@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Enpresa Gastuen Aurrekontua</title>
     
-    <!-- CDN GUZTIAK KENDU -->
-    <!-- Material Icons, Google Fonts, dena kendu -->
-    
     <!-- Tailwind CDN bakarrik -->
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -42,16 +39,34 @@
     .btn:hover {
         background: #4338ca;
     }
+    
+    /* Pestainen estiloak */
+    .tab-active {
+        border-bottom: 4px solid #4f46e5;
+        font-weight: 700;
+        color: #4f46e5;
+    }
+    
+    /* Karga-indikadorea */
+    .loader {
+        border-top-color: #3b82f6;
+        -webkit-animation: spin 1s ease-in-out infinite;
+        animation: spin 1s ease-in-out infinite;
+    }
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
     </style>
 </head>
 <body>
     <div class="container">
         <!-- Goiburua -->
         <div class="card" style="border-left: 8px solid #4f46e5;">
-            <h1 style="font-size: 2rem; font-weight: bold; text-align: center; color: #1f2937;">
+            <h1 id="main-title" style="font-size: 2rem; font-weight: bold; text-align: center; color: #1f2937;">
                 ENPRESA GASTUEN AURREKONTUA
             </h1>
-            <p style="text-align: center; color: #6b7280; font-size: 1.125rem; margin-top: 0.5rem;">
+            <p id="main-subtitle" style="text-align: center; color: #6b7280; font-size: 1.125rem; margin-top: 0.5rem;">
                 Gastu Finko, Aldakor, Pertsonal, Garraio eta Hazkuntza Estrategikoen Estimazioa
             </p>
         </div>
@@ -59,69 +74,179 @@
         <!-- Hizkuntza aukeraketa -->
         <div style="display: flex; justify-content: flex-end; margin-bottom: 1rem;">
             <div class="card" style="padding: 0.5rem;">
-                <label style="margin-right: 0.5rem; font-weight: 500;">Hizkuntza:</label>
-                <select style="border: 1px solid #d1d5db; border-radius: 0.375rem; padding: 0.25rem;">
+                <label style="margin-right: 0.5rem; font-weight: 500;" id="language-label">Hizkuntza:</label>
+                <select id="language-selector" style="border: 1px solid #d1d5db; border-radius: 0.375rem; padding: 0.25rem;">
                     <option value="eu">Euskara</option>
                     <option value="es">Español</option>
                 </select>
             </div>
         </div>
 
-        <!-- Eduki nagusia -->
+        <!-- Pestaina-kontrolak -->
         <div class="card">
-            <h2 style="font-size: 1.5rem; font-weight: bold; color: #374151; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.5rem;">
-                1. Lokalaren Gastu Finkoak
-            </h2>
+            <div class="border-b border-gray-200">
+                <nav class="flex flex-col sm:flex-row -mb-px" aria-label="Tabs">
+                    <button id="tab-button-nagusia" onclick="switchTab('nagusia')" class="tab-button flex-1 text-center whitespace-nowrap py-3 px-6 text-lg font-medium transition duration-200 ease-in-out cursor-pointer rounded-t-xl border-b-4 focus:outline-none tab-active">
+                        Ikuspegi Nagusia
+                    </button>
+                    <button id="tab-button-gastuak" onclick="switchTab('gastuak')" class="tab-button flex-1 text-center whitespace-nowrap py-3 px-6 text-lg font-medium transition duration-200 ease-in-out cursor-pointer rounded-t-xl border-b-4 focus:outline-none">
+                        Proiektuko Gastuak
+                    </button>
+                    <button id="tab-button-laburpena" onclick="switchTab('laburpena')" class="tab-button flex-1 text-center whitespace-nowrap py-3 px-6 text-lg font-medium transition duration-200 ease-in-out cursor-pointer rounded-t-xl border-b-4 focus:outline-none">
+                        Finantza Laburpena
+                    </button>
+                </nav>
+            </div>
             
-            <div style="display: grid; gap: 2rem; grid-template-columns: 1fr;">
-                <!-- Taula -->
-                <div>
-                    <h3 style="font-size: 1.25rem; font-weight: 600; color: #4f46e5; margin-bottom: 1rem;">
-                        Inbertsio Amortizagarriak
-                    </h3>
+            <!-- Pestaina-edukiak -->
+            <div class="p-6 sm:p-8">
+                <!-- 1. Edukia: Ikuspegi Nagusia -->
+                <div id="tab-content-nagusia" class="tab-content">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Proiektuaren Informazio Orokorra</h2>
+                    <div class="space-y-4">
+                        <label for="project-name-input" class="block text-sm font-medium text-gray-700">Proiektuaren Izenburua Editatu:</label>
+                        <input type="text" id="project-name-input" onchange="updateProjectName(event)"
+                            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-3 focus:ring-indigo-500 focus:border-indigo-500"
+                            placeholder="Sartu proiektuaren izena...">
+                        <div class="bg-indigo-100 p-4 rounded-lg shadow-inner">
+                            <p class="text-lg font-medium text-indigo-700">Bideragarritasuna:</p>
+                            <p class="text-xl font-bold text-indigo-900 mt-1">Ebaluazioan</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Edukia: Proiektuko Gastuak -->
+                <div id="tab-content-gastuak" class="tab-content hidden">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Proiektuko Gastuen Zehaztasun Estimazioa (EUR)</h2>
                     
-                    <div style="overflow-x: auto;">
-                        <table style="width: 100%; border-collapse: collapse;">
-                            <thead style="background-color: #eef2ff;">
+                    <!-- Elementu berria gehitu -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 p-4 border border-gray-200 rounded-lg bg-gray-50">
+                        <div>
+                            <label for="item-name" class="block text-sm font-medium text-gray-700">Kontzeptua / Elementua</label>
+                            <input type="text" id="item-name" placeholder="Adibidez: Sukaldeko altzariak"
+                                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
+                        </div>
+                        <div>
+                            <label for="item-cost" class="block text-sm font-medium text-gray-700">Kostua (€)</label>
+                            <input type="number" id="item-cost" placeholder="3500,00" min="0" step="0.01"
+                                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 text-right">
+                        </div>
+                        <div class="flex items-end">
+                            <button onclick="addItem()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-200">
+                                Gehitu
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Estimazio Zerrenda -->
+                    <div class="bg-white shadow-md rounded-lg overflow-hidden">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-100">
                                 <tr>
-                                    <th style="padding: 0.75rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Kontzeptua</th>
-                                    <th style="padding: 0.75rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Kostua (€)</th>
-                                    <th style="padding: 0.75rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Urteak</th>
-                                    <th style="padding: 0.75rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Amortizazioa (€)</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kontzeptua</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kostua (EUR)</th>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Ekintzak</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr style="border-bottom: 1px solid #e5e7eb;">
-                                    <td style="padding: 1rem; font-weight: 500;">Lokalaren Erosketa</td>
-                                    <td style="padding: 0.5rem;">
-                                        <input type="number" value="120000" style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.5rem; text-align: right;">
-                                    </td>
-                                    <td style="padding: 0.5rem;">
-                                        <input type="number" value="20" style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.5rem; text-align: center;">
-                                    </td>
-                                    <td style="padding: 1rem; font-weight: bold; text-align: right; background-color: #f0f9ff;">
-                                        6,000.00 €
-                                    </td>
+                            <tbody id="estimation-list" class="bg-white divide-y divide-gray-200">
+                                <!-- JS bidez beteko da -->
+                            </tbody>
+                            <tbody class="bg-indigo-100">
+                                <tr>
+                                    <td class="px-6 py-4 text-left text-lg font-bold text-indigo-800">KOSTU GUZTIRA:</td>
+                                    <td id="total-cost-display" class="px-6 py-4 text-left text-lg font-bold text-indigo-800 font-mono" colspan="2">0,00 €</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
 
-                <!-- Laburpena -->
-                <div>
-                    <h3 style="font-size: 1.5rem; font-weight: bold; color: #374151; border-bottom: 2px solid #d1d5db; padding-bottom: 0.5rem;">
-                        Laburpena
-                    </h3>
-                    
-                    <div class="card" style="border-left: 4px solid #4f46e5;">
-                        <p style="font-size: 0.875rem; font-weight: 500; color: #4f46e5; text-transform: uppercase;">Inbertsio Osoa</p>
-                        <p style="font-size: 1.875rem; font-weight: 800; color: #3730a3; margin-top: 0.25rem;">135,000.00 €</p>
-                    </div>
-                    
-                    <div class="card" style="border-left: 4px solid #10b981;">
-                        <p style="font-size: 0.875rem; font-weight: 500; color: #10b981; text-transform: uppercase;">Amortizazio Totala</p>
-                        <p style="font-size: 1.875rem; font-weight: 800; color: #047857; margin-top: 0.25rem;">9,000.00 €</p>
+                <!-- 3. Edukia: Finantza Laburpena -->
+                <div id="tab-content-laburpena" class="tab-content hidden">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Urteko Fakturazioa eta Orduko Prezioaren Kalkulua</h2>
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- ZUTABEA 1: Sarrera Datuak (Urteko Gastuak) -->
+                        <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200 space-y-4">
+                            <h3 class="text-xl font-bold text-indigo-700 border-b pb-2">1. Urteko Kostuen Sarrera</h3>
+                            
+                            <!-- Gastu Finko Finkoak (EZ-PERTSONALAK) -->
+                            <div class="input-group">
+                                <label for="fixedExpenses" class="block text-sm font-medium text-gray-700">Urteko Gastu Finko Finkoak (Alokairua, Hornidurak...)</label>
+                                <input type="number" id="fixedExpenses" onchange="updateSummaryField('fixedExpenses')" min="0" step="100"
+                                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 text-right">
+                            </div>
+                            
+                            <!-- Soldata Gastuak -->
+                            <div class="input-group">
+                                <label for="annualSalaries" class="block text-sm font-medium text-gray-700">Urteko Soldata Gastuak (€)</label>
+                                <input type="number" id="annualSalaries" onchange="updateSummaryField('annualSalaries')" min="0" step="100"
+                                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 text-right">
+                            </div>
+                            
+                            <!-- Gastu Guztira (Kalkulatua) -->
+                            <div class="bg-indigo-50 p-3 rounded-lg flex justify-between items-center mt-4">
+                                <span class="text-md font-semibold text-indigo-800">GASTU OROKORRA GUZTIRA:</span>
+                                <span id="totalAnnualExpense" class="text-lg font-extrabold text-indigo-900 font-mono"></span>
+                            </div>
+                        </div>
+                        
+                        <!-- ZUTABEA 2: Fakturazio Helburua eta Zerga Kalkulua -->
+                        <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200 space-y-4">
+                            <h3 class="text-xl font-bold text-indigo-700 border-b pb-2">2. Fakturatu beharreko Helburua</h3>
+                            
+                            <!-- Mozkin Gordina Helburua -->
+                            <div class="input-group">
+                                <label for="desiredProfitMargin" class="block text-sm font-medium text-gray-700">Mozkin Gordina Helburua (%)</label>
+                                <input type="number" id="desiredProfitMargin" onchange="updateSummaryField('desiredProfitMargin')" min="0" max="100" step="0.1"
+                                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 text-right">
+                                <p id="desiredProfit" class="text-sm text-gray-500 mt-1 text-right italic"></p>
+                            </div>
+                            
+                            <!-- Sozietate Zerga -->
+                            <div class="input-group">
+                                <label for="taxRate" class="block text-sm font-medium text-gray-700">Sozietate Zerga Tasa (%)</label>
+                                <input type="number" id="taxRate" onchange="updateSummaryField('taxRate')" min="0" max="100" step="1"
+                                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 text-right">
+                                <p id="taxAmount" class="text-sm text-gray-500 mt-1 text-right italic"></p>
+                            </div>
+                            
+                            <!-- Fakturatu beharreko Zenbatekoa (Emaitza) -->
+                            <div class="bg-emerald-100 p-3 rounded-lg flex flex-col items-center mt-4">
+                                <span class="text-sm font-semibold text-emerald-700">FAKTURATU BEHARREKOA (GUZTIRA):</span>
+                                <span id="totalRevenue" class="text-2xl font-extrabold text-emerald-900 font-mono"></span>
+                            </div>
+                        </div>
+                        
+                        <!-- ZUTABEA 3: Orduko Prezioaren Kalkulua -->
+                        <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200 space-y-4">
+                            <h3 class="text-xl font-bold text-indigo-700 border-b pb-2">3. Orduko Prezioaren Kalkulua</h3>
+                            
+                            <!-- Lan Egunak Urtean -->
+                            <div class="input-group">
+                                <label for="workDaysPerYear" class="block text-sm font-medium text-gray-700">Urteko lan egun erabilgarriak (Produkzioan)</label>
+                                <input type="number" id="workDaysPerYear" onchange="updateSummaryField('workDaysPerYear', true)" min="1" step="1"
+                                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 text-right">
+                            </div>
+                            
+                            <!-- Orduak Eguneko -->
+                            <div class="input-group">
+                                <label for="hoursPerWorkDay" class="block text-sm font-medium text-gray-700">Eguneko orduak (Produkzioan)</label>
+                                <input type="number" id="hoursPerWorkDay" onchange="updateSummaryField('hoursPerWorkDay', true)" min="1" max="16" step="1"
+                                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 text-right">
+                            </div>
+                            
+                            <!-- Ordu Guztira (Kalkulatua) -->
+                            <div class="bg-indigo-50 p-3 rounded-lg flex justify-between items-center">
+                                <span class="text-md font-semibold text-indigo-800">Ordu erabilgarriak guztira:</span>
+                                <span id="totalAvailableHours" class="text-lg font-extrabold text-indigo-900 font-mono"></span>
+                            </div>
+                            
+                            <!-- Orduko Prezioa (Emaitza) -->
+                            <div class="bg-blue-100 p-4 rounded-lg flex flex-col items-center mt-4">
+                                <span class="text-md font-semibold text-blue-700">ORDUKO PREZIO MINIMOA:</span>
+                                <span id="pricePerHour" class="text-3xl font-extrabold text-blue-900 font-mono mt-1"></span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -129,8 +254,233 @@
     </div>
 
     <script>
-        console.log("Bideragarritasun analisia - Kodea kargatuta");
-        alert("Orrialdea ondo kargatu da! CSP arazoak konponduta.");
+        // Hizkuntza datuak
+        const translations = {
+            eu: {
+                title: "ENPRESA GASTUEN AURREKONTUA",
+                subtitle: "Gastu Finko, Aldakor, Pertsonal, Garraio eta Hazkuntza Estrategikoen Estimazioa",
+                languageLabel: "Hizkuntza:",
+                tab1: "Ikuspegi Nagusia",
+                tab2: "Proiektuko Gastuak",
+                tab3: "Finantza Laburpena"
+            },
+            es: {
+                title: "PRESUPUESTO DE GASTOS EMPRESARIALES",
+                subtitle: "Estimación de Gastos Fijos, Variables, Personal, Transporte y Crecimiento Estratégico",
+                languageLabel: "Idioma:",
+                tab1: "Vista General",
+                tab2: "Gastos del Proyecto",
+                tab3: "Resumen Financiero"
+            }
+        };
+
+        // Hizkuntza aldatzeko funtzioa
+        function changeLanguage(lang) {
+            document.getElementById('main-title').textContent = translations[lang].title;
+            document.getElementById('main-subtitle').textContent = translations[lang].subtitle;
+            document.getElementById('language-label').textContent = translations[lang].languageLabel;
+            document.getElementById('tab-button-nagusia').textContent = translations[lang].tab1;
+            document.getElementById('tab-button-gastuak').textContent = translations[lang].tab2;
+            document.getElementById('tab-button-laburpena').textContent = translations[lang].tab3;
+            
+            // Gorde hautatutako hizkuntza
+            localStorage.setItem('selectedLanguage', lang);
+        }
+
+        // Hizkuntza aukeraketa kudeaketa
+        document.getElementById('language-selector').addEventListener('change', function(e) {
+            changeLanguage(e.target.value);
+        });
+
+        // Kargatzean hizkuntza ezarri
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedLanguage = localStorage.getItem('selectedLanguage') || 'eu';
+            document.getElementById('language-selector').value = savedLanguage;
+            changeLanguage(savedLanguage);
+        });
+
+        // Pestaina kudeatzailea
+        function switchTab(tabName) {
+            // Pestaina guztiak desaktibatu
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('text-indigo-600', 'border-indigo-600', 'tab-active');
+                button.classList.add('text-gray-500', 'border-transparent', 'hover:text-gray-700', 'hover:bg-gray-50');
+            });
+            
+            // Eduki guztiak ezkutatu
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            
+            // Hautatutako pestaina aktibatu
+            const activeButton = document.getElementById(`tab-button-${tabName}`);
+            activeButton.classList.remove('text-gray-500', 'border-transparent', 'hover:bg-gray-50');
+            activeButton.classList.add('text-indigo-600', 'border-indigo-600', 'tab-active');
+            
+            // Hautatutako edukia erakutsi
+            document.getElementById(`tab-content-${tabName}`).classList.remove('hidden');
+            
+            // Laburpen pestaina aktibatzen bada, kalkuluak berriz exekutatu
+            if (tabName === 'laburpena') {
+                renderSummaryCalculations();
+            }
+        }
+
+        // Datuak simulatzeko (Firebase ordez)
+        let estimationData = {
+            projectName: 'Proiektu Berria',
+            items: [],
+            totalCost: 0
+        };
+
+        let summaryData = {
+            fixedExpenses: 50000,
+            annualSalaries: 100000,
+            desiredProfitMargin: 10,
+            taxRate: 25,
+            workDaysPerYear: 220,
+            hoursPerWorkDay: 7
+        };
+
+        // Gastuen Kudeaketa (Estimation Tab)
+        function addItem() {
+            const nameInput = document.getElementById('item-name');
+            const costInput = document.getElementById('item-cost');
+            
+            const name = nameInput.value.trim();
+            const cost = parseFloat(costInput.value.replace(',', '.')) || 0;
+            
+            if (name && cost > 0) {
+                estimationData.items.push({ name: name, cost: cost });
+                nameInput.value = "";
+                costInput.value = "";
+                calculateTotal();
+                renderEstimationList();
+            } else {
+                alert("Mesedez, sartu izen bat eta kostu positibo bat.");
+            }
+        }
+
+        function removeItem(index) {
+            estimationData.items.splice(index, 1);
+            calculateTotal();
+            renderEstimationList();
+        }
+
+        function calculateTotal() {
+            const total = estimationData.items.reduce((sum, item) => sum + item.cost, 0);
+            estimationData.totalCost = total;
+            renderEstimationList();
+        }
+
+        function renderEstimationList() {
+            const listContainer = document.getElementById('estimation-list');
+            listContainer.innerHTML = "";
+            
+            estimationData.items.forEach((item, index) => {
+                const row = document.createElement('tr');
+                row.className = 'border-b hover:bg-gray-50';
+                row.innerHTML = `
+                    <td class="px-6 py-3">${item.name}</td>
+                    <td class="px-6 py-3 font-mono">${item.cost.toFixed(2).replace('.', ',')} €</td>
+                    <td class="px-6 py-3 text-right">
+                        <button onclick="removeItem(${index})" class="text-red-500 hover:text-red-700 transition duration-150 p-2 rounded-full hover:bg-red-100 focus:outline-none" title="Ezabatu">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                    </td>
+                `;
+                listContainer.appendChild(row);
+            });
+            
+            document.getElementById('total-cost-display').textContent = 
+                estimationData.totalCost.toFixed(2).replace('.', ',') + ' €';
+        }
+
+        function updateProjectName(event) {
+            estimationData.projectName = event.target.value.trim();
+            document.getElementById('project-name-display').textContent = estimationData.projectName;
+        }
+
+        // Laburpen Kalkuluen Kudeaketa (Summary Tab)
+        function updateSummaryField(field, isInt = false) {
+            const input = document.getElementById(field);
+            let value = input.value.replace(',', '.');
+            value = isInt ? parseInt(value) || 0 : parseFloat(value) || 0;
+            
+            // Ehunekoak 100era mugatu
+            if (field === 'desiredProfitMargin' || field === 'taxRate') {
+                value = Math.min(100, Math.max(0, value));
+            }
+            
+            summaryData[field] = value;
+            renderSummaryCalculations();
+        }
+
+        function renderSummaryCalculations() {
+            // Sarrerako eremuak eguneratu
+            document.getElementById('fixedExpenses').value = summaryData.fixedExpenses;
+            document.getElementById('annualSalaries').value = summaryData.annualSalaries;
+            document.getElementById('desiredProfitMargin').value = summaryData.desiredProfitMargin;
+            document.getElementById('taxRate').value = summaryData.taxRate;
+            document.getElementById('workDaysPerYear').value = summaryData.workDaysPerYear;
+            document.getElementById('hoursPerWorkDay').value = summaryData.hoursPerWorkDay;
+            
+            // Kalkuluak
+            // GASTU GUZTIRA = FINKOAK (ez-pertsonalak) + SOLDATAK
+            const totalAnnualExpense = summaryData.fixedExpenses + summaryData.annualSalaries;
+            
+            // Fakturatu beharreko Zenbatekoaren Kalkulua
+            const desiredProfit = totalAnnualExpense * (summaryData.desiredProfitMargin / 100);
+            
+            // Zerga aurreko irabaziak = Gastuak + Mozkina
+            const profitBeforeTax = totalAnnualExpense + desiredProfit;
+            
+            // Fakturazioa (Fakturazioa - Zerga = Zerga aurreko irabaziak)
+            let totalRevenue;
+            const taxFactor = 1 - (summaryData.taxRate / 100);
+            
+            if (taxFactor > 0) {
+                totalRevenue = profitBeforeTax / taxFactor;
+            } else {
+                totalRevenue = profitBeforeTax * 2;
+            }
+            
+            const taxAmount = totalRevenue - profitBeforeTax;
+            
+            // Ordu erabilgarriak
+            const totalAvailableHours = summaryData.workDaysPerYear * summaryData.hoursPerWorkDay;
+            
+            // Orduko Prezioa
+            const pricePerHour = totalRevenue / (totalAvailableHours > 0 ? totalAvailableHours : 1);
+            
+            // Emaitzak UI-n eguneratu
+            document.getElementById('totalAnnualExpense').textContent = formatCurrency(totalAnnualExpense);
+            document.getElementById('desiredProfit').textContent = formatCurrency(desiredProfit);
+            document.getElementById('totalRevenue').textContent = formatCurrency(totalRevenue);
+            document.getElementById('taxAmount').textContent = formatCurrency(taxAmount);
+            document.getElementById('totalAvailableHours').textContent = 
+                totalAvailableHours.toLocaleString('eu-ES', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) + ' ordu';
+            document.getElementById('pricePerHour').textContent = formatCurrency(pricePerHour);
+        }
+
+        function formatCurrency(amount) {
+            // Infinity kasuak kudeatu
+            if (!isFinite(amount) || amount < 0) return '0,00 €';
+            return amount.toLocaleString('eu-ES', {
+                style: 'currency',
+                currency: 'EUR',
+                minimumFractionDigits: 2
+            });
+        }
+
+        // Hasieratzea
+        window.onload = function() {
+            console.log("Bideragarritasun analisia - Kodea kargatuta");
+            renderEstimationList();
+            renderSummaryCalculations();
+        };
     </script>
 </body>
 </html>

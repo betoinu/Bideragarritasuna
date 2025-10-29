@@ -1,1705 +1,690 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="eu">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Empresa Gastuen Aurrekontua (7 Fitxa)</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
-    <!-- jsPDF eta html2canvas liburutegiak -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
-        .input-style { @apply w-full p-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150; }
-        .table-header { @apply px-3 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider; }
-        .result-card { @apply bg-white p-6 rounded-xl shadow-lg border-l-4; }
-        .tab-container { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
-        .tab-button { @apply px-2 py-3 font-semibold rounded-t-lg transition duration-200 text-xs md:text-sm text-center truncate; }
-        .tab-active { @apply text-white bg-indigo-600 shadow-md hover:bg-indigo-700; }
-        .tab-inactive { @apply text-gray-600 bg-gray-200 hover:bg-gray-300; }
-        
-        input[type=number]::-webkit-inner-spin-button,
-        input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>I·D arte — Neurketak eta Aurrekontuak (Laneko Orria)</title>
 
-        /* PDF txostenerako estilo bereziak */
-        .report-section { margin-bottom: 20px; break-inside: avoid; }
-        .report-table { width: 100%; border-collapse: collapse; margin: 10px 0; }
-        .report-table th, .report-table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        .report-table th { background-color: #f8f9fa; font-weight: bold; }
-        .report-summary { background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin: 10px 0; }
+  <!-- Fontak: HK Grotesk ez badago, Inter + Fira Sans erabiliko dira alternatiba gisa -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Fira+Sans:wght@400;700&display=swap" rel="stylesheet">
 
-        /* Kargatze animazioa */
-        .loader {
-            border-top-color: #3498db;
-            -webkit-animation: spinner 1.5s linear infinite;
-            animation: spinner 1.5s linear infinite;
-        }
+  <style>
+    /* Orokorra */
+    :root{
+      --bg:#f7f7f9;
+      --surface:#ffffff;
+      --indigo:#530ced; /* Erasmus / highlight (manualean agertzen den #530ced) */
+      --accent:#97dffc; /* interior design */
+      --muted:#6b7280;
+      --success:#22c55e;
+      --danger:#ef4444;
+      --glass: rgba(0,0,0,0.04);
+      --mono: "Fira Sans", "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    html,body{height:100%;margin:0;background:var(--bg);font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; color:#111827;}
+    a{color:var(--indigo);text-decoration:none}
+    .container{max-width:1100px;margin:28px auto;padding:20px}
+    header{
+      background:var(--surface);
+      border-top:8px solid var(--indigo);
+      border-radius:12px;padding:20px;display:flex;gap:16px;align-items:center;box-shadow:0 6px 20px rgba(16,24,40,0.06)
+    }
+    .logo{
+      display:flex;gap:12px;align-items:center;
+    }
+    .logo svg{width:56px;height:56px;flex:0 0 56px;color:var(--indigo)}
+    h1{font-family: "Fira Sans", Inter, sans-serif;font-weight:700;margin:0;font-size:20px}
+    p.lead{margin:0;color:var(--muted);font-size:13px}
+    .meta{margin-left:auto;display:flex;gap:12px;align-items:center}
+    select, button{font-family:var(--mono);}
 
-        @-webkit-keyframes spinner {
-            0% { -webkit-transform: rotate(0deg); }
-            100% { -webkit-transform: rotate(360deg); }
-        }
+    /* Kortxetako fitxak (tabs) */
+    .tabs{display:flex;gap:8px;margin-top:18px;background:var(--surface);padding:10px;border-radius:10px;box-shadow:0 4px 12px rgba(2,6,23,0.04)}
+    .tabs button{background:transparent;border:0;padding:8px 12px;border-radius:8px;font-weight:600;color:var(--muted);cursor:pointer;}
+    .tabs button.active{background:linear-gradient(180deg,var(--indigo),#3a0ed6);color:white;box-shadow:0 6px 18px rgba(83,12,237,0.12)}
 
-        @keyframes spinner {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-    </style>
+    /* Edukia */
+    main{margin-top:18px;background:var(--surface);padding:20px;border-radius:12px;box-shadow:0 8px 30px rgba(2,6,23,0.06)}
+    .grid{display:grid;grid-template-columns:1fr 360px;gap:20px}
+    .card{background:linear-gradient(180deg,#fff,var(--glass));padding:16px;border-radius:10px;border:1px solid rgba(16,24,40,0.04)}
+    table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:13px}
+    th,td{padding:8px;border-bottom:1px solid rgba(16,24,40,0.04);text-align:left}
+    th{font-weight:700;color:var(--muted);font-size:12px}
+    .muted{color:var(--muted);font-size:13px}
+
+    /* Result card */
+    .summary .stat{display:flex;justify-content:space-between;align-items:center;padding:12px;border-radius:8px;margin-bottom:10px}
+    .stat h4{margin:0;font-size:13px;color:var(--muted)}
+    .stat p{margin:0;font-weight:800;font-size:18px}
+
+    /* Form inputs */
+    input[type="number"], input[type="text"], select{
+      width:100%;padding:8px;border-radius:8px;border:1px solid rgba(16,24,40,0.06);background:#fff;font-family:var(--mono)
+    }
+
+    /* PDF loading overlay */
+    #loading-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:none;align-items:center;justify-content:center;z-index:1200}
+    #loading-overlay .box{background:white;padding:22px;border-radius:10px;display:flex;flex-direction:column;align-items:center;gap:12px;min-width:260px}
+    .spinner{height:44px;width:44px;border-radius:50%;border:4px solid #e6e7ef;border-top-color:var(--indigo);animation:spin 1s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* Responsibilitatea */
+    @media (max-width:900px){.grid{grid-template-columns:1fr} .meta{display:none}}
+  </style>
 </head>
 <body>
-
-<div class="max-w-7xl mx-auto p-4 md:p-8">
-    <!-- Goiburua -->
-    <header class="text-center mb-6 p-6 bg-white rounded-xl shadow-lg border-t-8 border-indigo-600">
-        <div class="flex items-center justify-between">
-            <div class="flex items-center space-x-4">
-                <svg class="w-10 h-10 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 01-2-2V7a2 2 0 00-2-2h-2.5m-1.5 5.51-2.5m0 012.5"></path>
-                </svg>
-                <div>
-                    <h1 id="main-title" class="text-2xl md:text-3xl font-extrabold text-gray-800">ENPRESA GASTUEN AURRERONTUA (7 EREMU)</h1>
-                    <p id="main-subtitle" class="mt-2 text-lg text-gray-500">Gastu Finko, Aldakor, Pertsonal, Garraio, Hazkuntza Estrategikoen Estimazioa eta Finantzaketa</p>
-                </div>
-            </div>
-            <!-- Hizkuntza Aukeraketa eta Deskargatzeko Botoia -->
-            <div class="flex items-center space-x-4">
-                <div class="flex items-center space-x-2">
-                    <label for="language-select" class="text-sm font-medium text-gray-700">Hizkuntza:</label>
-                    <select id="language-select" class="input-style w-32" onchange="changeLanguage(this.value)">
-                        <option value="eu">Euskara</option>
-                        <option value="es">Español</option>
-                    </select>
-                </div>
-                <!-- PDF Deskargatzeko Botoia -->
-                <button onclick="generatePDFReport()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-150 flex items-center space-x-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 01-3-3m3 313-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.29315.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                    </svg>
-                    <span id="download-report-btn">Deskargatu Txostena (PDF)</span>
-                </button>
-            </div>
+  <div class="container">
+    <header aria-labelledby="main-title">
+      <div class="logo" aria-hidden="false">
+        <!-- sinple logo mark, estilizat -->
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="I·D arte logo">
+          <rect x="6" y="6" width="52" height="52" rx="8" stroke="currentColor" stroke-width="3" fill="none" />
+          <circle cx="40" cy="24" r="6" fill="currentColor"/>
+          <path d="M18 42h28" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+        <div>
+          <h1 id="main-title">I·D arte — Neurketak eta Aurrekontuak</h1>
+          <p class="lead">Ikasgaiaren barruan: Neurketak eta Aurrekontuak — Fitxak: Lokal, Pertsonal, Ekoizpena, Garraioa, Hazkuntza, Finantzaketa, Prezioak</p>
         </div>
+      </div>
+
+      <div class="meta" role="region" aria-label="Kontrolak">
+        <label for="language-select" class="muted" style="margin-right:6px">Hizkuntza</label>
+        <select id="language-select" onchange="changeLanguage(this.value)">
+          <option value="eu">Euskara</option>
+          <option value="es">Español</option>
+        </select>
+
+        <button id="download-report" title="Deskargatu Txostena (PDF)" style="background:var(--success);border:0;color:white;padding:10px;border-radius:8px;font-weight:700;margin-left:12px;cursor:pointer" onclick="generatePDFReport()">
+          Deskargatu PDF
+        </button>
+      </div>
     </header>
 
-    <!-- Fitxen Nabigazioa -->
-    <nav class="flex flex-col">
-        <div class="tab-container p-2 bg-white rounded-t-xl shadow-md overflow-x-auto">
-            <button id="tab-lokala" class="tab-button tab-active" onclick="showSheet('lokala')">
-                <span id="tab-1-text">1. Lokal/Inbertsio FINKOAK</span>
-            </button>
-            <button id="tab-pertsonala" class="tab-button tab-inactive" onclick="showSheet('pertsonala')">
-                <span id="tab-2-text">2. Pertsonalaren Kostua</span>
-            </button>
-            <button id="tab-ekoizpena" class="tab-button tab-inactive" onclick="showSheet('ekoizpena')">
-                <span id="tab-3-text">3. Ekoizpen Aldakorrak</span>
-            </button>
-            <button id="tab-garraioa" class="tab-button tab-inactive" onclick="showSheet('garraioa')">
-                <span id="tab-4-text">4. Garraioa</span>
-            </button>
-            <button id="tab-hazkuntza" class="tab-button tab-inactive" onclick="showSheet('hazkuntza')">
-                <span id="tab-5-text">5. Hazkuntza/Marketina</span>
-            </button>
-            <button id="tab-finantzaketa" class="tab-button tab-inactive" onclick="showSheet('finantzaketa')">
-                <span id="tab-6-text">6. Finantzaketa</span>
-            </button>
-            <!-- 🆕 7. FITXA BERRIA -->
-            <button id="tab-prezioa" class="tab-button tab-inactive" onclick="showSheet('prezioa')">
-                <span id="tab-7-text">7. Prezio eta Mozkinak</span>
-            </button>
-        </div>
-    </nav>
-
-    <!-- KONTENEDORE NAGUSIA -->
-    <section id="main-sheet" class="p-6 bg-white rounded-b-xl shadow-2xl space-y-12">
-
-        <!-- 1. LOKALAREN GASTU FINKOAK ETA INBERTSIOAK -->
-        <div id="lokala-sheet">
-            <h2 class="text-2xl font-bold text-gray-700 mb-6 border-b pb-2 text-indigo-600">
-                <span id="sheet-1-title">1. Lokalaren Gastu Finko Nagusiak eta Inbertsioak</span>
-            </h2>
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- A) INBERTSIO AMORTIZAGARRIAK TABLE -->
-                <div class="lg:col-span-2 space-y-8">
-                    <h3 class="text-xl font-semibold text-indigo-600 mb-4 flex items-center">
-                        <span id="section-la-title">A) Inbertsio Amortizagarriak (Lokala & Ekipamendua)</span>
-                    </h3>
-                    <div class="overflow-x-auto mb-8">
-                        <table class="min-w-full divide-y divide-gray-200 rounded-xl overflow-hidden">
-                            <thead class="bg-indigo-50">
-                                <tr>
-                                    <th class="table-header"><span id="table-la-header-1">Kontzeptua (AM)</span></th>
-                                    <th class="table-header text-right"><span id="table-la-header-2">Kostua (€)</span></th>
-                                    <th class="table-header text-center"><span id="table-la-header-3">Amort. Urteak</span></th>
-                                    <th class="table-header text-right"><span id="table-la-header-4">Urteko Amortizazioa €</span></th>
-                                    <th class="table-header w-10"></th>
-                                </tr>
-                            </thead>
-                            <tbody id="lokala-amortizable-body" class="bg-white divide-y divide-gray-200">
-                                <!-- JS-k beteko du -->
-                            </tbody>
-                        </table>
-                    </div>
-                    <!-- GEHITU BOTOIA - Inbertsio Amortizagarriak -->
-                    <button onclick="addAmortizableItem('lokala')" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition duration-150 mb-8">
-                        <span id="add-amortizable-btn">+ Inbertsio Amortizagarri Berria</span>
-                    </button>
-
-                    <!-- B) GASTU ERREPIKARI FINKOAK TABLE -->
-                    <h3 class="text-xl font-semibold text-indigo-600 mb-4 mt-8 flex items-center">
-                        <span id="section-lb-title">B) Gastu Errepikari Finko Nagusiak</span>
-                    </h3>
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200 rounded-xl overflow-hidden">
-                            <thead class="bg-indigo-50">
-                                <tr>
-                                    <th class="table-header"><span id="table-lb-header-1">Kontzeptua (UR)</span></th>
-                                    <th class="table-header text-right"><span id="table-lb-header-2">Ordainketa Kostua €</span></th>
-                                    <th class="table-header text-center"><span id="table-lb-header-3">Maiztasuna (Urteko Aldiak)</span></th>
-                                    <th class="table-header text-right"><span id="table-lb-header-4">Urteko Guztizkoa €</span></th>
-                                    <th class="table-header w-10"></th>
-                                </tr>
-                            </thead>
-                            <tbody id="lokala-recurring-body" class="bg-white divide-y divide-gray-200">
-                                <!-- JS-k beteko du -->
-                            </tbody>
-                        </table>
-                    </div>
-                    <!-- GEHITU BOTOIA - Gastu Errepikariak -->
-                    <button onclick="addRecurringItem('lokala')" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition duration-150 mt-4">
-                        <span id="add-recurring-lokala-btn">+ Gastu Errepikari Berria</span>
-                    </button>
-                </div>
-                <!-- EMAITZEN LABURPENA (Lokala) -->
-                <div class="lg:col-span-1 space-y-6">
-                    <h3 class="text-2xl font-bold text-gray-700 pb-2 border-b-2 border-gray-300">
-                        <span id="summary-1-title">Laburpen Ekonomikoa (1. Fitxa)</span>
-                    </h3>
-                    <div class="result-card border-indigo-600">
-                        <p class="text-sm font-medium text-indigo-600 uppercase"><span id="summary-1-1">Lokalaren Inbertsio Osoa</span></p>
-                        <p id="total-local-investment" class="text-3xl font-extrabold text-indigo-800 mt-1">0.00</p>
-                    </div>
-                    <div class="result-card border-green-500">
-                        <p class="text-sm font-medium text-green-600 uppercase"><span id="summary-1-2">Urteko Amortizazio Kostua</span></p>
-                        <p id="total-local-amortization" class="text-3xl font-extrabold text-green-800 mt-1">0.00</p>
-                    </div>
-                    <div class="result-card border-yellow-500">
-                        <p class="text-sm font-medium text-yellow-600 uppercase"><span id="summary-1-3">Urteko Gastu Finko Errepikariak</span></p>
-                        <p id="total-local-recurring" class="text-3xl font-extrabold text-yellow-800 mt-1">0.00</p>
-                    </div>
-                    <div class="result-card bg-indigo-100 border-indigo-900">
-                        <p class="text-sm font-medium text-indigo-800 uppercase"><span id="summary-1-4">Lokalaren Urteko Kostu FINKOA</span></p>
-                        <p id="total-local-annual-cost" class="text-4xl font-extrabold text-indigo-900 mt-1">0.00</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 2. PERTSONALAREN KOSTUAK (FINKOAK) -->
-        <div id="pertsonala-sheet" class="hidden">
-            <h2 class="text-2xl font-bold text-gray-700 mb-6 border-b pb-2 text-pink-600">
-                <span id="sheet-2-title">2. Pertsonalaren Kostuak (Gastu Finko Errepikariak)</span>
-            </h2>
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- Langileen taula -->
-                <div class="lg:col-span-2">
-                    <h3 class="text-xl font-semibold text-pink-600 mb-4 flex items-center">
-                        <span id="section-2-title">Langile Bakotzaren Kostu Osoa (Urteko)</span>
-                    </h3>
-                    <div class="overflow-x-auto mb-8">
-                        <table class="min-w-full divide-y divide-gray-200 rounded-xl overflow-hidden">
-                            <thead class="bg-pink-50">
-                                <tr>
-                                    <th class="table-header"><span id="table-2-header-1">Funtzioa / Izena</span></th>
-                                    <th class="table-header text-right"><span id="table-2-header-2">Soldata Gordina (Urteko €)</span></th>
-                                    <th class="table-header text-center"><span id="table-2-header-3">Gizarte Seg. (% Empresa)</span></th>
-                                    <th class="table-header text-right"><span id="table-2-header-4">Kostu Osoa Empresarentzat (€)</span></th>
-                                    <th class="table-header w-10"></th>
-                                </tr>
-                            </thead>
-                            <tbody id="personnel-body" class="bg-white divide-y divide-gray-200">
-                                <!-- JS-k beteko du -->
-                            </tbody>
-                        </table>
-                    </div>
-                    <button onclick="addPersonnel()" class="px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition duration-150">
-                        <span id="add-personnel-btn">+ Langile Berria Gehitu</span>
-                    </button>
-
-                    <!-- Personalaren Laburpena -->
-                    <div class="mt-8 result-card bg-pink-100 border-pink-600">
-                        <p class="text-sm font-medium text-pink-600 uppercase"><span id="summary-2-1">Pertsonalaren Kostu Osoa (Urteko)</span></p>
-                        <p id="total-personnel-cost" class="text-3xl font-extrabold text-pink-800 mt-1">€ 0.00</p>
-                    </div>
-                </div>
-
-                <!-- SOLDATA GARBIAREN KALKULUA -->
-                <div id="net-salary-calculator" class="lg:col-span-1 p-6 bg-gray-50 rounded-xl border-2 border-gray-200">
-                    <h3 class="text-xl font-bold text-gray-700 mb-4 flex items-center border-b pb-2">
-                        <span id="salary-calc-title">Soldata Garbiaren Kalkulagailua (Langilearen Kenkariak)</span>
-                    </h3>
-                    <div class="space-y-4">
-                        <div>
-                            <label for="grossSalary" class="block text-sm font-medium text-gray-700 mb-1">
-                                <span id="salary-calc-label-1">Soldata Gordina Urtekoa (€):</span>
-                            </label>
-                            <input type="number" id="grossSalary" value="25000" min="0" class="input-style p-3 text-xl bg-pink-50 font-bold" oninput="calculateNetSalary()" placeholder="Adibidez: 25000">
-                        </div>
-                        <div>
-                            <label for="irpfRate" class="block text-sm font-medium text-gray-700 mb-1">
-                                <span id="salary-calc-label-2">PFEZ Atxikipen Portzentajea (%):</span>
-                            </label>
-                            <input type="number" id="irpfRate" value="15" min="0" max="100" class="input-style p-3 text-xl bg-pink-50 font-bold" oninput="calculateNetSalary()" placeholder="Adibidez: 15">
-                        </div>
-                        <div class="p-3 bg-red-100 rounded-lg border border-red-300">
-                            <p class="text-sm font-medium text-red-700">
-                                <span id="salary-calc-label-3">GS Kenkaria (Langileak) (6.35%):</span>
-                            </p>
-                            <span id="ssDeduction" class="text-xl font-bold text-red-700 block mt-1">0.00</span>
-                        </div>
-                        <div class="p-4 bg-green-200 rounded-lg border border-green-400 mt-4">
-                            <span class="text-lg font-semibold text-green-800">
-                                <span id="salary-calc-label-4">Soldata Garbia Hilekoa (14 ordainketa):</span>
-                            </span>
-                            <span id="netMonthlySalary" class="text-2xl font-extrabold text-green-800 block mt-1">0.00</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 3. EKOIZPEN GASTU ALDAKORRAK -->
-        <div id="ekoizpena-sheet" class="hidden">
-            <h2 class="text-2xl font-bold text-gray-700 mb-6 border-b pb-2 text-green-600">
-                <span id="sheet-3-title">3. Ekoizpen Gastuak (Aldakorrak)</span>
-            </h2>
-            <p class="text-sm text-gray-500 mb-6">
-                <span id="sheet-3-desc">Zuzenean lan-bolumenarekin lotutako gastuak (Materialak, Azpikontratak, EZA gehigarria).</span>
-            </p>
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- EKOIZPEN GASTU ERREPIKARIAK TABLE -->
-                <div class="lg:col-span-2 space-y-8">
-                    <h3 class="text-xl font-semibold text-green-600 mb-4 flex items-center">
-                        <span id="section-3-title">Proiektuaren arabera aldatzen diren gastuak</span>
-                    </h3>
-                    <div class="overflow-x-auto mb-10">
-                        <table class="min-w-full divide-y divide-gray-200 rounded-xl overflow-hidden">
-                            <thead class="bg-green-50">
-                                <tr>
-                                    <th class="table-header"><span id="table-3-header-1">Kontzeptua (UR)</span></th>
-                                    <th class="table-header text-right"><span id="table-3-header-2">Ordainketa Kostua (€)</span></th>
-                                    <th class="table-header text-center"><span id="table-3-header-3">Maiztasuna (Urteko Aldiak)</span></th>
-                                    <th class="table-header text-right"><span id="table-3-header-4">Urteko Guztizkoa (€)</span></th>
-                                    <th class="table-header w-10"></th>
-                                </tr>
-                            </thead>
-                            <tbody id="ekoizpena-recurring-body" class="bg-white divide-y divide-gray-200">
-                                <!-- JS-k beteko du -->
-                            </tbody>
-                        </table>
-                    </div>
-                    <!-- GEHITU BOTOIA - Ekoizpen Gastuak -->
-                    <button onclick="addRecurringItem('ekoizpena')" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-150">
-                        <span id="add-recurring-ekoizpena-btn">Ekoizpen Gastu Berria</span>
-                    </button>
-                </div>
-
-                <!-- LABURPENA -->
-                <div class="lg:col-span-1 space-y-6">
-                    <h3 class="text-2xl font-bold text-gray-700 pb-2 border-b-2 border-gray-300">
-                        <span id="summary-3-title">Laburpen Ekonomika (3. Fitxa)</span>
-                    </h3>
-                    <div class="result-card bg-green-100 border-green-600">
-                        <p class="text-sm font-medium text-green-600 uppercase">
-                            <span id="summary-3-1">Ekoizpen Gastu Aldakorrak (Urteko)</span>
-                        </p>
-                        <p id="total-production-cost" class="text-3xl font-extrabold text-green-800 mt-1"></p>
-                        <p class="text-xs text-gray-500 mt-2">
-                            <span id="summary-3-desc">Gastu aldakorrak aurrekontuaren kolumen estandararen arabera.</span>
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 4. GARRATOAREN GASTUAK -->
-        <div id="garraioa-sheet" class="hidden">
-            <h2 class="text-2xl font-bold text-gray-700 mb-6 border-b pb-2 text-red-600">
-                <span id="sheet-4-title">4. Garraioaren Gastuak</span>
-            </h2>
-            <p class="text-sm text-gray-500 mb-6">
-                <span id="sheet-4-desc">Lanari lotutako ibilgailuaren inbertisioa eta gastu errepikariak.</span>
-            </p>
-
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- GARRATOA TAULAK -->
-                <div class="lg:col-span-2 space-y-8">
-                    <!-- Garraioa: Inbertisioa (Amortizagarria) -->
-                    <h3 class="text-xl font-semibold text-red-600 mb-4 flex items-center">
-                        <span id="section-4a-title">A) Inbertisio Amortizagarriak (Ibilgailuaren Erosketa)</span>
-                    </h3>
-                    <div class="overflow-x-auto mb-10">
-                        <table class="min-w-full divide-y divide-gray-200 rounded-xl overflow-hidden">
-                            <thead class="bg-red-50">
-                                <tr>
-                                    <th class="table-header"><span id="table-4a-header-1">Kontzeptua (AM)</span></th>
-                                    <th class="table-header text-right"><span id="table-4a-header-2">Kostua (€)</span></th>
-                                    <th class="table-header text-center"><span id="table-4a-header-3">Amort. Urteak</span></th>
-                                    <th class="table-header text-right"><span id="table-4a-header-4">Urteko Amortizazioa €</span></th>
-                                    <th class="table-header w-10"></th>
-                                </tr>
-                            </thead>
-                            <tbody id="garraioa-amortizable-body" class="bg-white divide-y divide-gray-200">
-                                <!-- JS-k beteko du -->
-                            </tbody>
-                        </table>
-                    </div>
-                    <!-- GEHITU BOTOIA - Garraio Inbertsioak -->
-                    <button onclick="addAmortizableItem('garraioa')" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition duration-150 mb-8">
-                        <span id="add-amortizable-garraioa-btn">Garraio Inbertsio Berria</span>
-                    </button>
-                    <!-- Garraioa: Gastu Errepikariak -->
-                    <h3 class="text-xl font-semibold text-red-600 mb-4 flex items-center">
-                        <span id="section-4b-title">B) Gastu Errepikariak (Erregaia, Aseguru, Mantentzea)</span>
-                    </h3>
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200 rounded-xl overflow-hidden">
-                            <thead class="bg-red-50">
-                                <tr>
-                                    <th class="table-header"><span id="table-4b-header-1">Kontzeptua (UR)</span></th>
-                                    <th class="table-header text-right"><span id="table-4b-header-2">Ordainketa Kostua (€)</span></th>
-                                    <th class="table-header text-center"><span id="table-4b-header-3">Maiztasuna (Urteko Aldiak)</span></th>
-                                    <th class="table-header text-right"><span id="table-4b-header-4">Urteko Guztizkoa (€)</span></th>
-                                    <th class="table-header w-10"></th>
-                                </tr>
-                            </thead>
-                            <tbody id="garraioa-recurring-body" class="bg-white divide-y divide-gray-200">
-                                <!-- JS-k beteko du -->
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <!-- GEHITU BOTOIA - Garraio Gastu Errepikariak -->
-                    <button onclick="addRecurringItem('garraioa')" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition duration-150 mt-4">
-                        <span id="add-recurring-garraioa-btn">+ Garraio Gastu Berria</span>
-                    </button>
-                </div>
-
-                <!-- LABURPENA -->
-                <div class="lg:col-span-1 space-y-6">
-                    <h3 class="text-2xl font-bold text-gray-700 pb-2 border-b-2 border-gray-300">
-                        <span id="summary-4-title">Laburpen Ekonomika (4. Fitxa)</span>
-                    </h3>
-                    <div class="result-card border-red-600">
-                        <p class="text-sm font-medium text-red-600 uppercase">
-                            <span id="summary-4-1">Garraioaren Inbertsio Osoa</span>
-                        </p>
-                        <p id="total-transport-investment" class="text-3xl font-extrabold text-red-800 mt-1">0.00</p>
-                    </div>
-                    <div class="result-card bg-red-100 border-red-800">
-                        <p class="text-sm font-medium text-red-800 uppercase">
-                            <span id="summary-4-2">Garraioaren Urteko Kostu Osoa</span>
-                        </p>
-                        <p id="total-transport-annual-cost" class="text-3xl font-extrabold text-red-900 mt-1">0.00</p>
-                        <p class="text-xs text-gray-500 mt-2">
-                            <span id="summary-4-desc">Amortizazioa + Gastu Errepikariak.</span>
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 5. HAZKUNTZA ETA MARKETIN GASTUAK -->
-        <div id="hazkuntza-sheet" class="hidden">
-            <h2 class="text-2xl font-bold text-gray-700 mb-6 border-b pb-2 text-purple-600">
-                <span id="sheet-5-title">5. Hazkuntza eta Marketin Gastuak</span>
-            </h2>
-            <p class="text-sm text-gray-500 mb-6">
-                <span id="sheet-5-desc">Epe luzeko hazkunderako inbertsio estrategikoak (prestakuntza, publizitatea, harpidetzak).</span>
-            </p>
-
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- HAZKUNTZA GASTU ERREPIKARIAK TABLE -->
-                <div class="lg:col-span-2 space-y-8">
-                    <h3 class="text-xl font-semibold text-purple-600 mb-4 flex items-center">
-                        <span id="section-5-title">Prestakuntza, Harpidetzak eta Komunikazio Kampainak</span>
-                    </h3>
-                    <div class="overflow-x-auto mb-10">
-                        <table class="min-w-full divide-y divide-gray-200 rounded-xl overflow-hidden">
-                            <thead class="bg-purple-50">
-                                <tr>
-                                    <th class="table-header"><span id="table-5-header-1">Kontzeptua (UR)</span></th>
-                                    <th class="table-header text-right"><span id="table-5-header-2">Ordainketa Kostua (€)</span></th>
-                                    <th class="table-header text-center"><span id="table-5-header-3">Maiztasuna (Urteko Aldiak)</span></th>
-                                    <th class="table-header text-right"><span id="table-5-header-4">Urteko Guztizkoa (€)</span></th>
-                                    <th class="table-header w-10"></th>
-                                </tr>
-                            </thead>
-                            <tbody id="hazkuntza-recurring-body" class="bg-white divide-y divide-gray-200">
-                                <!-- JS-k beteko du -->
-                            </tbody>
-                        </table>
-                    </div>
-                    <!-- GEHITU BOTOIA - Hazkuntza Gastuak -->
-                    <button onclick="addRecurringItem('hazkuntza')" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition duration-150">
-                        <span id="add-recurring-hazkuntza-btn">Hazkuntza Gastu Berria</span>
-                    </button>
-                </div>
-                <!-- LABURPENA -->
-                <div class="lg:col-span-1 space-y-6">
-                    <h3 class="text-2xl font-bold text-gray-700 pb-2 border-b-2 border-gray-300">
-                        <span id="summary-5-title">Laburpen Ekonomika (5. Fitxa)</span>
-                    </h3>
-                    <div class="result-card bg-purple-100 border-purple-600">
-                        <p class="text-sm font-medium text-purple-600 uppercase">
-                            <span id="summary-5-1">Hazkuntza eta Marketin Gastuak (Urteko)</span>
-                        </p>
-                        <p id="total-growth-cost" class="text-3xl font-extrabold text-purple-800 mt-1">0.00</p>
-                        <p class="text-xs text-gray-500 mt-2">
-                            <span id="summary-5-desc">Sortzalleak diren inbertsio estrategikoak.</span>
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 6. FINANTAAKETA SISTEMA BERRIA -->
-        <div id="finantzaketa-sheet" class="hidden">
-            <h2 class="text-2xl font-bold text-gray-700 mb-6 border-b pb-2 text-blue-600">
-                <span id="sheet-6-title">6. Finantzaketa Estrategia</span>
-            </h2>
-
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <!-- Ezkerreko Zutabea: Finantzaketa Iturriak -->
-                <div class="space-y-6">
-                    <h3 class="text-xl font-semibold text-blue-600 mb-4">
-                        <span id="section-6a-title">Finantzaketa Iturriak</span>
-                    </h3>
-
-                    <!-- Finantzaketa Beharra -->
-                    <div class="result-card bg-red-50 border-red-600">
-                        <p class="text-sm font-medium text-red-600 uppercase">
-                            <span id="finance-need-title">Finantzaketa Behar Osoa</span>
-                        </p>
-                        <p id="total-finance-needed" class="text-3xl font-extrabold text-red-800 mt-1">0.00</p>
-                        <p class="text-xs text-gray-500 mt-2">
-                            <span id="finance-need-desc">Inbertsioak + Kapitalizazioa (3 hilabete)</span>
-                        </p>
-                    </div>
-
-                    <!-- Bazkideen Aportazioa -->
-                    <div class="result-card bg-green-50 border-green-600">
-                        <p class="text-sm font-medium text-green-600 uppercase">
-                            <span id="partner-capital-title">Bazkideen Kapital Aportazioa</span>
-                        </p>
-                        <div class="mt-4 space-y-4">
-                            <div>
-                                <label for="partner-capital-1" class="block text-sm font-medium text-gray-700">
-                                    <span id="partner-1-label">Bazkide 1 Aportazioa (€)</span>
-                                </label>
-                                <input type="number" id="partner-capital-1" value="0" min="0" class="input-style bg-green-100 text-xl font-bold mt-1" oninput="updateFinanceStrategy()">
-                            </div>
-                            <div>
-                                <label for="partner-capital-2" class="block text-sm font-medium text-gray-700">
-                                    <span id="partner-2-label">Bazkide 2 Aportazioa (€)</span>
-                                </label>
-                                <input type="number" id="partner-capital-2" value="0" min="0" class="input-style bg-green-100 text-xl font-bold mt-1" oninput="updateFinanceStrategy()">
-                            </div>
-                            <div>
-                                <label for="partner-capital-3" class="block text-sm font-medium text-gray-700">
-                                    <span id="partner-3-label">Bazkide 3 Aportazioa (€)</span>
-                                </label>
-                                <input type="number" id="partner-capital-3" value="0" min="0" class="input-style bg-green-100 text-xl font-bold mt-1" oninput="updateFinanceStrategy()">
-                            </div>
-                            <div class="mt-4 p-3 bg-green-100 rounded-lg">
-                                <p class="text-sm font-medium text-green-700">
-                                    <span id="total-partner-capital-label">Bazkideen Aportazio Totala:</span>
-                                </p>
-                                <p id="total-partner-capital" class="text-2xl font-extrabold text-green-800 mt-1">0.00</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Bazkide Kapitalista -->
-                    <div id="capitalist-partner-section" class="result-card bg-purple-50 border-purple-600 hidden">
-                        <p class="text-sm font-medium text-purple-600 uppercase">
-                            <span id="capitalist-title">Bazkide Kapitalista Beharra</span>
-                        </p>
-                        <p id="capitalist-needed" class="text-2xl font-extrabold text-purple-800 mt-1">0.00</p>
-                        <p class="text-xs text-gray-500 mt-2">
-                            <span id="capitalist-desc">Finantzaketa defizita estaltzeko beharrezkoa</span>
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Eskuineko Zutabea: Banku Mailegua eta Prezio Kalkulua -->
-                <div class="space-y-6">
-                    <h3 class="text-xl font-semibold text-blue-600 mb-4">
-                        <span id="section-6b-title">Banku Mailegua</span>
-                    </h3>
-
-                    <!-- Mailegu Automatikoa -->
-                    <div class="result-card bg-blue-50 border-blue-600">
-                        <p class="text-sm font-medium text-blue-600 uppercase">
-                            <span id="auto-loan-title">Gomendatutako Mailegu Zenbatekoa</span>
-                        </p>
-                        <p id="suggested-loan" class="text-3xl font-extrabold text-blue-800 mt-1">0.00</p>
-                        <p class="text-xs text-gray-500 mt-2">
-                            <span id="auto-loan-desc">Finantzaketa beharra - Bazkideen aportazioa</span>
-                        </p>
-                    </div>
-
-                    <!-- Maileguaren Ezarpenak -->
-                    <div class="result-card bg-orange-50 border-orange-600">
-                        <p class="text-sm font-medium text-orange-600 uppercase">
-                            <span id="loan-settings-title">Maileguaren Ezarpenak</span>
-                        </p>
-                        <div class="mt-4 space-y-4">
-                            <div>
-                                <label for="loan-amount" class="block text-sm font-medium text-gray-700">
-                                    <span id="loan-amount-label">Mailegu Zenbatekoa (€)</span>
-                                </label>
-                                <input type="number" id="loan-amount" value="0" min="0" class="input-style bg-orange-100 text-xl font-bold mt-1" oninput="updateLoanCalculation()">
-                            </div>
-                            <div>
-                                <label for="loan-tae" class="block text-sm font-medium text-gray-700">
-                                    <span id="loan-tae-label">TAE (%)</span>
-                                </label>
-                                <input type="number" id="loan-tae" value="5.0" min="0" max="20" step="0.1" class="input-style bg-orange-100 text-xl font-bold mt-1" oninput="updateLoanCalculation()">
-                            </div>
-                            <div>
-                                <label for="loan-term" class="block text-sm font-medium text-gray-700">
-                                    <span id="loan-term-label">Iraupena (urteak)</span>
-                                </label>
-                                <input type="number" id="loan-term" value="5" min="1" max="10" step="1" class="input-style bg-orange-100 text-xl font-bold mt-1" oninput="updateLoanCalculation()">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Maileguaren Eragina -->
-                    <div class="result-card bg-red-100 border-red-800">
-                        <p class="text-sm font-medium text-red-800 uppercase">
-                            <span id="loan-impact-title">Maileguaren Eragina Urteko Kostuetan</span>
-                        </p>
-                        <div class="mt-4 space-y-2">
-                            <div class="flex justify-between items-center">
-                                <span class="text-sm text-gray-700">
-                                    <span id="loan-interest-label">Urteko Interes Gastua:</span>
-                                </span>
-                                <span id="annual-interest-cost" class="text-lg font-bold text-red-800">0.00</span>
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <span class="text-sm text-gray-700">
-                                    <span id="total-financial-cost-label">Finantza Gastu Totala:</span>
-                                </span>
-                                <span id="total-financial-cost" class="text-lg font-bold text-red-800">0.00</span>
-                            </div>
-                        </div>
-                        <p class="text-xs text-gray-500 mt-3">
-                            <span id="loan-impact-desc">* Gastu hauek automatikoki gehitzen dira enpresaren urteko kostuetan</span>
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Finantzaketa Emaitzaren Laburpena -->
-            <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="result-card bg-green-100 border-green-600">
-                    <p class="text-sm font-medium text-green-600 uppercase">
-                        <span id="summary-finance-1">Lortutako Finantzaketa</span>
-                    </p>
-                    <p id="total-finance-raised" class="text-2xl font-extrabold text-green-800 mt-1">0.00</p>
-                </div>
-                <div class="result-card bg-blue-100 border-blue-600">
-                    <p class="text-sm font-medium text-blue-600 uppercase">
-                        <span id="summary-finance-2">Finantzaketa Defizita</span>
-                    </p>
-                    <p id="finance-deficit" class="text-2xl font-extrabold text-blue-800 mt-1">0.00</p>
-                </div>
-                <div id="finance-status-card" class="result-card border-gray-400">
-                    <p class="text-sm font-medium text-gray-700 uppercase">
-                        <span id="summary-finance-3">Finantzaketa Egoera</span>
-                    </p>
-                    <p id="finance-status" class="text-xl font-extrabold text-gray-800 mt-1">
-                        <span id="status-pending">Ebaluazioaren zain</span>
-                    </p>
-                    <p id="finance-message" class="text-xs mt-2 text-gray-500"></p>
-                </div>
-            </div>
-        </div>
-
-        <!-- 🆕 7. PREZIO KALKULUA ETA MOZKIN ANALISIA -->
-        <div id="prezioa-sheet" class="hidden">
-            <h2 class="text-2xl font-bold text-gray-700 mb-6 border-b pb-2 text-teal-600">
-                <span id="sheet-7-title">7. Prezio Kalkulua eta Mozkin Analisia</span>
-            </h2>
-            <p class="text-sm text-gray-500 mb-6">
-                <span id="sheet-7-desc">Rentabilitate analisia eta orduko prezioen finkapena</span>
-            </p>
-
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <!-- Ezkerreko zutabea - Sarrera parametroak -->
-                <div class="space-y-6">
-                    <h3 class="text-xl font-semibold text-teal-600" id="section-7a-title">Rentabilitate Parametroak</h3>
-                    
-                    <!-- Sozietateen zerga -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2" id="corporate-tax-label">
-                            Sozietateen Zerga (%)
-                        </label>
-                        <input type="number" id="corporate-tax" value="25" min="0" max="100" 
-                               class="input-style bg-teal-50" oninput="calculatePricing()">
-                    </div>
-
-                    <!-- Helburutako mozkin margina -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2" id="target-profit-label">
-                            Helburutako Mozkin Margina (%)
-                        </label>
-                        <input type="number" id="target-profit-margin" value="20" min="0" max="100"
-                               class="input-style bg-teal-50" oninput="calculatePricing()">
-                    </div>
-
-                    <!-- Langile kopurua -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2" id="employee-count-label">
-                            Langile Kopurua
-                        </label>
-                        <input type="number" id="employee-count" value="2" min="1"
-                               class="input-style bg-teal-50" oninput="calculatePricing()">
-                    </div>
-
-                    <!-- Urteko lan-ordu efektiboak -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2" id="annual-hours-label">
-                            Urteko Lan-Ordu Efektiboak/Langilea
-                        </label>
-                        <input type="number" id="annual-hours-per-employee" value="1600" min="0"
-                               class="input-style bg-teal-50" oninput="calculatePricing()">
-                        <p class="text-xs text-gray-500 mt-1">(≈ 35 ordu/aste × 46 aste)</p>
-                    </div>
-                </div>
-
-                <!-- Eskuineko zutabea - Emaitzak -->
-                <div class="space-y-6">
-                    <h3 class="text-xl font-semibold text-teal-600" id="section-7b-title">Kalkulu Emaitzak</h3>
-                    
-                    <div class="result-card bg-teal-50 border-teal-600">
-                        <p class="text-sm font-medium text-teal-600 uppercase" id="total-hours-label">
-                            Urteko Lan-Ordu Total Eskuragarriak
-                        </p>
-                        <p id="total-available-hours" class="text-2xl font-bold text-teal-800">3,200</p>
-                    </div>
-
-                    <div class="result-card bg-blue-50 border-blue-600">
-                        <p class="text-sm font-medium text-blue-600 uppercase" id="suggested-rate-label">
-                            Gomendatutako Orduko Prezioa
-                        </p>
-                        <p id="suggested-hourly-rate" class="text-3xl font-bold text-blue-800">€ 45.25</p>
-                    </div>
-
-                    <div class="result-card bg-green-50 border-green-600">
-                        <p class="text-sm font-medium text-green-600 uppercase" id="expected-profit-label">
-                            Espero den Mozkin Garbia
-                        </p>
-                        <p id="expected-net-profit" class="text-2xl font-bold text-green-800">€ 18,450</p>
-                    </div>
-
-                    <div class="result-card bg-orange-50 border-orange-600">
-                        <p class="text-sm font-medium text-orange-600 uppercase" id="break-even-label">
-                            Oreka-puntua (Orduak)
-                        </p>
-                        <p id="break-even-hours" class="text-xl font-bold text-orange-800">1,850 ordu</p>
-                        <p class="text-xs text-gray-500 mt-1" id="profitability-label">Rentabilitatea: 42%</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </section>
-
-    <!-- LABURPEN OROKORRA MALLEGUAREN ERAGINA GEHTUTA -->
-    <div class="mt-12 pt-8 border-t-4 border-indigo-400">
-        <h2 class="text-3xl font-extrabold text-gray-800 mb-6">
-            <span id="global-summary-title">AURRERONTUAREN LABURPEN OROKORRA (Maileguaren Eragina Barne)</span>
-        </h2>
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div class="result-card bg-blue-50 border-blue-600">
-                <p class="text-sm font-medium text-blue-600 uppercase">
-                    <span id="global-summary-1">Urteko Gastu FINKO Osoa</span>
-                </p>
-                <p id="total-fixed-annual-cost" class="text-2xl font-extrabold text-blue-800 mt-1">0.00</p>
-                <p class="text-xs text-gray-500 mt-2">
-                    <span id="global-summary-desc-1">Lokal Finko + Amortizazioa + Pertsonala</span>
-                </p>
-            </div>
-            <div class="result-card bg-orange-50 border-orange-600">
-                <p class="text-sm font-medium text-orange-600 uppercase">
-                    <span id="global-summary-2">Urteko Gastu Aldakorra</span>
-                </p>
-                <p id="total-variable-annual-cost" class="text-2xl font-extrabold text-orange-800 mt-1">0.00</p>
-                <p class="text-xs text-gray-500 mt-2">
-                    <span id="global-summary-desc-2">Ekoizpena + Garraioa + Hazkuntza</span>
-                </p>
-            </div>
-            <div class="result-card bg-red-50 border-red-600">
-                <p class="text-sm font-medium text-red-600 uppercase">
-                    <span id="global-summary-4">Finantza Gastuak</span>
-                </p>
-                <p id="total-financial-cost-summary" class="text-2xl font-extrabold text-red-800 mt-1">€ 0.00</p>
-                <p class="text-xs text-gray-500 mt-2">
-                    <span id="global-summary-desc-4">Maileguaren interesak eta gastuak</span>
-                </p>
-            </div>
-            <div class="result-card bg-indigo-700 border-indigo-900">
-                <p class="text-sm font-medium text-indigo-200 uppercase">
-                    <span id="global-summary-3">GASTU OPERATIBO GUZTIZKOA</span>
-                </p>
-                <p id="total-operational-cost" class="text-3xl font-extrabold text-white mt-1">€ 0.00</p>
-                <p class="text-xs text-indigo-300 mt-2">
-                    <span id="global-summary-desc-3">Guztiak barne (Finantzaketa ere bai)</span>
-                </p>
-            </div>
-        </div>
+    <div class="tabs" role="tablist" aria-label="Fitxak">
+      <button class="active" data-sheet="lokala" onclick="showSheet('lokala')" role="tab">1. Lokal / Inbertsio FINKOAK</button>
+      <button data-sheet="pertsonala" onclick="showSheet('pertsonala')" role="tab">2. Pertsonala</button>
+      <button data-sheet="ekoizpena" onclick="showSheet('ekoizpena')" role="tab">3. Ekoizpena</button>
+      <button data-sheet="garraioa" onclick="showSheet('garraioa')" role="tab">4. Garraioa</button>
+      <button data-sheet="hazkuntza" onclick="showSheet('hazkuntza')" role="tab">5. Hazkuntza</button>
+      <button data-sheet="finantzaketa" onclick="showSheet('finantzaketa')" role="tab">6. Finantzaketa</button>
+      <button data-sheet="prezioa" onclick="showSheet('prezioa')" role="tab">7. Prezio eta Mozkinak</button>
     </div>
 
-    <!-- Kargatze Indikatzallea -->
-    <div id="loading-overlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-        <div class="bg-white p-6 rounded-lg shadow-xl flex flex-col items-center">
-            <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4"></div>
-            <p class="text-gray-700 font-medium" id="loading-text">Txostena prestatzen...</p>
-        </div>
+    <main>
+      <div class="grid">
+        <!-- Eduki nagusia -->
+        <section id="sheet-area" class="card" aria-live="polite">
+          <!-- Fitxak edukia dinamikoa izango da; hastapenean 'lokala' erakutsiko da -->
+          <!-- Lokala -->
+          <div id="lokala-sheet">
+            <h2 style="margin-top:0">1. Lokalaren Gastu Finko eta Inbertsioak</h2>
+
+            <h3 style="margin-bottom:8px">A) Inbertsio amortizagarriak (lokala & ekipamendua)</h3>
+            <div style="overflow:auto">
+              <table id="amort-table" aria-label="Inbertsio amortizagarriak">
+                <thead><tr><th>Kontzeptua</th><th>Kostua (€)</th><th>Amort. urteak</th><th>Urteko amortizazioa</th><th></th></tr></thead>
+                <tbody id="lokala-amortizable-body"></tbody>
+              </table>
+            </div>
+            <div style="margin-top:10px">
+              <button onclick="addAmortizableItem('lokala')" style="background:var(--indigo);color:white;padding:8px 10px;border-radius:8px;border:0;cursor:pointer">+ Gehitu inbertsio amortizagarri</button>
+            </div>
+
+            <h3 style="margin-top:18px;margin-bottom:8px">B) Gastu errepikari finkoak</h3>
+            <div style="overflow:auto">
+              <table id="recurring-table" aria-label="Gastu errepikariak">
+                <thead><tr><th>Kontzeptua</th><th>Kostua (aldiz)</th><th>Maiztasuna (barruko urteean)</th><th>Urteko guztizkoa</th><th></th></tr></thead>
+                <tbody id="lokala-recurring-body"></tbody>
+              </table>
+            </div>
+            <div style="margin-top:10px">
+              <button onclick="addRecurringItem('lokala')" style="background:#10b981;color:white;padding:8px 10px;border-radius:8px;border:0;cursor:pointer">+ Gehitu gastu errepikari</button>
+            </div>
+          </div>
+
+          <!-- Beste fitxak dinamiko moduan -->
+          <div id="pertsonala-sheet" style="display:none">
+            <h2 style="margin-top:0">2. Pertsonalaren Kostua</h2>
+            <div style="margin-bottom:12px">
+              <table aria-label="Langileak" style="width:100%">
+                <thead><tr><th>Funtzioa / Izena</th><th>Soldata gordina (urtekoa €)</th><th>Gizarte Seg. (% enpresa)</th><th>Kostu osoa (enpresarentzat)</th><th></th></tr></thead>
+                <tbody id="personnel-body"></tbody>
+              </table>
+            </div>
+            <div style="margin-top:10px">
+              <button onclick="addPersonnel()" style="background:#ec4899;color:white;padding:8px 10px;border-radius:8px;border:0;cursor:pointer">+ Gehitu langile</button>
+            </div>
+
+            <div style="margin-top:12px">
+              <h4>Soldata garbia kalkulagailua</h4>
+              <div style="display:flex;gap:12px;flex-wrap:wrap">
+                <div style="flex:1;min-width:160px">
+                  <label class="muted">Soldata gordina urtekoa (€)</label>
+                  <input id="grossSalary" type="number" value="25000" oninput="calculateNetSalary()"/>
+                </div>
+                <div style="width:140px">
+                  <label class="muted">IRPF atxikipena (%)</label>
+                  <input id="irpfRate" type="number" value="15" min="0" max="100" oninput="calculateNetSalary()"/>
+                </div>
+                <div style="min-width:180px">
+                  <p class="muted">SS kenkaria (langilea):</p>
+                  <p id="ssDeduction" style="font-weight:700">€ 0.00</p>
+                </div>
+                <div style="min-width:180px">
+                  <p class="muted">Net monthly (14 pagas):</p>
+                  <p id="netMonthlySalary" style="font-weight:800">€ 0.00</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="ekoizpena-sheet" style="display:none">
+            <h2>3. Ekoizpen gastuak</h2>
+            <div style="overflow:auto">
+              <table aria-label="Ekoizpen gastuak" style="width:100%">
+                <thead><tr><th>Kontzeptua</th><th>Kostua (aldiz)</th><th>Maiztasuna</th><th>Urteko guztizkoa</th><th></th></tr></thead>
+                <tbody id="ekoizpena-recurring-body"></tbody>
+              </table>
+            </div>
+            <div style="margin-top:10px">
+              <button onclick="addRecurringItem('ekoizpena')" style="background:#16a34a;color:white;padding:8px 10px;border-radius:8px;border:0;cursor:pointer">+ Gehitu</button>
+            </div>
+          </div>
+
+          <div id="garraioa-sheet" style="display:none">
+            <h2>4. Garraio gastuak</h2>
+            <p class="muted">Inbertsio amortizagarriak eta gastu errepikariak</p>
+            <div style="overflow:auto;margin-top:12px">
+              <table style="width:100%"><thead><tr><th>Kontzeptua</th><th>Kostua</th><th>Amort. urteak</th><th>Urteko amortizazioa</th><th></th></tr></thead>
+              <tbody id="garraioa-amortizable-body"></tbody></table>
+            </div>
+            <div style="margin-top:8px"><button onclick="addAmortizableItem('garraioa')" style="background:#ef4444;color:white;padding:8px;border-radius:8px;border:0">+ Gehitu</button></div>
+
+            <h4 style="margin-top:16px">Garraio gastu errepikariak</h4>
+            <div style="overflow:auto;margin-top:8px">
+              <table style="width:100%"><thead><tr><th>Kontzeptua</th><th>Kostua</th><th>Maiztasuna</th><th>Urteko guztizkoa</th><th></th></tr></thead>
+              <tbody id="garraioa-recurring-body"></tbody></table>
+            </div>
+          </div>
+
+          <div id="hazkuntza-sheet" style="display:none">
+            <h2>5. Hazkuntza eta Marketing</h2>
+            <div style="overflow:auto">
+              <table style="width:100%"><thead><tr><th>Kontzeptua</th><th>Kostua</th><th>Maiztasuna</th><th>Urteko guztizkoa</th><th></th></tr></thead>
+              <tbody id="hazkuntza-recurring-body"></tbody></table>
+            </div>
+            <div style="margin-top:10px"><button onclick="addRecurringItem('hazkuntza')" style="background:#7c3aed;color:white;padding:8px;border-radius:8px;border:0">+ Gehitu</button></div>
+          </div>
+
+          <div id="finantzaketa-sheet" style="display:none">
+            <h2>6. Finantzaketa</h2>
+            <div style="display:flex;gap:12px;flex-wrap:wrap">
+              <div style="flex:1;min-width:220px">
+                <label class="muted">Bazkide 1 aportazioa (€)</label>
+                <input id="partner-capital-1" type="number" value="0" oninput="updateFinanceStrategy()"/>
+              </div>
+              <div style="flex:1;min-width:220px">
+                <label class="muted">Bazkide 2 aportazioa (€)</label>
+                <input id="partner-capital-2" type="number" value="0" oninput="updateFinanceStrategy()"/>
+              </div>
+              <div style="flex:1;min-width:220px">
+                <label class="muted">Bazkide 3 aportazioa (€)</label>
+                <input id="partner-capital-3" type="number" value="0" oninput="updateFinanceStrategy()"/>
+              </div>
+            </div>
+
+            <div style="margin-top:12px;display:flex;gap:12px;flex-wrap:wrap">
+              <div style="min-width:220px">
+                <p class="muted">Finantzaketa behar osoa</p>
+                <p id="total-finance-needed" style="font-weight:800">€ 0.00</p>
+              </div>
+              <div style="min-width:220px">
+                <p class="muted">Gomendatutako mailegu</p>
+                <p id="suggested-loan" style="font-weight:800">€ 0.00</p>
+              </div>
+
+              <div style="min-width:240px">
+                <label class="muted">Mailegu zenbatekoa (€)</label>
+                <input id="loan-amount" type="number" value="0" oninput="updateLoanCalculation()"/>
+                <label class="muted" style="margin-top:8px">TAE (%)</label>
+                <input id="loan-tae" type="number" value="5.0" step="0.1" oninput="updateLoanCalculation()"/>
+                <label class="muted" style="margin-top:8px">Iraupena (urteak)</label>
+                <input id="loan-term" type="number" value="5" oninput="updateLoanCalculation()"/>
+              </div>
+            </div>
+
+            <div style="margin-top:12px;display:flex;gap:12px;flex-wrap:wrap">
+              <div style="min-width:200px">
+                <p class="muted">Urteko interes gastua</p>
+                <p id="annual-interest-cost" style="font-weight:800">€ 0.00</p>
+              </div>
+              <div style="min-width:200px">
+                <p class="muted">Finantza gastu totala</p>
+                <p id="total-financial-cost" style="font-weight:800">€ 0.00</p>
+              </div>
+            </div>
+          </div>
+
+          <div id="prezioa-sheet" style="display:none">
+            <h2>7. Prezio kalkulua eta mozkin analisia</h2>
+            <div style="display:flex;gap:12px;flex-wrap:wrap">
+              <div style="min-width:180px">
+                <label class="muted">Sozietateen Zerga (%)</label>
+                <input id="corporate-tax" type="number" value="25" oninput="calculatePricing()"/>
+              </div>
+              <div style="min-width:180px">
+                <label class="muted">Helburutako mozkin (%)</label>
+                <input id="target-profit-margin" type="number" value="20" oninput="calculatePricing()"/>
+              </div>
+              <div style="min-width:180px">
+                <label class="muted">Langile kopurua</label>
+                <input id="employee-count" type="number" value="2" min="1" oninput="calculatePricing()"/>
+              </div>
+              <div style="min-width:180px">
+                <label class="muted">Urteko ordu/langilea</label>
+                <input id="annual-hours-per-employee" type="number" value="1600" oninput="calculatePricing()"/>
+              </div>
+            </div>
+
+            <div style="margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <div class="card">
+                <p class="muted">Urteko lan-ordu total</p>
+                <p id="total-available-hours" style="font-weight:800">0</p>
+              </div>
+              <div class="card">
+                <p class="muted">Gomendatutako orduko prezioa</p>
+                <p id="suggested-hourly-rate" style="font-weight:800">€ 0.00</p>
+              </div>
+            </div>
+
+            <div style="margin-top:10px;display:flex;gap:12px;flex-wrap:wrap">
+              <div class="card" style="flex:1">
+                <p class="muted">Espero den mozkin garbia</p>
+                <p id="expected-net-profit" style="font-weight:800">€ 0.00</p>
+              </div>
+              <div class="card" style="width:260px">
+                <p class="muted">Punto de equilibrio (orduak)</p>
+                <p id="break-even-hours" style="font-weight:800">0</p>
+                <p id="profitability-label" class="muted" style="margin-top:6px">Rentabilitatea: 0%</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Alboko laburpena -->
+        <aside class="card summary" aria-labelledby="summary-heading">
+          <h3 id="summary-heading">Laburpena</h3>
+
+          <div class="stat" style="background:#f0f9ff;border-left:4px solid var(--indigo)">
+            <h4>Urteko gastu finko osoa</h4>
+            <p id="total-fixed-annual-cost">€ 0.00</p>
+          </div>
+
+          <div class="stat" style="background:#fffbeb;border-left:4px solid #f59e0b">
+            <h4>Urteko gastu aldakorra</h4>
+            <p id="total-variable-annual-cost">€ 0.00</p>
+          </div>
+
+          <div class="stat" style="background:#fff1f2;border-left:4px solid var(--danger)">
+            <h4>Finantza gastuak</h4>
+            <p id="total-financial-cost-summary">€ 0.00</p>
+          </div>
+
+          <div style="margin-top:8px">
+            <p class="muted">Pertsonal kostua (urtekoa)</p>
+            <p id="total-personnel-cost" style="font-weight:800">€ 0.00</p>
+          </div>
+
+          <div style="margin-top:12px">
+            <small class="muted">Oharra: txostena 'Neurketak eta Aurrekontuak' ikasgairako prestatu da. Lana garatu du: <strong>Josu Ayerbe Guarás</strong>.</small>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
+
+  <!-- Loading overlay PDF -->
+  <div id="loading-overlay" role="status" aria-live="polite">
+    <div class="box">
+      <div class="spinner" aria-hidden="true"></div>
+      <div>Txostena prestatzen...</div>
     </div>
+  </div>
 
-    <script>
-        // --- HIZKUNTZA DATUAK ---
-        const translations = {
-            eu: {
-                // Goiburua
-                'main-title': 'ENPRESA GASTUEN AURREKONTUA (7 EREMU)',
-                'main-subtitle': 'Gastu Finko, Aldakor, Pertsonal, Garraio, Hazkuntza Estrategikoen Estimazioa eta Finantzaketa',
-                // Fitxak
-                'tab-1-text': '1. Lokal/Inbertsio FINKOAK',
-                'tab-2-text': '2. Pertsonalaren Kostua',
-                'tab-3-text': '3. Ekoizpen Aldakorrak',
-                'tab-4-text': '4. Garraioa',
-                'tab-5-text': '5. Hazkuntza/Marketina',
-                'tab-6-text': '6. Finantzaketa',
-                'tab-7-text': '7. Prezio eta Mozkinak',
-                // 1. Fitxa
-                'sheet-1-title': '1. Lokalaren Gastu Finko Nagusiak eta Inbertsioak',
-                'section-la-title': 'A) Inbertsio Amortizagarriak (Lokala & Ekipamendua)',
-                'table-la-header-1': 'Kontzeptua (AM)',
-                'table-la-header-2': 'Kostua (€)',
-                'table-la-header-3': 'Amort. Urteak',
-                'table-la-header-4': 'Urteko Amortizazioa (€)',
-                'section-lb-title': 'B) Gastu Errepikari Finko Nagusiak',
-                'table-lb-header-1': 'Kontzeptua (UR)',
-                'table-lb-header-2': 'Ordainketa Kostua (€)',
-                'table-lb-header-3': 'Maiztasuna (Urteko Aldiak)',
-                'table-lb-header-4': 'Urteko Guztizkoa (€)',
-                'summary-1-title': 'Laburpen Ekonomikoa (1. Fitxa)',
-                'summary-1-1': 'Lokalaren Inbertsio Osoa',
-                'summary-1-2': 'Urteko Amortizazio Kostua',
-                'summary-1-3': 'Urteko Gastu Finko Errepikariak',
-                'summary-1-4': 'Lokalaren Urteko Kostu FINKOA',
-                'add-amortizable-btn': '+ Inbertsio Amortizagarri Berria',
-                'add-recurring-lokala-btn': '+ Gastu Errepikari Berria',
-                // 2. Fitxa
-                'sheet-2-title': '2. Pertsonalaren Kostuak (Gastu Finko Errepikariak)',
-                'section-2-title': 'Langile Bakotzaren Kostu Osoa (Urteko)',
-                'table-2-header-1': 'Funtzioa / Izena',
-                'table-2-header-2': 'Soldata Gordina (Urteko €)',
-                'table-2-header-3': 'Gizarte Seg. (% Empresa)',
-                'table-2-header-4': 'Kostu Osoa Empresarentzat (€)',
-                'add-personnel-btn': '+ Langile Berria Gehitu',
-                'summary-2-1': 'Pertsonalaren Kostu Osoa (Urteko)',
-                'salary-calc-title': 'Soldata Garbiaren Kalkulagailua (Langilearen Kenkariak)',
-                'salary-calc-label-1': 'Soldata Gordina Urtekoa (€)',
-                'salary-calc-label-2': 'PFEZ Atxikipen Portzentajea (%)',
-                'salary-calc-label-3': 'GS Kenkaria (Langileak) (6.35%):',
-                'salary-calc-label-4': 'Soldata Garbia Hilekoa (14 ordainketa)',
-                // 3. Fitxa
-                'sheet-3-title': '3. Ekoizpen Gastuak (Aldakorrak)',
-                'sheet-3-desc': 'Zuzenean lan-bolumenarekin lotutako gastuak (Materialak, Azpikontratak, EZA gehigarria).',
-                'section-3-title': 'Proiektuaren arabera aldatzen diren gastuak',
-                'table-3-header-1': 'Kontzeptua (UR)',
-                'table-3-header-2': 'Ordainketa Kostua (€)',
-                'table-3-header-3': 'Maiztasuna (Urteko Aldiak)',
-                'table-3-header-4': 'Urteko Guztizkoa (€)',
-                'summary-3-title': 'Laburpen Ekonomikoa (3. Fitxa)',
-                'summary-3-1': 'Ekoizpen Gastu Aldakorrak (Urteko)',
-                'summary-3-desc': 'Gastu aldakorrak aurrekontuaren bolumen estandarraren arabera.',
-                'add-recurring-ekoizpena-btn': '+ Ekoizpen Gastu Berria',
-                // 4. Fitxa
-                'sheet-4-title': '4. Garraioaren Gastuak',
-                'sheet-4-desc': 'Lanari lotutako ibilgailuaren inbertisioa eta gastu errepikariak.',
-                'section-4a-title': 'A) Inbertsio Amortizagarriak (Ibilgailuaren Erosketa)',
-                'table-4a-header-1': 'Kontzeptua (AM)',
-                'table-4a-header-2': 'Kostua (€)',
-                'table-4a-header-3': 'Amort. Urteak',
-                'table-4a-header-4': 'Urteko Amortizazioa (€)',
-                'section-4b-title': 'B) Gastu Errepikariak (Erregaia, Asegurua, Mantentzea)',
-                'table-4b-header-1': 'Kontzeptua (UR)',
-                'table-4b-header-2': 'Ordainketa Kostua (€)',
-                'table-4b-header-3': 'Maiztasuna (Urteko Aldiak)',
-                'table-4b-header-4': 'Urteko Guztizkoa (€)',
-                'summary-4-title': 'Laburpen Ekonomikoa (4. Fitxa)',
-                'summary-4-1': 'Garraioaren Inbertsio Osoa',
-                'summary-4-2': 'Garraioaren Urteko Kostu Osoa',
-                'summary-4-desc': 'Amortizazioa + Gastu Errepikariak.',
-                'add-amortizable-garraioa-btn': '+ Garraio Inbertsio Berria',
-                'add-recurring-garraioa-btn': '+ Garraio Gastu Berria',
-                // 5. Fitxa
-                'sheet-5-title': '5. Hazkuntza eta Marketin Gastuak',
-                'sheet-5-desc': 'Epe luzeko hazkunderako inbertsio estrategikoak (prestakuntza, publizitatea, harpidetzak).',
-                'section-5-title': 'Prestakuntza, Harpidetzak eta Komunikazio Kampainak',
-                'table-5-header-1': 'Kontzeptua (UR)',
-                'table-5-header-2': 'Ordainketa Kostua (€)',
-                'table-5-header-3': 'Maiztasuna (Urteko Aldiak)',
-                'table-5-header-4': 'Urteko Guztizkoa (€)',
-                'summary-5-title': 'Laburpen Ekonomikoa (5. Fitxa)',
-                'summary-5-1': 'Hazkuntza eta Marketin Gastuak (Urteko)',
-                'summary-5-desc': 'Sortzalleak diren inbertsio estrategikoak.',
-                'add-recurring-hazkuntza-btn': '+ Hazkuntza Gastu Berria',
-                // 6. Fitxa
-                'sheet-6-title': '6. Finantzaketa Estrategia',
-                'section-6a-title': 'Finantzaketa Iturriak',
-                'finance-need-title': 'Finantzaketa Behar Osoa',
-                'finance-need-desc': 'Inbertsioak + Kapitalizazioa (3 hilabete)',
-                'partner-capital-title': 'Bazkideen Kapital Aportazioa',
-                'partner-1-label': 'Bazkide 1 Aportazioa (€)',
-                'partner-2-label': 'Bazkide 2 Aportazioa (€)',
-                'partner-3-label': 'Bazkide 3 Aportazioa (€)',
-                'total-partner-capital-label': 'Bazkideen Aportazio Totala:',
-                'capitalist-title': 'Bazkide Kapitalista Beharra',
-                'capitalist-desc': 'Finantzaketa defizita estaltzeko beharrezkoa',
-                'section-6b-title': 'Banku Mailegua',
-                'auto-loan-title': 'Gomendatutako Mailegu Zenbatekoa',
-                'auto-loan-desc': 'Finantzaketa beharra - Bazkideen aportazioa',
-                'loan-settings-title': 'Maileguaren Ezarpenak',
-                'loan-amount-label': 'Mailegu Zenbatekoa (€)',
-                'loan-tae-label': 'TAE (%)',
-                'loan-term-label': 'Iraupena (urteak)',
-                'loan-impact-title': 'Maileguaren Eragina Urteko Kostuetan',
-                'loan-interest-label': 'Urteko Interes Gastua:',
-                'total-financial-cost-label': 'Finantza Gastu Totala:',
-                'loan-impact-desc': '* Gastu hauek automatikoki gehitzen dira enpresaren urteko kostuetan',
-                'summary-finance-1': 'Lortutako Finantzaketa',
-                'summary-finance-2': 'Finantzaketa Defizita',
-                'summary-finance-3': 'Finantzaketa Egoera',
-                'status-pending': 'Ebaluazioaren zain',
-                // 🆕 7. Fitxa
-                'sheet-7-title': '7. Prezio Kalkulua eta Mozkin Analisia',
-                'sheet-7-desc': 'Rentabilitate analisia eta orduko prezioen finkapena',
-                'section-7a-title': 'Rentabilitate Parametroak',
-                'corporate-tax-label': 'Sozietateen Zerga (%)',
-                'target-profit-label': 'Helburutako Mozkin Margina (%)',
-                'employee-count-label': 'Langile Kopurua',
-                'annual-hours-label': 'Urteko Lan-Ordu Efektiboak/Langilea',
-                'section-7b-title': 'Kalkulu Emaitzak',
-                'total-hours-label': 'Urteko Lan-Ordu Total Eskuragarriak',
-                'suggested-rate-label': 'Gomendatutako Orduko Prezioa',
-                'expected-profit-label': 'Espero den Mozkin Garbia',
-                'break-even-label': 'Oreka-puntua (Orduak)',
-                'profitability-label': 'Rentabilitatea',
-                // Laburpen orokorra
-                'global-summary-title': 'AURRERONTUAREN LABURPEN OROKORRA (Maileguaren Eragina Barne)',
-                'global-summary-1': 'Urteko Gastu FINKO Osoa',
-                'global-summary-desc-1': 'Lokal Finko + Amortizazioa + Pertsonala',
-                'global-summary-2': 'Urteko Gastu Aldakorra',
-                'global-summary-desc-2': 'Ekoizpena + Garraioa + Hazkuntza',
-                'global-summary-3': 'GASTU OPERATIBO GUZTIZKOA',
-                'global-summary-desc-3': 'Guztiak barne (Finantzaketa ere bai)',
-                'global-summary-4': 'Finantza Gastuak',
-                'global-summary-desc-4': 'Maileguaren interesak eta gastuak',
-                // PDF botoia
-                'download-report-btn': 'Deskargatu Txostena (PDF)'
-            },
-            es: {
-                // Goiburua
-                'main-title': 'PRESUPUESTO DE GASTOS EMPRESARIALES (7 ÁREAS)',
-                'main-subtitle': 'Estimación de Gastos Fijos, Variables, Personal, Transporte, Crecimiento Estratégico y Financiación',
-                // Fitxak
-                'tab-1-text': '1. Local/Inversiones FIJAS',
-                'tab-2-text': '2. Coste de Personal',
-                'tab-3-text': '3. Producción Variables',
-                'tab-4-text': '4. Transporte',
-                'tab-5-text': '5. Crecimiento/Marketing',
-                'tab-6-text': '6. Financiación',
-                'tab-7-text': '7. Precios y Beneficios',
-                // 1. Fitxa
-                'sheet-1-title': '1. Gastos Fijos Principales del Local e Inversiones',
-                'section-la-title': 'A) Inversiones Amortizables (Local y Equipamiento)',
-                'table-la-header-1': 'Concepto (AM)',
-                'table-la-header-2': 'Coste (€)',
-                'table-la-header-3': 'Años Amort.',
-                'table-la-header-4': 'Amortización Anual (€)',
-                'section-lb-title': 'B) Gastos Fijos Recurrentes Principales',
-                'table-lb-header-1': 'Concepto (UR)',
-                'table-lb-header-2': 'Coste Pago (€)',
-                'table-lb-header-3': 'Frecuencia (Veces/Año)',
-                'table-lb-header-4': 'Total Anual (€)',
-                'summary-1-title': 'Resumen Económico (1. Hoja)',
-                'summary-1-1': 'Inversión Total Local',
-                'summary-1-2': 'Coste Amortización Anual',
-                'summary-1-3': 'Gastos Fijos Recurrentes Anuales',
-                'summary-1-4': 'Coste FIJOS Anual del Local',
-                'add-amortizable-btn': '+ Nueva Inversión Amortizable',
-                'add-recurring-lokala-btn': '+ Nuevo Gasto Recurrente',
-                // 2. Fitxa
-                'sheet-2-title': '2. Costes de Personal (Gastos Fijos Recurrentes)',
-                'section-2-title': 'Coste Total por Empleado (Anual)',
-                'table-2-header-1': 'Función / Nombre',
-                'table-2-header-2': 'Salario Bruto (Anual €)',
-                'table-2-header-3': 'Seg. Social (% Empresa)',
-                'table-2-header-4': 'Coste Total para Empresa (€)',
-                'add-personnel-btn': '+ Añadir Nuevo Empleado',
-                'summary-2-1': 'Coste Total Personal (Anual)',
-                'salary-calc-title': 'Calculadora de Salario Neto (Deducciones Empleado)',
-                'salary-calc-label-1': 'Salario Bruto Anual (€):',
-                'salary-calc-label-2': 'Porcentaje Retención IRPF (%):',
-                'salary-calc-label-3': 'Deducción S.S. (Empleado) (6.35%):',
-                'salary-calc-label-4': 'Salario Neto Mensual (14 pagas):',
-                // 3. Fitxa
-                'sheet-3-title': '3. Gastos de Producción (Variables)',
-                'sheet-3-desc': 'Gastos directamente vinculados al volumen de trabajo (Materiales, Subcontratas, Seguro RC adicional).',
-                'section-3-title': 'Gastos que varían según el proyecto',
-                'table-3-header-1': 'Concepto (UR)',
-                'table-3-header-2': 'Coste Pago (€)',
-                'table-3-header-3': 'Frecuencia (Veces/Año)',
-                'table-3-header-4': 'Total Anual (€)',
-                'summary-3-title': 'Resumen Económico (3. Hoja)',
-                'summary-3-1': 'Gastos Variables Producción (Anual)',
-                'summary-3-desc': 'Gastos variables según volumen estándar del presupuesto.',
-                'add-recurring-ekoizpena-btn': '+ Nuevo Gasto Producción',
-                // 4. Fitxa
-                'sheet-4-title': '4. Gastos de Transporte',
-                'sheet-4-desc': 'Inversión en vehículo vinculado al trabajo y gastos recurrentes.',
-                'section-4a-title': 'A) Inversiones Amortizables (Compra Vehículo)',
-                'table-4a-header-1': 'Concepto (AM)',
-                'table-4a-header-2': 'Coste (€)',
-                'table-4a-header-3': 'Años Amort.',
-                'table-4a-header-4': 'Amortización Anual (€)',
-                'section-4b-title': 'B) Gastos Recurrentes (Combustible, Seguro, Mantenimiento)',
-                'table-4b-header-1': 'Concepto (UR)',
-                'table-4b-header-2': 'Coste Pago (€)',
-                'table-4b-header-3': 'Frecuencia (Veces/Año)',
-                'table-4b-header-4': 'Total Anual (€)',
-                'summary-4-title': 'Resumen Económico (4. Hoja)',
-                'summary-4-1': 'Inversión Total Transporte',
-                'summary-4-2': 'Coste Anual Total Transporte',
-                'summary-4-desc': 'Amortización + Gastos Recurrentes.',
-                'add-amortizable-garraioa-btn': '+ Nueva Inversión Transporte',
-                'add-recurring-garraioa-btn': '+ Nuevo Gasto Transporte',
-                // 5. Fitxa
-                'sheet-5-title': '5. Gastos de Crecimiento y Marketing',
-                'sheet-5-desc': 'Inversiones estratégicas para crecimiento a largo plazo (formación, publicidad, suscripciones).',
-                'section-5-title': 'Formación, Suscripciones y Campañas de Comunicación',
-                'table-5-header-1': 'Concepto (UR)',
-                'table-5-header-2': 'Coste Pago (€)',
-                'table-5-header-3': 'Frecuencia (Veces/Año)',
-                'table-5-header-4': 'Total Anual (€)',
-                'summary-5-title': 'Resumen Económico (5. Hoja)',
-                'summary-5-1': 'Gastos Crecimiento y Marketing (Anual)',
-                'summary-5-desc': 'Inversiones estratégicas creadoras de valor.',
-                'add-recurring-hazkuntza-btn': '+ Nuevo Gasto Crecimiento',
-                // 6. Fitxa
-                'sheet-6-title': '6. Estrategia de Financiación',
-                'section-6a-title': 'Fuentes de Financiación',
-                'finance-need-title': 'Necesidad Total Financiación',
-                'finance-need-desc': 'Inversiones + Capitalización (3 meses)',
-                'partner-capital-title': 'Aportación Capital Socios',
-                'partner-1-label': 'Aportación Socio 1 (€)',
-                'partner-2-label': 'Aportación Socio 2 (€)',
-                'partner-3-label': 'Aportación Socio 3 (€)',
-                'total-partner-capital-label': 'Aportación Total Socios:',
-                'capitalist-title': 'Necesidad Socio Capitalista',
-                'capitalist-desc': 'Necesario para cubrir déficit financiero',
-                'section-6b-title': 'Préstamo Bancario',
-                'auto-loan-title': 'Importe Préstamo Recomendado',
-                'auto-loan-desc': 'Necesidad financiera - Aportación socios',
-                'loan-settings-title': 'Configuración Préstamo',
-                'loan-amount-label': 'Importe Préstamo (€)',
-                'loan-tae-label': 'TAE (%)',
-                'loan-term-label': 'Duración (años)',
-                'loan-impact-title': 'Impacto Préstamo en Costes Anuales',
-                'loan-interest-label': 'Gasto Intereses Anual:',
-                'total-financial-cost-label': 'Coste Financiero Total:',
-                'loan-impact-desc': '* Estos gastos se añaden automáticamente a los costes anuales de la empresa',
-                'summary-finance-1': 'Financiación Obtenida',
-                'summary-finance-2': 'Déficit Financiación',
-                'summary-finance-3': 'Estado Financiación',
-                'status-pending': 'Pendiente de evaluación',
-                // 🆕 7. Fitxa
-                'sheet-7-title': '7. Cálculo de Precios y Beneficios',
-                'sheet-7-desc': 'Análisis de rentabilidad y fijación de precios por hora',
-                'section-7a-title': 'Parámetros de Rentabilidad',
-                'corporate-tax-label': 'Impuesto de Sociedades (%)',
-                'target-profit-label': 'Margen Beneficio Objetivo (%)',
-                'employee-count-label': 'Número de Empleados',
-                'annual-hours-label': 'Horas Efectivas Anuales/Empleado',
-                'section-7b-title': 'Resultados del Cálculo',
-                'total-hours-label': 'Horas Totales Disponibles Anuales',
-                'suggested-rate-label': 'Precio Hora Recomendado',
-                'expected-profit-label': 'Beneficio Neto Esperado',
-                'break-even-label': 'Punto de Equilibrio (Horas)',
-                'profitability-label': 'Rentabilidad Estimada',
-                // Laburpen orokorra
-                'global-summary-title': 'RESUMEN GENERAL DEL PRESUPUESTO (Incluyendo Impacto Préstamo)',
-                'global-summary-1': 'Coste FIJOS Anual Total',
-                'global-summary-desc-1': 'Local Fijo + Amortización + Personal',
-                'global-summary-2': 'Coste Variable Anual',
-                'global-summary-desc-2': 'Producción + Transporte + Crecimiento',
-                'global-summary-3': 'COSTE OPERATIVO TOTAL',
-                'global-summary-desc-3': 'Todo incluido (Financiación también)',
-                'global-summary-4': 'Gastos Financieros',
-                'global-summary-desc-4': 'Intereses y gastos del préstamo',
-                // PDF botoia
-                'download-report-btn': 'Descargar Informe (PDF)'
-            }
-        };
+  <script>
+    /* Datu hasierakoak (laburbilduta, zure aurreko datuekin bateragarri) */
+    const amortizableItems = [
+      { id:'Lokala-erosketa', name:'Lokalaren Erosketa', cost:120000, years:20, category:'lokala' },
+      { id:'erreforma', name:'Erreformaren balioa', cost:30000, years:10, category:'lokala' },
+      { id:'kotxea', name:'Garraio ibilgailua', cost:20000, years:5, category:'garraioa' }
+    ];
 
-        // --- HIZKUNTZA ALDAKETA ---
-        function changeLanguage(lang) {
-            Object.keys(translations[lang]).forEach(key => {
-                const elements = document.querySelectorAll(`[id="${key}"]`);
-                elements.forEach(element => {
-                    element.textContent = translations[lang][key];
-                });
-            });
-            localStorage.setItem('selectedLanguage', lang);
-        }
+    const recurringItems = [
+      { id:'alokairua', name:'Alokairua', payment_cost:800, frequency:12, category:'lokala' },
+      { id:'argia', name:'Argia, ura', payment_cost:100, frequency:12, category:'lokala' },
+      { id:'material', name:'Material gordinak', payment_cost:400, frequency:12, category:'ekoizpena' },
+      { id:'erregaia', name:'Erregaia', payment_cost:250, frequency:12, category:'garraioa' },
+      { id:'marketing', name:'Marketing digital', payment_cost:300, frequency:12, category:'hazkuntza' }
+    ];
 
-        // --- DATUEN EGITURA ---
-        let amortizableItems = [
-            { id: 'Lokala-erosketa', name: 'Lokalaren Erosketa (Amortizagarria)', cost: 120000, years: 20, category: 'lokala' },
-            { id: 'erreforma-balioa', name: 'Erreformaren Balioa (Amortizagarria)', cost: 30000, years: 10, category: 'lokala' },
-            { id: 'altzarien-erosketa', name: 'Altzarien Erosketa', cost: 8000, years: 5, category: 'lokala' },
-            { id: 'hw-sw-hornitzea', name: 'Hardware eta Softwarearen Hornitzea', cost: 4000, years: 4, category: 'lokala' },
-            { id: 'kotxea-erosketa', name: 'Garraio Ibilgailuaren Erosketa', cost: 20000, years: 5, category: 'garraioa' }
+    let personnel = [{ id:Date.now(), name:'Zuzendaria / Bazkidea', salary:35000, ss_percent:30 }];
+
+    const financeData = { partnerCapital:[0,0,0], loanAmount:0, loanTAE:5, loanTerm:5, annualInterest:0 };
+
+    /* Helper */
+    const fmt = (n) => new Intl.NumberFormat('eu-ES', {style:'currency',currency:'EUR'}).format(Number(n||0));
+
+    /* Render funtzioak */
+    function renderAmortizableTables(){
+      const tbodyLok = document.getElementById('lokala-amortizable-body'); tbodyLok.innerHTML='';
+      const tbodyGar = document.getElementById('garraioa-amortizable-body'); tbodyGar.innerHTML='';
+      amortizableItems.forEach(item=>{
+        const row = document.createElement('tr');
+        const annual = item.years>0 ? (item.cost/item.years) : 0;
+        row.innerHTML = `
+          <td><input type="text" data-id="${item.id}" data-field="name" value="${item.name}" onchange="onAmortInput('${item.id}','name',this.value)"></td>
+          <td><input type="number" data-id="${item.id}" data-field="cost" value="${item.cost}" onchange="onAmortInput('${item.id}','cost',this.value)"></td>
+          <td><input type="number" data-id="${item.id}" data-field="years" value="${item.years}" min="1" onchange="onAmortInput('${item.id}','years',this.value)"></td>
+          <td style="font-weight:700">${fmt(annual)}</td>
+          <td><button onclick="removeAmort('${item.id}')">Ezabatu</button></td>
+        `;
+        if(item.category==='lokala') tbodyLok.appendChild(row); else tbodyGar.appendChild(row);
+      });
+    }
+
+    function renderRecurringTables(){
+      const ids = {lokala:'lokala-recurring-body', ekoizpena:'ekoizpena-recurring-body', garraioa:'garraioa-recurring-body', hazkuntza:'hazkuntza-recurring-body'};
+      Object.values(ids).forEach(id=>document.getElementById(id).innerHTML='');
+      recurringItems.forEach(item=>{
+        const annual = item.payment_cost * item.frequency;
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td><input type="text" data-id="${item.id}" data-field="name" value="${item.name}" onchange="onRecurringInput('${item.id}','name',this.value)"></td>
+          <td><input type="number" data-id="${item.id}" data-field="payment_cost" value="${item.payment_cost}" onchange="onRecurringInput('${item.id}','payment_cost',this.value)"></td>
+          <td><input type="number" data-id="${item.id}" data-field="frequency" value="${item.frequency}" min="1" onchange="onRecurringInput('${item.id}','frequency',this.value)"></td>
+          <td style="font-weight:700">${fmt(annual)}</td>
+          <td><button onclick="removeRecurring('${item.id}')">Ezabatu</button></td>
+        `;
+        document.getElementById(ids[item.category]||'lokala-recurring-body').appendChild(row);
+      });
+    }
+
+    function renderPersonnel(){
+      const tbody = document.getElementById('personnel-body'); tbody.innerHTML='';
+      personnel.forEach(p=>{
+        const ssCost = p.salary*(p.ss_percent/100);
+        const total = p.salary + ssCost;
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td><input type="text" value="${p.name}" onchange="onPersonnel(${p.id},'name',this.value)"></td>
+          <td><input type="number" value="${p.salary}" onchange="onPersonnel(${p.id},'salary',this.value)"></td>
+          <td><input type="number" value="${p.ss_percent}" min="0" max="100" onchange="onPersonnel(${p.id},'ss_percent',this.value)"></td>
+          <td style="font-weight:700">${fmt(total)}</td>
+          <td><button onclick="removePersonnel(${p.id})">Ezabatu</button></td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    /* Interakzio funtzio txikiak */
+    function onAmortInput(id,field,value){
+      const it = amortizableItems.find(i=>i.id===id); if(!it) return;
+      if(field==='name'){it.name=value}
+      if(field==='cost'){it.cost=Number(value)||0}
+      if(field==='years'){it.years=Math.max(1, parseInt(value)||1)}
+      updateCalculation();
+      renderAmortizableTables();
+    }
+    function onRecurringInput(id,field,value){
+      const it = recurringItems.find(i=>i.id===id); if(!it) return;
+      if(field==='name'){it.name=value}
+      if(field==='payment_cost'){it.payment_cost=Number(value)||0}
+      if(field==='frequency'){it.frequency=Math.max(1, parseInt(value)||1)}
+      updateCalculation();
+      renderRecurringTables();
+    }
+    function onPersonnel(id,field,value){
+      const p = personnel.find(x=>x.id==id); if(!p) return;
+      if(field==='name') p.name=value;
+      if(field==='salary') p.salary=Number(value)||0;
+      if(field==='ss_percent') p.ss_percent=Math.min(100,Math.max(0,Number(value)||0));
+      renderPersonnel(); updateCalculation();
+    }
+
+    function addAmortizableItem(category){
+      amortizableItems.push({ id:'customA'+Date.now(), name: (category==='lokala'?'Lokal inbertsio berria':'Garraio inbertsio berria'), cost:0, years:5, category});
+      renderAmortizableTables(); updateCalculation();
+    }
+    function removeAmort(id){ const idx=amortizableItems.findIndex(i=>i.id===id); if(idx>-1) amortizableItems.splice(idx,1); renderAmortizableTables(); updateCalculation(); }
+
+    function addRecurringItem(category){
+      recurringItems.push({ id:'customR'+Date.now(), name: category+' gastu berria', payment_cost:0, frequency:12, category });
+      renderRecurringTables(); updateCalculation();
+    }
+    function removeRecurring(id){ const idx=recurringItems.findIndex(i=>i.id===id); if(idx>-1) recurringItems.splice(idx,1); renderRecurringTables(); updateCalculation(); }
+
+    function addPersonnel(){ personnel.push({ id:Date.now(), name:'Langile Berria', salary:20000, ss_percent:30 }); renderPersonnel(); updateCalculation(); }
+    function removePersonnel(id){ personnel = personnel.filter(p=>p.id!=id); renderPersonnel(); updateCalculation(); }
+
+    /* Kalkulu zentralak */
+    function calculateNetSalary(){
+      const gross = Number(document.getElementById('grossSalary').value||0);
+      const irpf = Number(document.getElementById('irpfRate').value||0);
+      const SS_RATE = 0.0635;
+      const ss = gross * SS_RATE;
+      const irpfAmount = gross * (irpf/100);
+      const netAnnual = gross - ss - irpfAmount;
+      const monthly = netAnnual / 14;
+      document.getElementById('ssDeduction').textContent = fmt(ss);
+      document.getElementById('netMonthlySalary').textContent = fmt(monthly);
+    }
+
+    function calculatePricing(){
+      const corporateTax = Number(document.getElementById('corporate-tax').value||25);
+      const targetMargin = Number(document.getElementById('target-profit-margin').value||20);
+      const employeeCount = Math.max(1, Number(document.getElementById('employee-count').value||2));
+      const hoursPerEmployee = Math.max(1, Number(document.getElementById('annual-hours-per-employee').value||1600));
+      const totalOperationalCost = Number((document.getElementById('total-operational-cost')||{textContent:'0'}).textContent.replace(/[^\d.-]/g,''))||0;
+      const totalAvailableHours = employeeCount * hoursPerEmployee;
+      const profitBeforeTax = totalOperationalCost * (targetMargin/100);
+      const profitAfterTaxNeeded = profitBeforeTax / (1 - corporateTax/100);
+      const totalRevenueNeeded = totalOperationalCost + profitAfterTaxNeeded;
+      const hourlyRate = totalRevenueNeeded / totalAvailableHours || 0;
+      const breakEvenHours = hourlyRate>0 ? (totalOperationalCost / hourlyRate) : 0;
+      const profitability = Math.round( (totalAvailableHours - breakEvenHours)/totalAvailableHours *100 );
+      document.getElementById('total-available-hours').textContent = totalAvailableHours.toLocaleString();
+      document.getElementById('suggested-hourly-rate').textContent = '€ ' + hourlyRate.toFixed(2);
+      document.getElementById('expected-net-profit').textContent = '€ ' + Math.round(profitAfterTaxNeeded).toLocaleString();
+      document.getElementById('break-even-hours').textContent = Math.round(breakEvenHours).toLocaleString() + ' ordu';
+      document.getElementById('profitability-label').textContent = 'Rentabilitatea: ' + (isFinite(profitability)?profitability:0) + '%';
+    }
+
+    /* Finantzaketa */
+    function updateFinanceStrategy(){
+      financeData.partnerCapital[0] = Number(document.getElementById('partner-capital-1').value||0);
+      financeData.partnerCapital[1] = Number(document.getElementById('partner-capital-2').value||0);
+      financeData.partnerCapital[2] = Number(document.getElementById('partner-capital-3').value||0);
+      const totalPartner = financeData.partnerCapital.reduce((s,v)=>s+v,0);
+      const totalInvestment = amortizableItems.reduce((s,i)=>s+Number(i.cost||0),0);
+      const fixed = Number((document.getElementById('total-fixed-annual-cost')||{textContent:0}).textContent.replace(/[^\d.-]/g,''))||0;
+      const variable = Number((document.getElementById('total-variable-annual-cost')||{textContent:0}).textContent.replace(/[^\d.-]/g,''))||0;
+      const monthlyOperating = (fixed+variable)/12;
+      const capitalization = monthlyOperating * 3;
+      const totalNeeded = totalInvestment + capitalization;
+      const suggestedLoan = Math.max(0, totalNeeded - totalPartner);
+      financeData.totalNeeded = totalNeeded; financeData.suggestedLoan = suggestedLoan;
+      if(Number(document.getElementById('loan-amount').value||0)===0){ document.getElementById('loan-amount').value = suggestedLoan; financeData.loanAmount = suggestedLoan; }
+      document.getElementById('total-finance-needed').textContent = fmt(totalNeeded);
+      document.getElementById('total-partner-capital').textContent = fmt(totalPartner);
+      document.getElementById('suggested-loan').textContent = fmt(suggestedLoan);
+      updateLoanCalculation(); updateFinanceSummary();
+    }
+
+    function updateLoanCalculation(){
+      financeData.loanAmount = Number(document.getElementById('loan-amount').value||0);
+      financeData.loanTAE = Number(document.getElementById('loan-tae').value||5);
+      financeData.loanTerm = Math.max(1,Number(document.getElementById('loan-term').value||5));
+      const monthlyRate = (financeData.loanTAE/100)/12;
+      const n = financeData.loanTerm*12;
+      if(financeData.loanAmount>0 && monthlyRate>0){
+        const m = financeData.loanAmount * monthlyRate * Math.pow(1+monthlyRate,n) / (Math.pow(1+monthlyRate,n)-1);
+        const totalPayment = m * n;
+        financeData.annualInterest = (totalPayment - financeData.loanAmount) / financeData.loanTerm;
+      } else { financeData.annualInterest = 0; }
+      document.getElementById('annual-interest-cost').textContent = fmt(financeData.annualInterest);
+      document.getElementById('total-financial-cost').textContent = fmt(financeData.annualInterest);
+      updateFinanceSummary(); updateCalculation();
+    }
+
+    function updateFinanceSummary(){
+      const totalPartner = financeData.partnerCapital.reduce((s,v)=>s+v,0);
+      const totalFinanceRaised = totalPartner + financeData.loanAmount;
+      const deficit = Math.max(0, (financeData.totalNeeded||0) - totalFinanceRaised);
+      document.getElementById('total-finance-raised').textContent = fmt(totalFinanceRaised);
+      document.getElementById('finance-deficit').textContent = fmt(deficit);
+      const card = document.getElementById('finance-status-card') || null;
+      const status = document.getElementById('finance-status');
+      const msg = document.getElementById('finance-message');
+      if(!status) return;
+      // simple status logic
+      if(deficit===0){ status.textContent='FINANTZATUTA'; if(msg) msg.textContent = 'Finantzaketa behar osoa estaltzen da'; }
+      else if(deficit <= (financeData.totalNeeded||0)*0.1){ status.textContent='IA FINANTZATUTA'; if(msg) msg.textContent='Defizit txikia'; }
+      else { status.textContent = 'DEFIZIT HANDIA'; if(msg) msg.textContent='Finantzaketa gehiago behar da'; }
+    }
+
+    /* Update kalkulu orokorra */
+    function updateCalculation(){
+      // aktualizatu amortizable eta recurring datuak objektuetan, kalkulu txiki batzuk
+      let totalLocalInvestment=0, totalLocalAmort=0, totalLocalRecurring=0;
+      let totalTransportInvestment=0, totalTransportAmort=0, totalTransportRecurring=0;
+      let totalProductionRecurring=0, totalGrowthRecurring=0;
+      amortizableItems.forEach(it=>{
+        const amort = (Number(it.cost||0)/Math.max(1,Number(it.years||1)));
+        if(it.category==='lokala'){ totalLocalInvestment += Number(it.cost||0); totalLocalAmort += amort; }
+        if(it.category==='garraioa'){ totalTransportInvestment += Number(it.cost||0); totalTransportAmort += amort; }
+      });
+      recurringItems.forEach(it=>{
+        const annual = Number(it.payment_cost||0) * Math.max(1, Number(it.frequency||1));
+        if(it.category==='lokala') totalLocalRecurring += annual;
+        if(it.category==='ekoizpena') totalProductionRecurring += annual;
+        if(it.category==='garraioa') totalTransportRecurring += annual;
+        if(it.category==='hazkuntza') totalGrowthRecurring += annual;
+      });
+
+      let totalPersonnelCost = 0;
+      personnel.forEach(p=>{ totalPersonnelCost += Number(p.salary||0) + (Number(p.salary||0) * (Number(p.ss_percent||0)/100)); });
+
+      document.getElementById('total-local-investment').textContent = fmt(totalLocalInvestment||0);
+      document.getElementById('total-local-amortization').textContent = fmt(totalLocalAmort||0);
+      document.getElementById('total-local-recurring').textContent = fmt(totalLocalRecurring||0);
+      document.getElementById('total-local-annual-cost').textContent = fmt((totalLocalAmort||0)+(totalLocalRecurring||0));
+      document.getElementById('total-personnel-cost').textContent = fmt(totalPersonnelCost||0);
+      document.getElementById('total-production-cost').textContent = fmt(totalProductionRecurring||0);
+      document.getElementById('total-transport-investment').textContent = fmt(totalTransportInvestment||0);
+      document.getElementById('total-transport-annual-cost').textContent = fmt((totalTransportAmort||0)+(totalTransportRecurring||0));
+      document.getElementById('total-growth-cost').textContent = fmt(totalGrowthRecurring||0);
+
+      const totalFixed = (totalLocalAmort||0) + (totalLocalRecurring||0) + (totalPersonnelCost||0);
+      const totalVariable = (totalProductionRecurring||0) + (totalTransportRecurring||0) + (totalGrowthRecurring||0);
+      const totalFinancial = financeData.annualInterest || 0;
+      const totalOperational = totalFixed + totalVariable + totalFinancial;
+
+      document.getElementById('total-fixed-annual-cost').textContent = fmt(totalFixed);
+      document.getElementById('total-variable-annual-cost').textContent = fmt(totalVariable);
+      document.getElementById('total-financial-cost-summary').textContent = fmt(totalFinancial);
+      document.getElementById('total-operational-cost').textContent = fmt(totalOperational);
+
+      // erre-render taulak
+      renderAmortizableTables(); renderRecurringTables(); renderPersonnel();
+      calculateNetSalary(); calculatePricing(); updateFinanceStrategy();
+    }
+
+    /* Tab funtzioa */
+    function showSheet(name){
+      const sheets = ['lokala','pertsonala','ekoizpena','garraioa','hazkuntza','finantzaketa','prezioa'];
+      sheets.forEach(s=>{ const el = document.getElementById(s+'-sheet'); if(el) el.style.display = (s===name? 'block':'none'); });
+      // tab aktibatzea
+      document.querySelectorAll('.tabs button').forEach(b=>{ b.classList.toggle('active', b.getAttribute('data-sheet')===name); });
+      if(name==='prezioa') calculatePricing();
+      updateCalculation();
+    }
+
+    /* Hizkuntza itzultzaile sinple (eguneratzeko aukera dago) */
+    const translations = { eu:{}, es:{} };
+    function changeLanguage(lang){
+      // oharra: edukien itzulpena azaltzeko lekuak prestakuntza izan daitezke; gaur egun etiketa batzuk soilik alda daitezke.
+      localStorage.setItem('selectedLanguage', lang);
+      // Adibidez: goiburuko titulua itzultzeko (sinple)
+      const title = (lang==='es') ? 'PRESUPUESTO DE GASTOS EMPRESARIALES (7 ÁREAS)' : 'I·D arte — Neurketak eta Aurrekontuak';
+      document.getElementById('main-title').textContent = title;
+    }
+
+    /* PDF sortze funtzioa: estalkia txostenarekin eta egilea txertatuta */
+    async function generatePDFReport(){
+      const overlay = document.getElementById('loading-overlay'); overlay.style.display='flex';
+      try {
+        // Erraza: jsPDF tresna erabil daiteke. Hemen sinplea egiten dugu: HTML testu + laburpena.
+        // Ez da kanpoko liburutegirik inportatzen; zure ingurunean jsPDF badago, erabil ezazu.
+        // Hemen PDF bertsio txiki bat "print" erabiliz emango dugu (sinplifikazio erabilgarria).
+        const coverLines = [
+          'I·D arte — Neurketak eta Aurrekontuak',
+          'Ikasgai: Neurketak eta Aurrekontuak',
+          'Egilea: Josu Ayerbe Guarás',
+          'Data: ' + new Date().toLocaleDateString()
         ];
-
-        let recurringItems = [
-            // LOKALA
-            { id: 'alokairua', name: 'Alokairua (Hilekoa)', payment_cost: 800, frequency: 12, category: 'lokala' },
-            { id: 'hornigaiak-finko', name: 'Hornigaiak: Gutxieneko Kontsumoa (Argia, Ura)', payment_cost: 100, frequency: 12, category: 'lokala' },
-            { id: 'ezf-urteroko-prima', name: 'Erantzukizun Zibileko Asegurua (Urteko Prima FINKOA)', payment_cost: 600, frequency: 1, category: 'lokala' },
-            { id: 'zergak-tasak', name: 'Zergak eta Udal Tasak (Lokala)', payment_cost: 1200, frequency: 1, category: 'lokala' },
-            { id: 'asegurak-lokala', name: 'Bestelako Aseguruak (Lokala)', payment_cost: 450, frequency: 1, category: 'lokala' },
-            { id: 'telefonia-internet-finko', name: 'Telefonia eta Internet FINKOA', payment_cost: 80, frequency: 12, category: 'lokala' },
-            // EKOIZPENA
-            { id: 'ezf-proiektu-gehigarria', name: 'EZA (Proiektu Bakoltzeko Gehigarria)', payment_cost: 200, frequency: 12, category: 'ekoizpena' },
-            { id: 'hirugarrenen-lanak-ekoizpen', name: 'Hirugarrenen Lan Laguntzaileak (Proiektuko Azpikontratak)', payment_cost: 1500, frequency: 12, category: 'ekoizpena' },
-            { id: 'material-gordinak', name: 'Material Gordinak / Kontsumigarri Espezifikoak', payment_cost: 400, frequency: 12, category: 'ekoizpena' },
-            { id: 'elkargo-kuotak-ekoizpena', name: 'Elkargo Tasak (Jarduerari lotuak)', payment_cost: 150, frequency: 1, category: 'ekoizpena' },
-            // GARRAIOA
-            { id: 'garraio-mantenizea', name: 'Garraioa: Mantentze-lanak eta Konponketak', payment_cost: 500, frequency: 1, category: 'garraioa' },
-            { id: 'garraio-zergak', name: 'Garraioa: Udal Tasak eta Zergak (Urteko)', payment_cost: 150, frequency: 1, category: 'garraioa' },
-            { id: 'garraio-asegurua', name: 'Garraioa: Asegurua (Urteko)', payment_cost: 500, frequency: 1, category: 'garraioa' },
-            { id: 'garraio-erregaia', name: 'Garraioa: Erregaia / Gasolina', payment_cost: 250, frequency: 12, category: 'garraioa' },
-            { id: 'dietak', name: 'Dietak / Bazkariak (Desplazamenduak)', payment_cost: 150, frequency: 12, category: 'garraioa' },
-            // HAZKUNTZA
-            { id: 'prestakuntza-saioak', name: 'Prestakuntza Saioak eta Ikastaroak', payment_cost: 800, frequency: 1, category: 'hazkuntza' },
-            { id: 'aldizkari-harpidetzak', name: 'Aldizkari eta Ikerketa Harpidetzak', payment_cost: 100, frequency: 12, category: 'hazkuntza' },
-            { id: 'komunikazio-sareak', name: 'Komunikazioa Sareetan / Marketing digitala', payment_cost: 300, frequency: 12, category: 'hazkuntza' },
-            { id: 'patrozinioak', name: 'Patrozinioak / Networking Ekitaldiak', payment_cost: 500, frequency: 1, category: 'hazkuntza' }
-        ];
-
-        let personnel = [
-            { id: Date.now() + 1, name: 'Zuzendaria / Bazkidea', salary: 35000, ss_percent: 30 }
-        ];
-
-        let financeData = {
-            totalNeeded: 0,
-            partnerCapital: [0, 0, 0],
-            suggestedLoan: 0,
-            loanAmount: 0,
-            loanTAE: 5.0,
-            loanTerm: 5,
-            annualInterest: 0,
-            capitalistNeeded: 0
-        };
-
-        // --- FUNTZIO OROKORRAK ---
-        const formatCurrency = (number) => {
-            const num = parseFloat(number) || 0;
-            return new Intl.NumberFormat('eu-ES', { style: 'currency', currency: 'EUR' }).format(num);
-        };
-
-        window.showSheet = function(sheetName) {
-            document.getElementById('lokala-sheet').classList.add('hidden');
-            document.getElementById('pertsonala-sheet').classList.add('hidden');
-            document.getElementById('ekoizpena-sheet').classList.add('hidden');
-            document.getElementById('garraioa-sheet').classList.add('hidden');
-            document.getElementById('hazkuntza-sheet').classList.add('hidden');
-            document.getElementById('finantzaketa-sheet').classList.add('hidden');
-            document.getElementById('prezioa-sheet').classList.add('hidden');
-
-            document.querySelectorAll('.tab-button').forEach(btn => {
-                btn.classList.remove('tab-active');
-                btn.classList.add('tab-inactive');
-            });
-
-            document.getElementById(`${sheetName}-sheet`).classList.remove('hidden');
-            document.getElementById(`tab-${sheetName}`).classList.remove('tab-inactive');
-            document.getElementById(`tab-${sheetName}`).classList.add('tab-active');
-
-            if (sheetName === 'prezioa') {
-                calculatePricing();
-            }
-
-            updateCalculation();
-        };
-
-        // --- GEHITU AHAL IZATEKO SISTEMA ---
-        window.addAmortizableItem = function(category) {
-            const newId = `custom-amortizable-${Date.now()}`;
-            const categoryNames = {
-                'lokala': 'Lokalaren Inbertsioa',
-                'garraioa': 'Garraio Inbertsioa'
-            };
-
-            const newItem = {
-                id: newId,
-                name: `${categoryNames[category]} Berria`,
-                cost: 0,
-                years: 5,
-                category: category
-            };
-
-            amortizableItems.push(newItem);
-            renderAmortizableTables();
-            updateCalculation();
-        };
-
-        window.addRecurringItem = function(category) {
-            const newId = `custom-recurring-${Date.now()}`;
-            const categoryNames = {
-                'lokala': 'Lokalaren Gastua',
-                'ekoizpena': 'Ekoizpen Gastua',
-                'garraioa': 'Garraio Gastua',
-                'hazkuntza': 'Hazkuntza Gastua'
-            };
-
-            const newItem = {
-                id: newId,
-                name: `${categoryNames[category]} Berria`,
-                payment_cost: 0,
-                frequency: 12,
-                category: category
-            };
-
-            recurringItems.push(newItem);
-            renderRecurringTables();
-            updateCalculation();
-        };
-
-        window.removeItem = function(itemId, isAmortizable) {
-            if (isAmortizable) {
-                amortizableItems = amortizableItems.filter(item => item.id !== itemId);
-                renderAmortizableTables();
-            } else {
-                recurringItems = recurringItems.filter(item => item.id !== itemId);
-                renderRecurringTables();
-            }
-            updateCalculation();
-        };
-
-        // --- TAULA SORTZEKO FUNTZIOAK ---
-        const renderAmortizableTables = () => {
-            renderTable(amortizableItems, 'lokala-amortizable-body', 'lokala', true);
-            renderTable(amortizableItems, 'garraioa-amortizable-body', 'garraioa', true);
-        };
-
-        const renderRecurringTables = () => {
-            renderTable(recurringItems, 'lokala-recurring-body', 'lokala', false);
-            renderTable(recurringItems, 'ekoizpena-recurring-body', 'ekoizpena', false);
-            renderTable(recurringItems, 'garraioa-recurring-body', 'garraioa', false);
-            renderTable(recurringItems, 'hazkuntza-recurring-body', 'hazkuntza', false);
-        };
-
-        const renderTable = (data, tbodyId, category, isAmortizable) => {
-            const tbody = document.getElementById(tbodyId);
-            if (!tbody) return;
-            tbody.innerHTML = '';
-            const filteredData = data.filter(item => item.category === category);
-
-            filteredData.forEach(item => {
-                const row = document.createElement('tr');
-                row.className = 'hover:bg-gray-50';
-
-                let annualCost = 0;
-                if (isAmortizable) {
-                    annualCost = item.years > 0 ? item.cost / item.years : 0;
-                } else {
-                    annualCost = item.payment_cost * item.frequency;
-                }
-
-                const costInputId = `${item.id}-${isAmortizable ? 'cost' : 'payment-cost'}`;
-                const secondaryInputId = `${item.id}-${isAmortizable ? 'years' : 'frequency'}`;
-                const annualCostCellId = `${item.id}-annual-cost`;
-
-                if (isAmortizable) {
-                    row.innerHTML = `
-                        <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-700">
-                            <input type="text" id="amortizable-name-${item.id}" data-id="${item.id}" data-field="name" value="${item.name}" class="input-style p-1 text-sm bg-indigo-50" oninput="updateCalculation()">
-                        </td>
-                        <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-900 w-1/4">
-                            <input type="number" id="${costInputId}" data-id="${item.id}" data-type="cost" value="${item.cost}" min="0" class="input-style text-right bg-indigo-50" oninput="updateCalculation()">
-                        </td>
-                        <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-900 w-1/6">
-                            <input type="number" id="${secondaryInputId}" data-id="${item.id}" data-type="years" value="${item.years}" min="1" class="input-style text-center" oninput="updateCalculation()">
-                        </td>
-                        <td id="${annualCostCellId}" class="px-3 py-2 whitespace-nowrap text-sm font-bold text-gray-800 text-right bg-indigo-100">
-                            ${formatCurrency(annualCost)}
-                        </td>
-                        <td class="px-1 py-2 text-center w-10">
-                            <button onclick="removeItem('${item.id}', true)" class="text-red-500 hover:text-red-700 transition">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                </svg>
-                            </button>
-                        </td>
-                    `;
-                } else {
-                    row.innerHTML = `
-                        <td class="px-3 py-2 whitespace-nowrap text-sm font-medium text-gray-700">
-                            <input type="text" id="recurring-name-${item.id}" data-id="${item.id}" data-field="name" value="${item.name}" class="input-style p-1 text-sm bg-indigo-50" oninput="updateCalculation()">
-                        </td>
-                        <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-900 w-1/4">
-                            <input type="number" id="${costInputId}" data-id="${item.id}" data-type="payment_cost" value="${item.payment_cost}" min="0" class="input-style text-right bg-indigo-50" oninput="updateCalculation()">
-                        </td>
-                        <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-900 w-1/6">
-                            <input type="number" id="${secondaryInputId}" data-id="${item.id}" data-type="frequency" value="${item.frequency}" min="1" class="input-style text-center" oninput="updateCalculation()">
-                        </td>
-                        <td id="${annualCostCellId}" class="px-3 py-2 whitespace-nowrap text-sm font-bold text-gray-800 text-right bg-indigo-100">
-                            ${formatCurrency(annualCost)}
-                        </td>
-                        <td class="px-1 py-2 text-center w-10">
-                            <button onclick="removeItem('${item.id}', false)" class="text-red-500 hover:text-red-700 transition">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                </svg>
-                            </button>
-                        </td>
-                    `;
-                }
-
-                tbody.appendChild(row);
-            });
-        };
-
-        // --- PERTSONAL FUNTZIOAK ---
-        const renderPersonnelTable = () => {
-            const tbody = document.getElementById('personnel-body');
-            if (!tbody) return;
-            tbody.innerHTML = '';
-            personnel.forEach(p => {
-                const row = document.createElement('tr');
-                row.className = 'hover:bg-gray-50';
-                const ssCost = p.salary * (p.ss_percent / 100);
-                const totalCost = p.salary + ssCost;
-                row.innerHTML = `
-                    <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-700">
-                        <input type="text" id="personnel-name-${p.id}" data-id="${p.id}" data-field="name" value="${p.name}" class="input-style p-1 text-sm bg-pink-50" oninput="updateCalculation()">
-                    </td>
-                    <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-900 w-1/5">
-                        <input type="number" id="personnel-salary-${p.id}" data-id="${p.id}" data-field="salary" value="${p.salary}" min="0" class="input-style text-right bg-pink-50" oninput="updateCalculation()">
-                    </td>
-                    <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-900 w-1/6">
-                        <div class="flex items-center">
-                            <input type="number" id="personnel-ss-${p.id}" data-id="${p.id}" data-field="ss_percent" value="${p.ss_percent}" min="0" max="100" class="input-style text-center bg-pink-50 w-full" oninput="updateCalculation()">
-                            <span class="ml-1 text-gray-500">%</span>
-                        </div>
-                    </td>
-                    <td id="personnel-total-${p.id}" class="px-3 py-2 whitespace-nowrap text-sm font-bold text-gray-800 text-right bg-pink-100 w-1/4">
-                        ${formatCurrency(totalCost)}
-                    </td>
-                    <td class="px-1 py-2 text-center w-10">
-                        <button onclick="removePersonnel(${p.id})" class="text-red-500 hover:text-red-700 transition">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                            </svg>
-                        </button>
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
-        };
-
-        window.addPersonnel = function() {
-            personnel.push({
-                id: Date.now(),
-                name: 'Langile Berria',
-                salary: 20000,
-                ss_percent: 30
-            });
-            updateCalculation();
-        };
-
-        window.removePersonnel = function(id) {
-            personnel = personnel.filter(p => p.id != id);
-            updateCalculation();
-        };
-
-        // --- SOLDATA GARBIAREN KALKULUA ---
-        window.calculateNetSalary = function() {
-            const grossSalary = parseFloat(document.getElementById('grossSalary')?.value) || 0;
-            const irpfRate = parseFloat(document.getElementById('irpfRate')?.value) || 0;
-            if (grossSalary < 0 || irpfRate < 0 || irpfRate > 100) return;
-
-            const SS_RATE = 0.0635;
-            const ssDeduction = grossSalary * SS_RATE;
-            const irpfDeduction = grossSalary * (irpfRate / 100);
-
-            const netAnnualSalary = grossSalary - ssDeduction - irpfDeduction;
-            const monthlyPayments = 14;
-            const netMonthlySalary = netAnnualSalary / monthlyPayments;
-
-            document.getElementById('ssDeduction').textContent = formatCurrency(ssDeduction);
-            document.getElementById('netMonthlySalary').textContent = formatCurrency(netMonthlySalary);
-        };
-
-        // --- 🆕 PREZIO KALKULUAREN FUNTZIO BERRIAK ---
-        window.calculatePricing = function() {
-            // Parametroak
-            const corporateTax = parseFloat(document.getElementById('corporate-tax').value) || 25;
-            const targetMargin = parseFloat(document.getElementById('target-profit-margin').value) || 20;
-            const employeeCount = parseInt(document.getElementById('employee-count').value) || 2;
-            const hoursPerEmployee = parseInt(document.getElementById('annual-hours-per-employee').value) || 1600;
-            
-            // Gastu totalak (lehendik kalkulatuta)
-            const totalOperationalCost = parseFloat(
-                document.getElementById('total-operational-cost').textContent
-                    .replace(/[^\d,]/g, '')
-                    .replace(',', '.')
-            ) || 0;
-
-            // Kalkuluak
-            const totalAvailableHours = employeeCount * hoursPerEmployee;
-            
-            // Zerga aurreko mozkina kalkulatu
-            const profitBeforeTax = totalOperationalCost * (targetMargin / 100);
-            
-            // Zergak kontuan hartuta
-            const profitAfterTaxNeeded = profitBeforeTax / (1 - corporateTax / 100);
-            
-            // Diru-sarrerak totala beharrezkoa
-            const totalRevenueNeeded = totalOperationalCost + profitAfterTaxNeeded;
-            
-            // Orduko prezioa
-            const hourlyRate = totalRevenueNeeded / totalAvailableHours;
-            
-            // Punto de equilibrio
-            const breakEvenHours = totalOperationalCost / hourlyRate;
-            const profitability = ((totalAvailableHours - breakEvenHours) / totalAvailableHours * 100).toFixed(0);
-            
-            // Emaitzak eguneratu
-            document.getElementById('total-available-hours').textContent = 
-                totalAvailableHours.toLocaleString('eu-ES');
-            document.getElementById('suggested-hourly-rate').textContent = 
-                `€ ${hourlyRate.toFixed(2)}`;
-            document.getElementById('expected-net-profit').textContent = 
-                `€ ${profitAfterTaxNeeded.toFixed(0)}`;
-            document.getElementById('break-even-hours').textContent = 
-                `${breakEvenHours.toFixed(0)} ordu`;
-            document.getElementById('profitability-label').textContent = 
-                `Rentabilitatea: ${profitability}%`;
-        };
-
-        // --- KALKULU NAGUSIA ---
-        window.updateCalculation = function() {
-            // Datuak eguneratu
-            amortizableItems.forEach(item => {
-                const nameInput = document.getElementById(`amortizable-name-${item.id}`);
-                const costInput = document.getElementById(`${item.id}-cost`);
-                const yearsInput = document.getElementById(`${item.id}-years`);
-
-                if (nameInput) item.name = nameInput.value;
-                if (costInput) item.cost = parseFloat(costInput.value) || 0;
-                if (yearsInput) item.years = parseInt(yearsInput.value) > 0 ? parseInt(yearsInput.value) : 1;
-            });
-
-            recurringItems.forEach(item => {
-                const nameInput = document.getElementById(`recurring-name-${item.id}`);
-                const paymentCostInput = document.getElementById(`${item.id}-payment-cost`);
-                const frequencyInput = document.getElementById(`${item.id}-frequency`);
-
-                if (nameInput) item.name = nameInput.value;
-                if (paymentCostInput) item.payment_cost = parseFloat(paymentCostInput.value) || 0;
-                if (frequencyInput) item.frequency = parseInt(frequencyInput.value) > 0 ? parseInt(frequencyInput.value) : 1;
-            });
-
-            personnel.forEach(p => {
-                const salaryInput = document.getElementById(`personnel-salary-${p.id}`);
-                const ssInput = document.getElementById(`personnel-ss-${p.id}`);
-
-                if (salaryInput && ssInput) {
-                    p.salary = parseFloat(salaryInput.value) || 0;
-                    p.ss_percent = Math.min(100, Math.max(0, parseFloat(ssInput.value) || 0));
-                    ssInput.value = p.ss_percent;
-                }
-            });
-
-            // Kalkuluak
-            let totalInvestment = 0;
-            let totalAnnualAmortization = 0;
-            let totalLocalInvestment = 0;
-            let totalLocalAmortization = 0;
-            let totalLocalRecurring = 0;
-            let totalTransportInvestment = 0;
-            let totalTransportAmortization = 0;
-            let totalTransportRecurring = 0;
-            let totalProductionRecurring = 0;
-            let totalGrowthRecurring = 0;
-
-            // Inbertsioak kalkulatu
-            amortizableItems.forEach(item => {
-                const annualAmortization = item.cost / item.years;
-                totalInvestment += item.cost;
-                totalAnnualAmortization += annualAmortization;
-
-                if (item.category === 'lokala') {
-                    totalLocalInvestment += item.cost;
-                    totalLocalAmortization += annualAmortization;
-                } else if (item.category === 'garraioa') {
-                    totalTransportInvestment += item.cost;
-                    totalTransportAmortization += annualAmortization;
-                }
-            });
-
-            // Gastu errepikariak kalkulatu
-            recurringItems.forEach(item => {
-                const annualCost = item.payment_cost * item.frequency;
-
-                if (item.category === 'lokala') {
-                    totalLocalRecurring += annualCost;
-                } else if (item.category === 'ekoizpena') {
-                    totalProductionRecurring += annualCost;
-                } else if (item.category === 'garraioa') {
-                    totalTransportRecurring += annualCost;
-                } else if (item.category === 'hazkuntza') {
-                    totalGrowthRecurring += annualCost;
-                }
-            });
-
-            // Personalaren kostua kalkulatu
-            let totalPersonnelCost = 0;
-            personnel.forEach(p => {
-                const ssCost = p.salary * (p.ss_percent / 100);
-                const totalCost = p.salary + ssCost;
-                totalPersonnelCost += totalCost;
-            });
-
-            // Laburpenak eguneratu
-            document.getElementById('total-local-investment').textContent = formatCurrency(totalLocalInvestment);
-            document.getElementById('total-local-amortization').textContent = formatCurrency(totalLocalAmortization);
-            document.getElementById('total-local-recurring').textContent = formatCurrency(totalLocalRecurring);
-            document.getElementById('total-local-annual-cost').textContent = formatCurrency(totalLocalAmortization + totalLocalRecurring);
-
-            document.getElementById('total-personnel-cost').textContent = formatCurrency(totalPersonnelCost);
-            document.getElementById('total-production-cost').textContent = formatCurrency(totalProductionRecurring);
-
-            document.getElementById('total-transport-investment').textContent = formatCurrency(totalTransportInvestment);
-            document.getElementById('total-transport-annual-cost').textContent = formatCurrency(totalTransportAmortization + totalTransportRecurring);
-            document.getElementById('total-growth-cost').textContent = formatCurrency(totalGrowthRecurring);
-
-            // Laburpen orokorra
-            const totalFixedAnnualCost = totalAnnualAmortization + totalLocalRecurring + totalPersonnelCost;
-            const totalVariableAnnualCost = totalProductionRecurring + totalTransportRecurring + totalGrowthRecurring;
-            const totalFinancialCost = financeData.annualInterest;
-            const totalOperationalCost = totalFixedAnnualCost + totalVariableAnnualCost + totalFinancialCost;
-
-            document.getElementById('total-fixed-annual-cost').textContent = formatCurrency(totalFixedAnnualCost);
-            document.getElementById('total-variable-annual-cost').textContent = formatCurrency(totalVariableAnnualCost);
-            document.getElementById('total-financial-cost-summary').textContent = formatCurrency(totalFinancialCost);
-            document.getElementById('total-operational-cost').textContent = formatCurrency(totalOperationalCost);
-
-            // Finantzaketa estrategia eguneratu
-            updateFinanceStrategy();
-            calculateNetSalary();
-            calculatePricing();
-        };
-
-        // --- FINANTZAKETA SISTEMA ---
-        window.updateFinanceStrategy = function() {
-            financeData.partnerCapital[0] = parseFloat(document.getElementById('partner-capital-1').value) || 0;
-            financeData.partnerCapital[1] = parseFloat(document.getElementById('partner-capital-2').value) || 0;
-            financeData.partnerCapital[2] = parseFloat(document.getElementById('partner-capital-3').value) || 0;
-
-            const totalPartnerCapital = financeData.partnerCapital.reduce((sum, capital) => sum + capital, 0);
-
-            // Finantzaketa beharra kalkulatu
-            const totalInvestment = amortizableItems.reduce((sum, item) => sum + (parseFloat(item.cost) || 0), 0);
-
-            const operatingCosts = calculateOperatingCosts();
-            const monthlyOperatingCost = operatingCosts / 12;
-            const capitalizationNeeded = monthlyOperatingCost * 3;
-
-            financeData.totalNeeded = totalInvestment + capitalizationNeeded;
-            financeData.suggestedLoan = Math.max(0, financeData.totalNeeded - totalPartnerCapital);
-            financeData.capitalistNeeded = Math.max(0, financeData.totalNeeded - totalPartnerCapital - financeData.loanAmount);
-
-            // Emaitzak erakutsi
-            document.getElementById('total-finance-needed').textContent = formatCurrency(financeData.totalNeeded);
-            document.getElementById('total-partner-capital').textContent = formatCurrency(totalPartnerCapital);
-            document.getElementById('suggested-loan').textContent = formatCurrency(financeData.suggestedLoan);
-
-            const capitalistSection = document.getElementById('capitalist-partner-section');
-            if (financeData.capitalistNeeded > 0) {
-                capitalistSection.classList.remove('hidden');
-                document.getElementById('capitalist-needed').textContent = formatCurrency(financeData.capitalistNeeded);
-            } else {
-                capitalistSection.classList.add('hidden');
-            }
-
-            if (parseFloat(document.getElementById('loan-amount').value) == 0) {
-                document.getElementById('loan-amount').value = financeData.suggestedLoan;
-                financeData.loanAmount = financeData.suggestedLoan;
-            }
-
-            updateLoanCalculation();
-            updateFinanceSummary();
-        };
-
-        window.updateLoanCalculation = function() {
-            financeData.loanAmount = parseFloat(document.getElementById('loan-amount').value) || 0;
-            financeData.loanTAE = parseFloat(document.getElementById('loan-tae').value) || 5.0;
-            financeData.loanTerm = parseInt(document.getElementById('loan-term').value) || 5;
-
-            const monthlyRate = (financeData.loanTAE / 100) / 12;
-            const numberOfPayments = financeData.loanTerm * 12;
-
-            if (financeData.loanAmount > 0 && monthlyRate > 0) {
-                const monthlyPayment = financeData.loanAmount * monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments) / (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
-                const totalPayment = monthlyPayment * numberOfPayments;
-                financeData.annualInterest = (totalPayment - financeData.loanAmount) / financeData.loanTerm;
-            } else {
-                financeData.annualInterest = 0;
-            }
-
-            document.getElementById('annual-interest-cost').textContent = formatCurrency(financeData.annualInterest);
-            document.getElementById('total-financial-cost').textContent = formatCurrency(financeData.annualInterest);
-
-            updateFinanceStrategy();
-            updateCalculation();
-        };
-
-        function updateFinanceSummary() {
-            const totalPartnerCapital = financeData.partnerCapital.reduce((sum, capital) => sum + capital, 0);
-            const totalFinanceRaised = totalPartnerCapital + financeData.loanAmount;
-            const financeDeficit = Math.max(0, financeData.totalNeeded - totalFinanceRaised);
-
-            document.getElementById('total-finance-raised').textContent = formatCurrency(totalFinanceRaised);
-            document.getElementById('finance-deficit').textContent = formatCurrency(financeDeficit);
-
-            const statusCard = document.getElementById('finance-status-card');
-            const statusElement = document.getElementById('finance-status');
-            const messageElement = document.getElementById('finance-message');
-
-            statusCard.classList.remove('border-green-600', 'border-red-600', 'border-yellow-600', 'bg-green-50', 'bg-red-50', 'bg-yellow-50');
-
-            if (financeDeficit === 0) {
-                statusCard.classList.add('border-green-600', 'bg-green-50');
-                statusElement.textContent = "FINANTZATUTA";
-                statusElement.className = "text-xl font-extrabold text-green-800 mt-1";
-                messageElement.textContent = "Finantzaketa behar osoa estaltzen da";
-            } else if (financeDeficit <= financeData.totalNeeded * 0.1) {
-                statusCard.classList.add('border-yellow-600', 'bg-yellow-50');
-                statusElement.textContent = "IA FINANTZATUTA";
-                statusElement.className = "text-xl font-extrabold text-yellow-800 mt-1";
-                messageElement.textContent = "Defizit txikia, erraz konpon daiteke";
-            } else {
-                statusCard.classList.add('border-red-600', 'bg-red-50');
-                statusElement.textContent = "DEFIZIT HANDIA";
-                statusElement.className = "text-xl font-extrabold text-red-800 mt-1";
-                messageElement.textContent = "Finantzaketa gehiago behar da";
-            }
-        }
-
-        function calculateOperatingCosts() {
-            const fixedCosts = parseFloat(document.getElementById('total-fixed-annual-cost').textContent.replace(/[^\d,]/g, '').replace(',', '.')) || 0;
-            const variableCosts = parseFloat(document.getElementById('total-variable-annual-cost').textContent.replace(/[^\d,]/g, '').replace(',', '.')) || 0;
-            return fixedCosts + variableCosts;
-        }
-
-        // --- PDF TXOSTENA SORTZEKO FUNTZIOAK ---
-        window.generatePDFReport = async function() {
-            showLoadingIndicator('Txostena prestatzen...');
-            try {
-                const { jsPDF } = window.jspdf;
-                const doc = new jsPDF();
-                const pageWidth = doc.internal.pageSize.getWidth();
-                const margin = 15;
-                let yPosition = margin;
-
-                // 1. AZALA
-                await generateCoverPage(doc, pageWidth, margin);
-                
-                // 2. LABURPEN EXEKUTIBOA
-                doc.addPage();
-                yPosition = margin;
-                await generateExecutiveSummary(doc, pageWidth, margin, yPosition);
-
-                // 3. GASTUEN XEHAPENA
-                doc.addPage();
-                yPosition = margin;
-                await generateExpenseBreakdown(doc, pageWidth, margin, yPosition);
-
-                // 4. PREZIO ANALISIA
-                doc.addPage();
-                yPosition = margin;
-                await generatePricingAnalysis(doc, pageWidth, margin, yPosition);
-
-                // 5. FINANTAKETA ESTRATEGIA
-                doc.addPage();
-                yPosition = margin;
-                await generateFinanceStrategy(doc, pageWidth, margin, yPosition);
-
-                // 6. KONKLUSIOAK
-                doc.addPage();
-                yPosition = margin;
-                await generateConclusions(doc, pageWidth, margin, yPosition);
-
-                const fileName = `Empresa_Aurrekontua_${new Date().toISOString().split('T')[0]}.pdf`;
-                doc.save(fileName);
-
-            } catch (error) {
-                console.error('Errorea PDFa sortzean:', error);
-                alert('Errorea gertatu da txostena sortzean. Saiatu berriro.');
-            } finally {
-                hideLoadingIndicator();
-            }
-        };
-
-        // PDF sortzeko funtzioak (laburtuta)
-        async function generateCoverPage(doc, pageWidth, margin) {
-            doc.setFillColor(79, 70, 229);
-            doc.rect(0, 0, pageWidth, 80, 'F');
-            doc.setTextColor(255, 255, 255);
-            doc.setFontSize(20);
-            doc.setFont('helvetica', 'bold');
-            doc.text('ENPRESA GASTUEN AURREKONTUA', pageWidth / 2, 40, { align: 'center' });
-            doc.setFontSize(14);
-            doc.text('Bideragarritasun Analisi Teknikoa', pageWidth / 2, 55, { align: 'center' });
-        }
-
-        // Beste PDF funtzioak hemen (generateExecutiveSummary, generateExpenseBreakdown, etc.)
-
-        // --- HASIERATZEA ---
-        window.onload = function() {
-            const savedLanguage = localStorage.getItem('selectedLanguage') || 'eu';
-            document.getElementById('language-select').value = savedLanguage;
-            changeLanguage(savedLanguage);
-            renderAmortizableTables();
-            renderRecurringTables();
-            renderPersonnelTable();
-            updateCalculation();
-            updateFinanceStrategy();
-            updateLoanCalculation();
-            showSheet('lokala');
-        };
-    </script>
+        // Era txiki batean: sortu printable orria eta irekita inprimatu
+        const win = window.open('','_blank','noopener');
+        const html = `
+          <html><head><title>Txostena</title>
+            <style>body{font-family:Inter, Arial; padding:24px} h1{color:${getComputedStyle(document.documentElement).getPropertyValue('--indigo')||'#530ced'}} .block{margin-bottom:14px}</style>
+          </head><body>
+            <div style="border-bottom:4px solid ${getComputedStyle(document.documentElement).getPropertyValue('--indigo')||'#530ced'};padding-bottom:12px;margin-bottom:18px">
+              <h1>${coverLines[0]}</h1>
+              <div>${coverLines[1]}</div>
+              <div>Egilea: <strong>${coverLines[2].replace('Egilea: ','')}</strong></div>
+              <div>Data: ${coverLines[3].replace('Data: ','')}</div>
+            </div>
+            <h2>Laburpena</h2>
+            <ul>
+              <li>Urteko Gastu Finko Osoa: ${document.getElementById('total-fixed-annual-cost').textContent}</li>
+              <li>Urteko Gastu Aldakorra: ${document.getElementById('total-variable-annual-cost').textContent}</li>
+              <li>Finantza Gastuak: ${document.getElementById('total-financial-cost-summary').textContent}</li>
+              <li>Gastu Operatibo Guztizkoa: ${document.getElementById('total-operational-cost').textContent}</li>
+            </ul>
+            <h3>Datu gidatuak</h3>
+            <p>Dokumentu hau I·D arte markarekin bat datorren txosten-laburpena da. Diseinua eta itzulpen osagarriak eskatu daitezke.</p>
+            <footer style="margin-top:28px;border-top:1px solid #ddd;padding-top:8px;font-size:12px;color:#666">Txostena prestatua: ${coverLines[2]} — I·D arte</footer>
+          </body></html>
+        `;
+        win.document.write(html);
+        win.document.close();
+        // erabiltzaileari inprimatu edo PDF gorde dezan utzi (nabigatzaileak aukera emango du)
+        win.print();
+      } catch(e){
+        console.error('PDF sortze errorea', e);
+        alert('Errorea gertatu da PDF sortzean.');
+      } finally {
+        overlay.style.display='none';
+      }
+    }
+
+    /* onload init */
+    window.addEventListener('load', () => {
+      // hizkuntza aukeraketa aurreztuta bada
+      const saved = localStorage.getItem('selectedLanguage')||'eu';
+      document.getElementById('language-select').value = saved;
+      changeLanguage(saved);
+      renderAmortizableTables(); renderRecurringTables(); renderPersonnel();
+      updateCalculation();
+      updateFinanceStrategy();
+    });
+
+    /* kalkulu hasierakoak */
+    function updateCalculation(){ /* ezabatu, jarri berriro funtzio nagusia */ }
+    // Birdefinitu updateCalculation to actual one above
+    updateCalculation = window.updateCalculation || (function(){ /* no-op fallback */ });
+
+  </script>
 </body>
 </html>

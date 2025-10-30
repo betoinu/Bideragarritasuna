@@ -1,6 +1,8 @@
-// js/logic.js
-// IDarte - lógica completa: tabs, creación de paneles, tablas, cálculos, idioma y PDF
-// Reemplaza totalmente el fichero anterior
+// =========================================
+// IDarte · Enpresa Gastuen Aurrekontua
+// Lógica completa: datos, pestañas, cálculos,
+// idioma, resumen y exportación a PDF
+// =========================================
 
 /* ============
    GLOBAL STATE
@@ -13,7 +15,10 @@ const state = {
   finance: { loanAmount:0, loanTAE:5, loanTerm:5, annualInterest:0, totalFinancialCost:0 }
 };
 
-let translations = {}; // cargadas desde lang/lang.json o fallback
+/* ==============================
+   TRADUCCIONES FALLBACK (lang.json)
+   ============================== */
+let translations = {};
 const fallbackTranslations = {
   eu: {
     "header.title":"IDarte · Euskadiko Diseinu Eskola Publikoa",
@@ -28,9 +33,6 @@ const fallbackTranslations = {
     "tab.prezioa":"7 · Prezioa",
     "summary.title":"Laburpen Orokorra",
     "summary.subtitle":"Aurrekontu globala",
-    "contact.title":"Kontaktua",
-    "contact.name":"Josu Ayerbe Guarás, Barne Diseinuko Graduko irakaslea",
-    "contact.email":"josuayerbe@idarte.eus",
     "footer.note":"IDarte · Euskadiko Diseinu Eskola Publikoa — Escuela Pública de Diseño de Euskadi.",
     "loading":"Txostena prestatzen..."
   },
@@ -47,663 +49,321 @@ const fallbackTranslations = {
     "tab.prezioa":"7 · Precio/Hora",
     "summary.title":"Resumen General",
     "summary.subtitle":"Presupuesto global",
-    "contact.title":"Contacto",
-    "contact.name":"Josu Ayerbe Guarás, profesor del Grado en Diseño de Interiores",
-    "contact.email":"josuayerbe@idarte.eus",
     "footer.note":"IDarte · Escuela Pública de Diseño de Euskadi — Euskadiko Diseinu Eskola Publikoa.",
     "loading":"Preparando el informe..."
   }
 };
 
-/* ================
+/* =====================
    UTILIDADES BÁSICAS
-   ================ */
+   ===================== */
 function uid(prefix='id'){ return prefix + '-' + Math.random().toString(36).slice(2,9); }
-function fmt(n){ // formatea número a € con 2 decimales
-  n = Number(n)||0;
-  try{ return new Intl.NumberFormat('es-ES',{style:'currency',currency:'EUR'}).format(n); }catch(e){ return '€ ' + n.toFixed(2); }
-}
-function safeNum(v){ return Number(v || 0) || 0; }
+function fmt(n){ n=Number(n)||0; try{ return new Intl.NumberFormat('es-ES',{style:'currency',currency:'EUR'}).format(n);}catch(e){return '€'+n.toFixed(2);} }
+function safeNum(v){ return Number(v||0)||0; }
 function qs(sel){ return document.querySelector(sel); }
 function qsa(sel){ return Array.from(document.querySelectorAll(sel)); }
 
 /* ===========================
-   CARGA TRADUCCIONES (lang.json)
+   CARGA TRADUCCIONES
    =========================== */
-async function loadTranslations(langRequested){
+async function loadTranslations(lang){
   try{
     const res = await fetch('lang/lang.json');
-    if(!res.ok) throw new Error('no JSON');
+    if(!res.ok) throw new Error('no file');
     const all = await res.json();
     translations = all;
-    applyTranslations(langRequested || (localStorage.getItem('selectedLanguage') || 'eu'));
-    return;
   }catch(e){
-    // fallback si fetch falla (p. ej. testing con file://)
     translations = fallbackTranslations;
-    applyTranslations(langRequested || (localStorage.getItem('selectedLanguage') || 'eu'));
   }
+  applyTranslations(lang || localStorage.getItem('selectedLanguage') || 'eu');
 }
 
 function applyTranslations(lang){
-  if(!translations || !translations[lang]) translations = fallbackTranslations;
-  const strings = translations[lang] || {};
+  if(!translations[lang]) translations = fallbackTranslations;
+  const strings = translations[lang];
   qsa('[data-i18n]').forEach(el=>{
     const key = el.getAttribute('data-i18n');
-    if(key && strings[key]) el.textContent = strings[key];
+    if(strings[key]) el.textContent = strings[key];
   });
-  // boton especial
   const dl = document.getElementById('download-report-btn');
-  if(dl) dl.textContent = (strings['button.download'] || dl.textContent);
+  if(dl) dl.textContent = strings['button.download'];
   localStorage.setItem('selectedLanguage', lang);
   document.documentElement.lang = lang;
 }
 
 /* ===========================
-   CONSTRUCCIÓN DINÁMICA DE PANELES
+   CONSTRUCCIÓN DE PANELES
    =========================== */
-// Si los paneles están vacíos (tienen '…' o sin hijos) los rellenamos con contenido completo.
 function buildPanelsIfEmpty(){
-  const lok = document.getElementById('lokala-sheet');
-  if(lok && (!lok.innerHTML.trim() || lok.textContent.trim()==='…')){
-    lok.innerHTML = `
-      <h2><span data-i18n="section.lokala">1 · Lokalaren Gastu Finkoak eta Inbertsioak</span></h2>
-      <div style="display:grid;grid-template-columns:1fr 320px;gap:12px;margin-top:12px;">
-        <div>
-          <h3>A) Inbertsio amortizagarriak</h3>
-          <div style="overflow:auto">
-            <table class="min-w" style="width:100%">
-              <thead><tr><th>Kontzeptua</th><th style="text-align:right">Kostua</th><th style="text-align:center">Urteak</th><th style="text-align:right">Urteko Amortiz.</th><th></th></tr></thead>
-              <tbody id="lokala-amortizable-body"></tbody>
-            </table>
-          </div>
-          <button class="btn" onclick="addAmortizable('lokala')">+ Gehitu</button>
-
-          <h3 style="margin-top:16px">B) Gastu errepikari finkoak</h3>
-          <table class="min-w" style="width:100%"><thead><tr><th>Kontzeptua</th><th style="text-align:right">Ordainketa</th><th style="text-align:center">Maiztasuna</th><th style="text-align:right">Urteko Guztizkoa</th><th></th></tr></thead>
-            <tbody id="lokala-recurring-body"></tbody>
-          </table>
-          <button class="btn" onclick="addRecurring('lokala')">+ Gehitu gastu errepikari</button>
-        </div>
-        <aside style="padding:8px">
-          <div class="card"><h4>Gastu eta Amortizazio laburra</h4><p id="lokal-summary" class="muted">-</p></div>
-          <div class="card"><h4>Lokalaren Inbertsio Osoa</h4><p id="total-local-investment" class="value">€ 0.00</p></div>
-          <div class="card"><h4>Urteko Amortizazioa</h4><p id="total-local-amortization" class="value">€ 0.00</p></div>
-          <div class="card"><h4>Lokalaren Urteko Kostu FINKOAK</h4><p id="total-local-annual-cost" class="value">€ 0.00</p></div>
-        </aside>
-      </div>
-    `;
-  }
-
-  const per = document.getElementById('pertsonala-sheet');
-  if(per && (!per.innerHTML.trim() || per.textContent.trim()==='…')){
-    per.innerHTML = `
-      <h2><span data-i18n="section.pertsonala">2 · Pertsonalaren Kostuak</span></h2>
-      <div style="display:grid;grid-template-columns:2fr 1fr;gap:12px;margin-top:12px;">
-        <div>
-          <h3>Langileak</h3>
-          <table class="min-w" style="width:100%"><thead><tr><th>Funtzioa</th><th style="text-align:right">Soldata gordina</th><th style="text-align:center">Seg. S. (%)</th><th style="text-align:right">Kostu osoa</th><th></th></tr></thead>
-            <tbody id="personnel-body"></tbody></table>
-          <button class="btn" onclick="addPerson()">+ Gehitu langile</button>
-          <div style="margin-top:12px" class="card"><h4>Pertsonalaren Kostu Osoa</h4><p id="total-personnel-cost" class="value">€ 0.00</p></div>
-        </div>
-        <div style="background:#fff;padding:12px;border-radius:8px;border:1px solid #eee">
-          <h4>Soldata Garbia Kalkulagailua</h4>
-          <label>Soldata gordina urtekoa:</label><input id="grossSalary" type="number" value="25000" oninput="calcNetSalary()" />
-          <label>IRPF (%)</label><input id="irpfRate" type="number" value="15" oninput="calcNetSalary()" />
-          <p>SS kenaria: <span id="ssDeduction">€ 0.00</span></p>
-          <p>Soldata Garbia (hilean, 14 ord): <span id="netMonthlySalary">€ 0.00</span></p>
-        </div>
-      </div>`;
-  }
-
-  const eko = document.getElementById('ekoizpena-sheet');
-  if(eko && (!eko.innerHTML.trim() || eko.textContent.trim()==='…')){
-    eko.innerHTML = `
-      <h2><span data-i18n="section.ekoizpena">3 · Ekoizpen Gastuak</span></h2>
-      <table class="min-w" style="width:100%"><thead><tr><th>Kontzeptua</th><th style="text-align:right">Ordainketa</th><th style="text-align:center">Maiztasuna</th><th style="text-align:right">Urteko Guztizkoa</th><th></th></tr></thead>
-      <tbody id="ekoizpena-recurring-body"></tbody></table>
-      <button class="btn" onclick="addRecurring('ekoizpena')">+ Gehitu</button>
-      <div style="margin-top:12px" class="card"><h4>Ekoizpen Kostua</h4><p id="total-production-cost" class="value">€ 0.00</p></div>`;
-  }
-
-  const gar = document.getElementById('garraioa-sheet');
-  if(gar && (!gar.innerHTML.trim() || gar.textContent.trim()==='…')){
-    gar.innerHTML = `
-      <h2><span data-i18n="section.garraioa">4 · Garraioa</span></h2>
-      <h3>Inbertsio amortizagarriak</h3>
-      <table class="min-w" style="width:100%"><thead><tr><th>Kontzeptua</th><th style="text-align:right">Kostua</th><th style="text-align:center">Urteak</th><th style="text-align:right">Urteko Amortiz.</th><th></th></tr></thead>
-        <tbody id="garraioa-amortizable-body"></tbody></table>
-      <button class="btn" onclick="addAmortizable('garraioa')">+ Gehitu inbertsio</button>
-      <h3 style="margin-top:12px">Gastu errepikariak</h3>
-      <table class="min-w" style="width:100%"><tbody id="garraioa-recurring-body"></tbody></table>`;
-  }
-
-  const haz = document.getElementById('hazkuntza-sheet');
-  if(haz && (!haz.innerHTML.trim() || haz.textContent.trim()==='…')){
-    haz.innerHTML = `
-      <h2><span data-i18n="section.hazkuntza">5 · Hazkuntza eta Marketina</span></h2>
-      <table class="min-w" style="width:100%"><thead><tr><th>Kontzeptua</th><th style="text-align:right">Ordainketa</th><th style="text-align:center">Maiztasuna</th><th style="text-align:right">Urteko Guztizkoa</th><th></th></tr></thead>
-      <tbody id="hazkuntza-recurring-body"></tbody></table>
-      <button class="btn" onclick="addRecurring('hazkuntza')">+ Gehitu</button>
-      <div style="margin-top:12px" class="card"><h4>Urteko Plan</h4><p id="total-growth-cost" class="value">€ 0.00</p></div>`;
-  }
-
-  const fin = document.getElementById('finantzaketa-sheet');
-  if(fin && (!fin.innerHTML.trim() || fin.textContent.trim()==='…')){
-    fin.innerHTML = `
-      <h2><span data-i18n="section.finantzaketa">6 · Finantzaketa</span></h2>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-        <div>
-          <h4>Finantzaketa behar</h4>
-          <p id="total-finance-needed">€ 0.00</p>
-          <div><label>Bazkide 1</label><input id="partner-capital-1" type="number" value="0" /></div>
-          <div><label>Bazkide 2</label><input id="partner-capital-2" type="number" value="0" /></div>
-          <div><label>Bazkide 3</label><input id="partner-capital-3" type="number" value="0" /></div>
-          <p>Total: <span id="total-partner-capital">€ 0.00</span></p>
-          <p>Finantzia Defizita: <span id="finance-deficit">€ 0.00</span></p>
-          <p>Suggested Loan: <span id="suggested-loan">€ 0.00</span></p>
-        </div>
-        <div>
-          <h4>Maileguaren ezarpenak</h4>
-          <label>Mailegu zenb:</label><input id="loan-amount" type="number" value="0" />
-          <label>TAE (%):</label><input id="loan-tae" type="number" value="5" step="0.1" />
-          <label>Iraupena (urte):</label><input id="loan-term" type="number" value="5" />
-          <p>Urteko interes gastua: <span id="annual-interest-cost">€ 0.00</span></p>
-          <p>Finantza gastu totala: <span id="total-financial-cost">€ 0.00</span></p>
-        </div>
-      </div>`;
-  }
-
-  const prez = document.getElementById('prezioa-sheet');
-  if(prez && (!prez.innerHTML.trim() || prez.textContent.trim()==='…')){
-    prez.innerHTML = `
-      <h2><span data-i18n="section.prezioa">7 · Lanorduaren prezioa eta Mozkinak</span></h2>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;">
-        <div class="form-grid">
-          <label>Sozietateen Zerga (%)</label><input id="corporate-tax" type="number" value="25" />
-          <label>Mozkin helburua (%)</label><input id="target-profit-margin" type="number" value="20" />
-          <label>Langile kopurua</label><input id="employee-count" type="number" value="2" />
-          <label>Urteko orduak/langileko</label><input id="annual-hours-per-employee" type="number" value="1600" />
-        </div>
-        <div>
-          <div class="card"><h4>Urteko lan-orduak guzt.</h4><p id="total-available-hours" class="value">0</p></div>
-          <div class="card"><h4>Gomendatutako orduko prezioa</h4><p id="suggested-hourly-rate" class="value">€ 0.00</p></div>
-          <div class="card"><h4>Espero den mozkin garbia</h4><p id="expected-net-profit" class="value">€ 0.00</p></div>
-        </div>
-      </div>`;
-  }
+  // Ya definidos en tu HTML, por tanto no se reconstruyen.
+  // (Función conservada por compatibilidad)
 }
 
-/* =========================
-   RENDERIZADO Y CRUD TABLAS
-   ========================= */
+/* ===========================
+   CRUD Y RENDER DE TABLAS
+   =========================== */
 function renderAllTables(){
-  // amortizables lokala + garraioa
-  const lokAmortTbody = document.getElementById('lokala-amortizable-body');
-  const garAmortTbody = document.getElementById('garraioa-amortizable-body');
-  if(lokAmortTbody) lokAmortTbody.innerHTML = '';
-  if(garAmortTbody) garAmortTbody.innerHTML = '';
-
-  state.amortizables.lokala.forEach(item => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td><input value="${item.name}" data-id="${item.id}" data-field="name" class="input-style" onchange="onFieldChange(event)"/></td>
-                    <td style="text-align:right"><input type="number" value="${item.cost}" data-id="${item.id}" data-field="cost" class="input-style" onchange="onFieldChange(event)"/></td>
-                    <td style="text-align:center"><input type="number" value="${item.life}" data-id="${item.id}" data-field="life" class="input-style" onchange="onFieldChange(event)"/></td>
-                    <td style="text-align:right" id="${item.id}-annual">`+fmt(item.cost/item.life)+`</td>
-                    <td style="text-align:center"><button onclick="removeAmortizable('${item.id}','lokala')" class="btn small">✕</button></td>`;
-    lokAmortTbody.appendChild(tr);
-  });
-
-  state.amortizables.garraioa.forEach(item => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td><input value="${item.name}" data-id="${item.id}" data-field="name" class="input-style" onchange="onFieldChange(event)"/></td>
-                    <td style="text-align:right"><input type="number" value="${item.cost}" data-id="${item.id}" data-field="cost" class="input-style" onchange="onFieldChange(event)"/></td>
-                    <td style="text-align:center"><input type="number" value="${item.life}" data-id="${item.id}" data-field="life" class="input-style" onchange="onFieldChange(event)"/></td>
-                    <td style="text-align:right" id="${item.id}-annual">`+fmt(item.cost/item.life)+`</td>
-                    <td style="text-align:center"><button onclick="removeAmortizable('${item.id}','garraioa')" class="btn small">✕</button></td>`;
-    garAmortTbody.appendChild(tr);
-  });
-
-  // recurrings
-  const renderRecurringFor = (category, tbodyId) => {
-    const tbody = document.getElementById(tbodyId);
-    if(!tbody) return;
-    tbody.innerHTML = '';
-    state.recurrings[category].forEach(item => {
-      const annual = item.payment_cost * item.frequency;
-      const tr = document.createElement('tr');
-      tr.innerHTML = `<td><input value="${item.name}" data-id="${item.id}" data-field="name" class="input-style" onchange="onFieldChange(event)"/></td>
-                      <td style="text-align:right"><input type="number" value="${item.payment_cost}" data-id="${item.id}" data-field="payment_cost" class="input-style" onchange="onFieldChange(event)"/></td>
-                      <td style="text-align:center"><input type="number" value="${item.frequency}" data-id="${item.id}" data-field="frequency" class="input-style" onchange="onFieldChange(event)"/></td>
-                      <td style="text-align:right" id="${item.id}-annual">`+fmt(annual)+`</td>
-                      <td style="text-align:center"><button onclick="removeRecurring('${item.id}','${category}')" class="btn small">✕</button></td>`;
-      tbody.appendChild(tr);
+  const renderAmort = (cat, tbodyId)=>{
+    const tb = document.getElementById(tbodyId);
+    if(!tb) return;
+    tb.innerHTML='';
+    state.amortizables[cat].forEach(it=>{
+      const tr=document.createElement('tr');
+      tr.innerHTML=`
+        <td><input value="${it.name}" data-id="${it.id}" data-field="name" onchange="onFieldChange(event)" /></td>
+        <td style="text-align:right"><input type="number" value="${it.cost}" data-id="${it.id}" data-field="cost" onchange="onFieldChange(event)" /></td>
+        <td style="text-align:center"><input type="number" value="${it.life}" data-id="${it.id}" data-field="life" onchange="onFieldChange(event)" /></td>
+        <td style="text-align:right">${fmt(it.cost/it.life)}</td>
+        <td><button onclick="removeAmortizable('${it.id}','${cat}')" class="btn small">✕</button></td>`;
+      tb.appendChild(tr);
     });
   };
-  renderRecurringFor('lokala','lokala-recurring-body');
-  renderRecurringFor('ekoizpena','ekoizpena-recurring-body');
-  renderRecurringFor('garraioa','garraioa-recurring-body');
-  renderRecurringFor('hazkuntza','hazkuntza-recurring-body');
+  renderAmort('lokala','lokala-amortizable-body');
+  renderAmort('garraioa','garraioa-amortizable-body');
 
-  // personnel
-  const tbodyPers = document.getElementById('personnel-body');
-  if(tbodyPers) tbodyPers.innerHTML = '';
-  state.personnel.forEach(p => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td><input value="${p.role}" data-id="${p.id}" data-field="role" class="input-style" onchange="onFieldChange(event)"/></td>
-                    <td style="text-align:right"><input type="number" value="${p.gross}" data-id="${p.id}" data-field="gross" class="input-style" onchange="onFieldChange(event)"/></td>
-                    <td style="text-align:center"><input type="number" value="${p.employer_ss}" data-id="${p.id}" data-field="employer_ss" class="input-style" onchange="onFieldChange(event)"/></td>
-                    <td style="text-align:right" id="${p.id}-total">`+fmt(p.gross*(1+p.employer_ss/100))+`</td>
-                    <td style="text-align:center"><button onclick="removePersonnel('${p.id}')" class="btn small">✕</button></td>`;
-    tbodyPers.appendChild(tr);
-  });
+  const renderRec = (cat, tbodyId)=>{
+    const tb=document.getElementById(tbodyId);
+    if(!tb) return;
+    tb.innerHTML='';
+    state.recurrings[cat].forEach(it=>{
+      const tr=document.createElement('tr');
+      tr.innerHTML=`
+        <td><input value="${it.name}" data-id="${it.id}" data-field="name" onchange="onFieldChange(event)" /></td>
+        <td style="text-align:right"><input type="number" value="${it.payment_cost}" data-id="${it.id}" data-field="payment_cost" onchange="onFieldChange(event)" /></td>
+        <td style="text-align:center"><input type="number" value="${it.frequency}" data-id="${it.id}" data-field="frequency" onchange="onFieldChange(event)" /></td>
+        <td style="text-align:right">${fmt(it.payment_cost*it.frequency)}</td>
+        <td><button onclick="removeRecurring('${it.id}','${cat}')" class="btn small">✕</button></td>`;
+      tb.appendChild(tr);
+    });
+  };
+  renderRec('lokala','lokala-recurring-body');
+  renderRec('ekoizpena','ekoizpena-recurring-body');
+  renderRec('garraioa','garraioa-recurring-body');
+  renderRec('hazkuntza','hazkuntza-recurring-body');
+
+  const tbP=document.getElementById('personnel-body');
+  if(tbP){ tbP.innerHTML='';
+    state.personnel.forEach(p=>{
+      const tr=document.createElement('tr');
+      tr.innerHTML=`
+        <td><input value="${p.role}" data-id="${p.id}" data-field="role" onchange="onFieldChange(event)" /></td>
+        <td style="text-align:right"><input type="number" value="${p.gross}" data-id="${p.id}" data-field="gross" onchange="onFieldChange(event)" /></td>
+        <td style="text-align:center"><input type="number" value="${p.employer_ss}" data-id="${p.id}" data-field="employer_ss" onchange="onFieldChange(event)" /></td>
+        <td style="text-align:right">${fmt(p.gross*(1+p.employer_ss/100))}</td>
+        <td><button onclick="removePersonnel('${p.id}')" class="btn small">✕</button></td>`;
+      tbP.appendChild(tr);
+    });
+  }
 }
 
-/* =========================
-   MANEJADORES CRUD
-   ========================= */
-window.addAmortizable = function(category){
-  const obj = { id: uid('am'), name: 'Ekipamendua', cost: 1000, life: 5, category };
-  state.amortizables[category].push(obj);
-  renderAllTables();
-  updateAll();
-};
+/* ===========================
+   CRUD FUNCTIONS
+   =========================== */
+window.addAmortizable=function(cat){state.amortizables[cat].push({id:uid('am'),name:'Ekipamendua',cost:1000,life:5,category:cat});renderAllTables();updateAll();};
+window.removeAmortizable=function(id,cat){state.amortizables[cat]=state.amortizables[cat].filter(x=>x.id!==id);renderAllTables();updateAll();};
+window.addRecurring=function(cat){state.recurrings[cat].push({id:uid('r'),name:'Gastu',payment_cost:100,frequency:12,category:cat});renderAllTables();updateAll();};
+window.removeRecurring=function(id,cat){state.recurrings[cat]=state.recurrings[cat].filter(x=>x.id!==id);renderAllTables();updateAll();};
+window.addPerson=function(){state.personnel.push({id:uid('p'),role:'Diseinatzaile',gross:25000,employer_ss:30});renderAllTables();updateAll();};
+window.removePersonnel=function(id){state.personnel=state.personnel.filter(p=>p.id!==id);renderAllTables();updateAll();};
 
-window.addRecurring = function(category){
-  const obj = { id: uid('r'), name: 'Gastu', payment_cost: 100, frequency: 12, category };
-  state.recurrings[category].push(obj);
-  renderAllTables();
-  updateAll();
-};
-
-window.addPerson = function(){
-  const p = { id: uid('p'), role: 'Diseinatzaile', gross: 25000, employer_ss: 30 };
-  state.personnel.push(p);
-  renderAllTables();
-  updateAll();
-};
-
-window.removeAmortizable = function(id, category){
-  state.amortizables[category] = state.amortizables[category].filter(i => i.id !== id);
-  renderAllTables();
-  updateAll();
-};
-
-window.removeRecurring = function(id, category){
-  state.recurrings[category] = state.recurrings[category].filter(i => i.id !== id);
-  renderAllTables();
-  updateAll();
-};
-
-window.removePersonnel = function(id){
-  state.personnel = state.personnel.filter(p => p.id !== id);
-  renderAllTables();
-  updateAll();
-};
-
-window.onFieldChange = function(e){
-  const el = e.target;
-  const id = el.dataset.id;
-  const field = el.dataset.field;
-  const value = el.type === 'number' ? safeNum(el.value) : el.value;
-  // find in arrays
+window.onFieldChange=function(e){
+  const el=e.target;
+  const id=el.dataset.id;
+  const field=el.dataset.field;
+  const value=el.type==='number'?safeNum(el.value):el.value;
   ['lokala','garraioa'].forEach(cat=>{
-    const idx = state.amortizables[cat].findIndex(x=>x.id===id);
-    if(idx>-1){ state.amortizables[cat][idx][field] = value; renderAllTables(); updateAll(); }
+    const i=state.amortizables[cat].findIndex(x=>x.id===id);
+    if(i>-1){state.amortizables[cat][i][field]=value;}
   });
   ['lokala','ekoizpena','garraioa','hazkuntza'].forEach(cat=>{
-    const idx = state.recurrings[cat].findIndex(x=>x.id===id);
-    if(idx>-1){ state.recurrings[cat][idx][field] = value; renderAllTables(); updateAll(); }
+    const i=state.recurrings[cat].findIndex(x=>x.id===id);
+    if(i>-1){state.recurrings[cat][i][field]=value;}
   });
-  const pidx = state.personnel.findIndex(x=>x.id===id);
-  if(pidx>-1){ state.personnel[pidx][field] = value; renderAllTables(); updateAll(); }
+  const p=state.personnel.findIndex(x=>x.id===id);
+  if(p>-1){state.personnel[p][field]=value;}
+  renderAllTables();updateAll();
 };
 
-/* =========================
+/* ===========================
    CÁLCULOS PRINCIPALES
-   ========================= */
+   =========================== */
 function updateAll(){
-  // amortization totals
-  let localInvestment=0, localAmort=0;
-  let transportInvestment=0, transportAmort=0;
-  Object.values(state.amortizables).forEach(arr=>{
-    arr.forEach(it=>{
-      if(it.category==='lokala'){ localInvestment += safeNum(it.cost); localAmort += (safeNum(it.life)>0? safeNum(it.cost)/safeNum(it.life):0); }
-      if(it.category==='garraioa'){ transportInvestment += safeNum(it.cost); transportAmort += (safeNum(it.life)>0? safeNum(it.cost)/safeNum(it.life):0); }
-    });
-  });
-
-  // recurring totals
-  let locRec=0, prodRec=0, transRec=0, growthRec=0;
+  let locInv=0,locAm=0,locRec=0,prodRec=0,transRec=0,growRec=0,perCost=0;
+  state.amortizables.lokala.forEach(it=>{locInv+=it.cost;locAm+=it.cost/it.life;});
+  state.amortizables.garraioa.forEach(it=>{transRec+=it.cost/it.life;});
   Object.keys(state.recurrings).forEach(cat=>{
     state.recurrings[cat].forEach(it=>{
-      const ann = safeNum(it.payment_cost) * safeNum(it.frequency);
-      if(cat==='lokala') locRec += ann;
-      if(cat==='ekoizpena') prodRec += ann;
-      if(cat==='garraioa') transRec += ann;
-      if(cat==='hazkuntza') growthRec += ann;
+      const ann=it.payment_cost*it.frequency;
+      if(cat==='lokala')locRec+=ann;
+      if(cat==='ekoizpena')prodRec+=ann;
+      if(cat==='garraioa')transRec+=ann;
+      if(cat==='hazkuntza')growRec+=ann;
     });
   });
-
-  // personnel
-  let totalPersonnelCost = 0;
-  state.personnel.forEach(p=>{
-    totalPersonnelCost += safeNum(p.gross) * (1 + safeNum(p.employer_ss)/100);
-  });
-
-  // financial cost already in state.finance
-  const totalFinancial = safeNum(state.finance.totalFinancialCost);
-
-  // DOM set
-  const trySet = (id,v)=>{ const el = document.getElementById(id); if(el) el.textContent = (typeof v === 'number')? fmt(v): v; };
-
-  trySet('total-local-investment', localInvestment);
-  trySet('total-local-amortization', localAmort);
-  trySet('total-local-recurring', locRec);
-  trySet('total-local-annual-cost', localAmort + locRec);
-
-  trySet('total-production-cost', prodRec);
-  trySet('total-transport-annual-cost', transportAmort + transRec);
-  trySet('total-growth-cost', growthRec);
-
-  trySet('total-personnel-cost', totalPersonnelCost);
-
-  // global summary
-  const totalFixed = localAmort + locRec + totalPersonnelCost;
-  const totalVariable = prodRec + transRec + growthRec;
-  const totalOperational = totalFixed + totalVariable + totalFinancial;
-
-  trySet('total-fixed-annual-cost', totalFixed);
-  trySet('total-variable-annual-cost', totalVariable);
-  trySet('total-financial-cost', totalFinancial);
-  trySet('total-operational-cost', totalOperational);
-
-  // update right panel summary (specific per active tab)
+  state.personnel.forEach(p=>perCost+=p.gross*(1+p.employer_ss/100));
+  const totalFin=safeNum(state.finance.totalFinancialCost);
+  const total=locAm+locRec+prodRec+transRec+growRec+perCost+totalFin;
+  const trySet=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=fmt(v);};
+  trySet('total-operational-cost',total);
   updateRightSummary();
 }
 
-/* =========================
-   FINANCE / LOAN
-   ========================= */
-function updateFinanceInputs(){
-  state.partners[0] = safeNum(document.getElementById('partner-capital-1')?.value);
-  state.partners[1] = safeNum(document.getElementById('partner-capital-2')?.value);
-  state.partners[2] = safeNum(document.getElementById('partner-capital-3')?.value);
-  const totalPartner = state.partners.reduce((s,v)=>s+v,0);
-  const elp = document.getElementById('total-partner-capital'); if(elp) elp.textContent = fmt(totalPartner);
-
-  // calculate finance needed (simple heuristic)
-  const investmentSum = state.amortizables.lokala.concat(state.amortizables.garraioa).reduce((s,i)=>s+safeNum(i.cost),0);
-  const recurringAnnual = Object.keys(state.recurrings).reduce((s,cat)=> s + state.recurrings[cat].reduce((ss,it)=> ss + safeNum(it.payment_cost)*safeNum(it.frequency),0), 0);
-  const personnelAnnual = state.personnel.reduce((s,p)=> s+ safeNum(p.gross)*(1+safeNum(p.employer_ss)/100),0);
-  const runway = (recurringAnnual + personnelAnnual)/4; // 3 months ~ quarter approximated
-  const needed = investmentSum + runway;
-  const nf = document.getElementById('total-finance-needed'); if(nf) nf.textContent = fmt(needed);
-  const deficit = Math.max(0, needed - totalPartner);
-  const dfEl = document.getElementById('finance-deficit'); if(dfEl) dfEl.textContent = fmt(deficit);
-  const suggestedLoanEl = document.getElementById('suggested-loan'); if(suggestedLoanEl) suggestedLoanEl.textContent = fmt(deficit);
-}
-
-window.updateFinanceStrategy = function(){
-  updateFinanceInputs();
-  updateAll();
-};
-
-window.updateLoanCalculation = function(){
-  state.finance.loanAmount = safeNum(document.getElementById('loan-amount')?.value);
-  state.finance.loanTAE = safeNum(document.getElementById('loan-tae')?.value);
-  state.finance.loanTerm = Math.max(1, safeNum(document.getElementById('loan-term')?.value));
-
-  if(state.finance.loanAmount <= 0){
-    state.finance.annualInterest = 0;
-    state.finance.totalFinancialCost = 0;
-  } else {
-    state.finance.annualInterest = state.finance.loanAmount * (state.finance.loanTAE/100);
-    state.finance.totalFinancialCost = state.finance.annualInterest * state.finance.loanTerm;
-  }
-  const aic = document.getElementById('annual-interest-cost'); if(aic) aic.textContent = fmt(state.finance.annualInterest);
-  const tfc = document.getElementById('total-financial-cost'); if(tfc) tfc.textContent = fmt(state.finance.totalFinancialCost);
-  // trigger recompute
-  updateAll();
-};
-
-/* =========================
-   SALARY / PRICING CALCS
-   ========================= */
+/* ===========================
+   SALARIO / PRECIO HORA
+   =========================== */
 function calcNetSalary(){
-  const gross = safeNum(document.getElementById('grossSalary')?.value);
-  const irpf = safeNum(document.getElementById('irpfRate')?.value);
-  const ssEmp = gross * 0.0635;
-  const annualNet = gross - (gross * irpf/100) - ssEmp;
-  const monthly = annualNet / 14;
-  const elNet = document.getElementById('netMonthlySalary'); if(elNet) elNet.textContent = fmt(monthly);
-  const elSS = document.getElementById('ssDeduction'); if(elSS) elSS.textContent = fmt(ssEmp);
+  const gross=safeNum(qs('#grossSalary')?.value);
+  const irpf=safeNum(qs('#irpfRate')?.value);
+  const ss=gross*0.0635;
+  const net=gross-(gross*irpf/100)-ss;
+  qs('#netMonthlySalary').textContent=fmt(net/14);
+  qs('#ssDeduction').textContent=fmt(ss);
 }
 
 function calculatePricing(){
-  const corporateTax = safeNum(document.getElementById('corporate-tax')?.value) || 25;
-  const margin = safeNum(document.getElementById('target-profit-margin')?.value) || 20;
-  const employees = Math.max(1, safeNum(document.getElementById('employee-count')?.value) || 1);
-  const hoursEach = Math.max(1, safeNum(document.getElementById('annual-hours-per-employee')?.value) || 1600);
-  const totalHours = employees * hoursEach;
-  const totalCosts = Number((document.getElementById('total-operational-cost')?.textContent || '').replace(/[^0-9\.-]/g,'')) || 0;
-  const suggested = totalHours>0 ? (totalCosts * (1 + margin/100)) / totalHours : 0;
-  const elHours = document.getElementById('total-available-hours'); if(elHours) elHours.textContent = totalHours.toLocaleString();
-  const elRate = document.getElementById('suggested-hourly-rate'); if(elRate) elRate.textContent = fmt(suggested);
-  const elProfit = document.getElementById('expected-net-profit'); if(elProfit) elProfit.textContent = fmt(totalCosts * (margin/100));
-  // also update summary fields used in right panel
-  const requiredRevenue = totalCosts * (1 + margin/100);
-  const reqEl = document.getElementById('required-annual-revenue');
-  if(reqEl) reqEl.textContent = fmt(requiredRevenue);
+  const margin=safeNum(qs('#target-profit-margin')?.value)||20;
+  const emp=Math.max(1,safeNum(qs('#employee-count')?.value)||1);
+  const hours=safeNum(qs('#annual-hours-per-employee')?.value)||1600;
+  const totalHours=emp*hours;
+  const totalCosts=Number((qs('#total-operational-cost')?.textContent||'').replace(/[^0-9\.-]/g,''))||0;
+  const suggested=(totalCosts*(1+margin/100))/totalHours;
+  qs('#total-available-hours').textContent=totalHours.toLocaleString();
+  qs('#suggested-hourly-rate').textContent=fmt(suggested);
+  qs('#expected-net-profit').textContent=fmt(totalCosts*(margin/100));
+  qs('#required-annual-revenue').textContent=fmt(totalCosts*(1+margin/100));
 }
 
-/* =========================
-   PANEL DERECHO (RESUMEN ESPECÍFICO)
-   ========================= */
+/* ===========================
+   RESUMEN DERECHO
+   =========================== */
 function updateRightSummary(){
-  // ensure enhanced summary card exists; if not, create
-  const aside = document.querySelector('aside.sidebar');
-  if(!aside) return;
-  let enhanced = document.getElementById('enhanced-summary');
-  if(!enhanced){
-    enhanced = document.createElement('div');
-    enhanced.className = 'card';
-    enhanced.id = 'enhanced-summary';
-    enhanced.innerHTML = `
-      <h4>Laburpen xehetuak</h4>
-      <p id="summary-operational">Urteko gastu osoa: <strong id="summary-operational-val">€ 0.00</strong></p>
-      <p id="summary-profit">Mozkin garbia: <strong id="summary-profit-val">€ 0.00</strong></p>
-      <p id="summary-required">Fakturazio beharra: <strong id="summary-required-val">€ 0.00</strong></p>
-      <p id="summary-finance">Finantzia behar: <strong id="summary-finance-val">€ 0.00</strong></p>
-      <p id="summary-rate">Orduko prezioa gomendatua: <strong id="summary-rate-val">€ 0.00</strong></p>
-    `;
-    // insert before contact card
-    const contactCard = aside.querySelector('.card:last-of-type');
-    if(contactCard) aside.insertBefore(enhanced, contactCard);
-    else aside.appendChild(enhanced);
+  const op=Number((qs('#total-operational-cost')?.textContent||'').replace(/[^0-9\.-]/g,''))||0;
+  const profit=Number((qs('#expected-net-profit')?.textContent||'').replace(/[^0-9\.-]/g,''))||0;
+  const req=Number((qs('#required-annual-revenue')?.textContent||'').replace(/[^0-9\.-]/g,''))||0;
+  const rate=Number((qs('#suggested-hourly-rate')?.textContent||'').replace(/[^0-9\.-]/g,''))||0;
+  const aside=document.querySelector('aside.sidebar');
+  if(!aside)return;
+  let c=document.getElementById('enhanced-summary');
+  if(!c){
+    c=document.createElement('div');
+    c.className='card';c.id='enhanced-summary';
+    c.innerHTML=`<h4>Laburpen xehetuak</h4>
+      <p>Urteko gastu osoa: <strong id="summary-operational-val">€ 0.00</strong></p>
+      <p>Mozkin garbia: <strong id="summary-profit-val">€ 0.00</strong></p>
+      <p>Fakturazio beharra: <strong id="summary-required-val">€ 0.00</strong></p>
+      <p>Orduko prezioa: <strong id="summary-rate-val">€ 0.00</strong></p>`;
+    aside.appendChild(c);
   }
-
-  // compute summary values
-  const totalOperational = Number((document.getElementById('total-operational-cost')?.textContent||'').replace(/[^0-9\.-]/g,''))||0;
-  const profit = Number((document.getElementById('expected-net-profit')?.textContent||'').replace(/[^0-9\.-]/g,''))||0;
-  const required = Number((document.getElementById('required-annual-revenue')?.textContent||'').replace(/[^0-9\.-]/g,''))||0;
-  const financeNeeded = Number((document.getElementById('total-finance-needed')?.textContent||'').replace(/[^0-9\.-]/g,''))||0;
-  const suggestedRate = Number((document.getElementById('suggested-hourly-rate')?.textContent||'').replace(/[^0-9\.-]/g,''))||0;
-
-  const set = (id,val)=>{ const el = document.getElementById(id); if(el) el.textContent = fmt(val); };
-  set('summary-operational-val', totalOperational);
-  set('summary-profit-val', profit);
-  set('summary-required-val', required);
-  set('summary-finance-val', financeNeeded);
-  set('summary-rate-val', suggestedRate);
-
-  // additionally show context-specific snippet
-  // e.g., if current visible sheet is 'lokala', show local breakdown
-  const visibleSheet = qsa('.panel').find(p=> p.style.display !== 'none' && !p.classList.contains('hidden'));
-  const snippetEl = document.getElementById('lokal-summary');
-  if(visibleSheet && visibleSheet.id === 'lokala-sheet' && snippetEl){
-    const localAmort = Number((document.getElementById('total-local-amortization')?.textContent||'').replace(/[^0-9\.-]/g,''))||0;
-    const localRec = Number((document.getElementById('total-local-recurring')?.textContent||'').replace(/[^0-9\.-]/g,''))||0;
-    snippetEl.textContent = `Amortiz: ${fmt(localAmort)} · Errepik: ${fmt(localRec)}`;
-  }
+  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=fmt(v);};
+  set('summary-operational-val',op);
+  set('summary-profit-val',profit);
+  set('summary-required-val',req);
+  set('summary-rate-val',rate);
 }
 
-/* =========================
+/* ===========================
    PDF GENERATION
-   ========================= */
+   =========================== */
 async function generatePDFReport(){
-  const overlay = document.getElementById('loading-overlay');
-  if(overlay) overlay.style.display = 'flex';
+  const overlay=document.getElementById('loading-overlay');
+  if(overlay)overlay.style.display='flex';
   try{
-    // prefer to capture the active panel content to produce compact PDF
-    const activePanel = qsa('.panel').find(p => p.style.display !== 'none' && !p.classList.contains('hidden'));
-    const node = activePanel || document.getElementById('main-sheet') || document.body;
-    const canvas = await html2canvas(node, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
-    const imgData = canvas.toDataURL('image/png');
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF('p','pt','a4');
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const imgHeight = canvas.height * pageWidth / canvas.width;
-    doc.addImage(imgData, 'PNG', 0, 0, pageWidth, imgHeight);
-    // footer with contact and language
-    const lang = localStorage.getItem('selectedLanguage') || 'eu';
-    const footerText = (translations[lang] && translations[lang]['footer.note']) || fallbackTranslations[lang]['footer.note'];
+    const node=document.querySelector('.panel:not([style*="display: none"])')||document.body;
+    const canvas=await html2canvas(node,{scale:2,useCORS:true,backgroundColor:'#fff'});
+    const img=canvas.toDataURL('image/png');
+    const {jsPDF}=window.jspdf;
+    const doc=new jsPDF('p','pt','a4');
+    const w=doc.internal.pageSize.getWidth();
+    const h=canvas.height*w/canvas.width;
+    doc.addImage(img,'PNG',0,0,w,h);
     doc.setFontSize(9);
-    doc.text(footerText, 40, doc.internal.pageSize.getHeight() - 30);
+    const lang=localStorage.getItem('selectedLanguage')||'eu';
+    const footer=(translations[lang]?.['footer.note'])||fallbackTranslations[lang]['footer.note'];
+    doc.text(footer,40,doc.internal.pageSize.getHeight()-30);
     doc.save('IDarte_Aurrekontua.pdf');
-  }catch(err){
-    console.error(err);
-    alert('Errorea sortzean PDF: ' + (err.message || err));
-  }finally{
-    if(overlay) overlay.style.display = 'none';
-  }
+  }catch(e){alert('Errorea sortzean PDF: '+e.message);}
+  if(overlay)overlay.style.display='none';
 }
 
-/* =========================
-   INIT: PRELOAD SAMPLE DATA + BIND EVENTS
-   ========================= */
-function preloadSampleData(){
-  // amortizables
+/* ===========================
+   DATOS INICIALES (basados en kodea (7))
+   =========================== */
+function preloadSampleData() {
+  // --- AMORTIZABLES ---
   state.amortizables.lokala = [
-    { id: uid('am'), name: 'Sarrera ekipamendua', cost: 3000, life: 5, category: 'lokala' }
+    { id: uid('am'), name: 'Lokalaren Erosketa (Amortizagarria)', cost: 120000, life: 20, category: 'lokala' },
+    { id: uid('am'), name: 'Erreformaren Balioa (Amortizagarria)', cost: 30000, life: 10, category: 'lokala' },
+    { id: uid('am'), name: 'Altzarien Erosketa', cost: 8000, life: 5, category: 'lokala' },
+    { id: uid('am'), name: 'Hardware eta Softwarearen Hornitzea', cost: 4000, life: 4, category: 'lokala' }
   ];
+
   state.amortizables.garraioa = [
-    { id: uid('am'), name: 'Kotxea', cost: 12000, life: 5, category: 'garraioa' }
+    { id: uid('am'), name: 'Garraio Ibilgailuaren Erosketa', cost: 20000, life: 5, category: 'garraioa' }
   ];
-  // recurrings
+
+  // --- GASTOS RECURRENTES ---
   state.recurrings.lokala = [
-    { id: uid('r'), name: 'Alokairua (hilekoa)', payment_cost: 800, frequency: 12, category: 'lokala' },
-    { id: uid('r'), name: 'Ura / Argia', payment_cost: 100, frequency: 12, category: 'lokala' }
+    { id: uid('r'), name: 'Alokairua (Hilekoa)', payment_cost: 800, frequency: 12, category: 'lokala' },
+    { id: uid('r'), name: 'Hornigaiak: Gutxieneko Kontsumoa (Argia, Ura)', payment_cost: 100, frequency: 12, category: 'lokala' },
+    { id: uid('r'), name: 'Erantzukizun Zibileko Asegurua (Urteko Prima FINKOA)', payment_cost: 600, frequency: 1, category: 'lokala' },
+    { id: uid('r'), name: 'Zergak eta Udal Tasak (Lokala)', payment_cost: 1200, frequency: 1, category: 'lokala' },
+    { id: uid('r'), name: 'Bestelako Aseguruak (Lokala)', payment_cost: 450, frequency: 1, category: 'lokala' },
+    { id: uid('r'), name: 'Telefonia eta Internet FINKOA', payment_cost: 80, frequency: 12, category: 'lokala' }
   ];
+
   state.recurrings.ekoizpena = [
-    { id: uid('r'), name: 'Materialak', payment_cost: 400, frequency: 12, category: 'ekoizpena' }
+    { id: uid('r'), name: 'EZA (Proiektu Bakoltzeko Gehigarria)', payment_cost: 200, frequency: 12, category: 'ekoizpena' },
+    { id: uid('r'), name: 'Hirugarrenen Lan Laguntzaileak (Proiektuko Azpikontratak)', payment_cost: 1500, frequency: 12, category: 'ekoizpena' },
+    { id: uid('r'), name: 'Material Gordinak / Kontsumigarri Espezifikoak', payment_cost: 400, frequency: 12, category: 'ekoizpena' },
+    { id: uid('r'), name: 'Elkargo Tasak (Jarduerari lotuak)', payment_cost: 150, frequency: 1, category: 'ekoizpena' }
   ];
+
   state.recurrings.garraioa = [
-    { id: uid('r'), name: 'Erregaia', payment_cost: 250, frequency: 12, category: 'garraioa' }
+    { id: uid('r'), name: 'Garraioa: Mantentze-lanak eta Konponketak', payment_cost: 500, frequency: 1, category: 'garraioa' },
+    { id: uid('r'), name: 'Garraioa: Udal Tasak eta Zergak (Urteko)', payment_cost: 150, frequency: 1, category: 'garraioa' },
+    { id: uid('r'), name: 'Garraioa: Asegurua (Urteko)', payment_cost: 500, frequency: 1, category: 'garraioa' },
+    { id: uid('r'), name: 'Garraioa: Erregaia / Gasolina', payment_cost: 250, frequency: 12, category: 'garraioa' },
+    { id: uid('r'), name: 'Dietak / Bazkariak (Desplazamenduak)', payment_cost: 150, frequency: 12, category: 'garraioa' }
   ];
+
   state.recurrings.hazkuntza = [
-    { id: uid('r'), name: 'Komunikazioa', payment_cost: 150, frequency: 12, category: 'hazkuntza' }
+    { id: uid('r'), name: 'Prestakuntza Saioak eta Ikastaroak', payment_cost: 800, frequency: 1, category: 'hazkuntza' },
+    { id: uid('r'), name: 'Aldizkari eta Ikerketa Harpidetzak', payment_cost: 100, frequency: 12, category: 'hazkuntza' },
+    { id: uid('r'), name: 'Komunikazioa Sareetan / Marketing digitala', payment_cost: 300, frequency: 12, category: 'hazkuntza' },
+    { id: uid('r'), name: 'Patrozinioak / Networking Ekitaldiak', payment_cost: 500, frequency: 1, category: 'hazkuntza' }
   ];
-  // personnel
+
+  // --- PERSONAL ---
   state.personnel = [
-    { id: uid('p'), role: 'Diseinatzaile', gross: 25000, employer_ss: 30 }
+    { id: uid('p'), role: 'Zuzendaria / Bazkidea', gross: 35000, employer_ss: 30 }
   ];
-}
 
-function bindGlobalInputs(){
-  // language select
-  const sel = document.getElementById('language-select');
-  if(sel) sel.addEventListener('change', (e)=> applyTranslations(e.target.value));
-  // finance inputs
-  ['partner-capital-1','partner-capital-2','partner-capital-3'].forEach(id=>{
-    const el = document.getElementById(id); if(el) el.addEventListener('input', updateFinanceStrategy);
-  });
-  ['loan-amount','loan-tae','loan-term'].forEach(id=>{
-    const el = document.getElementById(id); if(el) el.addEventListener('input', updateLoanCalculation);
-  });
-  ['corporate-tax','target-profit-margin','employee-count','annual-hours-per-employee'].forEach(id=>{
-    const el = document.getElementById(id); if(el) el.addEventListener('input', calculatePricing);
-  });
-  // salary calc
-  const gross = document.getElementById('grossSalary'); if(gross) gross.addEventListener('input', calcNetSalary);
-  const irpf = document.getElementById('irpfRate'); if(irpf) irpf.addEventListener('input', calcNetSalary);
-  // download button
-  const dl = document.getElementById('download-report-btn'); if(dl) dl.addEventListener('click', generatePDFReport);
-}
+  // --- FINANZAS ---
+  state.finance = {
+    totalNeeded: 0,
+    partnerCapital: [0, 0, 0],
+    suggestedLoan: 0,
+    loanAmount: 0,
+    loanTAE: 5.0,
+    loanTerm: 5,
+    annualInterest: 0,
+    capitalistNeeded: 0
+  };
 
-async function init(){
-  // load translations (try remote file; fallback to embedded)
-  await loadTranslations(localStorage.getItem('selectedLanguage') || 'eu');
-  // build panels if empty
-  buildPanelsIfEmpty();
-  // preload data
-  preloadSampleData();
-  // render tables
+  // Render inicial
   renderAllTables();
-  renderAllTables(); // call twice occasionally helps ensure DOM ids exist
-  // compute initial sums
   updateAll();
-  // bind inputs
-  bindGlobalInputs();
-  // init tabs behaviour
-  initTabs();
-  // set language select value
-  const sel = document.getElementById('language-select'); if(sel) sel.value = localStorage.getItem('selectedLanguage') || 'eu';
 }
 
-// run init on load
-
-/* =========================
-   TABS BEHAVIOUR
-   ========================= */
-function initTabs() {
-  const tabs = document.querySelectorAll('.tabs button');
-  const panels = document.querySelectorAll('.panel');
-
-  if (!tabs.length || !panels.length) return;
-
-  tabs.forEach((tab, idx) => {
-    tab.addEventListener('click', () => {
-      tabs.forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      panels.forEach(p => p.style.display = 'none');
-      if (panels[idx]) panels[idx].style.display = 'block';
-      // actualizar resumen contextual
-      updateRightSummary();
-    });
+/* ===========================
+   INIT + EVENTOS GLOBALES
+   =========================== */
+function bindGlobalInputs(){
+  const sel=document.getElementById('language-select');
+  if(sel)sel.addEventListener('change',e=>applyTranslations(e.target.value));
+  ['partner-capital-1','partner-capital-2','partner-capital-3'].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.addEventListener('input',updateAll);
   });
+  ['loan-amount','loan-tae','loan-term'].
 
-  // mostrar primer panel por defecto
-  tabs[0]?.classList.add('active');
-  panels.forEach((p, i) => p.style.display = i === 0 ? 'block' : 'none');
-}
-
-/* =========================
-   NAVEGACIÓN ENTRE PESTAÑAS
-   ========================= */
-function initTabs() {
-  const tabs = document.querySelectorAll('.tabs button');
-  const panels = document.querySelectorAll('.panel');
-
-  if (!tabs.length || !panels.length) return;
-
-  tabs.forEach((tab, idx) => {
-    tab.addEventListener('click', () => {
-      tabs.forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      panels.forEach(p => p.style.display = 'none');
-      if (panels[idx]) panels[idx].style.display = 'block';
-      // Actualizar resumen de la pestaña
-      if (typeof updateRightSummary === 'function') updateRightSummary();
-    });
-  });
-
-  // Mostrar la primera pestaña por defecto
-  tabs[0]?.classList.add('active');
-  panels.forEach((p, i) => p.style.display = i === 0 ? 'block' : 'none');
-}
-
-
-window.addEventListener('load', init);
 

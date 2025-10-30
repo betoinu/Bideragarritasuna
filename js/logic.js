@@ -359,11 +359,92 @@ function preloadSampleData() {
    INIT + EVENTOS GLOBALES
    =========================== */
 function bindGlobalInputs(){
-  const sel=document.getElementById('language-select');
-  if(sel)sel.addEventListener('change',e=>applyTranslations(e.target.value));
+  const sel = document.getElementById('language-select');
+  if (sel) sel.addEventListener('change', e => applyTranslations(e.target.value));
+
+  // Capital de socios
   ['partner-capital-1','partner-capital-2','partner-capital-3'].forEach(id=>{
-    const el=document.getElementById(id);if(el)el.addEventListener('input',updateAll);
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', updateAll);
   });
-  ['loan-amount','loan-tae','loan-term'].
 
+  // Préstamo
+  ['loan-amount','loan-tae','loan-term'].forEach(id=>{
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', updateAll);
+  });
 
+  // Cálculo de salario y precio/hora
+  const gross = document.getElementById('grossSalary');
+  const irpf = document.getElementById('irpfRate');
+  if (gross) gross.addEventListener('input', calcNetSalary);
+  if (irpf) irpf.addEventListener('input', calcNetSalary);
+
+  ['corporate-tax','target-profit-margin','employee-count','annual-hours-per-employee'].forEach(id=>{
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', calculatePricing);
+  });
+
+  // Botón PDF
+  const dl = document.getElementById('download-report-btn');
+  if (dl) dl.addEventListener('click', generatePDFReport);
+}
+
+/* ===========================
+   TABS / PESTAÑAS
+   =========================== */
+function initTabs() {
+  const tabs = document.querySelectorAll('.tabs button');
+  const panels = document.querySelectorAll('.panel');
+
+  if (!tabs.length || !panels.length) return;
+
+  tabs.forEach((tab, idx) => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      panels.forEach(p => p.style.display = 'none');
+      if (panels[idx]) panels[idx].style.display = 'block';
+      if (typeof updateRightSummary === 'function') updateRightSummary();
+    });
+  });
+
+  // Mostrar primer panel por defecto
+  if (tabs[0]) tabs[0].classList.add('active');
+  panels.forEach((p, i) => p.style.display = i === 0 ? 'block' : 'none');
+}
+
+/* ===========================
+   INIT PRINCIPAL
+   =========================== */
+async function init(){
+  // Idioma inicial
+  await loadTranslations(localStorage.getItem('selectedLanguage') || 'eu');
+
+  // Construir paneles (por compatibilidad)
+  buildPanelsIfEmpty();
+
+  // Datos de ejemplo iniciales
+  preloadSampleData();
+
+  // Render de tablas
+  renderAllTables();
+
+  // Cálculos iniciales
+  updateAll();
+
+  // Inputs y botones
+  bindGlobalInputs();
+
+  // Tabs
+  initTabs();
+
+  // Selección de idioma actual
+  const sel = document.getElementById('language-select');
+  if (sel) sel.value = localStorage.getItem('selectedLanguage') || 'eu';
+}
+
+/* ===========================
+   EJECUCIÓN AUTOMÁTICA AL CARGAR
+   =========================== */
+window.addEventListener('load', init);

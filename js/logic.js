@@ -447,4 +447,3 @@ async function init(){
    EJECUCIÓN AUTOMÁTICA AL CARGAR
    =========================== */
 window.addEventListener('load', init);
-}

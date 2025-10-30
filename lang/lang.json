@@ -1,0 +1,40 @@
+{
+  "eu": {
+    "header.title": "IDarte · Euskadiko Diseinu Eskola Publikoa",
+    "header.subtitle": "BARNE DISEINU GRADUA - Neurketak eta Aurrekontuak",
+    "button.download": "Deskargatu",
+    "tab.lokal": "1 · Lokal",
+    "tab.pertsonala": "2 · Pertsonala",
+    "tab.ekoizpena": "3 · Ekoizpena",
+    "tab.garraioa": "4 · Garraioa",
+    "tab.hazkuntza": "5 · Hazkuntza",
+    "tab.finantzaketa": "6 · Finantzaketa",
+    "tab.prezioa": "7 · Prezioa",
+    "summary.title": "Laburpen Orokorra",
+    "summary.subtitle": "Aurrekontu globala",
+    "contact.title": "Kontaktua",
+    "contact.name": "Josu Ayerbe Guarás, Barne Diseinuko Graduko irakaslea",
+    "contact.email": "josuayerbe@idarte.eus",
+    "footer.note": "IDarte · Euskadiko Diseinu Eskola Publikoa — Escuela Pública de Diseño de Euskadi.",
+    "loading": "Txostena prestatzen..."
+  },
+  "es": {
+    "header.title": "IDarte · Escuela Pública de Diseño de Euskadi",
+    "header.subtitle": "GRADO EN DISEÑO DE INTERIORES - Mediciones y Presupuestos",
+    "button.download": "Descargar",
+    "tab.lokal": "1 · Local",
+    "tab.pertsonala": "2 · Personal",
+    "tab.ekoizpena": "3 · Producción",
+    "tab.garraioa": "4 · Transporte",
+    "tab.hazkuntza": "5 · Crecimiento",
+    "tab.finantzaketa": "6 · Financiación",
+    "tab.prezioa": "7 · Precio",
+    "summary.title": "Resumen General",
+    "summary.subtitle": "Presupuesto global",
+    "contact.title": "Contacto",
+    "contact.name": "Josu Ayerbe Guarás, profesor del Grado en Diseño de Interiores",
+    "contact.email": "josuayerbe@idarte.eus",
+    "footer.note": "IDarte · Escuela Pública de Diseño de Euskadi — Euskadiko Diseinu Eskola Publikoa.",
+    "loading": "Preparando el informe..."
+  }
+}

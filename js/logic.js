@@ -269,7 +269,7 @@ async function generatePDFReport(){
   if(overlay)overlay.style.display='flex';
   try{
     const node=document.querySelector('.panel:not([style*="display: none"])')||document.body;
-    const canvas=await html2canvas(node,{scale:2,useCORS:true,backgroundColor:'#fff');
+    const canvas=await html2canvas(node,{scale:2,useCORS:true,backgroundColor:'#fff'});
     const img=canvas.toDataURL('image/png');
     const {jsPDF}=window.jspdf;
     const doc=new jsPDF('p','pt','a4');

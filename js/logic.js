@@ -284,7 +284,6 @@ async function generatePDFReport(){
   }catch(e){alert('Errorea sortzean PDF: '+e.message);}
   if(overlay)overlay.style.display='none';
 }
-
 /* ===========================
    DATOS INICIALES (basados en kodea (7))
    =========================== */

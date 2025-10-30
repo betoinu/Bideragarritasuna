@@ -35,25 +35,145 @@
   <main class="stage">
     <section class="stage-left" id="main-sheet">
 
-      <!-- TABS -->
-      <div class="tabs" role="tablist">
-        <button class="tab active" data-target="lokala-sheet"><span data-i18n="tab.lokal">1 · Lokal</span></button>
-        <button class="tab" data-target="pertsonala-sheet"><span data-i18n="tab.pertsonala">2 · Pertsonala</span></button>
-        <button class="tab" data-target="ekoizpena-sheet"><span data-i18n="tab.ekoizpena">3 · Ekoizpena</span></button>
-        <button class="tab" data-target="garraioa-sheet"><span data-i18n="tab.garraioa">4 · Garraioa</span></button>
-        <button class="tab" data-target="hazkuntza-sheet"><span data-i18n="tab.hazkuntza">5 · Hazkuntza</span></button>
-        <button class="tab" data-target="finantzaketa-sheet"><span data-i18n="tab.finantzaketa">6 · Finantzaketa</span></button>
-        <button class="tab" data-target="prezioa-sheet"><span data-i18n="tab.prezioa">7 · Prezioa</span></button>
-      </div>
+     <!-- TABS -->
+<div class="tabs" role="tablist">
+  <button class="tab active"><span data-i18n="tab.lokal">1 · Lokal</span></button>
+  <button class="tab"><span data-i18n="tab.pertsonala">2 · Pertsonala</span></button>
+  <button class="tab"><span data-i18n="tab.ekoizpena">3 · Ekoizpena</span></button>
+  <button class="tab"><span data-i18n="tab.garraioa">4 · Garraioa</span></button>
+  <button class="tab"><span data-i18n="tab.hazkuntza">5 · Hazkuntza</span></button>
+  <button class="tab"><span data-i18n="tab.finantzaketa">6 · Finantzaketa</span></button>
+  <button class="tab"><span data-i18n="tab.prezioa">7 · Prezioa</span></button>
+</div>
 
-      <!-- PANELES (uno por sección) -->
-      <div id="lokala-sheet" class="panel">…</div>
-      <div id="pertsonala-sheet" class="panel" style="display:none">…</div>
-      <div id="ekoizpena-sheet" class="panel" style="display:none">…</div>
-      <div id="garraioa-sheet" class="panel" style="display:none">…</div>
-      <div id="hazkuntza-sheet" class="panel" style="display:none">…</div>
-      <div id="finantzaketa-sheet" class="panel" style="display:none">…</div>
-      <div id="prezioa-sheet" class="panel" style="display:none">…</div>
+<!-- PANEL 1 · LOKALA -->
+<div id="lokala-sheet" class="panel">
+  <h2>1 · Lokalaren Gastu Finkoak eta Inbertsioak</h2>
+
+  <h3>A) Inbertsio amortizagarriak</h3>
+  <table class="data">
+    <thead>
+      <tr><th>Kontzeptua</th><th>Kostua (€)</th><th>Amortizazio Urteak</th><th>Urteko Amortizazioa</th><th></th></tr>
+    </thead>
+    <tbody id="lokala-amortizable-body"></tbody>
+  </table>
+  <button class="btn small" onclick="addAmortizable('lokala')">+ Gehitu</button>
+
+  <h3>B) Gastu finkoak</h3>
+  <table class="data">
+    <thead>
+      <tr><th>Kontzeptua</th><th>Kostua (€)</th><th>Maiztasuna</th><th>Urteko Guztira</th><th></th></tr>
+    </thead>
+    <tbody id="lokala-recurring-body"></tbody>
+  </table>
+  <button class="btn small" onclick="addRecurring('lokala')">+ Gehitu</button>
+</div>
+
+<!-- PANEL 2 · PERTSONALA -->
+<div id="pertsonala-sheet" class="panel" style="display:none">
+  <h2>2 · Pertsonalaren Gastuak</h2>
+  <table class="data">
+    <thead>
+      <tr><th>Lanpostua</th><th>Urteko Soldata Gordina</th><th>Gizarte Segurantza (%)</th><th>Guztira</th><th></th></tr>
+    </thead>
+    <tbody id="personnel-body"></tbody>
+  </table>
+  <button class="btn small" onclick="addPerson()">+ Gehitu Langilea</button>
+</div>
+
+<!-- PANEL 3 · EKOIZPENA -->
+<div id="ekoizpena-sheet" class="panel" style="display:none">
+  <h2>3 · Ekoizpen Gastuak</h2>
+  <table class="data">
+    <thead>
+      <tr><th>Kontzeptua</th><th>Kostua (€)</th><th>Maiztasuna</th><th>Urteko Guztira</th><th></th></tr>
+    </thead>
+    <tbody id="ekoizpena-recurring-body"></tbody>
+  </table>
+  <button class="btn small" onclick="addRecurring('ekoizpena')">+ Gehitu Gastua</button>
+</div>
+
+<!-- PANEL 4 · GARRAIOA -->
+<div id="garraioa-sheet" class="panel" style="display:none">
+  <h2>4 · Garraio eta Logistika Gastuak</h2>
+
+  <h3>A) Inbertsio amortizagarriak</h3>
+  <table class="data">
+    <thead>
+      <tr><th>Kontzeptua</th><th>Kostua (€)</th><th>Amortizazio Urteak</th><th>Urteko Amortizazioa</th><th></th></tr>
+    </thead>
+    <tbody id="garraioa-amortizable-body"></tbody>
+  </table>
+  <button class="btn small" onclick="addAmortizable('garraioa')">+ Gehitu Inbertsioa</button>
+
+  <h3>B) Gastu finkoak</h3>
+  <table class="data">
+    <thead>
+      <tr><th>Kontzeptua</th><th>Kostua (€)</th><th>Maiztasuna</th><th>Urteko Guztira</th><th></th></tr>
+    </thead>
+    <tbody id="garraioa-recurring-body"></tbody>
+  </table>
+  <button class="btn small" onclick="addRecurring('garraioa')">+ Gehitu Gastua</button>
+</div>
+
+<!-- PANEL 5 · HAZKUNTZA -->
+<div id="hazkuntza-sheet" class="panel" style="display:none">
+  <h2>5 · Hazkuntza eta Garapen Gastuak</h2>
+  <table class="data">
+    <thead>
+      <tr><th>Kontzeptua</th><th>Kostua (€)</th><th>Maiztasuna</th><th>Urteko Guztira</th><th></th></tr>
+    </thead>
+    <tbody id="hazkuntza-recurring-body"></tbody>
+  </table>
+  <button class="btn small" onclick="addRecurring('hazkuntza')">+ Gehitu Gastua</button>
+</div>
+
+<!-- PANEL 6 · FINANTZAKETA -->
+<div id="finantzaketa-sheet" class="panel" style="display:none">
+  <h2>6 · Finantzaketa Estrategia</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px">
+    <div>
+      <label for="partner-capital-1">Bazkide 1 Kapitala (€)</label>
+      <input id="partner-capital-1" type="number" value="0" oninput="updateAll()" />
+      <label for="partner-capital-2">Bazkide 2 Kapitala (€)</label>
+      <input id="partner-capital-2" type="number" value="0" oninput="updateAll()" />
+      <label for="partner-capital-3">Bazkide 3 Kapitala (€)</label>
+      <input id="partner-capital-3" type="number" value="0" oninput="updateAll()" />
+    </div>
+    <div>
+      <label for="loan-amount">Mailegua (€)</label>
+      <input id="loan-amount" type="number" value="0" oninput="updateAll()" />
+      <label for="loan-tae">TAE (%)</label>
+      <input id="loan-tae" type="number" value="5" oninput="updateAll()" />
+      <label for="loan-term">Epea (urte)</label>
+      <input id="loan-term" type="number" value="5" oninput="updateAll()" />
+    </div>
+  </div>
+</div>
+
+<!-- PANEL 7 · PREZIOA -->
+<div id="prezioa-sheet" class="panel" style="display:none">
+  <h2>7 · Lanorduaren Prezioa eta Mozkinak</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+    <div>
+      <label for="corporate-tax">Sozietateen Zerga (%)</label>
+      <input id="corporate-tax" type="number" value="25" oninput="calculatePricing()" />
+      <label for="target-profit-margin">Helburuko Mozkin (%)</label>
+      <input id="target-profit-margin" type="number" value="20" oninput="calculatePricing()" />
+      <label for="employee-count">Langile kopurua</label>
+      <input id="employee-count" type="number" value="2" oninput="calculatePricing()" />
+      <label for="annual-hours-per-employee">Urteko orduak/lang</label>
+      <input id="annual-hours-per-employee" type="number" value="1600" oninput="calculatePricing()" />
+    </div>
+    <div>
+      <div class="card"><h4>Urteko lan-orduak guzt.</h4><p id="total-available-hours" class="value">0</p></div>
+      <div class="card"><h4>Gomendatutako orduko prezioa</h4><p id="suggested-hourly-rate" class="value">€ 0.00</p></div>
+      <div class="card"><h4>Espero den mozkin garbia</h4><p id="expected-net-profit" class="value">€ 0.00</p></div>
+      <div class="card"><h4>Fakturazio beharrezkoa</h4><p id="required-annual-revenue" class="value">€ 0.00</p></div>
+    </div>
+  </div>
+</div>
+
 
     </section>
 

@@ -653,5 +653,32 @@ async function init(){
 }
 
 // run init on load
+
+/* =========================
+   TABS BEHAVIOUR
+   ========================= */
+function initTabs() {
+  const tabs = document.querySelectorAll('.tabs button');
+  const panels = document.querySelectorAll('.panel');
+
+  if (!tabs.length || !panels.length) return;
+
+  tabs.forEach((tab, idx) => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      panels.forEach(p => p.style.display = 'none');
+      if (panels[idx]) panels[idx].style.display = 'block';
+      // actualizar resumen contextual
+      updateRightSummary();
+    });
+  });
+
+  // mostrar primer panel por defecto
+  tabs[0]?.classList.add('active');
+  panels.forEach((p, i) => p.style.display = i === 0 ? 'block' : 'none');
+}
+
+
 window.addEventListener('load', init);
 

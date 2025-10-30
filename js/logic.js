@@ -1,401 +1,451 @@
-/* === Fuentes IDarte === */
-@font-face {
-  font-family: 'HK Grotesk';
-  src: url('../fonts/HKGrotesk-Regular.woff2') format('woff2'),
-       url('../fonts/HKGrotesk-Regular.woff') format('woff');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
+/* =========================================
+// IDarte · Enpresa Gastuen Aurrekontua
+// Lógica completa: datos, pestañas, cálculos,
+// idioma, resumen y exportación a PDF
+// =========================================
 
-@font-face {
-  font-family: 'HK Grotesk';
-  src: url('../fonts/HKGrotesk-Medium.woff2') format('woff2'),
-       url('../fonts/HKGrotesk-Medium.woff') format('woff');
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
+/* ============
+   GLOBAL STATE
+   ============ */
+const state = {
+  amortizables: { lokala: [], garraioa: [] },
+  recurrings: { lokala: [], ekoizpena: [], garraioa: [], hazkuntza: [] },
+  personnel: [],
+  partners: [0,0,0],
+  finance: { loanAmount:0, loanTAE:5, loanTerm:5, annualInterest:0, totalFinancialCost:0 }
+};
 
-@font-face {
-  font-family: 'HK Grotesk';
-  src: url('../fonts/HKGrotesk-Bold.woff2') format('woff2'),
-       url('../fonts/HKGrotesk-Bold.woff') format('woff');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-:root {
-  --id-primary: #530CED;
-  --id-illustration: #CE6B78;
-  --id-animation: #23D9B7;
-  --id-yellow: #E2F208;
-  --id-erasmus: #97DFFC;
-  --bg: #fafafa;
-  --muted: #6b7280;
-  --card-bg: #ffffff;
-  --max-width: 1100px;
-}
-
-* { box-sizing: border-box; }
-
-body {
-  font-family: 'HK Grotesk', 'Fira Sans', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
-  background: var(--bg);
-  margin: 0;
-  color: #111827;
-  padding: 24px;
-}
-
-.wrap {
-  max-width: var(--max-width);
-  margin: auto;
-}
-
-/* === CABECERA === */
-header.brand {
-  display: flex;
-  gap: 18px;
-  align-items: center;
-  background: var(--card-bg);
-  padding: 18px;
-  border-radius: 12px;
-  box-shadow: 0 6px 20px rgba(16,24,40,0.06);
-  border-left: 6px solid var(--id-primary);
-}
-
-.logo {
-  width: 200px;
-  height: 200px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.logo img {
-  max-width: 100%;
-  max-height: 100%;
-}
-
-.brand h1 {
-  margin: 0;
-  font-size: 24px;
-  color: var(--id-primary);
-  font-weight: 800;
-}
-
-.brand p {
-  margin: 6px 0 0 0;
-  color: var(--muted);
-  font-size: 14px;
-}
-
-.controls {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  margin-left: auto;
-}
-
-.select, .btn {
-  background: rgba(255,255,255,0.7);
-  border: 1px solid rgba(15,23,42,0.06);
-  padding: 8px 12px;
-  border-radius: 10px;
-  font-weight: 600;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-.btn.primary {
-  background: linear-gradient(90deg, var(--id-primary), #7b4bff);
-  color: white;
-  border: none;
-  box-shadow: 0 6px 18px rgba(83,12,237,0.14);
-  margin-right: 16px;
-}
-
-/* === CUERPO PRINCIPAL === */
-main.stage {
-  margin-top: 18px;
-  display: grid;
-  grid-template-columns: 1fr 360px;
-  gap: 18px;
-  align-items: start;
-}
-
-.stage-left {
-  background: var(--card-bg);
-  padding: 20px;
-  border-radius: 12px;
-  min-height: 420px;
-  box-shadow: 0 6px 20px rgba(16,24,40,0.04);
-  position: relative;
-}
-
-.stage-left::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: linear-gradient(transparent 0 calc(100% - 0px), rgba(14,20,30,0.02) 0),
-                    linear-gradient(90deg, transparent 0 calc(100% - 0px), rgba(14,20,30,0.02) 0);
-  background-size: 80px 80px, 80px 80px;
-  opacity: 0.7;
-  pointer-events: none;
-}
-
-/* === PESTAÑAS === */
-.tabs {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-bottom: 18px;
-}
-
-.tab {
-  padding: 10px 12px;
-  border-radius: 10px;
-  font-weight: 700;
-  font-size: 13px;
-  background: linear-gradient(180deg, rgba(16,24,40,0.03), rgba(16,24,40,0.01));
-  cursor: pointer;
-  border: 1px solid rgba(15,23,42,0.04);
-  transition: all 0.2s ease;
-  flex: 1 1 auto;
-  min-width: 120px;
-  text-align: center;
-  white-space: nowrap;
-}
-
-.tab.active {
-  background: white;
-  border-left: 4px solid var(--id-primary);
-  box-shadow: 0 10px 30px rgba(83,12,237,0.06);
-}
-
-/* === PANELES === */
-.panel {
-  background: linear-gradient(180deg, white, #fbfbff);
-  border-radius: 10px;
-  padding: 18px;
-  border: 1px solid rgba(15,23,42,0.03);
-  margin-bottom: 14px;
-  animation: fadeIn 0.3s ease;
-}
-
-/* === BARRA LATERAL === */
-aside.sidebar {
-  position: sticky;
-  top: 28px;
-  height: fit-content;
-  align-self: start;
-  background: linear-gradient(180deg, var(--card-bg), #fff);
-  padding: 16px;
-  border-radius: 12px;
-  box-shadow: 0 6px 20px rgba(16,24,40,0.04);
-  border-left: 6px solid var(--id-animation);
-}
-
-.card {
-  background: linear-gradient(180deg, rgba(255,255,255,0.9), #fff);
-  padding: 14px;
-  border-radius: 10px;
-  margin-bottom: 12px;
-  border: 1px solid rgba(15,23,42,0.04);
-}
-
-.card h4 {
-  margin: 0 0 8px 0;
-  color: var(--muted);
-  font-size: 12px;
-}
-
-.card p.value {
-  font-size: 20px;
-  margin: 0;
-  font-weight: 800;
-  color: var(--id-primary);
-}
-
-/* === FOOTER === */
-footer.siteinfo {
-  margin-top: 18px;
-  text-align: center;
-  color: var(--muted);
-  font-size: 13px;
-}
-
-/* === RESPONSIVE === */
-@media (max-width: 1000px) {
-  main.stage {
-    grid-template-columns: 1fr;
+/* ==============================
+   TRADUCCIONES FALLBACK (lang.json)
+   ============================== */
+let translations = {};
+const fallbackTranslations = {
+  eu: {
+    "header.title":"IDarte · Euskadiko Diseinu Eskola Publikoa",
+    "header.subtitle":"BARNE DISEINU GRADUA - Neurketak eta Aurrekontuak",
+    "button.download":"Deskargatu",
+    "tab.lokal":"1 · Lokal",
+    "tab.pertsonala":"2 · Pertsonala",
+    "tab.ekoizpena":"3 · Ekoizpena",
+    "tab.garraioa":"4 · Garraioa",
+    "tab.hazkuntza":"5 · Hazkuntza",
+    "tab.finantzaketa":"6 · Finantzaketa",
+    "tab.prezioa":"7 · Prezioa",
+    "summary.title":"Laburpen Orokorra",
+    "summary.subtitle":"Aurrekontu globala",
+    "footer.note":"IDarte · Euskadiko Diseinu Eskola Publikoa — Escuela Pública de Diseño de Euskadi.",
+    "loading":"Txostena prestatzen..."
+  },
+  es: {
+    "header.title":"IDarte · Escuela Pública de Diseño de Euskadi",
+    "header.subtitle":"GRADO EN DISEÑO DE INTERIORES - Mediciones y Presupuestos",
+    "button.download":"Descargar",
+    "tab.lokal":"1 · Local",
+    "tab.pertsonala":"2 · Personal",
+    "tab.ekoizpena":"3 · Producción",
+    "tab.garraioa":"4 · Transporte",
+    "tab.hazkuntza":"5 · Crecimiento",
+    "tab.finantzaketa":"6 · Financiación",
+    "tab.prezioa":"7 · Precio/Hora",
+    "summary.title":"Resumen General",
+    "summary.subtitle":"Presupuesto global",
+    "footer.note":"IDarte · Escuela Pública de Diseño de Euskadi — Euskadiko Diseinu Eskola Publikoa.",
+    "loading":"Preparando el informe..."
   }
-  
-  aside.sidebar {
-    position: relative;
-    border-left: 6px solid var(--id-primary);
+};
+
+/* =====================
+   UTILIDADES BÁSICAS
+   ===================== */
+function uid(prefix='id'){ return prefix + '-' + Math.random().toString(36).slice(2,9); }
+function fmt(n){ n=Number(n)||0; try{ return new Intl.NumberFormat('es-ES',{style:'currency',currency:'EUR'}).format(n);}catch(e){return '€'+n.toFixed(2);} }
+function safeNum(v){ return Number(v||0)||0; }
+function qs(sel){ return document.querySelector(sel); }
+function qsa(sel){ return Array.from(document.querySelectorAll(sel)); }
+
+/* ===========================
+   CARGA TRADUCCIONES
+   =========================== */
+async function loadTranslations(lang){
+  try{
+    const res = await fetch('lang/lang.json');
+    if(!res.ok) throw new Error('no file');
+    const all = await res.json();
+    translations = all;
+  }catch(e){
+    translations = fallbackTranslations;
+  }
+  applyTranslations(lang || localStorage.getItem('selectedLanguage') || 'eu');
+}
+
+function applyTranslations(lang){
+  if(!translations[lang]) translations = fallbackTranslations;
+  const strings = translations[lang];
+  qsa('[data-i18n]').forEach(el=>{
+    const key = el.getAttribute('data-i18n');
+    if(strings[key]) el.textContent = strings[key];
+  });
+  const dl = document.getElementById('download-report-btn');
+  if(dl) dl.textContent = strings['button.download'];
+  localStorage.setItem('selectedLanguage', lang);
+  document.documentElement.lang = lang;
+}
+
+/* ===========================
+   CONSTRUCCIÓN DE PANELES
+   =========================== */
+function buildPanelsIfEmpty(){
+  // Ya definidos en tu HTML, por tanto no se reconstruyen.
+  // (Función conservada por compatibilidad)
+}
+
+/* ===========================
+   CRUD Y RENDER DE TABLAS
+   =========================== */
+function renderAllTables(){
+  const renderAmort = (cat, tbodyId)=>{
+    const tb = document.getElementById(tbodyId);
+    if(!tb) return;
+    tb.innerHTML='';
+    state.amortizables[cat].forEach(it=>{
+      const tr=document.createElement('tr');
+      tr.innerHTML=`
+        <td><input value="${it.name}" data-id="${it.id}" data-field="name" onchange="onFieldChange(event)" /></td>
+        <td style="text-align:right"><input type="number" value="${it.cost}" data-id="${it.id}" data-field="cost" onchange="onFieldChange(event)" /></td>
+        <td style="text-align:center"><input type="number" value="${it.life}" data-id="${it.id}" data-field="life" onchange="onFieldChange(event)" /></td>
+        <td style="text-align:right">${fmt(it.cost/it.life)}</td>
+        <td><button onclick="removeAmortizable('${it.id}','${cat}')" class="btn small">✕</button></td>`;
+      tb.appendChild(tr);
+    });
+  };
+  renderAmort('lokala','lokala-amortizable-body');
+  renderAmort('garraioa','garraioa-amortizable-body');
+
+  const renderRec = (cat, tbodyId)=>{
+    const tb=document.getElementById(tbodyId);
+    if(!tb) return;
+    tb.innerHTML='';
+    state.recurrings[cat].forEach(it=>{
+      const tr=document.createElement('tr');
+      tr.innerHTML=`
+        <td><input value="${it.name}" data-id="${it.id}" data-field="name" onchange="onFieldChange(event)" /></td>
+        <td style="text-align:right"><input type="number" value="${it.payment_cost}" data-id="${it.id}" data-field="payment_cost" onchange="onFieldChange(event)" /></td>
+        <td style="text-align:center"><input type="number" value="${it.frequency}" data-id="${it.id}" data-field="frequency" onchange="onFieldChange(event)" /></td>
+        <td style="text-align:right">${fmt(it.payment_cost*it.frequency)}</td>
+        <td><button onclick="removeRecurring('${it.id}','${cat}')" class="btn small">✕</button></td>`;
+      tb.appendChild(tr);
+    });
+  };
+  renderRec('lokala','lokala-recurring-body');
+  renderRec('ekoizpena','ekoizpena-recurring-body');
+  renderRec('garraioa','garraioa-recurring-body');
+  renderRec('hazkuntza','hazkuntza-recurring-body');
+
+  const tbP=document.getElementById('personnel-body');
+  if(tbP){ tbP.innerHTML='';
+    state.personnel.forEach(p=>{
+      const tr=document.createElement('tr');
+      tr.innerHTML=`
+        <td><input value="${p.role}" data-id="${p.id}" data-field="role" onchange="onFieldChange(event)" /></td>
+        <td style="text-align:right"><input type="number" value="${p.gross}" data-id="${p.id}" data-field="gross" onchange="onFieldChange(event)" /></td>
+        <td style="text-align:center"><input type="number" value="${p.employer_ss}" data-id="${p.id}" data-field="employer_ss" onchange="onFieldChange(event)" /></td>
+        <td style="text-align:right">${fmt(p.gross*(1+p.employer_ss/100))}</td>
+        <td><button onclick="removePersonnel('${p.id}')" class="btn small">✕</button></td>`;
+      tbP.appendChild(tr);
+    });
   }
 }
 
-@media (max-width: 600px) {
-  .form-grid {
-    grid-template-columns: 1fr;
+/* ===========================
+   CRUD FUNCTIONS
+   =========================== */
+window.addAmortizable=function(cat){state.amortizables[cat].push({id:uid('am'),name:'Ekipamendua',cost:1000,life:5,category:cat});renderAllTables();updateAll();};
+window.removeAmortizable=function(id,cat){state.amortizables[cat]=state.amortizables[cat].filter(x=>x.id!==id);renderAllTables();updateAll();};
+window.addRecurring=function(cat){state.recurrings[cat].push({id:uid('r'),name:'Gastu',payment_cost:100,frequency:12,category:cat});renderAllTables();updateAll();};
+window.removeRecurring=function(id,cat){state.recurrings[cat]=state.recurrings[cat].filter(x=>x.id!==id);renderAllTables();updateAll();};
+window.addPerson=function(){state.personnel.push({id:uid('p'),role:'Diseinatzaile',gross:25000,employer_ss:30});renderAllTables();updateAll();};
+window.removePersonnel=function(id){state.personnel=state.personnel.filter(p=>p.id!==id);renderAllTables();updateAll();};
+
+window.onFieldChange=function(e){
+  const el=e.target;
+  const id=el.dataset.id;
+  const field=el.dataset.field;
+  const value=el.type==='number'?safeNum(el.value):el.value;
+  ['lokala','garraioa'].forEach(cat=>{
+    const i=state.amortizables[cat].findIndex(x=>x.id===id);
+    if(i>-1){state.amortizables[cat][i][field]=value;}
+  });
+  ['lokala','ekoizpena','garraioa','hazkuntza'].forEach(cat=>{
+    const i=state.recurrings[cat].findIndex(x=>x.id===id);
+    if(i>-1){state.recurrings[cat][i][field]=value;}
+  });
+  const p=state.personnel.findIndex(x=>x.id===id);
+  if(p>-1){state.personnel[p][field]=value;}
+  renderAllTables();updateAll();
+};
+
+/* ===========================
+   CÁLCULOS PRINCIPALES
+   =========================== */
+function updateAll(){
+  let locInv=0,locAm=0,locRec=0,prodRec=0,transRec=0,growRec=0,perCost=0;
+  state.amortizables.lokala.forEach(it=>{locInv+=it.cost;locAm+=it.cost/it.life;});
+  state.amortizables.garraioa.forEach(it=>{transRec+=it.cost/it.life;});
+  Object.keys(state.recurrings).forEach(cat=>{
+    state.recurrings[cat].forEach(it=>{
+      const ann=it.payment_cost*it.frequency;
+      if(cat==='lokala')locRec+=ann;
+      if(cat==='ekoizpena')prodRec+=ann;
+      if(cat==='garraioa')transRec+=ann;
+      if(cat==='hazkuntza')growRec+=ann;
+    });
+  });
+  state.personnel.forEach(p=>perCost+=p.gross*(1+p.employer_ss/100));
+  const totalFin=safeNum(state.finance.totalFinancialCost);
+  const total=locAm+locRec+prodRec+transRec+growRec+perCost+totalFin;
+  const trySet=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=fmt(v);};
+  trySet('total-operational-cost',total);
+  updateRightSummary();
+}
+
+/* ===========================
+   SALARIO / PRECIO HORA
+   =========================== */
+function calcNetSalary(){
+  const gross=safeNum(qs('#grossSalary')?.value);
+  const irpf=safeNum(qs('#irpfRate')?.value);
+  const ss=gross*0.0635;
+  const net=gross-(gross*irpf/100)-ss;
+  qs('#netMonthlySalary').textContent=fmt(net/14);
+  qs('#ssDeduction').textContent=fmt(ss);
+}
+
+function calculatePricing(){
+  const margin=safeNum(qs('#target-profit-margin')?.value)||20;
+  const emp=Math.max(1,safeNum(qs('#employee-count')?.value)||1);
+  const hours=safeNum(qs('#annual-hours-per-employee')?.value)||1600;
+  const totalHours=emp*hours;
+  const totalCosts=Number((qs('#total-operational-cost')?.textContent||'').replace(/[^0-9\.-]/g,''))||0;
+  const suggested=(totalCosts*(1+margin/100))/totalHours;
+  qs('#total-available-hours').textContent=totalHours.toLocaleString();
+  qs('#suggested-hourly-rate').textContent=fmt(suggested);
+  qs('#expected-net-profit').textContent=fmt(totalCosts*(margin/100));
+  qs('#required-annual-revenue').textContent=fmt(totalCosts*(1+margin/100));
+}
+
+/* ===========================
+   RESUMEN DERECHO
+   =========================== */
+function updateRightSummary(){
+  const op=Number((qs('#total-operational-cost')?.textContent||'').replace(/[^0-9\.-]/g,''))||0;
+  const profit=Number((qs('#expected-net-profit')?.textContent||'').replace(/[^0-9\.-]/g,''))||0;
+  const req=Number((qs('#required-annual-revenue')?.textContent||'').replace(/[^0-9\.-]/g,''))||0;
+  const rate=Number((qs('#suggested-hourly-rate')?.textContent||'').replace(/[^0-9\.-]/g,''))||0;
+  const aside=document.querySelector('aside.sidebar');
+  if(!aside)return;
+  let c=document.getElementById('enhanced-summary');
+  if(!c){
+    c=document.createElement('div');
+    c.className='card';c.id='enhanced-summary';
+    c.innerHTML=`<h4>Laburpen xehetuak</h4>
+      <p>Urteko gastu osoa: <strong id="summary-operational-val">€ 0.00</strong></p>
+      <p>Mozkin garbia: <strong id="summary-profit-val">€ 0.00</strong></p>
+      <p>Fakturazio beharra: <strong id="summary-required-val">€ 0.00</strong></p>
+      <p>Orduko prezioa: <strong id="summary-rate-val">€ 0.00</strong></p>`;
+    aside.appendChild(c);
   }
-  
-  .form-grid label {
-    text-align: left;
-    padding-right: 0;
-  }
-  
-  header.brand {
-    flex-direction: column;
-    text-align: center;
-  }
-  
-  .controls {
-    margin-left: 0;
-    justify-content: center;
-  }
+  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=fmt(v);};
+  set('summary-operational-val',op);
+  set('summary-profit-val',profit);
+  set('summary-required-val',req);
+  set('summary-rate-val',rate);
 }
 
-/* === CLASES UTILITARIAS === */
-.muted { color: var(--muted); }
-
-.pill {
-  display: inline-block;
-  padding: 6px 8px;
-  border-radius: 999px;
-  font-weight: 700;
-  font-size: 12px;
+/* ===========================
+   PDF GENERATION
+   =========================== */
+async function generatePDFReport(){
+  const overlay=document.getElementById('loading-overlay');
+  if(overlay)overlay.style.display='flex';
+  try{
+    const node=document.querySelector('.panel:not([style*="display: none"])')||document.body;
+    const canvas=await html2canvas(node,{scale:2,useCORS:true,backgroundColor:'#fff');
+    const img=canvas.toDataURL('image/png');
+    const {jsPDF}=window.jspdf;
+    const doc=new jsPDF('p','pt','a4');
+    const w=doc.internal.pageSize.getWidth();
+    const h=canvas.height*w/canvas.width;
+    doc.addImage(img,'PNG',0,0,w,h);
+    doc.setFontSize(9);
+    const lang=localStorage.getItem('selectedLanguage')||'eu';
+    const footer=(translations[lang]?.['footer.note'])||fallbackTranslations[lang]['footer.note'];
+    doc.text(footer,40,doc.internal.pageSize.getHeight()-30);
+    doc.save('IDarte_Aurrekontua.pdf');
+  }catch(e){alert('Errorea sortzean PDF: '+e.message);}
+  if(overlay)overlay.style.display='none';
 }
 
-.color-swatch {
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  border: 1px solid rgba(0,0,0,0.06);
+/* ===========================
+   DATOS INICIALES (basados en kodea (7))
+   =========================== */
+function preloadSampleData() {
+  // --- AMORTIZABLES ---
+  state.amortizables.lokala = [
+    { id: uid('am'), name: 'Lokalaren Erosketa (Amortizagarria)', cost: 120000, life: 20, category: 'lokala' },
+    { id: uid('am'), name: 'Erreformaren Balioa (Amortizagarria)', cost: 30000, life: 10, category: 'lokala' },
+    { id: uid('am'), name: 'Altzarien Erosketa', cost: 8000, life: 5, category: 'lokala' },
+    { id: uid('am'), name: 'Hardware eta Softwarearen Hornitzea', cost: 4000, life: 4, category: 'lokala' }
+  ];
+
+  state.amortizables.garraioa = [
+    { id: uid('am'), name: 'Garraio Ibilgailuaren Erosketa', cost: 20000, life: 5, category: 'garraioa' }
+  ];
+
+  // --- GASTOS RECURRENTES ---
+  state.recurrings.lokala = [
+    { id: uid('r'), name: 'Alokairua (Hilekoa)', payment_cost: 800, frequency: 12, category: 'lokala' },
+    { id: uid('r'), name: 'Hornigaiak: Gutxieneko Kontsumoa (Argia, Ura)', payment_cost: 100, frequency: 12, category: 'lokala' },
+    { id: uid('r'), name: 'Erantzukizun Zibileko Asegurua (Urteko Prima FINKOA)', payment_cost: 600, frequency: 1, category: 'lokala' },
+    { id: uid('r'), name: 'Zergak eta Udal Tasak (Lokala)', payment_cost: 1200, frequency: 1, category: 'lokala' },
+    { id: uid('r'), name: 'Bestelako Aseguruak (Lokala)', payment_cost: 450, frequency: 1, category: 'lokala' },
+    { id: uid('r'), name: 'Telefonia eta Internet FINKOA', payment_cost: 80, frequency: 12, category: 'lokala' }
+  ];
+
+  state.recurrings.ekoizpena = [
+    { id: uid('r'), name: 'EZA (Proiektu Bakoltzeko Gehigarria)', payment_cost: 200, frequency: 12, category: 'ekoizpena' },
+    { id: uid('r'), name: 'Hirugarrenen Lan Laguntzaileak (Proiektuko Azpikontratak)', payment_cost: 1500, frequency: 12, category: 'ekoizpena' },
+    { id: uid('r'), name: 'Material Gordinak / Kontsumigarri Espezifikoak', payment_cost: 400, frequency: 12, category: 'ekoizpena' },
+    { id: uid('r'), name: 'Elkargo Tasak (Jarduerari lotuak)', payment_cost: 150, frequency: 1, category: 'ekoizpena' }
+  ];
+
+  state.recurrings.garraioa = [
+    { id: uid('r'), name: 'Garraioa: Mantentze-lanak eta Konponketak', payment_cost: 500, frequency: 1, category: 'garraioa' },
+    { id: uid('r'), name: 'Garraioa: Udal Tasak eta Zergak (Urteko)', payment_cost: 150, frequency: 1, category: 'garraioa' },
+    { id: uid('r'), name: 'Garraioa: Asegurua (Urteko)', payment_cost: 500, frequency: 1, category: 'garraioa' },
+    { id: uid('r'), name: 'Garraioa: Erregaia / Gasolina', payment_cost: 250, frequency: 12, category: 'garraioa' },
+    { id: uid('r'), name: 'Dietak / Bazkariak (Desplazamenduak)', payment_cost: 150, frequency: 12, category: 'garraioa' }
+  ];
+
+  state.recurrings.hazkuntza = [
+    { id: uid('r'), name: 'Prestakuntza Saioak eta Ikastaroak', payment_cost: 800, frequency: 1, category: 'hazkuntza' },
+    { id: uid('r'), name: 'Aldizkari eta Ikerketa Harpidetzak', payment_cost: 100, frequency: 12, category: 'hazkuntza' },
+    { id: uid('r'), name: 'Komunikazioa Sareetan / Marketing digitala', payment_cost: 300, frequency: 12, category: 'hazkuntza' },
+    { id: uid('r'), name: 'Patrozinioak / Networking Ekitaldiak', payment_cost: 500, frequency: 1, category: 'hazkuntza' }
+  ];
+
+  // --- PERSONAL ---
+  state.personnel = [
+    { id: uid('p'), role: 'Zuzendaria / Bazkidea', gross: 35000, employer_ss: 30 }
+  ];
+
+  // --- FINANZAS ---
+  state.finance = {
+    totalNeeded: 0,
+    partnerCapital: [0, 0, 0],
+    suggestedLoan: 0,
+    loanAmount: 0,
+    loanTAE: 5.0,
+    loanTerm: 5,
+    annualInterest: 0,
+    capitalistNeeded: 0
+  };
+
+  // Render inicial
+  renderAllTables();
+  updateAll();
 }
 
-.grid-small {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
+/* ===========================
+   INIT + EVENTOS GLOBALES
+   =========================== */
+function bindGlobalInputs(){
+  const sel = document.getElementById('language-select');
+  if (sel) sel.addEventListener('change', e => applyTranslations(e.target.value));
+
+  // Capital de socios
+  ['partner-capital-1','partner-capital-2','partner-capital-3'].forEach(id=>{
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', updateAll);
+  });
+
+  // Préstamo
+  ['loan-amount','loan-tae','loan-term'].forEach(id=>{
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', updateAll);
+  });
+
+  // Cálculo de salario y precio/hora
+  const gross = document.getElementById('grossSalary');
+  const irpf = document.getElementById('irpfRate');
+  if (gross) gross.addEventListener('input', calcNetSalary);
+  if (irpf) irpf.addEventListener('input', calcNetSalary);
+
+  ['corporate-tax','target-profit-margin','employee-count','annual-hours-per-employee'].forEach(id=>{
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', calculatePricing);
+  });
+
+  // Botón PDF
+  const dl = document.getElementById('download-report-btn');
+  if (dl) dl.addEventListener('click', generatePDFReport);
 }
 
-.hero-visual {
-  width: 100%;
-  height: 160px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  color: white;
-  font-weight: 800;
+/* ===========================
+   TABS / PESTAÑAS
+   =========================== */
+function initTabs() {
+  const tabs = document.querySelectorAll('.tabs button');
+  const panels = document.querySelectorAll('.panel');
+
+  if (!tabs.length || !panels.length) return;
+
+  tabs.forEach((tab, idx) => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      panels.forEach(p => p.style.display = 'none');
+      if (panels[idx]) panels[idx].style.display = 'block';
+      if (typeof updateRightSummary === 'function') updateRightSummary();
+    });
+  });
+
+  // Mostrar primer panel por defecto
+  if (tabs[0]) tabs[0].classList.add('active');
+  panels.forEach((p, i) => p.style.display = i === 0 ? 'block' : 'none');
 }
 
-table.min-w {
-  width: 100%;
-  border-collapse: collapse;
+/* ===========================
+   INIT PRINCIPAL
+   =========================== */
+async function init(){
+  // Idioma inicial
+  await loadTranslations(localStorage.getItem('selectedLanguage') || 'eu');
+
+  // Construir paneles (por compatibilidad)
+  buildPanelsIfEmpty();
+
+  // Datos de ejemplo iniciales
+  preloadSampleData();
+
+  // Render de tablas
+  renderAllTables();
+
+  // Cálculos iniciales
+  updateAll();
+
+  // Inputs y botones
+  bindGlobalInputs();
+
+  // Tabs
+  initTabs();
+
+  // Selección de idioma actual
+  const sel = document.getElementById('language-select');
+  if (sel) sel.value = localStorage.getItem('selectedLanguage') || 'eu';
 }
 
-table.min-w td, table.min-w th {
-  padding: 8px;
-  border-top: 1px solid #f1f5f9;
-}
-
-input[type="number"], input[type="text"], select {
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid #e6edf3;
-  font-family: inherit;
-}
-
-/* === LOGO IDARTE === */
-.idarte-logo {
-  filter: brightness(0) saturate(100%) invert(21%) sepia(95%) saturate(6800%) hue-rotate(253deg) brightness(94%) contrast(107%);
-}
-
-/* === GRIDS ESPECIALES === */
-.idarte-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 12px;
-  margin-top: 12px;
-  align-items: center;
-}
-
-.idarte-grid img {
-  width: 100%;
-  height: auto;
-  border-radius: 8px;
-  object-fit: contain;
-}
-
-.form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px 16px;
-  align-items: center;
-  margin-top: 12px;
-  max-width: 600px;
-}
-
-.form-grid label {
-  font-weight: 500;
-  text-align: right;
-  padding-right: 8px;
-}
-
-.form-grid input {
-  width: 100%;
-  padding: 8px 10px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 1rem;
-}
-
-/* === ANIMACIONES === */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(5px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-/* === SCROLLBAR PARA TABS === */
-.tabs {
-  scroll-behavior: smooth;
-  scrollbar-width: thin;
-  scrollbar-color: #ccc transparent;
-}
-
-.tabs::-webkit-scrollbar {
-  height: 6px;
-}
-
-.tabs::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.tabs::-webkit-scrollbar-thumb {
-  background: #ccc;
-  border-radius: 3px;
-}
-
-/* === BOTONES PEQUEÑOS === */
-.btn.small {
-  padding: 4px 8px;
-  font-size: 12px;
-  border-radius: 6px;
-}
-
-/* === IMÁGENES === */
-img {
-  overflow: visible !important;
-  max-width: 100%;
-  height: auto;
+/* ===========================
+   EJECUCIÓN AUTOMÁTICA AL CARGAR
+   =========================== */
+window.addEventListener('load', init);
 }

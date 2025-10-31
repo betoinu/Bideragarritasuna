@@ -188,24 +188,58 @@ window.onFieldChange=function(e){
    CÁLCULOS PRINCIPALES
    =========================== */
 function updateAll(){
-  let locInv=0,locAm=0,locRec=0,prodRec=0,transRec=0,growRec=0,perCost=0;
-  state.amortizables.lokala.forEach(it=>{locInv+=it.cost;locAm+=it.cost/it.life;});
-  state.amortizables.garraioa.forEach(it=>{transRec+=it.cost/it.life;});
+  let locInv=0, locAm=0, locRec=0, prodRec=0, transRec=0, growRec=0, perCost=0;
+  state.amortizables.lokala.forEach(it=>{ locInv += safeNum(it.cost); locAm += safeNum(it.cost)/Math.max(1,safeNum(it.life)); });
+  state.amortizables.garraioa.forEach(it=>{ transRec += safeNum(it.cost)/Math.max(1,safeNum(it.life)); });
+
   Object.keys(state.recurrings).forEach(cat=>{
     state.recurrings[cat].forEach(it=>{
-      const ann=it.payment_cost*it.frequency;
-      if(cat==='lokala')locRec+=ann;
-      if(cat==='ekoizpena')prodRec+=ann;
-      if(cat==='garraioa')transRec+=ann;
-      if(cat==='hazkuntza')growRec+=ann;
+      const ann = safeNum(it.payment_cost) * Math.max(1, safeNum(it.frequency));
+      if(cat==='lokala') locRec += ann;
+      if(cat==='ekoizpena') prodRec += ann;
+      if(cat==='garraioa') transRec += ann;
+      if(cat==='hazkuntza') growRec += ann;
     });
   });
-  state.personnel.forEach(p=>perCost+=p.gross*(1+p.employer_ss/100));
-  const totalFin=safeNum(state.finance.totalFinancialCost);
-  const total=locAm+locRec+prodRec+transRec+growRec+perCost+totalFin;
-  const trySet=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=fmt(v);};
-  trySet('total-operational-cost',total);
+
+  state.personnel.forEach(p=> perCost += safeNum(p.gross) * (1 + safeNum(p.employer_ss)/100) );
+
+  // financial part (already numeric in state)
+  const totalFin = safeNum(state.finance.totalFinancialCost);
+
+  // totals numeric (sin formato)
+  const totalFixed = locAm + locRec + perCost;
+  const totalVariable = prodRec + transRec + growRec;
+  const totalOperational = totalFixed + totalVariable + totalFin;
+
+  // Helper to set formatted text AND store raw numeric in dataset.value
+  const setFmtAndRaw = (id, value) => {
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.textContent = fmt(value);
+    el.dataset.value = String(Number(value) || 0);
+  };
+
+  setFmtAndRaw('total-local-investment', locInv);
+  setFmtAndRaw('total-local-amortization', locAm);
+  setFmtAndRaw('total-local-recurring', locRec);
+  setFmtAndRaw('total-local-annual-cost', locAm + locRec);
+
+  setFmtAndRaw('total-production-cost', prodRec);
+  setFmtAndRaw('total-transport-annual-cost', transRec + /* transport amortizations already added above? */ 0);
+  setFmtAndRaw('total-growth-cost', growRec);
+
+  setFmtAndRaw('total-personnel-cost', perCost);
+
+  setFmtAndRaw('total-fixed-annual-cost', totalFixed);
+  setFmtAndRaw('total-variable-annual-cost', totalVariable);
+  setFmtAndRaw('total-financial-cost', totalFin);
+  setFmtAndRaw('total-operational-cost', totalOperational);
+
+  // Actualiza resumen derecho y recalcula precios dependientes
   updateRightSummary();
+  // También recalcular el precio/hora por si total_operational cambió
+  calculatePricing();
 }
 
 /* ===========================
@@ -221,16 +255,35 @@ function calcNetSalary(){
 }
 
 function calculatePricing(){
-  const margin=safeNum(qs('#target-profit-margin')?.value)||20;
-  const emp=Math.max(1,safeNum(qs('#employee-count')?.value)||1);
-  const hours=safeNum(qs('#annual-hours-per-employee')?.value)||1600;
-  const totalHours=emp*hours;
-  const totalCosts=Number((qs('#total-operational-cost')?.textContent||'').replace(/[^0-9\.-]/g,''))||0;
-  const suggested=(totalCosts*(1+margin/100))/totalHours;
-  qs('#total-available-hours').textContent=totalHours.toLocaleString();
-  qs('#suggested-hourly-rate').textContent=fmt(suggested);
-  qs('#expected-net-profit').textContent=fmt(totalCosts*(margin/100));
-  qs('#required-annual-revenue').textContent=fmt(totalCosts*(1+margin/100));
+  // lee directamente valores limpios
+  const margin = safeNum(document.getElementById('target-profit-margin')?.value) || 20;
+  const employees = Math.max(1, safeNum(document.getElementById('employee-count')?.value) || 1);
+  const hoursEach = Math.max(1, safeNum(document.getElementById('annual-hours-per-employee')?.value) || 1600);
+  const totalHours = employees * hoursEach;
+
+  // Leer total-operational-cost de dataset.value (si existe), fallback a 0
+  const totalOpEl = document.getElementById('total-operational-cost');
+  const totalCosts = totalOpEl ? safeNum(totalOpEl.dataset.value) : 0;
+
+  const suggested = totalHours > 0 ? ( totalCosts * (1 + margin/100) ) / totalHours : 0;
+
+  // Seteos visuales
+  const elHours = document.getElementById('total-available-hours');
+  if(elHours){
+    elHours.textContent = totalHours.toLocaleString();
+    elHours.dataset.value = String(totalHours);
+  }
+  const elRate = document.getElementById('suggested-hourly-rate');
+  if(elRate){ elRate.textContent = fmt(suggested); elRate.dataset.value = String(Number(suggested)||0); }
+
+  const elProfit = document.getElementById('expected-net-profit');
+  if(elProfit){ elProfit.textContent = fmt(totalCosts * (margin/100)); elProfit.dataset.value = String(totalCosts * (margin/100)); }
+
+  const reqEl = document.getElementById('required-annual-revenue');
+  if(reqEl){ reqEl.textContent = fmt(totalCosts * (1 + margin/100)); reqEl.dataset.value = String(totalCosts * (1 + margin/100)); }
+
+  // Actualiza resumen derecho si es necesario
+  updateRightSummary();
 }
 
 /* ===========================
@@ -355,33 +408,44 @@ function preloadSampleData() {
 }
 
 /* ===========================
+  /* ===========================
    INIT + EVENTOS GLOBALES
    =========================== */
-function bindGlobalInputs(){
+function bindGlobalInputs() {
   const sel = document.getElementById('language-select');
   if (sel) sel.addEventListener('change', e => applyTranslations(e.target.value));
 
-  // Capital de socios
-  ['partner-capital-1','partner-capital-2','partner-capital-3'].forEach(id=>{
+  // Capital de socios → actualiza finanzas y totales
+  ['partner-capital-1', 'partner-capital-2', 'partner-capital-3'].forEach(id => {
     const el = document.getElementById(id);
-    if (el) el.addEventListener('input', updateAll);
+    if (el) el.addEventListener('input', () => {
+      updateAll();
+      calculatePricing();
+    });
   });
 
-  // Préstamo
-  ['loan-amount','loan-tae','loan-term'].forEach(id=>{
+  // Préstamo → recalcula finanzas y costes
+  ['loan-amount', 'loan-tae', 'loan-term'].forEach(id => {
     const el = document.getElementById(id);
-    if (el) el.addEventListener('input', updateAll);
+    if (el) el.addEventListener('input', () => {
+      updateAll();
+      calculatePricing();
+    });
   });
 
-  // Cálculo de salario y precio/hora
+  // Salario neto → recalcula sueldo
   const gross = document.getElementById('grossSalary');
   const irpf = document.getElementById('irpfRate');
   if (gross) gross.addEventListener('input', calcNetSalary);
   if (irpf) irpf.addEventListener('input', calcNetSalary);
 
-  ['corporate-tax','target-profit-margin','employee-count','annual-hours-per-employee'].forEach(id=>{
+  // Precio/hora → recalcula horas y precio cada vez que cambian datos clave
+  ['corporate-tax', 'target-profit-margin', 'employee-count', 'annual-hours-per-employee'].forEach(id => {
     const el = document.getElementById(id);
-    if (el) el.addEventListener('input', calculatePricing);
+    if (el) el.addEventListener('input', () => {
+      updateAll();
+      calculatePricing();
+    });
   });
 
   // Botón PDF

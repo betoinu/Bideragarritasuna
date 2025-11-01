@@ -255,63 +255,60 @@ function calcNetSalary(){
 }
 
 function calculatePricing(){
-  // lee directamente valores limpios
-  const margin = safeNum(document.getElementById('target-profit-margin')?.value) || 20;
-  const employees = Math.max(1, safeNum(document.getElementById('employee-count')?.value) || 1);
-  const hoursEach = Math.max(1, safeNum(document.getElementById('annual-hours-per-employee')?.value) || 1600);
-  const totalHours = employees * hoursEach;
+  const margin=safeNum(qs('#target-profit-margin')?.value)||20;
+  const emp=Math.max(1,safeNum(qs('#employee-count')?.value)||1);
+  const hours=safeNum(qs('#annual-hours-per-employee')?.value)||1600;
+  const totalHours=emp*hours;
 
-  // Leer total-operational-cost de dataset.value (si existe), fallback a 0
-  const totalOpEl = document.getElementById('total-operational-cost');
-  const totalCosts = totalOpEl ? safeNum(totalOpEl.dataset.value) : 0;
+  // Leer total desde el texto visible
+  const totalCosts=Number((qs('#total-operational-cost')?.textContent||'').replace(/[^0-9\.-]/g,''))||0;
 
-  const suggested = totalHours > 0 ? ( totalCosts * (1 + margin/100) ) / totalHours : 0;
+  const profit = totalCosts * (margin / 100);
+  const revenue = totalCosts + profit;
+  const suggested = totalHours > 0 ? revenue / totalHours : 0;
 
-  // Seteos visuales
-  const elHours = document.getElementById('total-available-hours');
-  if(elHours){
-    elHours.textContent = totalHours.toLocaleString();
-    elHours.dataset.value = String(totalHours);
-  }
-  const elRate = document.getElementById('suggested-hourly-rate');
-  if(elRate){ elRate.textContent = fmt(suggested); elRate.dataset.value = String(Number(suggested)||0); }
+  // Actualizar interfaz
+  qs('#total-available-hours').textContent = totalHours.toLocaleString();
+  qs('#suggested-hourly-rate').textContent = fmt(suggested);
+  qs('#expected-net-profit').textContent = fmt(profit);
+  qs('#required-annual-revenue').textContent = fmt(revenue);
 
-  const elProfit = document.getElementById('expected-net-profit');
-  if(elProfit){ elProfit.textContent = fmt(totalCosts * (margin/100)); elProfit.dataset.value = String(totalCosts * (margin/100)); }
-
-  const reqEl = document.getElementById('required-annual-revenue');
-  if(reqEl){ reqEl.textContent = fmt(totalCosts * (1 + margin/100)); reqEl.dataset.value = String(totalCosts * (1 + margin/100)); }
-
-  // Actualiza resumen derecho si es necesario
-  updateRightSummary();
+  // Sincronizar resumen lateral
+  updateRightSummary(totalCosts, profit, revenue, suggested);
 }
 
 /* ===========================
    RESUMEN DERECHO
    =========================== */
-function updateRightSummary(){
-  const op=Number((qs('#total-operational-cost')?.textContent||'').replace(/[^0-9\.-]/g,''))||0;
-  const profit=Number((qs('#expected-net-profit')?.textContent||'').replace(/[^0-9\.-]/g,''))||0;
-  const req=Number((qs('#required-annual-revenue')?.textContent||'').replace(/[^0-9\.-]/g,''))||0;
-  const rate=Number((qs('#suggested-hourly-rate')?.textContent||'').replace(/[^0-9\.-]/g,''))||0;
-  const aside=document.querySelector('aside.sidebar');
-  if(!aside)return;
-  let c=document.getElementById('enhanced-summary');
-  if(!c){
-    c=document.createElement('div');
-    c.className='card';c.id='enhanced-summary';
-    c.innerHTML=`<h4>Laburpen xehetuak</h4>
+function updateRightSummary(total = 0, profit = 0, revenue = 0, rate = 0) {
+  const aside = document.querySelector('aside.sidebar');
+  if (!aside) return;
+
+  let c = document.getElementById('enhanced-summary');
+  if (!c) {
+    c = document.createElement('div');
+    c.className = 'card';
+    c.id = 'enhanced-summary';
+    c.innerHTML = `
+      <h4>Laburpen xehetuak</h4>
       <p>Urteko gastu osoa: <strong id="summary-operational-val">€ 0.00</strong></p>
       <p>Mozkin garbia: <strong id="summary-profit-val">€ 0.00</strong></p>
       <p>Fakturazio beharra: <strong id="summary-required-val">€ 0.00</strong></p>
-      <p>Orduko prezioa: <strong id="summary-rate-val">€ 0.00</strong></p>`;
+      <p>Orduko prezioa: <strong id="summary-rate-val">€ 0.00</strong></p>
+    `;
     aside.appendChild(c);
   }
-  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=fmt(v);};
-  set('summary-operational-val',op);
-  set('summary-profit-val',profit);
-  set('summary-required-val',req);
-  set('summary-rate-val',rate);
+
+  const set = (id, val) => {
+    const e = document.getElementById(id);
+    if (e) e.textContent = fmt(val);
+  };
+
+  // Actualiza directamente desde los valores recibidos (los mismos de ficha 7)
+  set('summary-operational-val', total);
+  set('summary-profit-val', profit);
+  set('summary-required-val', revenue);
+  set('summary-rate-val', rate);
 }
 
 /* ===========================

@@ -191,5 +191,90 @@ img {
   from { opacity: 0; transform: translateY(5px); }
   to { opacity: 1; transform: translateY(0); }
 }
+/* SIDEBAR MEJORADO */
+.sidebar .card {
+    margin-bottom: 20px;
+    padding: 20px;
+    border-radius: 8px;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
 
+.sidebar .card.highlight {
+    border-left: 4px solid #2c5aa0;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.sidebar .value {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #2c5aa0;
+    margin: 10px 0;
+    text-align: center;
+}
+
+.sidebar .value.highlight-value {
+    font-size: 2.2em;
+    color: #1e3a8a;
+    margin: 15px 0;
+}
+
+/* Desglose de facturación */
+.facturacion-desglose {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #dee2e6;
+}
+
+.desglose-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 0.9em;
+}
+
+.desglose-label {
+    color: #666;
+}
+
+.desglose-value {
+    font-weight: 600;
+    color: #333;
+}
+
+/* Desglose de costes */
+.cost-breakdown {
+    margin-top: 10px;
+}
+
+.cost-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    font-size: 0.85em;
+    color: #666;
+}
+
+.cost-item span:last-child {
+    font-weight: 600;
+    color: #333;
+}
+
+/* Tarjeta de contacto al final */
+.contact-card {
+    margin-top: auto;
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .sidebar .value.highlight-value {
+        font-size: 1.8em;
+    }
+    
+    .sidebar .value {
+        font-size: 1.5em;
+    }
+}
 

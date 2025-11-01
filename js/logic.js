@@ -512,40 +512,93 @@ function calculatePricing(totalOperational = null) {
 }
 
 /* ===========================
-   RESUMEN DERECHO - CORREGIDA
+   SIDEBAR MEJORADO
    =========================== */
 function updateRightSummary(totalOperational = null) {
-  if (totalOperational === null) {
-    totalOperational = calculateTotalCosts();
-  }
-  
-  // Obtener valores actuales de pricing
-  const suggestedRate = safeNum(document.getElementById('suggested-hourly-rate')?.dataset.value) || 0;
-  const expectedProfit = safeNum(document.getElementById('expected-net-profit')?.dataset.value) || 0;
-  const requiredRevenue = safeNum(document.getElementById('required-annual-revenue')?.dataset.value) || 0;
-  const totalHours = safeNum(document.getElementById('total-available-hours')?.dataset.value) || 0;
+    if (totalOperational === null) {
+        totalOperational = calculateTotalCosts();
+    }
+    
+    // Obtener valores de pricing
+    const suggestedRate = safeNum(document.getElementById('suggested-hourly-rate')?.dataset.value) || 0;
+    const expectedProfit = safeNum(document.getElementById('expected-net-profit')?.dataset.value) || 0;
+    const requiredRevenue = safeNum(document.getElementById('required-annual-revenue')?.dataset.value) || 0;
+    const totalHours = safeNum(document.getElementById('total-available-hours')?.dataset.value) || 0;
+    const employeeCount = safeNum(document.getElementById('employee-count')?.value) || 0;
 
-  const aside = document.querySelector('aside.sidebar');
-  if (!aside) return;
-  
-  let c = document.getElementById('enhanced-summary');
-  if (!c) {
-    c = document.createElement('div');
-    c.className = 'card';
-    c.id = 'enhanced-summary';
-    aside.appendChild(c);
-  }
-  
-  c.innerHTML = `
-    <h4>Laburpen Xehetua</h4>
-    <p>Urteko gastu osoa: <strong>${fmt(totalOperational)}</strong></p>
-    <p>Mozkin garbia: <strong>${fmt(expectedProfit)}</strong></p>
-    <p>Fakturazio beharra: <strong>${fmt(requiredRevenue)}</strong></p>
-    <p>Orduko prezioa: <strong>${fmt(suggestedRate)}</strong></p>
-    <p>Urteko orduak: <strong>${totalHours.toLocaleString()}</strong></p>
-  `;
+    // Calcular desglose de costes
+    const desgloseCostes = calcularDesgloseCostes();
+    
+    // Calcular costos financieros
+    const loanAmount = safeNum(document.getElementById('loan-amount')?.value) || 0;
+    const loanTAE = safeNum(document.getElementById('loan-tae')?.value) || 5;
+    const costosFinancieros = loanAmount * (loanTAE / 100);
+
+    // Calcular margen bruto (beneficio antes de impuestos)
+    const margin = safeNum(document.getElementById('target-profit-margin')?.value) || 20;
+    const margenBruto = (totalOperational + costosFinancieros) * (margin / 100);
+
+    // Actualizar sidebar
+    const setFmt = (id, value) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = fmt(value);
+    };
+
+    const setText = (id, text) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = text;
+    };
+
+    // Card 1: Facturación Principal
+    setFmt('total-facturacion', requiredRevenue);
+    setFmt('gastos-operativos', totalOperational);
+    setFmt('costos-financieros', costosFinancieros);
+    setFmt('margen-bruto', margenBruto);
+
+    // Card 2: Precio/Hora
+    setFmt('suggested-hourly-rate-sidebar', suggestedRate);
+    setText('employee-count-sidebar', employeeCount);
+    setText('annual-hours-sidebar', totalHours.toLocaleString());
+
+    // Card 3: Desglose de Costes
+    setFmt('total-amortizaciones', desgloseCostes.amortizaciones);
+    setFmt('total-gastos-fijos', desgloseCostes.gastosFijos);
+    setFmt('total-personal', desgloseCostes.personal);
+    setFmt('total-intereses', costosFinancieros);
 }
 
+// Función para calcular desglose de costes
+function calcularDesgloseCostes() {
+    let amortizaciones = 0;
+    let gastosFijos = 0;
+    let personal = 0;
+
+    // Amortizaciones
+    state.amortizables.lokala.forEach(item => {
+        amortizaciones += safeNum(item.cost) / Math.max(1, safeNum(item.life));
+    });
+    state.amortizables.garraioa.forEach(item => {
+        amortizaciones += safeNum(item.cost) / Math.max(1, safeNum(item.life));
+    });
+
+    // Gastos fijos (recurrentes)
+    Object.values(state.recurrings).forEach(category => {
+        category.forEach(item => {
+            gastosFijos += safeNum(item.payment_cost) * Math.max(1, safeNum(item.frequency));
+        });
+    });
+
+    // Personal
+    state.personnel.forEach(person => {
+        personal += safeNum(person.gross) * (1 + safeNum(person.employer_ss) / 100);
+    });
+
+    return {
+        amortizaciones,
+        gastosFijos,
+        personal
+    };
+}
 /* ===========================
    PDF GENERATION
    =========================== */

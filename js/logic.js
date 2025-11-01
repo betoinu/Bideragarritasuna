@@ -803,7 +803,7 @@ function removeSocio() {
     if (socioCount > 1) {
         updateNumSocios(socioCount - 1);
     } else {
-        alert('Debe haber al menos un socio');
+        alert('Gutxienez bazkide bat egon behar da');
     }
 }
 
@@ -815,9 +815,9 @@ function addCapitalista() {
     
     const row = document.createElement('tr');
     row.innerHTML = `
-        <td>Socio Capitalista ${capitalistaCount}</td>
+        <td>Kapitalista Bazkidea ${capitalistaCount}</td>
         <td><input type="number" value="0" min="0" class="capitalista-input" oninput="updateAll()"></td>
-        <td><button class="btn small" onclick="removeCapitalista(this)">Eliminar</button></td>
+        <td><button class="btn small" onclick="removeCapitalista(this)">Ezabatu</button></td>
     `;
     tbody.appendChild(row);
     

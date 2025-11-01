@@ -834,7 +834,7 @@ function removeCapitalista(button) {
     }
 }
 
-// Calcular financiación y facturación necesaria
+// Calcular financiación con tesorería
 function calcularFinanciacion() {
     // Calcular total aportado por socios
     let totalSocios = 0;
@@ -848,12 +848,20 @@ function calcularFinanciacion() {
         totalCapitalistas += parseFloat(input.value) || 0;
     });
     
-    // Obtener necesidades de inversión
+    // Obtener necesidades de inversión base
     const necesidadesInput = document.getElementById('necesidades-inversion');
-    const necesidadesInversion = necesidadesInput ? parseFloat(necesidadesInput.value) || 0 : 0;
+    const necesidadesInversionBase = necesidadesInput ? parseFloat(necesidadesInput.value) || 0 : 0;
+    
+    // CALCULAR TESORERÍA (financiación de gastos anuales)
+    const porcentajeTesoreria = parseFloat(document.getElementById('porcentaje-tesoreria')?.value) || 0;
+    const gastosAnualesTotales = calculateTotalCosts();
+    const importeTesoreria = gastosAnualesTotales * (porcentajeTesoreria / 100);
+    
+    // Calcular necesidades TOTALES de inversión (base + tesorería)
+    const necesidadesInversionTotales = necesidadesInversionBase + importeTesoreria;
     
     // Calcular cantidad a financiar
-    let cantidadFinanciar = necesidadesInversion - totalSocios - totalCapitalistas;
+    let cantidadFinanciar = necesidadesInversionTotales - totalSocios - totalCapitalistas;
     cantidadFinanciar = Math.max(0, cantidadFinanciar);
     
     // Calcular costos financieros
@@ -878,19 +886,6 @@ function calcularFinanciacion() {
         interesAnual = 0;
     }
     
-    // CALCULAR FACTURACIÓN ANUAL NECESARIA
-    const gastosTotales = calculateTotalCosts(); // Gastos operativos totales
-    const interesFinanciero = interesAnual; // Intereses del préstamo
-    
-    // Obtener parámetros de pricing
-    const margin = safeNum(document.getElementById('target-profit-margin')?.value) || 20;
-    const corporateTax = safeNum(document.getElementById('corporate-tax')?.value) || 25;
-    
-    // Cálculo de facturación necesaria
-    const beneficioAntesImpuestos = (gastosTotales + interesFinanciero) * (margin / 100);
-    const beneficioDespuesImpuestos = beneficioAntesImpuestos * (1 - corporateTax / 100);
-    const facturacionAnual = gastosTotales + interesFinanciero + beneficioAntesImpuestos;
-    
     // Actualizar la interfaz
     const totalSociosSpan = document.getElementById('total-socios');
     const totalCapitalistasSpan = document.getElementById('total-capitalistas');
@@ -898,7 +893,8 @@ function calcularFinanciacion() {
     const cuotaMensualSpan = document.getElementById('cuota-mensual');
     const interesAnualSpan = document.getElementById('interes-anual');
     const cuotaAnualSpan = document.getElementById('cuota-anual');
-    const facturacionAnualSpan = document.getElementById('facturacion-anual');
+    const importeTesoreriaSpan = document.getElementById('importe-tesoreria');
+    const importeTesoreriaDisplaySpan = document.getElementById('importe-tesoreria-display');
     
     if (totalSociosSpan) totalSociosSpan.textContent = fmt(totalSocios);
     if (totalCapitalistasSpan) totalCapitalistasSpan.textContent = fmt(totalCapitalistas);
@@ -906,42 +902,37 @@ function calcularFinanciacion() {
     if (cuotaMensualSpan) cuotaMensualSpan.textContent = fmt(cuotaMensual);
     if (interesAnualSpan) interesAnualSpan.textContent = fmt(interesAnual);
     if (cuotaAnualSpan) cuotaAnualSpan.textContent = fmt(cuotaAnual);
-    if (facturacionAnualSpan) facturacionAnualSpan.textContent = fmt(facturacionAnual);
-    
-    // Actualizar también el sidebar con la facturación necesaria
-    updateSidebarWithFacturacion(facturacionAnual);
+    if (importeTesoreriaSpan) importeTesoreriaSpan.textContent = fmt(importeTesoreria);
+    if (importeTesoreriaDisplaySpan) importeTesoreriaDisplaySpan.textContent = fmt(importeTesoreria);
     
     // Actualizar también el input de necesidades para mantener consistencia
     if (necesidadesInput) {
-        necesidadesInput.value = necesidadesInversion;
+        necesidadesInput.value = necesidadesInversionBase;
     }
+    
+    // Actualizar el sidebar con la facturación necesaria
+    updateSidebarWithFacturacion();
 }
 
-// Actualizar sidebar con facturación
-function updateSidebarWithFacturacion(facturacionAnual) {
+// Actualizar sidebar con facturación (usando la función existente de pricing)
+function updateSidebarWithFacturacion() {
+    const totalOperational = calculateTotalCosts();
+    calculatePricing(totalOperational);
+    
     const aside = document.querySelector('aside.sidebar');
     if (!aside) return;
     
-    let facturacionCard = document.getElementById('facturacion-card');
-    if (!facturacionCard) {
-        facturacionCard = document.createElement('div');
-        facturacionCard.className = 'card';
-        facturacionCard.id = 'facturacion-card';
-        // Insertar después del primer card
-        const firstCard = aside.querySelector('.card');
-        if (firstCard) {
-            firstCard.parentNode.insertBefore(facturacionCard, firstCard.nextSibling);
-        } else {
-            aside.appendChild(facturacionCard);
+    // Actualizar el card existente de "Laburpen Orokorra"
+    const summaryCard = document.querySelector('.card h4');
+    if (summaryCard && summaryCard.textContent.includes('Laburpen Orokorra')) {
+        const card = summaryCard.closest('.card');
+        if (card) {
+            const subtitle = card.querySelector('.muted');
+            if (subtitle) {
+                subtitle.textContent = 'Urteko fakturazioa beharrezkoa (Gastu guztiak + Interesak + Mozkina + Sozietateen Zergak)';
+            }
         }
     }
-    
-    facturacionCard.innerHTML = `
-        <h4>Fakturazio Beharra</h4>
-        <p class="muted">Urteko fakturazioa beharrezkoa</p>
-        <p style="font-size:1.4em;font-weight:bold;color:#2c5aa0;text-align:center;margin:10px 0">${fmt(facturacionAnual)}</p>
-        <small style="color:#666;display:block;text-align:center">Gastuak + Interesak + Mozkina</small>
-    `;
 }
 
 // Llamar a initFinantzaketaPanel cuando se cargue la página

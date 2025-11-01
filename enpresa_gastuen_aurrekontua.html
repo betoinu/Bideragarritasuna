@@ -165,7 +165,7 @@
                     <button class="btn small" onclick="addRecurring('hazkuntza')">+ Gehitu Gastua</button>
                 </div>
 
-               <!-- PANEL 6 · FINANTZAKETA (MEJORADO) -->
+              <!-- PANEL 6 · FINANTZAKETA (MEJORADO) -->
 <div id="finantzaketa-sheet" class="panel" style="display:none">
     <h2>6 · Finantzaketa Estrategia</h2>
     
@@ -201,27 +201,6 @@
                         </tr>
                     </tbody>
                 </table>
-            </div>
-        </div>
-    </div>
-
-    <!-- Sección de Gastos -->
-    <div class="section">
-        <h3>Gastuen Sailkapena</h3>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
-            <div>
-                <h4>Amortizagarri diren Gastuak</h4>
-                <label for="gastos-amortizables">Amortizagarri diren Gastu Totala (€)</label>
-                <input type="number" id="gastos-amortizables" value="0" min="0" oninput="updateAll()">
-            </div>
-            <div>
-                <h4>Urteko Gastuak</h4>
-                <label for="gastos-anualizables">Urteko Gastu Totala (€)</label>
-                <input type="number" id="gastos-anualizables" value="0" min="0" oninput="updateAll()">
-                <div style="margin-top:10px">
-                    <input type="checkbox" id="financiar-anualizables" onchange="updateAll()">
-                    <label for="financiar-anualizables" style="display:inline;margin-left:5px">Finantziatu urteko gastuak kutxa hobetzeko</label>
-                </div>
             </div>
         </div>
     </div>
@@ -267,14 +246,31 @@
                 <input type="number" id="plazo" value="5" min="1" oninput="updateAll()">
             </div>
         </div>
+    </div>
+
+    <!-- Resultados de Cálculo -->
+    <div class="section" style="background:#f8f9fa;padding:20px;border-radius:8px;margin-top:20px">
+        <h3>Finantzaketaren Laburpena</h3>
         
-        <!-- Resultados de Cálculo -->
-        <div style="background:#f8f9fa;padding:15px;border-radius:5px;margin-top:20px">
-            <h4>Finantzaketaren Laburpena</h4>
-            <p>Bazkideek Emandako Guztira: <span id="total-socios">0</span> €</p>
-            <p>Kapitalista Bazkideek Emandako Guztira: <span id="total-capitalistas">0</span> €</p>
-            <p>Finantziatzeko Kantitatea: <span id="cantidad-financiar">210127.5</span> €</p>
-            <p>Hilabeteko Kuota Estimaturik: <span id="cuota-mensual">0</span> €</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px">
+            <div>
+                <h4>Finantzaketa Iturriak</h4>
+                <p>Bazkideek Emandako Guztira: <strong><span id="total-socios">0</span> €</strong></p>
+                <p>Kapitalista Bazkideek Emandako Guztira: <strong><span id="total-capitalistas">0</span> €</strong></p>
+                <p>Finantziatzeko Kantitatea: <strong><span id="cantidad-financiar">210127.5</span> €</strong></p>
+            </div>
+            <div>
+                <h4>Kostu Finantzarioak</h4>
+                <p>Urteko Interesak: <strong><span id="interes-anual">0</span> €</strong></p>
+                <p>Hilabeteko Kuota: <strong><span id="cuota-mensual">0</span> €</strong></p>
+                <p>Urteko Kuota Guztira: <strong><span id="cuota-anual">0</span> €</strong></p>
+            </div>
+        </div>
+        
+        <div style="border-top:2px solid #ddd;padding-top:15px">
+            <h4>Fakturazio Beharra</h4>
+            <p style="font-size:1.2em;color:#2c5aa0">Urteko Fakturazioa: <strong><span id="facturacion-anual">0</span> €</strong></p>
+            <small style="color:#666">(Gastu guztiak + Interesak + Mozkina + Sozietateen Zergak)</small>
         </div>
     </div>
 </div>

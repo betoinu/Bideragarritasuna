@@ -834,7 +834,7 @@ function removeCapitalista(button) {
     }
 }
 
-// Calcular financiación
+// Calcular financiación y facturación necesaria
 function calcularFinanciacion() {
     // Calcular total aportado por socios
     let totalSocios = 0;
@@ -854,19 +854,9 @@ function calcularFinanciacion() {
     
     // Calcular cantidad a financiar
     let cantidadFinanciar = necesidadesInversion - totalSocios - totalCapitalistas;
-    
-    // Si se selecciona financiar gastos anualizables, añadirlos
-    const financiarAnualizables = document.getElementById('financiar-anualizables')?.checked || false;
-    const gastosAnualizables = parseFloat(document.getElementById('gastos-anualizables')?.value) || 0;
-    
-    if (financiarAnualizables) {
-        cantidadFinanciar += gastosAnualizables;
-    }
-    
-    // Asegurar que la cantidad a financiar no sea negativa
     cantidadFinanciar = Math.max(0, cantidadFinanciar);
     
-    // Calcular cuota mensual
+    // Calcular costos financieros
     const tae = parseFloat(document.getElementById('tae')?.value) || 0;
     const plazo = parseFloat(document.getElementById('plazo')?.value) || 1;
     
@@ -874,35 +864,90 @@ function calcularFinanciacion() {
     const numPagos = plazo * 12;
     
     let cuotaMensual = 0;
+    let interesAnual = 0;
+    let cuotaAnual = 0;
+    
     if (tasaMensual > 0 && cantidadFinanciar > 0) {
         cuotaMensual = cantidadFinanciar * tasaMensual * Math.pow(1 + tasaMensual, numPagos) / 
                       (Math.pow(1 + tasaMensual, numPagos) - 1);
+        cuotaAnual = cuotaMensual * 12;
+        interesAnual = cuotaAnual - (cantidadFinanciar / plazo);
     } else if (cantidadFinanciar > 0) {
         cuotaMensual = cantidadFinanciar / numPagos;
+        cuotaAnual = cuotaMensual * 12;
+        interesAnual = 0;
     }
+    
+    // CALCULAR FACTURACIÓN ANUAL NECESARIA
+    const gastosTotales = calculateTotalCosts(); // Gastos operativos totales
+    const interesFinanciero = interesAnual; // Intereses del préstamo
+    
+    // Obtener parámetros de pricing
+    const margin = safeNum(document.getElementById('target-profit-margin')?.value) || 20;
+    const corporateTax = safeNum(document.getElementById('corporate-tax')?.value) || 25;
+    
+    // Cálculo de facturación necesaria
+    const beneficioAntesImpuestos = (gastosTotales + interesFinanciero) * (margin / 100);
+    const beneficioDespuesImpuestos = beneficioAntesImpuestos * (1 - corporateTax / 100);
+    const facturacionAnual = gastosTotales + interesFinanciero + beneficioAntesImpuestos;
     
     // Actualizar la interfaz
     const totalSociosSpan = document.getElementById('total-socios');
     const totalCapitalistasSpan = document.getElementById('total-capitalistas');
     const cantidadFinanciarSpan = document.getElementById('cantidad-financiar');
     const cuotaMensualSpan = document.getElementById('cuota-mensual');
+    const interesAnualSpan = document.getElementById('interes-anual');
+    const cuotaAnualSpan = document.getElementById('cuota-anual');
+    const facturacionAnualSpan = document.getElementById('facturacion-anual');
     
-    if (totalSociosSpan) totalSociosSpan.textContent = totalSocios.toFixed(2);
-    if (totalCapitalistasSpan) totalCapitalistasSpan.textContent = totalCapitalistas.toFixed(2);
-    if (cantidadFinanciarSpan) cantidadFinanciarSpan.textContent = cantidadFinanciar.toFixed(2);
-    if (cuotaMensualSpan) cuotaMensualSpan.textContent = cuotaMensual.toFixed(2);
+    if (totalSociosSpan) totalSociosSpan.textContent = fmt(totalSocios);
+    if (totalCapitalistasSpan) totalCapitalistasSpan.textContent = fmt(totalCapitalistas);
+    if (cantidadFinanciarSpan) cantidadFinanciarSpan.textContent = fmt(cantidadFinanciar);
+    if (cuotaMensualSpan) cuotaMensualSpan.textContent = fmt(cuotaMensual);
+    if (interesAnualSpan) interesAnualSpan.textContent = fmt(interesAnual);
+    if (cuotaAnualSpan) cuotaAnualSpan.textContent = fmt(cuotaAnual);
+    if (facturacionAnualSpan) facturacionAnualSpan.textContent = fmt(facturacionAnual);
     
-    // Actualizar también el input de mailegua para mantener consistencia
+    // Actualizar también el sidebar con la facturación necesaria
+    updateSidebarWithFacturacion(facturacionAnual);
+    
+    // Actualizar también el input de necesidades para mantener consistencia
     if (necesidadesInput) {
         necesidadesInput.value = necesidadesInversion;
     }
+}
+
+// Actualizar sidebar con facturación
+function updateSidebarWithFacturacion(facturacionAnual) {
+    const aside = document.querySelector('aside.sidebar');
+    if (!aside) return;
+    
+    let facturacionCard = document.getElementById('facturacion-card');
+    if (!facturacionCard) {
+        facturacionCard = document.createElement('div');
+        facturacionCard.className = 'card';
+        facturacionCard.id = 'facturacion-card';
+        // Insertar después del primer card
+        const firstCard = aside.querySelector('.card');
+        if (firstCard) {
+            firstCard.parentNode.insertBefore(facturacionCard, firstCard.nextSibling);
+        } else {
+            aside.appendChild(facturacionCard);
+        }
+    }
+    
+    facturacionCard.innerHTML = `
+        <h4>Fakturazio Beharra</h4>
+        <p class="muted">Urteko fakturazioa beharrezkoa</p>
+        <p style="font-size:1.4em;font-weight:bold;color:#2c5aa0;text-align:center;margin:10px 0">${fmt(facturacionAnual)}</p>
+        <small style="color:#666;display:block;text-align:center">Gastuak + Interesak + Mozkina</small>
+    `;
 }
 
 // Llamar a initFinantzaketaPanel cuando se cargue la página
 document.addEventListener('DOMContentLoaded', function() {
     initFinantzaketaPanel();
 });
-
 
 /* ===========================
    EJECUCIÓN AUTOMÁTICA AL CARGAR

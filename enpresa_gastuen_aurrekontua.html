@@ -323,24 +323,73 @@
             </section>
 
             <!-- COLUMNA DERECHA -->
-            <aside class="sidebar">
-                <div class="card">
-                    <h4 data-i18n="summary.title">Laburpen Orokorra</h4>
-                    <p class="muted" data-i18n="summary.subtitle">Aurrekontu globala</p>
-                    <p id="total-operational-cost" class="value">€ 0.00</p>
-                </div>
-                <div class="card">
-                    <div class="idarte-graphic">
-                        <img src="img/fondo.png" alt="Detalle gráfico IDarte" loading="lazy">
-                    </div>
-                </div>
-                <div class="card">
-                    <h4 data-i18n="contact.title">Kontaktua</h4>
-                    <p class="muted" data-i18n="contact.name">Josu Ayerbe Guarás, Barne Diseinuko Graduko irakaslea</p>
-                    <p class="muted" data-i18n="contact.email">josuayerbe@idarte.eus</p>
-                    <p class="muted">Portal de Betoño, 23 · Vitoria-Gasteiz</p>
-                </div>
-            </aside>
+<aside class="sidebar">
+    <!-- Card 1: Facturación Necesaria (PRINCIPAL) -->
+    <div class="card highlight">
+        <h4>Urteko Fakturazioa Beharrezkoa</h4>
+        <p id="total-facturacion" class="value highlight-value">€ 0.00</p>
+        <div class="facturacion-desglose">
+            <div class="desglose-item">
+                <span class="desglose-label">Gastu Operatiboak:</span>
+                <span id="gastos-operativos" class="desglose-value">€ 0.00</span>
+            </div>
+            <div class="desglose-item">
+                <span class="desglose-label">Kostu Finantzarioak:</span>
+                <span id="costos-financieros" class="desglose-value">€ 0.00</span>
+            </div>
+            <div class="desglose-item">
+                <span class="desglose-label">Mozkin Gordina:</span>
+                <span id="margen-bruto" class="desglose-value">€ 0.00</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card 2: Precio/Hora (SECUNDARIO IMPORTANTE) -->
+    <div class="card">
+        <h4>Gomendatutako Orduko Prezioa</h4>
+        <p id="suggested-hourly-rate-sidebar" class="value">€ 0.00</p>
+        <p class="muted">Langile kopurua: <span id="employee-count-sidebar">0</span></p>
+        <p class="muted">Urteko orduak: <span id="annual-hours-sidebar">0</span></p>
+    </div>
+
+    <!-- Card 3: Resumen de Costes (INFORMATIVO) -->
+    <div class="card">
+        <h4>Kostuen Laburpena</h4>
+        <div class="cost-breakdown">
+            <div class="cost-item">
+                <span>Amortizazioak:</span>
+                <span id="total-amortizaciones">€ 0.00</span>
+            </div>
+            <div class="cost-item">
+                <span>Gastu Finkoak:</span>
+                <span id="total-gastos-fijos">€ 0.00</span>
+            </div>
+            <div class="cost-item">
+                <span>Pertsonala:</span>
+                <span id="total-personal">€ 0.00</span>
+            </div>
+            <div class="cost-item">
+                <span>Interesak:</span>
+                <span id="total-intereses">€ 0.00</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card 4: Gráfico IDarte -->
+    <div class="card">
+        <div class="idarte-graphic">
+            <img src="img/fondo.png" alt="Detalle gráfico IDarte" loading="lazy">
+        </div>
+    </div>
+
+    <!-- Card 5: Contacto (AL FINAL) -->
+    <div class="card contact-card">
+        <h4>Kontaktua</h4>
+        <p class="muted">Josu Ayerbe Guarás, Barne Diseinuko Graduko irakaslea</p>
+        <p class="muted">josuayerbe@idarte.eus</p>
+        <p class="muted">Portal de Betoño, 23 · Vitoria-Gasteiz</p>
+    </div>
+</aside>
         </main>
 
         <footer class="siteinfo">

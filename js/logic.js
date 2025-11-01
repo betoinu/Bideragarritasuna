@@ -751,6 +751,159 @@ async function init(){
   if (sel) sel.value = localStorage.getItem('selectedLanguage') || 'eu';
 }
 
+// ===== FINANZAKETA PANEL FUNCTIONS =====
+
+let socioCount = 3;
+let capitalistaCount = 0;
+
+// Inicializar panel de finantzaketa
+function initFinantzaketaPanel() {
+    // Actualizar número de socios
+    updateNumSocios(socioCount);
+    
+    // Añadir eventos a los botones
+    document.getElementById('add-socio')?.addEventListener('click', addSocio);
+    document.getElementById('remove-socio')?.addEventListener('click', removeSocio);
+    document.getElementById('add-capitalista')?.addEventListener('click', addCapitalista);
+    
+    // Calcular financiación inicial
+    calcularFinanciacion();
+}
+
+// Actualizar número de socios
+function updateNumSocios(n) {
+    socioCount = n;
+    const numSociosSpan = document.getElementById('num-socios');
+    if (numSociosSpan) numSociosSpan.textContent = n;
+    
+    const tbody = document.getElementById('socios-table-body');
+    if (!tbody) return;
+    
+    tbody.innerHTML = '';
+    
+    for (let i = 1; i <= socioCount; i++) {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>Bazkide ${i}</td>
+            <td><input type="number" value="0" min="0" class="capital-input" oninput="updateAll()"></td>
+        `;
+        tbody.appendChild(row);
+    }
+    
+    calcularFinanciacion();
+}
+
+// Añadir socio
+function addSocio() {
+    updateNumSocios(socioCount + 1);
+}
+
+// Eliminar socio
+function removeSocio() {
+    if (socioCount > 1) {
+        updateNumSocios(socioCount - 1);
+    } else {
+        alert('Debe haber al menos un socio');
+    }
+}
+
+// Añadir socio capitalista
+function addCapitalista() {
+    capitalistaCount++;
+    const tbody = document.getElementById('capitalistas-table-body');
+    if (!tbody) return;
+    
+    const row = document.createElement('tr');
+    row.innerHTML = `
+        <td>Socio Capitalista ${capitalistaCount}</td>
+        <td><input type="number" value="0" min="0" class="capitalista-input" oninput="updateAll()"></td>
+        <td><button class="btn small" onclick="removeCapitalista(this)">Eliminar</button></td>
+    `;
+    tbody.appendChild(row);
+    
+    calcularFinanciacion();
+}
+
+// Eliminar socio capitalista
+function removeCapitalista(button) {
+    const row = button.closest('tr');
+    if (row) {
+        row.remove();
+        capitalistaCount--;
+        calcularFinanciacion();
+    }
+}
+
+// Calcular financiación
+function calcularFinanciacion() {
+    // Calcular total aportado por socios
+    let totalSocios = 0;
+    document.querySelectorAll('.capital-input').forEach(input => {
+        totalSocios += parseFloat(input.value) || 0;
+    });
+    
+    // Calcular total aportado por socios capitalistas
+    let totalCapitalistas = 0;
+    document.querySelectorAll('.capitalista-input').forEach(input => {
+        totalCapitalistas += parseFloat(input.value) || 0;
+    });
+    
+    // Obtener necesidades de inversión
+    const necesidadesInput = document.getElementById('necesidades-inversion');
+    const necesidadesInversion = necesidadesInput ? parseFloat(necesidadesInput.value) || 0 : 0;
+    
+    // Calcular cantidad a financiar
+    let cantidadFinanciar = necesidadesInversion - totalSocios - totalCapitalistas;
+    
+    // Si se selecciona financiar gastos anualizables, añadirlos
+    const financiarAnualizables = document.getElementById('financiar-anualizables')?.checked || false;
+    const gastosAnualizables = parseFloat(document.getElementById('gastos-anualizables')?.value) || 0;
+    
+    if (financiarAnualizables) {
+        cantidadFinanciar += gastosAnualizables;
+    }
+    
+    // Asegurar que la cantidad a financiar no sea negativa
+    cantidadFinanciar = Math.max(0, cantidadFinanciar);
+    
+    // Calcular cuota mensual
+    const tae = parseFloat(document.getElementById('tae')?.value) || 0;
+    const plazo = parseFloat(document.getElementById('plazo')?.value) || 1;
+    
+    const tasaMensual = (tae / 100) / 12;
+    const numPagos = plazo * 12;
+    
+    let cuotaMensual = 0;
+    if (tasaMensual > 0 && cantidadFinanciar > 0) {
+        cuotaMensual = cantidadFinanciar * tasaMensual * Math.pow(1 + tasaMensual, numPagos) / 
+                      (Math.pow(1 + tasaMensual, numPagos) - 1);
+    } else if (cantidadFinanciar > 0) {
+        cuotaMensual = cantidadFinanciar / numPagos;
+    }
+    
+    // Actualizar la interfaz
+    const totalSociosSpan = document.getElementById('total-socios');
+    const totalCapitalistasSpan = document.getElementById('total-capitalistas');
+    const cantidadFinanciarSpan = document.getElementById('cantidad-financiar');
+    const cuotaMensualSpan = document.getElementById('cuota-mensual');
+    
+    if (totalSociosSpan) totalSociosSpan.textContent = totalSocios.toFixed(2);
+    if (totalCapitalistasSpan) totalCapitalistasSpan.textContent = totalCapitalistas.toFixed(2);
+    if (cantidadFinanciarSpan) cantidadFinanciarSpan.textContent = cantidadFinanciar.toFixed(2);
+    if (cuotaMensualSpan) cuotaMensualSpan.textContent = cuotaMensual.toFixed(2);
+    
+    // Actualizar también el input de mailegua para mantener consistencia
+    if (necesidadesInput) {
+        necesidadesInput.value = necesidadesInversion;
+    }
+}
+
+// Llamar a initFinantzaketaPanel cuando se cargue la página
+document.addEventListener('DOMContentLoaded', function() {
+    initFinantzaketaPanel();
+});
+
+
 /* ===========================
    EJECUCIÓN AUTOMÁTICA AL CARGAR
    =========================== */

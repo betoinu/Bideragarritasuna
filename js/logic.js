@@ -5,6 +5,7 @@
 // =========================================
 
 /* ============
+  /* ============
    GLOBAL STATE
    ============ */
 const state = {
@@ -12,7 +13,18 @@ const state = {
   recurrings: { lokala: [], ekoizpena: [], garraioa: [], hazkuntza: [] },
   personnel: [],
   partners: [0,0,0],
-  finance: { loanAmount:0, loanTAE:5, loanTerm:5, annualInterest:0, totalFinancialCost:0 }
+  finance: { 
+    totalNeeded: 0,
+    partnerCapital: [0, 0, 0],
+    suggestedLoan: 0,
+    loanAmount: 0,
+    loanTAE: 5.0,
+    loanTerm: 5,
+    annualInterest: 0,
+    capitalistNeeded: 0,
+    totalFinanceRaised: 0,
+    financeDeficit: 0
+  }
 };
 
 /* ==============================
@@ -62,6 +74,121 @@ function fmt(n){ n=Number(n)||0; try{ return new Intl.NumberFormat('es-ES',{styl
 function safeNum(v){ return Number(v||0)||0; }
 function qs(sel){ return document.querySelector(sel); }
 function qsa(sel){ return Array.from(document.querySelectorAll(sel)); }
+
+/* ===========================
+   CÁLCULOS FINANCIEROS
+   =========================== */
+function calculateTotalInitialInvestment() {
+  let totalInvestment = 0;
+  
+  // 1. SUMAR TODAS LAS INVERSIONES EN ACTIVOS (coste completo)
+  state.amortizables.lokala.forEach(item => {
+    totalInvestment += safeNum(item.cost);
+  });
+  state.amortizables.garraioa.forEach(item => {
+    totalInvestment += safeNum(item.cost);
+  });
+  
+  // 2. CALCULAR CAPITALIZACIÓN (3 meses de gastos operativos)
+  const operatingCosts = calculateOperatingCosts();
+  const monthlyOperatingCost = operatingCosts / 12;
+  const capitalizationNeeded = monthlyOperatingCost * 3;
+  
+  totalInvestment += capitalizationNeeded;
+  
+  return totalInvestment;
+}
+
+function calculateOperatingCosts() {
+  let totalOperating = 0;
+  
+  // 1. Amortizaciones anuales
+  state.amortizables.lokala.forEach(item => {
+    totalOperating += safeNum(item.cost) / Math.max(1, safeNum(item.life));
+  });
+  state.amortizables.garraioa.forEach(item => {
+    totalOperating += safeNum(item.cost) / Math.max(1, safeNum(item.life));
+  });
+  
+  // 2. Gastos recurrentes anuales
+  Object.values(state.recurrings).forEach(category => {
+    category.forEach(item => {
+      totalOperating += safeNum(item.payment_cost) * Math.max(1, safeNum(item.frequency));
+    });
+  });
+  
+  // 3. Costos de personal anuales
+  state.personnel.forEach(person => {
+    totalOperating += safeNum(person.gross) * (1 + safeNum(person.employer_ss) / 100);
+  });
+  
+  // 4. Gastos financieros anuales
+  totalOperating += state.finance.annualInterest || 0;
+  
+  return totalOperating;
+}
+
+function updateFinanceUI() {
+  const totalPartnerCapital = state.partners.reduce((sum, capital) => sum + capital, 0);
+  
+  // Actualizar elementos financieros
+  const setFmt = (id, value) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = fmt(value);
+  };
+  
+  setFmt('total-finance-needed', state.finance.totalNeeded);
+  setFmt('total-partner-capital', totalPartnerCapital);
+  setFmt('suggested-loan', state.finance.suggestedLoan);
+  setFmt('total-finance-raised', state.finance.totalFinanceRaised);
+  setFmt('finance-deficit', state.finance.financeDeficit);
+  setFmt('annual-interest-cost', state.finance.annualInterest);
+  setFmt('total-financial-cost', state.finance.annualInterest);
+  
+  // Mostrar/ocultar sección de socio capitalista
+  const capitalistSection = document.getElementById('capitalist-partner-section');
+  const capitalistNeededEl = document.getElementById('capitalist-needed');
+  
+  if (capitalistSection && capitalistNeededEl) {
+    if (state.finance.capitalistNeeded > 0) {
+      capitalistSection.classList.remove('hidden');
+      capitalistNeededEl.textContent = fmt(state.finance.capitalistNeeded);
+    } else {
+      capitalistSection.classList.add('hidden');
+    }
+  }
+  
+  // Actualizar estado financiero
+  updateFinanceStatus();
+}
+
+function updateFinanceStatus() {
+  const statusCard = document.getElementById('finance-status-card');
+  const statusElement = document.getElementById('finance-status');
+  const messageElement = document.getElementById('finance-message');
+
+  if (!statusCard || !statusElement || !messageElement) return;
+
+  // Resetear clases
+  statusCard.className = 'result-card';
+  
+  if (state.finance.financeDeficit === 0) {
+    statusCard.classList.add('border-green-600', 'bg-green-50');
+    statusElement.textContent = "FINANTAATUTA";
+    statusElement.className = "text-xl font-extrabold text-green-800 mt-1";
+    messageElement.textContent = "Finantzaketa behar osoa estaltzen da";
+  } else if (state.finance.financeDeficit <= state.finance.totalNeeded * 0.1) {
+    statusCard.classList.add('border-yellow-600', 'bg-yellow-50');
+    statusElement.textContent = "IA FINANTAATUTA";
+    statusElement.className = "text-xl font-extrabold text-yellow-800 mt-1";
+    messageElement.textContent = "Defizit txikia, erraz konpon datieke";
+  } else {
+    statusCard.classList.add('border-red-600', 'bg-red-50');
+    statusElement.textContent = "DEFIZIT HANDIA";
+    statusElement.className = "text-xl font-extrabold text-red-800 mt-1";
+    messageElement.textContent = "Finantzaketa gehiago behar da";
+  }
+}
 
 /* ===========================
    CÁLCULO DE COSTOS TOTALES
@@ -222,6 +349,64 @@ window.onFieldChange=function(e){
 };
 
 /* ===========================
+   FINANCIACIÓN ESTRATEGIA
+   =========================== */
+window.updateFinanceStrategy = function() {
+  // 1. Obtener aportaciones de socios
+  state.partners[0] = safeNum(document.getElementById('partner-capital-1')?.value);
+  state.partners[1] = safeNum(document.getElementById('partner-capital-2')?.value);
+  state.partners[2] = safeNum(document.getElementById('partner-capital-3')?.value);
+  
+  const totalPartnerCapital = state.partners.reduce((sum, capital) => sum + capital, 0);
+  
+  // 2. CALCULAR FINANCIACIÓN NECESARIA TOTAL (INVERSIÓN INICIAL)
+  state.finance.totalNeeded = calculateTotalInitialInvestment();
+  
+  // 3. Calcular préstamo sugerido
+  state.finance.suggestedLoan = Math.max(0, state.finance.totalNeeded - totalPartnerCapital);
+  
+  // 4. Calcular necesidad de socio capitalista
+  state.finance.capitalistNeeded = Math.max(0, state.finance.totalNeeded - totalPartnerCapital - (state.finance.loanAmount || 0));
+  
+  // 5. Calcular financiación obtenida y déficit
+  state.finance.totalFinanceRaised = totalPartnerCapital + (state.finance.loanAmount || 0);
+  state.finance.financeDeficit = Math.max(0, state.finance.totalNeeded - state.finance.totalFinanceRaised);
+  
+  // 6. ACTUALIZAR INTERFAZ
+  updateFinanceUI();
+  
+  // 7. Auto-completar préstamo si está en 0
+  const loanAmountInput = document.getElementById('loan-amount');
+  if (loanAmountInput && safeNum(loanAmountInput.value) === 0 && state.finance.suggestedLoan > 0) {
+    loanAmountInput.value = state.finance.suggestedLoan;
+    state.finance.loanAmount = state.finance.suggestedLoan;
+  }
+};
+
+window.updateLoanCalculation = function() {
+  state.finance.loanAmount = safeNum(document.getElementById('loan-amount')?.value);
+  state.finance.loanTAE = safeNum(document.getElementById('loan-tae')?.value) || 5.0;
+  state.finance.loanTerm = safeNum(document.getElementById('loan-term')?.value) || 5;
+
+  const monthlyRate = (state.finance.loanTAE / 100) / 12;
+  const numberOfPayments = state.finance.loanTerm * 12;
+
+  if (state.finance.loanAmount > 0 && monthlyRate > 0) {
+    const monthlyPayment = state.finance.loanAmount * monthlyRate * 
+      Math.pow(1 + monthlyRate, numberOfPayments) / 
+      (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
+    const totalPayment = monthlyPayment * numberOfPayments;
+    state.finance.annualInterest = (totalPayment - state.finance.loanAmount) / state.finance.loanTerm;
+  } else {
+    state.finance.annualInterest = 0;
+  }
+
+  // Actualizar interfaz y cálculos
+  updateFinanceUI();
+  updateAll();
+};
+
+/* ===========================
    CÁLCULOS PRINCIPALES - CORREGIDA
    =========================== */
 function updateAll() {
@@ -285,6 +470,9 @@ function updateAll() {
   // Actualizar resumen y cálculos de precio
   updateRightSummary(totalOperational);
   calculatePricing(totalOperational);
+ if (typeof updateFinanceStrategy === 'function') {
+    updateFinanceStrategy();
+  }
 }
 
 /* ===========================
@@ -488,6 +676,22 @@ function bindGlobalInputs() {
     dl.removeAttribute('onclick');
     dl.addEventListener('click', generatePDFReport);
   }
+   
+   // AÑADIR estos event listeners:
+  ['partner-capital-1', 'partner-capital-2', 'partner-capital-3'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', () => {
+      updateFinanceStrategy();
+      updateAll();
+    });
+  });
+
+  ['loan-amount', 'loan-tae', 'loan-term'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', () => {
+      updateLoanCalculation();
+    });
+  });
 }
 
 /* ===========================
@@ -538,6 +742,9 @@ async function init(){
 
   // Cálculos iniciales - ESTO ES LO MÁS IMPORTANTE
   updateAll();
+
+  // AÑADIR ESTA LÍNEA NADA MÁS:
+  if (typeof updateFinanceStrategy === 'function') updateFinanceStrategy();
 
   // Selección de idioma actual
   const sel = document.getElementById('language-select');

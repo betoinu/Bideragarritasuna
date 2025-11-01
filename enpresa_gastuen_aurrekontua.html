@@ -205,6 +205,22 @@
         </div>
     </div>
 
+    <!-- Sección de Tesorería -->
+    <div class="section">
+        <h3>Kutxa Errefortzua</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+            <div>
+                <label for="porcentaje-tesoreria">Urteko gastuen % finantziatu kutxa errefortzurako</label>
+                <input type="number" id="porcentaje-tesoreria" value="0" min="0" max="100" oninput="updateAll()">
+                <small style="color:#666">Normalean %10-%20 proiektuen ordainketa atzerapenen aurrean</small>
+            </div>
+            <div>
+                <p><strong>Kutxa errefortzua: <span id="importe-tesoreria">0</span> €</strong></p>
+                <p style="color:#666;font-size:0.9em">(Gastu totalen portzentai gisa kalkulatuta)</p>
+            </div>
+        </div>
+    </div>
+
     <!-- Sección de Socios Capitalistas -->
     <div class="section">
         <h3>Kapitalista Bazkideak</h3>
@@ -257,6 +273,7 @@
                 <h4>Finantzaketa Iturriak</h4>
                 <p>Bazkideek Emandako Guztira: <strong><span id="total-socios">0</span> €</strong></p>
                 <p>Kapitalista Bazkideek Emandako Guztira: <strong><span id="total-capitalistas">0</span> €</strong></p>
+                <p>Kutxa Errefortzua: <strong><span id="importe-tesoreria-display">0</span> €</strong></p>
                 <p>Finantziatzeko Kantitatea: <strong><span id="cantidad-financiar">210127.5</span> €</strong></p>
             </div>
             <div>
@@ -265,12 +282,6 @@
                 <p>Hilabeteko Kuota: <strong><span id="cuota-mensual">0</span> €</strong></p>
                 <p>Urteko Kuota Guztira: <strong><span id="cuota-anual">0</span> €</strong></p>
             </div>
-        </div>
-        
-        <div style="border-top:2px solid #ddd;padding-top:15px">
-            <h4>Fakturazio Beharra</h4>
-            <p style="font-size:1.2em;color:#2c5aa0">Urteko Fakturazioa: <strong><span id="facturacion-anual">0</span> €</strong></p>
-            <small style="color:#666">(Gastu guztiak + Interesak + Mozkina + Sozietateen Zergak)</small>
         </div>
     </div>
 </div>

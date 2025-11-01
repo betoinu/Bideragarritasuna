@@ -64,6 +64,43 @@ function qs(sel){ return document.querySelector(sel); }
 function qsa(sel){ return Array.from(document.querySelectorAll(sel)); }
 
 /* ===========================
+   CÁLCULO DE COSTOS TOTALES
+   =========================== */
+function calculateTotalCosts() {
+  let total = 0;
+  
+  // 1. Sumar amortizaciones de lokala
+  state.amortizables.lokala.forEach(item => {
+    total += safeNum(item.cost) / Math.max(1, safeNum(item.life));
+  });
+  
+  // 2. Sumar amortizaciones de garraioa
+  state.amortizables.garraioa.forEach(item => {
+    total += safeNum(item.cost) / Math.max(1, safeNum(item.life));
+  });
+  
+  // 3. Sumar gastos recurrentes de todas las categorías
+  Object.values(state.recurrings).forEach(category => {
+    category.forEach(item => {
+      total += safeNum(item.payment_cost) * Math.max(1, safeNum(item.frequency));
+    });
+  });
+  
+  // 4. Sumar costos de personal
+  state.personnel.forEach(person => {
+    total += safeNum(person.gross) * (1 + safeNum(person.employer_ss) / 100);
+  });
+  
+  // 5. Sumar gastos financieros (intereses del préstamo)
+  const loanAmount = safeNum(document.getElementById('loan-amount')?.value) || 0;
+  const loanTAE = safeNum(document.getElementById('loan-tae')?.value) || 5;
+  const annualInterest = loanAmount * (loanTAE / 100);
+  total += annualInterest;
+  
+  return total;
+}
+
+/* ===========================
    CARGA TRADUCCIONES
    =========================== */
 async function loadTranslations(lang){
@@ -185,132 +222,140 @@ window.onFieldChange=function(e){
 };
 
 /* ===========================
-   CÁLCULOS PRINCIPALES
+   CÁLCULOS PRINCIPALES - CORREGIDA
    =========================== */
-function updateAll(){
-  let locInv=0, locAm=0, locRec=0, prodRec=0, transRec=0, growRec=0, perCost=0;
-  state.amortizables.lokala.forEach(it=>{ locInv += safeNum(it.cost); locAm += safeNum(it.cost)/Math.max(1,safeNum(it.life)); });
-  state.amortizables.garraioa.forEach(it=>{ transRec += safeNum(it.cost)/Math.max(1,safeNum(it.life)); });
-
-  Object.keys(state.recurrings).forEach(cat=>{
-    state.recurrings[cat].forEach(it=>{
-      const ann = safeNum(it.payment_cost) * Math.max(1, safeNum(it.frequency));
-      if(cat==='lokala') locRec += ann;
-      if(cat==='ekoizpena') prodRec += ann;
-      if(cat==='garraioa') transRec += ann;
-      if(cat==='hazkuntza') growRec += ann;
-    });
+function updateAll() {
+  // Calcular costos por categoría para mostrar en tablas
+  let locInv = 0, locAm = 0, locRec = 0, prodRec = 0, transRec = 0, growRec = 0, perCost = 0;
+  
+  // Amortizaciones lokala
+  state.amortizables.lokala.forEach(it => { 
+    locInv += safeNum(it.cost); 
+    locAm += safeNum(it.cost) / Math.max(1, safeNum(it.life)); 
+  });
+  
+  // Amortizaciones garraioa (se consideran como gasto recurrente anual)
+  state.amortizables.garraioa.forEach(it => { 
+    transRec += safeNum(it.cost) / Math.max(1, safeNum(it.life)); 
   });
 
-  state.personnel.forEach(p=> perCost += safeNum(p.gross) * (1 + safeNum(p.employer_ss)/100) );
+  // Gastos recurrentes por categoría
+  state.recurrings.lokala.forEach(it => {
+    locRec += safeNum(it.payment_cost) * Math.max(1, safeNum(it.frequency));
+  });
+  
+  state.recurrings.ekoizpena.forEach(it => {
+    prodRec += safeNum(it.payment_cost) * Math.max(1, safeNum(it.frequency));
+  });
+  
+  state.recurrings.garraioa.forEach(it => {
+    transRec += safeNum(it.payment_cost) * Math.max(1, safeNum(it.frequency));
+  });
+  
+  state.recurrings.hazkuntza.forEach(it => {
+    growRec += safeNum(it.payment_cost) * Math.max(1, safeNum(it.frequency));
+  });
 
-  // financial part (already numeric in state)
-  const totalFin = safeNum(state.finance.totalFinancialCost);
+  // Costos de personal
+  state.personnel.forEach(p => {
+    perCost += safeNum(p.gross) * (1 + safeNum(p.employer_ss) / 100);
+  });
 
-  // totals numeric (sin formato)
+  // Calcular gastos financieros
+  const loanAmount = safeNum(document.getElementById('loan-amount')?.value) || 0;
+  const loanTAE = safeNum(document.getElementById('loan-tae')?.value) || 5;
+  const annualInterest = loanAmount * (loanTAE / 100);
+  state.finance.annualInterest = annualInterest;
+  state.finance.totalFinancialCost = annualInterest;
+
+  // Totales
   const totalFixed = locAm + locRec + perCost;
   const totalVariable = prodRec + transRec + growRec;
-  const totalOperational = totalFixed + totalVariable + totalFin;
+  const totalFinancial = annualInterest;
+  const totalOperational = totalFixed + totalVariable + totalFinancial;
 
-  // Helper to set formatted text AND store raw numeric in dataset.value
-  const setFmtAndRaw = (id, value) => {
+  // Actualizar valores en la interfaz
+  const setFmt = (id, value) => {
     const el = document.getElementById(id);
-    if(!el) return;
-    el.textContent = fmt(value);
-    el.dataset.value = String(Number(value) || 0);
+    if (el) el.textContent = fmt(value);
   };
 
-  setFmtAndRaw('total-local-investment', locInv);
-  setFmtAndRaw('total-local-amortization', locAm);
-  setFmtAndRaw('total-local-recurring', locRec);
-  setFmtAndRaw('total-local-annual-cost', locAm + locRec);
+  setFmt('total-operational-cost', totalOperational);
 
-  setFmtAndRaw('total-production-cost', prodRec);
-  setFmtAndRaw('total-transport-annual-cost', transRec + /* transport amortizations already added above? */ 0);
-  setFmtAndRaw('total-growth-cost', growRec);
-
-  setFmtAndRaw('total-personnel-cost', perCost);
-
-  setFmtAndRaw('total-fixed-annual-cost', totalFixed);
-  setFmtAndRaw('total-variable-annual-cost', totalVariable);
-  setFmtAndRaw('total-financial-cost', totalFin);
-  setFmtAndRaw('total-operational-cost', totalOperational);
-
-  // Actualiza resumen derecho y recalcula precios dependientes
-  updateRightSummary();
-  // También recalcular el precio/hora por si total_operational cambió
-  calculatePricing();
+  // Actualizar resumen y cálculos de precio
+  updateRightSummary(totalOperational);
+  calculatePricing(totalOperational);
 }
 
 /* ===========================
-   SALARIO / PRECIO HORA
+   SALARIO / PRECIO HORA - CORREGIDA
    =========================== */
-function calcNetSalary(){
-  const gross=safeNum(qs('#grossSalary')?.value);
-  const irpf=safeNum(qs('#irpfRate')?.value);
-  const ss=gross*0.0635;
-  const net=gross-(gross*irpf/100)-ss;
-  qs('#netMonthlySalary').textContent=fmt(net/14);
-  qs('#ssDeduction').textContent=fmt(ss);
-}
+function calculatePricing(totalOperational = null) {
+  // Si no se pasa el total, calcularlo
+  if (totalOperational === null) {
+    totalOperational = calculateTotalCosts();
+  }
+  
+  const margin = safeNum(qs('#target-profit-margin')?.value) || 20;
+  const emp = Math.max(1, safeNum(qs('#employee-count')?.value) || 1);
+  const hours = safeNum(qs('#annual-hours-per-employee')?.value) || 1600;
+  const totalHours = emp * hours;
 
-function calculatePricing(){
-  const margin=safeNum(qs('#target-profit-margin')?.value)||20;
-  const emp=Math.max(1,safeNum(qs('#employee-count')?.value)||1);
-  const hours=safeNum(qs('#annual-hours-per-employee')?.value)||1600;
-  const totalHours=emp*hours;
-
-  // Leer total desde el texto visible
-  const totalCosts=Number((qs('#total-operational-cost')?.textContent||'').replace(/[^0-9\.-]/g,''))||0;
-
-  const profit = totalCosts * (margin / 100);
-  const revenue = totalCosts + profit;
+  const profit = totalOperational * (margin / 100);
+  const revenue = totalOperational + profit;
   const suggested = totalHours > 0 ? revenue / totalHours : 0;
 
   // Actualizar interfaz
-  qs('#total-available-hours').textContent = totalHours.toLocaleString();
-  qs('#suggested-hourly-rate').textContent = fmt(suggested);
-  qs('#expected-net-profit').textContent = fmt(profit);
-  qs('#required-annual-revenue').textContent = fmt(revenue);
+  const setFmt = (id, value) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = fmt(value);
+  };
 
-  // Sincronizar resumen lateral
-  updateRightSummary(totalCosts, profit, revenue, suggested);
+  setFmt('total-available-hours', totalHours);
+  setFmt('suggested-hourly-rate', suggested);
+  setFmt('expected-net-profit', profit);
+  setFmt('required-annual-revenue', revenue);
+  
+  // Guardar valores numéricos para el resumen
+  document.getElementById('suggested-hourly-rate').dataset.value = suggested;
+  document.getElementById('expected-net-profit').dataset.value = profit;
+  document.getElementById('required-annual-revenue').dataset.value = revenue;
+  document.getElementById('total-available-hours').dataset.value = totalHours;
 }
 
 /* ===========================
-   RESUMEN DERECHO
+   RESUMEN DERECHO - CORREGIDA
    =========================== */
-function updateRightSummary(){
-  const op = safeNum(document.getElementById('total-operational-cost')?.dataset.value);
-  const profit = safeNum(document.getElementById('expected-net-profit')?.dataset.value);
-  const req = safeNum(document.getElementById('required-annual-revenue')?.dataset.value);
-  const rate = safeNum(document.getElementById('suggested-hourly-rate')?.dataset.value);
+function updateRightSummary(totalOperational = null) {
+  if (totalOperational === null) {
+    totalOperational = calculateTotalCosts();
+  }
+  
+  // Obtener valores actuales de pricing
+  const suggestedRate = safeNum(document.getElementById('suggested-hourly-rate')?.dataset.value) || 0;
+  const expectedProfit = safeNum(document.getElementById('expected-net-profit')?.dataset.value) || 0;
+  const requiredRevenue = safeNum(document.getElementById('required-annual-revenue')?.dataset.value) || 0;
+  const totalHours = safeNum(document.getElementById('total-available-hours')?.dataset.value) || 0;
 
   const aside = document.querySelector('aside.sidebar');
   if (!aside) return;
+  
   let c = document.getElementById('enhanced-summary');
   if (!c) {
     c = document.createElement('div');
     c.className = 'card';
     c.id = 'enhanced-summary';
-    c.innerHTML = `
-      <h4>Laburpen xehetuak</h4>
-      <p>Urteko gastu osoa: <strong id="summary-operational-val">€ 0.00</strong></p>
-      <p>Mozkin garbia: <strong id="summary-profit-val">€ 0.00</strong></p>
-      <p>Fakturazio beharra: <strong id="summary-required-val">€ 0.00</strong></p>
-      <p>Orduko prezioa: <strong id="summary-rate-val">€ 0.00</strong></p>
-    `;
     aside.appendChild(c);
   }
-
-  const set = (id, v) => {
-    const e = document.getElementById(id);
-    if (e) e.textContent = fmt(v);
-  };
-  set('summary-operational-val', op);
-  set('summary-profit-val', profit);
-  set('summary-required-val', req);
-  set('summary-rate-val', rate);
+  
+  c.innerHTML = `
+    <h4>Laburpen Xehetua</h4>
+    <p>Urteko gastu osoa: <strong>${fmt(totalOperational)}</strong></p>
+    <p>Mozkin garbia: <strong>${fmt(expectedProfit)}</strong></p>
+    <p>Fakturazio beharra: <strong>${fmt(requiredRevenue)}</strong></p>
+    <p>Orduko prezioa: <strong>${fmt(suggestedRate)}</strong></p>
+    <p>Urteko orduak: <strong>${totalHours.toLocaleString()}</strong></p>
+  `;
 }
 
 /* ===========================
@@ -406,7 +451,6 @@ function preloadSampleData() {
   updateAll();
 }
 
-/* ===========================
   /* ===========================
    INIT + EVENTOS GLOBALES
    =========================== */
@@ -417,39 +461,33 @@ function bindGlobalInputs() {
   // Capital de socios → actualiza finanzas y totales
   ['partner-capital-1', 'partner-capital-2', 'partner-capital-3'].forEach(id => {
     const el = document.getElementById(id);
-    if (el) el.addEventListener('input', () => {
-      updateAll();
-      calculatePricing();
-    });
+    if (el) el.addEventListener('input', updateAll);
   });
 
   // Préstamo → recalcula finanzas y costes
   ['loan-amount', 'loan-tae', 'loan-term'].forEach(id => {
     const el = document.getElementById(id);
-    if (el) el.addEventListener('input', () => {
-      updateAll();
-      calculatePricing();
-    });
+    if (el) el.addEventListener('input', updateAll);
   });
 
-  // Salario neto → recalcula sueldo
-  const gross = document.getElementById('grossSalary');
-  const irpf = document.getElementById('irpfRate');
-  if (gross) gross.addEventListener('input', calcNetSalary);
-  if (irpf) irpf.addEventListener('input', calcNetSalary);
-
-  // Precio/hora → recalcula horas y precio cada vez que cambian datos clave
+  // Inputs de precio/hora → solo recalcula pricing (no updateAll completo)
   ['corporate-tax', 'target-profit-margin', 'employee-count', 'annual-hours-per-employee'].forEach(id => {
     const el = document.getElementById(id);
-    if (el) el.addEventListener('input', () => {
-      updateAll();
-      calculatePricing();
-    });
+    if (el) {
+      el.addEventListener('input', () => {
+        const totalOperational = calculateTotalCosts();
+        calculatePricing(totalOperational);
+        updateRightSummary(totalOperational);
+      });
+    }
   });
 
-  // Botón PDF
+  // Botón PDF - eliminar onclick del HTML y usar solo event listener
   const dl = document.getElementById('download-report-btn');
-  if (dl) dl.addEventListener('click', generatePDFReport);
+  if (dl) {
+    dl.removeAttribute('onclick');
+    dl.addEventListener('click', generatePDFReport);
+  }
 }
 
 /* ===========================
@@ -492,14 +530,14 @@ async function init(){
   // Render de tablas
   renderAllTables();
 
-  // Cálculos iniciales
-  updateAll();
+  // Tabs
+  initTabs();
 
   // Inputs y botones
   bindGlobalInputs();
 
-  // Tabs
-  initTabs();
+  // Cálculos iniciales - ESTO ES LO MÁS IMPORTANTE
+  updateAll();
 
   // Selección de idioma actual
   const sel = document.getElementById('language-select');

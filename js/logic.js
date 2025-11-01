@@ -280,10 +280,14 @@ function calculatePricing(){
 /* ===========================
    RESUMEN DERECHO
    =========================== */
-function updateRightSummary(total = 0, profit = 0, revenue = 0, rate = 0) {
+function updateRightSummary(){
+  const op = safeNum(document.getElementById('total-operational-cost')?.dataset.value);
+  const profit = safeNum(document.getElementById('expected-net-profit')?.dataset.value);
+  const req = safeNum(document.getElementById('required-annual-revenue')?.dataset.value);
+  const rate = safeNum(document.getElementById('suggested-hourly-rate')?.dataset.value);
+
   const aside = document.querySelector('aside.sidebar');
   if (!aside) return;
-
   let c = document.getElementById('enhanced-summary');
   if (!c) {
     c = document.createElement('div');
@@ -299,15 +303,13 @@ function updateRightSummary(total = 0, profit = 0, revenue = 0, rate = 0) {
     aside.appendChild(c);
   }
 
-  const set = (id, val) => {
+  const set = (id, v) => {
     const e = document.getElementById(id);
-    if (e) e.textContent = fmt(val);
+    if (e) e.textContent = fmt(v);
   };
-
-  // Actualiza directamente desde los valores recibidos (los mismos de ficha 7)
-  set('summary-operational-val', total);
+  set('summary-operational-val', op);
   set('summary-profit-val', profit);
-  set('summary-required-val', revenue);
+  set('summary-required-val', req);
   set('summary-rate-val', rate);
 }
 

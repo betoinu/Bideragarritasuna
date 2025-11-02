@@ -1,15 +1,15 @@
 /* =========================================
-// IDarte · VERSIÓN DEFINITIVA CON DATOS PRECARGADOS COMPLETOS
+// IDarte · VERSIÓN CORREGIDA
 // ========================================= */
 
-console.log("🚀 IDarte - Sistema iniciado");
+console.log("🚀 IDarte - Sistema mejorado iniciado");
 
 const state = {
   amortizables: { lokala: [], garraioa: [] },
   recurrings: { lokala: [], ekoizpena: [], garraioa: [], hazkuntza: [] },
   personnel: [],
   finance: { 
-    socios: [],  // ← CAMBIADO: Ahora incluye tipo
+    socios: [],
     prestamo: { tae: 5, plazo: 5, periodoGracia: 0 }
   }
 };
@@ -28,7 +28,12 @@ function safeNum(v) {
   return isNaN(num) ? 0 : num;
 }
 
-// ===== DATOS PRECARGADOS COMPLETOS =====
+function updateElement(id, value) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = value;
+}
+
+// ===== DATOS PRECARGADOS =====
 function preloadSampleData() {
   console.log("📥 Cargando datos de ejemplo completos...");
   
@@ -81,24 +86,18 @@ function preloadSampleData() {
     { id: uid('p'), role: 'Zuzendaria / Bazkidea', gross: 35000, employer_ss: 30 }
   ];
 
-  // --- FINANZAS ACTUALIZADAS ---
+  // --- FINANZAS ---
   state.finance.socios = [
     { id: uid('s'), name: 'Bazkide 1', tipo: 'trabajador', aportacion: 0 },
     { id: uid('s'), name: 'Bazkide 2', tipo: 'trabajador', aportacion: 0 },
     { id: uid('s'), name: 'Bazkide 3', tipo: 'capitalista', aportacion: 0 }
   ];
 
-  console.log("✅ Datos precargados correctamente - Total elementos:", {
-    amortizables: state.amortizables.lokala.length + state.amortizables.garraioa.length,
-    recurrentes: Object.values(state.recurrings).flat().length,
-    personal: state.personnel.length,
-    socios: state.finance.socios.length
-  });
+  console.log("✅ Datos precargados correctamente");
 }
 
-// ===== CÁLCULOS FINANCIEROS MEJORADOS =====
+// ===== CÁLCULOS FINANCIEROS =====
 function calculateInvestmentNeeds() {
-  // 1. Inversiones en activos fijos
   let inversiones = 0;
   state.amortizables.lokala.forEach(item => {
     inversiones += safeNum(item.cost);
@@ -107,35 +106,17 @@ function calculateInvestmentNeeds() {
     inversiones += safeNum(item.cost);
   });
 
-  // 2. Gastos operativos anuales (sin amortizaciones)
   const gastosOperativosAnuales = calculateOperationalCosts();
-  
-  // 3. Tesorería (n meses de gastos operativos)
   const mesesTesoreria = safeNum(document.getElementById('meses-tesoreria')?.value) || 3;
   const tesoreria = (gastosOperativosAnuales / 12) * mesesTesoreria;
-  
-  // 4. Necesidades totales de financiación
   const necesidadesTotales = inversiones + tesoreria;
 
-  console.log("💰 Necesidades de inversión calculadas:", {
-    inversiones: fmt(inversiones),
-    gastosOperativos: fmt(gastosOperativosAnuales),
-    tesoreria: fmt(tesoreria),
-    necesidadesTotales: fmt(necesidadesTotales)
-  });
-
-  return {
-    inversiones,
-    gastosOperativosAnuales,
-    tesoreria,
-    necesidadesTotales
-  };
+  return { inversiones, gastosOperativosAnuales, tesoreria, necesidadesTotales };
 }
 
 function calculateFinancing() {
   const necesidades = calculateInvestmentNeeds();
   
-  // 1. Calcular aportaciones diferenciadas por tipo
   let aportacionesTrabajadores = 0;
   let aportacionesCapitalistas = 0;
   
@@ -148,11 +129,8 @@ function calculateFinancing() {
   });
   
   const aportacionesTotales = aportacionesTrabajadores + aportacionesCapitalistas;
-  
-  // 2. Préstamo necesario
   const prestamoNecesario = Math.max(0, necesidades.necesidadesTotales - aportacionesTotales);
 
-  // 3. Calcular cuota del préstamo (sistema francés)
   const tae = safeNum(document.getElementById('tae')?.value) || 5;
   const plazo = safeNum(document.getElementById('plazo')?.value) || 5;
   const periodoGracia = safeNum(document.getElementById('periodo-gracia')?.value) || 0;
@@ -168,7 +146,7 @@ function calculateFinancing() {
       const cuotaMensual = prestamoNecesario * tasaMensual * Math.pow(1 + tasaMensual, numPagos) / 
                           (Math.pow(1 + tasaMensual, numPagos) - 1);
       cuotaAnual = cuotaMensual * 12;
-      interesAnual = cuotaAnual * numPagos / 12 - prestamoNecesario / (plazo - periodoGracia/12);
+      interesAnual = (cuotaMensual * numPagos) - prestamoNecesario;
     }
   }
 
@@ -186,7 +164,7 @@ function calculateFinancing() {
 function calculateOperationalCosts() {
   let total = 0;
 
-  // 1. Amortizaciones (¡IMPORTANTE! Incluir en costes operativos)
+  // Amortizaciones
   state.amortizables.lokala.forEach(item => {
     total += safeNum(item.cost) / Math.max(1, safeNum(item.life));
   });
@@ -194,14 +172,14 @@ function calculateOperationalCosts() {
     total += safeNum(item.cost) / Math.max(1, safeNum(item.life));
   });
 
-  // 2. Gastos recurrentes
+  // Gastos recurrentes
   Object.values(state.recurrings).forEach(category => {
     category.forEach(item => {
       total += safeNum(item.payment_cost) * Math.max(1, safeNum(item.frequency));
     });
   });
 
-  // 3. Personal (coste total empleador)
+  // Personal
   state.personnel.forEach(person => {
     total += safeNum(person.gross) * (1 + safeNum(person.employer_ss) / 100);
   });
@@ -214,23 +192,19 @@ function calculatePricing() {
   const costesOperativos = financiacion.gastosOperativosAnuales;
   const costesFinancieros = financiacion.cuotaAnual;
 
-  // Parámetros del negocio
   const margin = safeNum(document.getElementById('target-profit-margin')?.value) || 20;
   const corporateTax = safeNum(document.getElementById('corporate-tax')?.value) || 25;
   const employeeCount = Math.max(1, safeNum(document.getElementById('employee-count')?.value) || state.personnel.length);
   const annualHours = safeNum(document.getElementById('annual-hours-per-employee')?.value) || 1600;
   const totalHours = employeeCount * annualHours;
 
-  // CÁLCULOS ECONÓMICOS CLAVE
   const costesTotales = costesOperativos + costesFinancieros;
   const margenBruto = costesTotales * (margin / 100);
   const facturacionNecesaria = costesTotales + margenBruto;
   const precioHora = totalHours > 0 ? facturacionNecesaria / totalHours : 0;
 
-  // Cálculo de impuestos y beneficio neto
-  const beneficioBruto = margenBruto;
-  const impuestos = beneficioBruto * (corporateTax / 100);
-  const beneficioNeto = beneficioBruto - impuestos;
+  const impuestos = margenBruto * (corporateTax / 100);
+  const beneficioNeto = margenBruto - impuestos;
 
   // ACTUALIZAR PANEL 7
   updateElement('desglose-gastos-operativos', fmt(costesOperativos));
@@ -256,9 +230,6 @@ function calculatePricing() {
   updateElement('total-capitalistas', fmt(financiacion.aportacionesCapitalistas));
   updateElement('cantidad-financiar', fmt(financiacion.prestamoNecesario));
   updateElement('cuota-anual', fmt(financiacion.cuotaAnual));
-  updateElement('gastos-operativos-panel6', fmt(costesOperativos));
-  updateElement('costes-financieros-panel6', fmt(costesFinancieros));
-  updateElement('gastos-totales-panel6', fmt(costesTotales));
   updateElement('num-socios', state.finance.socios.length);
 
   // ACTUALIZAR SIDEBAR
@@ -270,7 +241,7 @@ function calculatePricing() {
   updateElement('employee-count-sidebar', employeeCount);
   updateElement('annual-hours-sidebar', totalHours.toLocaleString());
 
-  // Resumen de costes para sidebar
+  // Resumen de costes
   const totalAmortizaciones = calculateTotalAmortizations();
   const totalGastosFijos = calculateTotalRecurring();
   const totalPersonal = calculateTotalPersonnel();
@@ -280,20 +251,7 @@ function calculatePricing() {
   updateElement('total-personal', fmt(totalPersonal));
   updateElement('total-intereses', fmt(financiacion.interesAnual));
 
-  console.log("🎯 Modelo de negocio calculado:", {
-    facturacionNecesaria: fmt(facturacionNecesaria),
-    precioHora: fmt(precioHora),
-    margenBruto: fmt(margenBruto),
-    beneficioNeto: fmt(beneficioNeto),
-    necesidadesFinanciacion: fmt(financiacion.necesidadesTotales)
-  });
-
-  return {
-    facturacionNecesaria,
-    precioHora,
-    margenBruto,
-    beneficioNeto
-  };
+  return { facturacionNecesaria, precioHora, margenBruto, beneficioNeto };
 }
 
 // ===== FUNCIONES AUXILIARES =====
@@ -323,11 +281,6 @@ function calculateTotalPersonnel() {
     total += safeNum(person.gross) * (1 + safeNum(person.employer_ss) / 100);
   });
   return total;
-}
-
-function updateElement(id, value) {
-  const el = document.getElementById(id);
-  if (el) el.textContent = value;
 }
 
 // ===== CRUD OPERATIONS =====
@@ -384,19 +337,20 @@ window.removePersonnel = function(id) {
   updateAll();
 };
 
-// ===== FUNCIONES DE GESTIÓN DE SOCIOS MEJORADAS =====
+// ===== GESTIÓN DE SOCIOS =====
 window.addSocio = function() {
   const newNumber = state.finance.socios.length + 1;
   state.finance.socios.push({
     id: uid('s'),
     name: `Bazkide ${newNumber}`,
-    tipo: 'trabajador', // Por defecto es trabajador
+    tipo: 'trabajador',
     aportacion: 0
   });
   renderAllTables();
   updateAll();
 };
 
+// ¡ESTA ES LA FUNCIÓN QUE FALTABA!
 window.removeSocio = function(id) {
   state.finance.socios = state.finance.socios.filter(s => s.id !== id);
   renderAllTables();
@@ -411,11 +365,46 @@ window.removeLastSocio = function() {
   }
 };
 
-// ELIMINAR las funciones antiguas de capitalistas:
-// window.addCapitalista y window.removeCapitalista
+window.onFieldChange = function(e) {
+  const el = e.target;
+  const id = el.dataset.id;
+  const field = el.dataset.field;
+  const value = el.type === 'number' ? safeNum(el.value) : el.value;
+
+  let found = false;
+
+  // Amortizables
+  ['lokala', 'garraioa'].forEach(cat => {
+    const item = state.amortizables[cat].find(x => x.id === id);
+    if (item) { item[field] = value; found = true; }
+  });
+
+  // Recurrentes
+  if (!found) {
+    ['lokala', 'ekoizpena', 'garraioa', 'hazkuntza'].forEach(cat => {
+      const item = state.recurrings[cat].find(x => x.id === id);
+      if (item) { item[field] = value; found = true; }
+    });
+  }
+
+  // Personal
+  if (!found) {
+    const person = state.personnel.find(x => x.id === id);
+    if (person) { person[field] = value; found = true; }
+  }
+
+  // Socios
+  if (!found) {
+    const socio = state.finance.socios.find(x => x.id === id);
+    if (socio) { socio[field] = value; found = true; }
+  }
+
+  if (found) updateAll();
+};
 
 // ===== RENDER DE TABLAS =====
 function renderAllTables() {
+  // Solo renderizar las tablas que existen
   renderTable(state.amortizables.lokala, 'lokala-amortizable-body', 'amort');
   renderTable(state.amortizables.garraioa, 'garraioa-amortizable-body', 'amort');
   
@@ -426,7 +415,8 @@ function renderAllTables() {
   
   renderTable(state.personnel, 'personnel-body', 'person');
   renderTable(state.finance.socios, 'socios-table-body', 'socio');
-  renderTable(state.finance.capitalistas, 'capitalistas-table-body', 'capitalista');
+  
+  // NO renderizar capitalistas-table-body porque ya no existe
 }
 
 function renderTable(items, containerId, type) {
@@ -474,34 +464,43 @@ function renderTable(items, containerId, type) {
       `;
     }
     if (type === 'socio') {
-  return `
-    <tr>
-      <td><input value="${item.name}" data-id="${item.id}" data-field="name" style="border: none; background: transparent; padding: 4px;"></td>
-      <td>
-        <select data-id="${item.id}" data-field="tipo" onchange="onFieldChange(event)" style="padding: 4px 8px; border-radius: 4px; border: 1px solid #ddd;">
-          <option value="trabajador" ${item.tipo === 'trabajador' ? 'selected' : ''}>Langile Bazkidea</option>
-          <option value="capitalista" ${item.tipo === 'capitalista' ? 'selected' : ''}>Kapitalista Bazkidea</option>
-        </select>
-      </td>
-      <td><input type="number" value="${item.aportacion}" data-id="${item.id}" data-field="aportacion" style="text-align: right; padding: 4px 8px; border: 1px solid #ddd; border-radius: 4px;"></td>
-      <td><button onclick="removeSocio('${item.id}')" class="btn small">✕</button></td>
-    </tr>
-  `;
-}
-    if (type === 'capitalista') {
       return `
         <tr>
-          <td>${item.name}</td>
-          <td><input type="number" value="${item.aportacion}" data-id="${item.id}" data-field="aportacion"></td>
-          <td><button onclick="removeCapitalista('${item.id}')" class="btn small">✕</button></td>
+          <td><input value="${item.name}" data-id="${item.id}" data-field="name" style="border: none; background: transparent; padding: 4px;"></td>
+          <td>
+            <select data-id="${item.id}" data-field="tipo" style="padding: 4px 8px; border-radius: 4px; border: 1px solid #ddd;">
+              <option value="trabajador" ${item.tipo === 'trabajador' ? 'selected' : ''}>Langile Bazkidea</option>
+              <option value="capitalista" ${item.tipo === 'capitalista' ? 'selected' : ''}>Kapitalista Bazkidea</option>
+            </select>
+          </td>
+          <td><input type="number" value="${item.aportacion}" data-id="${item.id}" data-field="aportacion" style="text-align: right; padding: 4px 8px; border: 1px solid #ddd; border-radius: 4px;"></td>
+          <td><button onclick="removeSocio('${item.id}')" class="btn small">✕</button></td>
         </tr>
       `;
     }
   }).join('');
 
-  // Añadir event listeners
-  container.querySelectorAll('input[data-id]').forEach(input => {
+  container.querySelectorAll('input[data-id], select[data-id]').forEach(input => {
     input.addEventListener('input', onFieldChange);
+    input.addEventListener('change', onFieldChange);
+  });
+}
+
+// ===== NAVEGACIÓN =====
+function setupTabNavigation() {
+  const tabs = document.querySelectorAll('.tab');
+  const panels = document.querySelectorAll('.panel');
+  
+  tabs.forEach((tab, index) => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      panels.forEach(p => p.style.display = 'none');
+      
+      tab.classList.add('active');
+      if (panels[index]) {
+        panels[index].style.display = 'block';
+      }
+    });
   });
 }
 
@@ -510,38 +509,14 @@ function updateAll() {
   calculatePricing();
 }
 
-// ===== NAVEGACIÓN ENTRE PESTAÑAS =====
-function setupTabNavigation() {
-  const tabs = document.querySelectorAll('.tab');
-  const panels = document.querySelectorAll('.panel');
-  
-  tabs.forEach((tab, index) => {
-    tab.addEventListener('click', () => {
-      // Remover clase active de todas las pestañas
-      tabs.forEach(t => t.classList.remove('active'));
-      // Ocultar todos los paneles
-      panels.forEach(p => p.style.display = 'none');
-      
-      // Activar pestaña clickeada
-      tab.classList.add('active');
-      
-      // Mostrar panel correspondiente
-      if (panels[index]) {
-        panels[index].style.display = 'block';
-      }
-    });
-  });
-}
-
-// ===== INICIALIZACIÓN MEJORADA =====
+// ===== INICIALIZACIÓN =====
 function initializeApp() {
-  console.log("🎯 Inicializando IDarte con cálculos financieros mejorados...");
+  console.log("🎯 Inicializando IDarte...");
   
   preloadSampleData();
   renderAllTables();
   setupTabNavigation();
   
-  // Configurar event listeners para todos los inputs globales
   const globalInputs = [
     'target-profit-margin', 'corporate-tax', 'employee-count', 'annual-hours-per-employee',
     'tae', 'plazo', 'periodo-gracia', 'meses-tesoreria'
@@ -552,10 +527,8 @@ function initializeApp() {
     if (el) el.addEventListener('input', updateAll);
   });
   
-  // Inicializar cálculos
   setTimeout(updateAll, 100);
-  
-  console.log("✅ IDarte completamente operativo con modelo financiero integrado");
+  console.log("✅ IDarte completamente operativo");
 }
 
 // ===== GENERACIÓN DE PDF =====
@@ -589,5 +562,4 @@ window.generatePDFReport = function() {
   }, 500);
 };
 
-// Iniciar aplicación cuando se carga la página
 window.addEventListener('load', initializeApp);

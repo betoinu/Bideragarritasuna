@@ -350,39 +350,81 @@
 </div>
             </section>
 
-<!-- SIDEBAR (DENTRO DEL MAIN) -->
+<!-- 🧾 LABURPEN OROKORRA -->
+    <section class="sidebar-section">
+        <h4 data-i18n="sidebar.facturacion">Urteko Fakturazioa Beharrezkoa</h4>
+        <p class="muted" data-i18n="sidebar.facturacionSubtitle">
+            Gastu guztiak + Interesak + Mozkina + Zergak
+        </p>
+        <p class="sidebar-value" id="total-facturacion">€ 0.00</p>
+        
+        <div class="sidebar-breakdown">
+            <p data-i18n="sidebar.operating">Gastu Operatiboak: <span id="gastos-operativos">€ 0.00</span></p>
+            <p data-i18n="sidebar.financial">Kostu Finantzarioak: <span id="costos-financieros">€ 0.00</span></p>
+            <p data-i18n="sidebar.grossMargin">Mozkin Brutoa: <span id="margen-bruto">€ 0.00</span></p>
+        </div>
+    </section>
 
-<aside class="sidebar" style="background:#f9fafb;padding:20px;border-left:2px solid #ddd;max-width:340px;">
-  
-  <!-- 🧾 LABURPEN OROKORRA -->
-  <section class="sidebar-section" style="margin-bottom:25px;">
-    <h4 data-i18n="summary.title">Laburpen Orokorra</h4>
-    <p class="muted" data-i18n="summary.subtitle">
-      Urteko fakturazioa beharrezkoa (Gastu guztiak + Interesak + Mozkina + Zergak)
-    </p>
-    <p><strong id="total-facturacion">€ 0.00</strong></p>
-    <p data-i18n="sidebar.operating">Gastu Operatiboak: <span id="gastos-operativos">€ 0.00</span></p>
-    <p data-i18n="sidebar.financial">Kostu Finantzarioak: <span id="costos-financieros">€ 0.00</span></p>
-    <p data-i18n="sidebar.grossMargin">Mozkin Brutoa: <span id="margen-bruto">€ 0.00</span></p>
-  </section>
+    <!-- 👥 LANGILE ETA ORDUAK -->
+    <section class="sidebar-section">
+        <h4 data-i18n="sidebar.workforce">Langile eta Orduak</h4>
+        <div class="sidebar-stats">
+            <div class="stat-item">
+                <span data-i18n="sidebar.employeeCount">Langile Kopurua:</span>
+                <strong id="employee-count-sidebar">0</strong>
+            </div>
+            <div class="stat-item">
+                <span data-i18n="sidebar.annualHours">Urteko Orduak:</span>
+                <strong id="annual-hours-sidebar">0</strong>
+            </div>
+            <div class="stat-item highlight">
+                <span data-i18n="sidebar.hourlyRate">Orduko Prezioa:</span>
+                <strong id="suggested-hourly-rate-sidebar">€ 0.00</strong>
+            </div>
+        </div>
+    </section>
 
-  <!-- 👥 LANGILE ETA ORDUAK -->
-  <section class="sidebar-section" style="margin-bottom:25px;">
-    <h4 data-i18n="sidebar.workforce">Langile eta Orduak</h4>
-    <p>Langile Kopurua: <strong><span id="employee-count-sidebar">0</span></strong></p>
-    <p>Urteko Orduak: <strong><span id="annual-hours-sidebar">0</span></strong></p>
-    <p>Orduko Prezioa: <strong><span id="suggested-hourly-rate-sidebar">€ 0.00</span></strong></p>
-  </section>
+    <!-- 🧩 KOSTUEN DESGLOSEA -->
+    <section class="sidebar-section">
+        <h4 data-i18n="sidebar.costBreakdown">Kostuen Desglosea</h4>
+        <div class="cost-breakdown">
+            <div class="cost-item">
+                <span class="cost-label" data-i18n="sidebar.amortizations">Amortizazioak:</span>
+                <span class="cost-value" id="total-amortizaciones">€ 0.00</span>
+            </div>
+            <div class="cost-item">
+                <span class="cost-label" data-i18n="sidebar.fixedCosts">Gastu Finkoak:</span>
+                <span class="cost-value" id="total-gastos-fijos">€ 0.00</span>
+            </div>
+            <div class="cost-item">
+                <span class="cost-label" data-i18n="sidebar.personnelCosts">Langileen Kostua:</span>
+                <span class="cost-value" id="total-personal">€ 0.00</span>
+            </div>
+            <div class="cost-item">
+                <span class="cost-label" data-i18n="sidebar.interest">Interesak:</span>
+                <span class="cost-value" id="total-intereses">€ 0.00</span>
+            </div>
+        </div>
+    </section>
 
-  <!-- 🧩 DESGLOSE DE COSTES -->
-  <section class="sidebar-section" style="margin-bottom:25px;">
-    <h4 data-i18n="sidebar.costBreakdown">Kostuen Desglosea</h4>
-    <p>Amortizazioak: <span id="total-amortizaciones">€ 0.00</span></p>
-    <p>Gastu Finkoak: <span id="total-gastos-fijos">€ 0.00</span></p>
-    <p>Langileen Kostua: <span id="total-personal">€ 0.00</span></p>
-    <p>Interesak: <span id="total-intereses">€ 0.00</span></p>
-  </section>
-
+    <!-- 💰 FINANTZAKETA LABURPENA -->
+    <section class="sidebar-section">
+        <h4 data-i18n="sidebar.financingSummary">Finantzaketaren Laburpena</h4>
+        <div class="financing-summary">
+            <div class="finance-item">
+                <span data-i18n="sidebar.totalInvestment">Inbertsio Totala:</span>
+                <span id="total-inversion-sidebar">€ 0.00</span>
+            </div>
+            <div class="finance-item">
+                <span data-i18n="sidebar.partnerContributions">Bazkide Ekarpenak:</span>
+                <span id="total-aportacion-socios-sidebar">€ 0.00</span>
+            </div>
+            <div class="finance-item">
+                <span data-i18n="sidebar.loanNeeded">Mailegu Beharrezkoa:</span>
+                <span id="cantidad-financiar-sidebar">€ 0.00</span>
+            </div>
+        </div>
+    </section>
 </aside>
 
         </main>

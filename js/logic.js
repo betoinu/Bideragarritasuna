@@ -518,6 +518,7 @@ function calcularCostesFinancierosCompletos() {
     console.log("💰 Costes financieros finales:", costes);
     return costes;
 }
+
 function calculatePricing(totalOperational = null) {
     console.log("🎯 Calculando pricing con costes financieros incluidos...");
     
@@ -541,10 +542,11 @@ function calculatePricing(totalOperational = null) {
     });
 
     // MARGEN BRUTO (sobre costes operativos + financieros)
-    const margenBruto = (totalOperational + costosFinancieros) * (margin / 100);
+    const costesTotales = totalOperational + costosFinancieros; // ← AÑADIR ESTA LÍNEA
+    const margenBruto = costesTotales * (margin / 100);
     
     // FACTURACIÓN TOTAL necesaria
-    const revenue = totalOperational + costosFinancieros + margenBruto;
+    const revenue = costesTotales + margenBruto;
     const suggested = totalHours > 0 ? revenue / totalHours : 0;
 
     // MARGEN NETO (después de impuestos)
@@ -568,6 +570,9 @@ function calculatePricing(totalOperational = null) {
     document.getElementById('expected-net-profit').dataset.value = margenNeto;
     document.getElementById('required-annual-revenue').dataset.value = revenue;
     document.getElementById('total-available-hours').dataset.value = totalHours;
+
+    // 6. ACTUALIZAR DESGLOSE PEDAGÓGICO (NUEVO)
+    actualizarDesglosePedagogico(totalOperational, costosFinancieros, costesTotales, margenBruto, revenue, totalHours, suggested, margin);
     
     console.log("✅ Pricing calculado CON costes financieros:", {
         totalOperational,
@@ -578,6 +583,31 @@ function calculatePricing(totalOperational = null) {
     });
     
     return revenue;
+} // ← ESTE CIERRE va AQUÍ
+
+// NUEVA FUNCIÓN: Actualizar desglose pedagógico ← FUERA de calculatePricing
+function actualizarDesglosePedagogico(operacional, financieros, totales, margenBruto, facturacion, horas, precioHora, porcentajeMargen) {
+    const setFmt = (id, value) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = fmt(value);
+    };
+
+    const setText = (id, value) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = value;
+    };
+
+    setFmt('desglose-gastos-operativos', operacional);
+    setFmt('desglose-costes-financieros', financieros);
+    setFmt('desglose-gastos-totales', totales);
+    setFmt('desglose-margen-bruto', margenBruto);
+    setFmt('desglose-facturacion-total', facturacion);
+    setFmt('desglose-precio-hora', precioHora);
+    
+    setText('desglose-porcentaje-margen', porcentajeMargen);
+    setText('desglose-total-horas', horas.toLocaleString());
+    
+    console.log("📚 Desglose pedagógico actualizado");
 }
 
 // AÑADE esta nueva función después de calculatePricing

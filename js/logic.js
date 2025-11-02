@@ -1003,7 +1003,7 @@ async function initializeAppAsync() {
             console.log("🔁 Recalculando financiación y pricing tras carga inicial...");
             try {
                 calculateFinancing();
-                calculatePricing());
+                calculatePricing();
                 updateRightSummary();
 
                 // 🧩 Forzar actualización visual del sidebar (Langile kopurua + Urteko orduak)

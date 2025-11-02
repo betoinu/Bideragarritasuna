@@ -978,19 +978,27 @@ function bindGlobalInputs() {
 function bindFinantzaketaInputs() {
     console.log("🔧 Configurando event listeners para panel 6...");
     
-    // Porcentaje de tesorería
+function bindFinantzaketaInputs() {
+    console.log("🔧 Configurando event listeners para panel 6...");
+    
+    // Porcentaje de tesorería 
     const porcentajeTesoreria = document.getElementById('porcentaje-tesoreria');
     if (porcentajeTesoreria) {
         porcentajeTesoreria.addEventListener('input', function() {
-            console.log("📊 Porcentaje tesorería cambiado:", this.value);
+            console.log("🔄 TESORERÍA CAMBIADA:", this.value);
+            
+            // 1. Recalcular financiación (que incluye tesorería)
             if (typeof calcularFinanciacion === 'function') {
                 calcularFinanciacion();
             }
-            actualizarCascada();
+            
+            // 2. Forzar actualización completa
+            setTimeout(() => {
+                actualizarCascada();
+            }, 100);
         });
-        console.log("✅ Listener añadido a porcentaje-tesoreria");
     }
-    
+           
     // Otros inputs del panel 6
     const inputsFinantzaketa = [
         'necesidades-inversion', 'tipo-prestamo', 'tae', 'plazo'

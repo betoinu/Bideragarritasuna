@@ -1028,42 +1028,41 @@ async function initializeAppAsync() {
 }
 
 
-                // 🧩 Forzar actualización visual del sidebar (Langile kopurua + Urteko orduak)
-                const employeeCount = state.personnel.length;
-                const annualHours = (safeNum(document.getElementById('annual-hours-per-employee')?.value) || 1600) * employeeCount;
+// 🧩 Forzar actualización visual del sidebar (Langile kopurua + Urteko orduak)
+const employeeCount = state.personnel.length;
+const annualHours = (safeNum(document.getElementById('annual-hours-per-employee')?.value) || 1600) * employeeCount;
 
-                const empEl = document.getElementById('employee-count-sidebar');
-                const hoursEl = document.getElementById('annual-hours-sidebar');
+const empEl = document.getElementById('employee-count-sidebar');
+const hoursEl = document.getElementById('annual-hours-sidebar');
 
-                if (empEl) empEl.textContent = employeeCount.toString();
-                if (hoursEl) hoursEl.textContent = annualHours.toLocaleString('es-ES');
+if (empEl) empEl.textContent = employeeCount.toString();
+if (hoursEl) hoursEl.textContent = annualHours.toLocaleString('es-ES');
 
-                console.log(`👥 Langile kopurua: ${employeeCount} · ⏱ Urteko orduak: ${annualHours}`);
+console.log(`👥 Langile kopurua: ${employeeCount} · ⏱ Urteko orduak: ${annualHours}`);
 
-                console.log("✅ Financiación, pricing y sidebar recalculados correctamente.");
-            } catch (err) {
-                console.warn("⚠️ Error al recalcular tras carga:", err);
-            }
-        }, 500);
-
-
-        // Verificación final
-        setTimeout(() => {
-            console.log("🔍 Verificación final del estado...");
-            const finalCheck = document.getElementById('suggested-hourly-rate-sidebar');
-            if (finalCheck && finalCheck.textContent !== '€ 0.00') {
-                console.log("🎉 IDarte completamente operativo y mostrando datos");
-            } else {
-                console.warn("⚠️ Los cálculos podrían no haberse ejecutado correctamente");
-                updateAll(); // Reintentar
-            }
-        }, 500);
-        
-    } catch (error) {
-        console.error("💥 Error crítico durante la inicialización:", error);
-        showErrorToUser("Error al inicializar la aplicación. Por favor, recarga la página.");
-    }
+console.log("✅ Financiación, pricing y sidebar recalculados correctamente.");
+} catch (err) {
+console.warn("⚠️ Error al recalcular tras carga:", err);
 }
+}, 500);
+
+// Verificación final
+setTimeout(() => {
+console.log("🔍 Verificación final del estado...");
+const finalCheck = document.getElementById('suggested-hourly-rate-sidebar');
+if (finalCheck && finalCheck.textContent !== '€ 0.00') {
+    console.log("🎉 IDarte completamente operativo y mostrando datos");
+} else {
+    console.warn("⚠️ Los cálculos podrían no haberse ejecutado correctamente");
+    updateAll(); // Reintentar
+}
+}, 500);
+
+} catch (error) {
+console.error("💥 Error crítico durante la inicialización:", error);
+showErrorToUser("Error al inicializar la aplicación. Por favor, recarga la página.");
+}
+} // <-- ESTE CIERRA initializeAppAsync
 
 // ===== FUNCIONES AUXILIARES MEJORADAS =====
 

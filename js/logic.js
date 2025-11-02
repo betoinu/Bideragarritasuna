@@ -11,7 +11,8 @@ let translations = {};
 // Cargar traducciones desde el JSON
 async function loadTranslations() {
     try {
-        const response = await fetch('lang/lang.json');
+        const response = await fetch('lang/lang.json');totalcost
+        
         translations = await response.json();
         console.log("✅ Traducciones cargadas correctamente");
         applyTranslations();
@@ -1002,7 +1003,7 @@ async function initializeAppAsync() {
             console.log("🔁 Recalculando financiación y pricing tras carga inicial...");
             try {
                 calculateFinancing();
-                calculatePricing(calculateTotalCosts());
+                calculatePricing());
                 updateRightSummary();
 
                 // 🧩 Forzar actualización visual del sidebar (Langile kopurua + Urteko orduak)

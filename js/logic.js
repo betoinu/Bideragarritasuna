@@ -72,7 +72,59 @@ function applyTranslations() {
             element.textContent = translation;
         }
     });
+    
+    // Traducir textos estáticos que no tienen data-i18n
+    updateStaticTexts();
 }
+
+function updateStaticTexts() {
+    // Actualizar títulos de paneles
+    const panelTitles = {
+        'lokala-sheet': 'panel.lokal.title',
+        'pertsonala-sheet': 'panel.pertsonala.title', 
+        'ekoizpena-sheet': 'panel.ekoizpena.title',
+        'garraioa-sheet': 'panel.garraioa.title',
+        'hazkuntza-sheet': 'panel.hazkuntza.title',
+        'finantzaketa-sheet': 'panel.finantzaketa.title',
+        'prezioa-sheet': 'panel.prezioa.title'
+    };
+    
+    Object.entries(panelTitles).forEach(([panelId, translationKey]) => {
+        const title = document.querySelector(`#${panelId} h2`);
+        if (title) title.textContent = getTranslation(translationKey);
+    });
+    
+    // Actualizar textos de botones específicos
+    const buttons = document.querySelectorAll('.btn.small');
+    buttons.forEach(btn => {
+        if (btn.textContent.includes('+ Gehitu') || btn.textContent.includes('+ Añadir') || btn.textContent.includes('+ Add')) {
+            if (btn.onclick && btn.onclick.toString().includes('addAmortizable')) {
+                btn.textContent = getTranslation('button.addAmortizable');
+            } else if (btn.onclick && btn.onclick.toString().includes('addRecurring')) {
+                btn.textContent = getTranslation('button.addRecurring');
+            } else if (btn.onclick && btn.onclick.toString().includes('addPerson')) {
+                btn.textContent = getTranslation('button.addPerson');
+            } else if (btn.onclick && btn.onclick.toString().includes('addSocio')) {
+                btn.textContent = getTranslation('button.addSocio');
+            } else {
+                btn.textContent = getTranslation('button.add');
+            }
+        }
+        if (btn.textContent.includes('- Kendu') || btn.textContent.includes('- Quitar') || btn.textContent.includes('- Remove')) {
+            btn.textContent = getTranslation('button.removeSocio');
+        }
+    });
+    
+    // Actualizar opciones del selector de tipos de socio
+    document.querySelectorAll('select[data-field="tipo"] option').forEach(option => {
+        if (option.value === 'trabajador') {
+            option.textContent = getTranslation('socio.trabajador');
+        } else if (option.value === 'capitalista') {
+            option.textContent = getTranslation('socio.capitalista');
+        }
+    });
+}
+
 
 // ===== CONFIGURACIÓN DEL SELECTOR DE IDIOMA =====
 function setupLanguageSelector() {

@@ -493,7 +493,7 @@ function calcularCostesFinancierosCompletos() {
 }
 
 function calculatePricing(totalOperational = null) {
-    console.log("🎯 Calculando pricing con márgenes diferenciados...");
+    console.log("🎯 Calculando pricing con costes financieros incluidos...");
     
     if (totalOperational === null) {
         totalOperational = calculateTotalCosts();
@@ -510,21 +510,21 @@ function calculatePricing(totalOperational = null) {
 
     console.log("📊 Datos para pricing:", {
         totalOperational,
-        margin,
-        corporateTax,
-        costosFinancieros
+        costosFinancieros,
+        margin
     });
 
-    // MARGEN BRUTO (antes de impuestos e intereses)
-    const margenBruto = totalOperational * (margin / 100);
+    // MARGEN BRUTO (sobre costes operativos + financieros)
+    const margenBruto = (totalOperational + costosFinancieros) * (margin / 100);
     
+    // FACTURACIÓN TOTAL necesaria
+    const revenue = totalOperational + costosFinancieros + margenBruto;
+    const suggested = totalHours > 0 ? revenue / totalHours : 0;
+
     // MARGEN NETO (después de impuestos)
-    const beneficioAntesImpuestos = margenBruto - costosFinancieros;
+    const beneficioAntesImpuestos = margenBruto;
     const impuestos = Math.max(0, beneficioAntesImpuestos * (corporateTax / 100));
     const margenNeto = beneficioAntesImpuestos - impuestos;
-
-    const revenue = totalOperational + margenBruto;
-    const suggested = totalHours > 0 ? revenue / totalHours : 0;
 
     // Actualizar interfaz PANEL 7
     const setFmt = (id, value) => {
@@ -534,7 +534,7 @@ function calculatePricing(totalOperational = null) {
 
     setFmt('total-available-hours', totalHours);
     setFmt('suggested-hourly-rate', suggested);
-    setFmt('expected-net-profit', margenNeto); // Ahora muestra margen NETO
+    setFmt('expected-net-profit', margenNeto);
     setFmt('required-annual-revenue', revenue);
     
     // Guardar valores para el sidebar
@@ -543,15 +543,15 @@ function calculatePricing(totalOperational = null) {
     document.getElementById('required-annual-revenue').dataset.value = revenue;
     document.getElementById('total-available-hours').dataset.value = totalHours;
     
-    // Actualizar sidebar con márgenes diferenciados
-    updateRightSummaryWithMargins(totalOperational, margenBruto, costosFinancieros);
-    
-    console.log("✅ Pricing calculado:", {
+    console.log("✅ Pricing calculado CON costes financieros:", {
+        totalOperational,
+        costosFinancieros,
         margenBruto,
-        margenNeto,
         revenue,
         suggested
     });
+    
+    return revenue;
 }
 
 // AÑADE esta nueva función después de calculatePricing

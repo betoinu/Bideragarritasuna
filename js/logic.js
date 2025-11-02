@@ -1004,9 +1004,26 @@ async function initializeAppAsync() {
         setTimeout(() => {
             console.log("🔁 Recalculando financiación y pricing tras carga inicial...");
             try {
-                calculateFinancing();
-                calculatePricing(calculateTotalCosts());
-                updateRightSummary();
+    if (typeof calculateFinancing === "function") {
+        calculateFinancing();
+    }
+
+    if (typeof calculateTotalCosts === "function") {
+        const total = calculateTotalCosts();
+        calculatePricing(total);
+    } else {
+        console.warn("⚠️ calculateTotalCosts no existe. Ejecutando cálculo directo de pricing.");
+        calculatePricing();
+    }
+
+    if (typeof updateRightSummary === "function") {
+        updateRightSummary();
+    }
+
+} catch (error) {
+    console.warn("⚠️ Error al recalcular tras carga:", error);
+}
+
 
                 // 🧩 Forzar actualización visual del sidebar (Langile kopurua + Urteko orduak)
                 const employeeCount = state.personnel.length;

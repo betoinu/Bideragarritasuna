@@ -410,88 +410,114 @@ window.updateLoanCalculation = function() {
    CÁLCULOS PRINCIPALES - CORREGIDA
    =========================== */
 function updateAll() {
-  // Calcular costos por categoría para mostrar en tablas
-  let locInv = 0, locAm = 0, locRec = 0, prodRec = 0, transRec = 0, growRec = 0, perCost = 0;
-  
-  // Amortizaciones lokala
-  state.amortizables.lokala.forEach(it => { 
-    locInv += safeNum(it.cost); 
-    locAm += safeNum(it.cost) / Math.max(1, safeNum(it.life)); 
-  });
-  
-  // Amortizaciones garraioa (se consideran como gasto recurrente anual)
-  state.amortizables.garraioa.forEach(it => { 
-    transRec += safeNum(it.cost) / Math.max(1, safeNum(it.life)); 
-  });
+    actualizarCascada();
+}
 
-  // Gastos recurrentes por categoría
-  state.recurrings.lokala.forEach(it => {
-    locRec += safeNum(it.payment_cost) * Math.max(1, safeNum(it.frequency));
-  });
-  
-  state.recurrings.ekoizpena.forEach(it => {
-    prodRec += safeNum(it.payment_cost) * Math.max(1, safeNum(it.frequency));
-  });
-  
-  state.recurrings.garraioa.forEach(it => {
-    transRec += safeNum(it.payment_cost) * Math.max(1, safeNum(it.frequency));
-  });
-  
-  state.recurrings.hazkuntza.forEach(it => {
-    growRec += safeNum(it.payment_cost) * Math.max(1, safeNum(it.frequency));
-  });
+// NUEVA FUNCIÓN: Actualización en cascada mejorada
+function actualizarCascada() {
+    console.log("🔄 INICIANDO ACTUALIZACIÓN EN CASCADA");
+    
+    // 1. Calcular costes operativos básicos (igual que antes)
+    let locInv = 0, locAm = 0, locRec = 0, prodRec = 0, transRec = 0, growRec = 0, perCost = 0;
+    
+    // Amortizaciones lokala
+    state.amortizables.lokala.forEach(it => { 
+        locInv += safeNum(it.cost); 
+        locAm += safeNum(it.cost) / Math.max(1, safeNum(it.life)); 
+    });
+    
+    // Amortizaciones garraioa
+    state.amortizables.garraioa.forEach(it => { 
+        transRec += safeNum(it.cost) / Math.max(1, safeNum(it.life)); 
+    });
 
-  // Costos de personal
-  state.personnel.forEach(p => {
-    perCost += safeNum(p.gross) * (1 + safeNum(p.employer_ss) / 100);
-  });
+    // Gastos recurrentes
+    state.recurrings.lokala.forEach(it => { locRec += safeNum(it.payment_cost) * Math.max(1, safeNum(it.frequency)); });
+    state.recurrings.ekoizpena.forEach(it => { prodRec += safeNum(it.payment_cost) * Math.max(1, safeNum(it.frequency)); });
+    state.recurrings.garraioa.forEach(it => { transRec += safeNum(it.payment_cost) * Math.max(1, safeNum(it.frequency)); });
+    state.recurrings.hazkuntza.forEach(it => { growRec += safeNum(it.payment_cost) * Math.max(1, safeNum(it.frequency)); });
 
-  // Calcular gastos financieros
-  const loanAmount = safeNum(document.getElementById('loan-amount')?.value) || 0;
-  const loanTAE = safeNum(document.getElementById('loan-tae')?.value) || 5;
-  const annualInterest = loanAmount * (loanTAE / 100);
-  state.finance.annualInterest = annualInterest;
-  state.finance.totalFinancialCost = annualInterest;
+    // Costos de personal
+    state.personnel.forEach(p => { perCost += safeNum(p.gross) * (1 + safeNum(p.employer_ss) / 100); });
 
-  // Totales
-  const totalFixed = locAm + locRec + perCost;
-  const totalVariable = prodRec + transRec + growRec;
-  const totalFinancial = annualInterest;
-  const totalOperational = totalFixed + totalVariable + totalFinancial;
+    // Gastos financieros básicos
+    const loanAmount = safeNum(document.getElementById('loan-amount')?.value) || 0;
+    const loanTAE = safeNum(document.getElementById('loan-tae')?.value) || 5;
+    const annualInterest = loanAmount * (loanTAE / 100);
+    state.finance.annualInterest = annualInterest;
 
-  // Actualizar valores en la interfaz
-  const setFmt = (id, value) => {
-    const el = document.getElementById(id);
-    if (el) el.textContent = fmt(value);
-  };
+    const totalFixed = locAm + locRec + perCost;
+    const totalVariable = prodRec + transRec + growRec;
+    const totalFinancial = annualInterest;
+    const totalOperational = totalFixed + totalVariable + totalFinancial;
 
-  setFmt('total-operational-cost', totalOperational);
-
-  // Actualizar resumen y cálculos de precio
-  updateRightSummary(totalOperational);
-  calculatePricing(totalOperational);
- if (typeof updateFinanceStrategy === 'function') {
-    updateFinanceStrategy();
-  }
+    // 2. Recalcular financiación si existe
+    if (typeof calcularFinanciacion === 'function') {
+        console.log("💰 Recalculando financiación...");
+        calcularFinanciacion();
+    }
+    
+    // 3. Esperar y recalcular todo
+    setTimeout(() => {
+        try {
+            console.log("🔧 Recargando todos los cálculos...");
+            
+            // Recalcular costes operativos (por si cambió algo)
+            const costesOperativos = calculateTotalCosts();
+            console.log("📊 Costes operativos:", costesOperativos);
+            
+            // Recalcular pricing con ambos costes
+            calculatePricing(costesOperativos);
+            
+            // Actualizar sidebar
+            updateRightSummary(costesOperativos);
+            
+            // Actualizar Panel 8 si existe
+            if (typeof actualizarReferenciasServicios === 'function') {
+                actualizarReferenciasServicios();
+            }
+            if (typeof renderizarServicios === 'function') {
+                renderizarServicios();
+                actualizarResumenServicios();
+            }
+            
+            console.log("✅ CASCADA COMPLETADA");
+            
+        } catch (error) {
+            console.error("❌ ERROR en actualización:", error);
+        }
+    }, 300);
 }
 
 // NUEVA FUNCIÓN: Calcular costes financieros completos usando "Urteko Kuota Guztira"
 function calcularCostesFinancierosCompletos() {
-    let costesTotales = 0;
+    // VERIFICAR múltiples fuentes
+    let costes = 0;
     
-    // USAR DIRECTAMENTE "Urteko Kuota Guztira" que ya incluye intereses + amortización
-    const cuotaAnualSpan = document.getElementById('cuota-anual');
-    if (cuotaAnualSpan) {
-        const cuotaText = cuotaAnualSpan.textContent;
-        costesTotales = safeNum(cuotaText.replace(/[^\d.,]/g, '').replace(',', '.'));
-        console.log("💰 Costes financieros completos (de cuota-anual):", costesTotales);
-    } else {
-        console.warn("❌ No se encontró 'cuota-anual'");
+    // Fuente 1: Cuota anual directa
+    const cuotaAnualEl = document.getElementById('cuota-anual');
+    if (cuotaAnualEl) {
+        costes = safeNum(cuotaAnualEl.textContent.replace(/[^\d.,]/g, '').replace(',', '.'));
     }
     
-    return costesTotales;
+    // Fuente 2: Calcular si no hay valor
+    if (costes === 0) {
+        const cantidad = safeNum(document.getElementById('cantidad-financiar')?.textContent.replace(/[^\d.,]/g, '').replace(',', '.')) || 0;
+        const tae = safeNum(document.getElementById('tae')?.value) || 5;
+        const plazo = safeNum(document.getElementById('plazo')?.value) || 1;
+        
+        if (cantidad > 0) {
+            const mensual = (tae/100/12) > 0 ? 
+                cantidad * (tae/100/12) * Math.pow(1 + (tae/100/12), plazo*12) / 
+                (Math.pow(1 + (tae/100/12), plazo*12) - 1) :
+                cantidad / (plazo*12);
+            costes = mensual * 12;
+        }
+    }
+    
+    console.log("💰 Costes financieros finales:", costes);
+    return costes;
 }
-
 function calculatePricing(totalOperational = null) {
     console.log("🎯 Calculando pricing con costes financieros incluidos...");
     

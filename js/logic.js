@@ -1,16 +1,15 @@
 /* =========================================
-// IDarte · VERSIÓN MEJORADA CON CÁLCULOS FINANCIEROS COMPLETOS
+// IDarte · VERSIÓN DEFINITIVA CON DATOS PRECARGADOS COMPLETOS
 // ========================================= */
 
-console.log("🚀 IDarte - Sistema mejorado iniciado");
+console.log("🚀 IDarte - Sistema iniciado");
 
 const state = {
   amortizables: { lokala: [], garraioa: [] },
   recurrings: { lokala: [], ekoizpena: [], garraioa: [], hazkuntza: [] },
   personnel: [],
   finance: { 
-    socios: [], 
-    capitalistas: [], 
+    socios: [],  // ← CAMBIADO: Ahora incluye tipo
     prestamo: { tae: 5, plazo: 5, periodoGracia: 0 }
   }
 };
@@ -82,11 +81,11 @@ function preloadSampleData() {
     { id: uid('p'), role: 'Zuzendaria / Bazkidea', gross: 35000, employer_ss: 30 }
   ];
 
-  // --- FINANZAS ---
+  // --- FINANZAS ACTUALIZADAS ---
   state.finance.socios = [
-    { id: uid('s'), name: 'Bazkide 1', aportacion: 0 },
-    { id: uid('s'), name: 'Bazkide 2', aportacion: 0 },
-    { id: uid('s'), name: 'Bazkide 3', aportacion: 0 }
+    { id: uid('s'), name: 'Bazkide 1', tipo: 'trabajador', aportacion: 0 },
+    { id: uid('s'), name: 'Bazkide 2', tipo: 'trabajador', aportacion: 0 },
+    { id: uid('s'), name: 'Bazkide 3', tipo: 'capitalista', aportacion: 0 }
   ];
 
   console.log("✅ Datos precargados correctamente - Total elementos:", {
@@ -136,14 +135,22 @@ function calculateInvestmentNeeds() {
 function calculateFinancing() {
   const necesidades = calculateInvestmentNeeds();
   
-  // 1. Aportaciones de socios
-  let aportacionesSocios = 0;
+  // 1. Calcular aportaciones diferenciadas por tipo
+  let aportacionesTrabajadores = 0;
+  let aportacionesCapitalistas = 0;
+  
   state.finance.socios.forEach(socio => {
-    aportacionesSocios += safeNum(socio.aportacion);
+    if (socio.tipo === 'trabajador') {
+      aportacionesTrabajadores += safeNum(socio.aportacion);
+    } else {
+      aportacionesCapitalistas += safeNum(socio.aportacion);
+    }
   });
   
+  const aportacionesTotales = aportacionesTrabajadores + aportacionesCapitalistas;
+  
   // 2. Préstamo necesario
-  const prestamoNecesario = Math.max(0, necesidades.necesidadesTotales - aportacionesSocios);
+  const prestamoNecesario = Math.max(0, necesidades.necesidadesTotales - aportacionesTotales);
 
   // 3. Calcular cuota del préstamo (sistema francés)
   const tae = safeNum(document.getElementById('tae')?.value) || 5;
@@ -167,7 +174,9 @@ function calculateFinancing() {
 
   return {
     ...necesidades,
-    aportacionesSocios,
+    aportacionesTrabajadores,
+    aportacionesCapitalistas,
+    aportacionesTotales,
     prestamoNecesario,
     cuotaAnual,
     interesAnual
@@ -242,12 +251,15 @@ function calculatePricing() {
   updateElement('total-inversion', fmt(financiacion.inversiones));
   updateElement('tesoreria-calculada', fmt(financiacion.tesoreria));
   updateElement('necesidad-total', fmt(financiacion.necesidadesTotales));
-  updateElement('total-aportacion-socios', fmt(financiacion.aportacionesSocios));
+  updateElement('total-aportacion-socios', fmt(financiacion.aportacionesTotales));
+  updateElement('total-trabajadores', fmt(financiacion.aportacionesTrabajadores));
+  updateElement('total-capitalistas', fmt(financiacion.aportacionesCapitalistas));
   updateElement('cantidad-financiar', fmt(financiacion.prestamoNecesario));
   updateElement('cuota-anual', fmt(financiacion.cuotaAnual));
   updateElement('gastos-operativos-panel6', fmt(costesOperativos));
   updateElement('costes-financieros-panel6', fmt(costesFinancieros));
   updateElement('gastos-totales-panel6', fmt(costesTotales));
+  updateElement('num-socios', state.finance.socios.length);
 
   // ACTUALIZAR SIDEBAR
   updateElement('total-facturacion', fmt(facturacionNecesaria));
@@ -372,14 +384,21 @@ window.removePersonnel = function(id) {
   updateAll();
 };
 
-// ===== FUNCIONES DE GESTIÓN DE SOCIOS =====
+// ===== FUNCIONES DE GESTIÓN DE SOCIOS MEJORADAS =====
 window.addSocio = function() {
   const newNumber = state.finance.socios.length + 1;
   state.finance.socios.push({
     id: uid('s'),
     name: `Bazkide ${newNumber}`,
+    tipo: 'trabajador', // Por defecto es trabajador
     aportacion: 0
   });
+  renderAllTables();
+  updateAll();
+};
+
+window.removeSocio = function(id) {
+  state.finance.socios = state.finance.socios.filter(s => s.id !== id);
   renderAllTables();
   updateAll();
 };
@@ -392,65 +411,8 @@ window.removeLastSocio = function() {
   }
 };
 
-window.addCapitalista = function() {
-  state.finance.capitalistas.push({
-    id: uid('c'),
-    name: 'Nuevo Capitalista',
-    aportacion: 0
-  });
-  renderAllTables();
-  updateAll();
-};
-
-window.removeCapitalista = function(id) {
-  state.finance.capitalistas = state.finance.capitalistas.filter(c => c.id !== id);
-  renderAllTables();
-  updateAll();
-};
-
-window.onFieldChange = function(e) {
-  const el = e.target;
-  const id = el.dataset.id;
-  const field = el.dataset.field;
-  const value = el.type === 'number' ? safeNum(el.value) : el.value;
-
-  // Buscar en todos los arrays
-  let found = false;
-
-  // Amortizables
-  ['lokala', 'garraioa'].forEach(cat => {
-    const item = state.amortizables[cat].find(x => x.id === id);
-    if (item) { item[field] = value; found = true; }
-  });
-
-  // Recurrentes
-  if (!found) {
-    ['lokala', 'ekoizpena', 'garraioa', 'hazkuntza'].forEach(cat => {
-      const item = state.recurrings[cat].find(x => x.id === id);
-      if (item) { item[field] = value; found = true; }
-    });
-  }
-
-  // Personal
-  if (!found) {
-    const person = state.personnel.find(x => x.id === id);
-    if (person) { person[field] = value; found = true; }
-  }
-
-  // Socios
-  if (!found) {
-    const socio = state.finance.socios.find(x => x.id === id);
-    if (socio) { socio[field] = value; found = true; }
-  }
-
-  // Capitalistas
-  if (!found) {
-    const capitalista = state.finance.capitalistas.find(x => x.id === id);
-    if (capitalista) { capitalista[field] = value; found = true; }
-  }
-
-  if (found) updateAll();
-};
+// ELIMINAR las funciones antiguas de capitalistas:
+// window.addCapitalista y window.removeCapitalista
 
 // ===== RENDER DE TABLAS =====
 function renderAllTables() {
@@ -512,14 +474,20 @@ function renderTable(items, containerId, type) {
       `;
     }
     if (type === 'socio') {
-      return `
-        <tr>
-          <td>${item.name}</td>
-          <td><input type="number" value="${item.aportacion}" data-id="${item.id}" data-field="aportacion"></td>
-          <td><button onclick="removeSocio('${item.id}')" class="btn small">✕</button></td>
-        </tr>
-      `;
-    }
+  return `
+    <tr>
+      <td><input value="${item.name}" data-id="${item.id}" data-field="name" style="border: none; background: transparent; padding: 4px;"></td>
+      <td>
+        <select data-id="${item.id}" data-field="tipo" onchange="onFieldChange(event)" style="padding: 4px 8px; border-radius: 4px; border: 1px solid #ddd;">
+          <option value="trabajador" ${item.tipo === 'trabajador' ? 'selected' : ''}>Langile Bazkidea</option>
+          <option value="capitalista" ${item.tipo === 'capitalista' ? 'selected' : ''}>Kapitalista Bazkidea</option>
+        </select>
+      </td>
+      <td><input type="number" value="${item.aportacion}" data-id="${item.id}" data-field="aportacion" style="text-align: right; padding: 4px 8px; border: 1px solid #ddd; border-radius: 4px;"></td>
+      <td><button onclick="removeSocio('${item.id}')" class="btn small">✕</button></td>
+    </tr>
+  `;
+}
     if (type === 'capitalista') {
       return `
         <tr>

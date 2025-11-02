@@ -994,6 +994,37 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 /* ===========================
+   DEBUG TEMPORAL - SIDEBAR
+   =========================== */
+function debugSidebar() {
+    console.log("=== DEBUG SIDEBAR ===");
+    
+    // Verificar que los elementos existen
+    const elementos = [
+        'total-facturacion', 'gastos-operativos', 'costos-financieros', 'margen-bruto',
+        'suggested-hourly-rate-sidebar', 'employee-count-sidebar', 'annual-hours-sidebar',
+        'total-amortizaciones', 'total-gastos-fijos', 'total-personal', 'total-intereses'
+    ];
+    
+    elementos.forEach(id => {
+        const el = document.getElementById(id);
+        console.log(`${id}:`, el ? "✅ EXISTE" : "❌ NO EXISTE");
+    });
+    
+    // Verificar datos de cálculo
+    const totalOperational = calculateTotalCosts();
+    const requiredRevenue = safeNum(document.getElementById('required-annual-revenue')?.dataset.value) || 0;
+    
+    console.log("Datos calculados:", {
+        totalOperational,
+        requiredRevenue
+    });
+}
+
+// Llamar al debug después de init
+setTimeout(debugSidebar, 1000);
+
+/* ===========================
    EJECUCIÓN AUTOMÁTICA AL CARGAR
    =========================== */
 window.addEventListener('load', init);

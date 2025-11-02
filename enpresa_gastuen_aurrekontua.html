@@ -1,435 +1,31 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="eu">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>IDarte · Enpresa Gastuen Aurrekontua</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link rel="stylesheet" href="css/style.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <style>
-        /* ===== VARIABLES IDarte ===== */
-        :root {
-            --id-primary: #1a237e;
-            --id-primary-light: #3949ab;
-            --id-accent: #e53935;
-            --id-success: #43a047;
-            --id-warning: #ffb300;
-            --id-light: #f8f9fa;
-            --id-dark: #121212;
-            --id-gray: #64748b;
-            --id-border: #e2e8f0;
-        }
-        
-        /* ===== RESET Y BASE ===== */
-        * { 
-            margin: 0; 
-            padding: 0; 
-            box-sizing: border-box; 
-        }
-        
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; 
-            line-height: 1.6; 
-            color: #333; 
-            background: #f8fafc; 
-        }
-        
-        /* ===== LAYOUT PRINCIPAL ===== */
-        .wrap {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        /* ===== CABECERA IDarte ===== */
-        .brand {
-            background: white;
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            margin-bottom: 2rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 2rem;
-        }
-        
-        .logo {
-            flex-shrink: 0;
-        }
-        
-        .idarte-logo {
-            height: 60px;
-            width: auto;
-        }
-        
-        .meta {
-            flex-grow: 1;
-            text-align: center;
-        }
-        
-        .meta h1 {
-            color: var(--id-primary);
-            font-size: 2.2rem;
-            margin-bottom: 0.5rem;
-            font-weight: 700;
-        }
-        
-        .muted {
-            color: var(--id-gray);
-            font-size: 1.1rem;
-        }
-        
-        .controls {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
-        
-        /* ===== CONTENIDO PRINCIPAL ===== */
-        .stage {
-            display: grid;
-            grid-template-columns: 1fr 350px;
-            gap: 2rem;
-            flex-grow: 1;
-        }
-        
-        .stage-left {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            overflow: hidden;
-        }
-        
-        /* ===== PESTAÑAS IDarte ===== */
-        .tabs {
-            display: flex;
-            background: var(--id-light);
-            border-bottom: 1px solid var(--id-border);
-            padding: 0.5rem;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-        
-        .tab {
-            padding: 12px 20px;
-            border: 2px solid transparent;
-            background: white;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.2s;
-            color: var(--id-gray);
-        }
-        
-        .tab.active {
-            background: var(--id-primary);
-            color: white;
-            border-color: var(--id-primary);
-        }
-        
-        .tab:hover:not(.active) {
-            border-color: var(--id-primary);
-            color: var(--id-primary);
-        }
-        
-        /* ===== PANELES ===== */
-        .panel {
-            padding: 2rem;
-            display: none;
-        }
-        
-        .panel:first-child {
-            display: block;
-        }
-        
-        .panel h2 {
-            color: var(--id-primary);
-            font-size: 1.5rem;
-            margin-bottom: 1.5rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid var(--id-primary-light);
-        }
-        
-        .panel h3 {
-            color: var(--id-primary-light);
-            font-size: 1.2rem;
-            margin: 1.5rem 0 1rem 0;
-        }
-        
-        /* ===== TARJETAS ===== */
-        .card {
-            background: var(--id-light);
-            padding: 1.5rem;
-            border-radius: 8px;
-            margin-bottom: 1.5rem;
-            border-left: 4px solid var(--id-primary);
-        }
-        
-        .card h4 {
-            color: var(--id-primary);
-            margin-bottom: 1rem;
-            font-size: 1.2rem;
-        }
-        
-        /* ===== TABLAS ===== */
-        .data {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 1rem 0;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-        
-        .data th {
-            background: var(--id-primary-light);
-            color: white;
-            padding: 12px;
-            text-align: left;
-            font-weight: 600;
-        }
-        
-        .data td {
-            padding: 12px;
-            border-bottom: 1px solid var(--id-border);
-        }
-        
-        .data tr:last-child td {
-            border-bottom: none;
-        }
-        
-        .data tr:hover {
-            background: #f8fafc;
-        }
-        
-        /* ===== FORMULARIOS ===== */
-        input, select {
-            width: 100%;
-            padding: 8px 12px;
-            border: 1px solid var(--id-border);
-            border-radius: 6px;
-            font-size: 14px;
-        }
-        
-        input:focus, select:focus {
-            outline: none;
-            border-color: var(--id-primary);
-            box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
-        }
-        
-        /* ===== BOTONES ===== */
-        .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.2s;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .btn.primary {
-            background: var(--id-primary);
-            color: white;
-        }
-        
-        .btn.primary:hover {
-            background: var(--id-primary-light);
-        }
-        
-        .btn.small {
-            padding: 6px 12px;
-            font-size: 12px;
-        }
-        
-        .btn.secondary {
-            background: var(--id-gray);
-            color: white;
-        }
-        
-        .btn.secondary:hover {
-            background: #475569;
-        }
-        
-        /* ===== SIDEBAR IDarte ===== */
-        .sidebar {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-        
-        .sidebar .card {
-            background: white;
-            border: 1px solid var(--id-border);
-            border-left: 4px solid var(--id-primary);
-        }
-        
-        .value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--id-primary);
-            margin: 0.5rem 0;
-        }
-        
-        /* ===== DESGLOSES ===== */
-        .facturacion-desglose,
-        .cost-breakdown {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            margin-top: 1rem;
-        }
-        
-        .desglose-item,
-        .cost-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.25rem 0;
-            border-bottom: 1px solid #f1f5f9;
-        }
-        
-        .desglose-label,
-        .cost-item span:first-child {
-            color: var(--id-gray);
-            font-size: 0.9rem;
-        }
-        
-        .desglose-value,
-        .cost-item span:last-child {
-            font-weight: 600;
-            color: var(--id-dark);
-        }
-        
-        /* ===== GRÁFICO IDarte ===== */
-        .idarte-graphic {
-            text-align: center;
-            padding: 1rem;
-        }
-        
-        .idarte-graphic img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 8px;
-        }
-        
-        /* ===== TARJETA DE CONTACTO ===== */
-        .contact-card {
-            background: linear-gradient(135deg, var(--id-primary), var(--id-primary-light));
-            color: white;
-        }
-        
-        .contact-card h4,
-        .contact-card .muted {
-            color: white;
-        }
-        
-        .contact-card .muted {
-            opacity: 0.9;
-        }
-        
-        /* ===== FOOTER ===== */
-        .siteinfo {
-            text-align: center;
-            margin-top: 3rem;
-            padding: 2rem;
-            color: var(--id-gray);
-        }
-        
-        /* ===== UTILIDADES ===== */
-        .text-right { text-align: right; }
-        .text-center { text-align: center; }
-        .hidden { display: none; }
-        .highlight { color: var(--id-primary); font-weight: 700; }
-        
-        .grid-2 { 
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            gap: 1rem; 
-        }
-        
-        .grid-3 { 
-            display: grid; 
-            grid-template-columns: 1fr 1fr 1fr; 
-            gap: 1rem; 
-        }
-        
-        /* ===== LOADING ===== */
-        #loading-overlay { 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%; 
-            background: rgba(0,0,0,0.7); 
-            display: none; 
-            justify-content: center; 
-            align-items: center; 
-            z-index: 1000; 
-            color: white; 
-            font-size: 1.2rem; 
-        }
-        
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 1024px) {
-            .stage {
-                grid-template-columns: 1fr;
-            }
-            
-            .sidebar {
-                order: -1;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .brand {
-                flex-direction: column;
-                text-align: center;
-                gap: 1rem;
-            }
-            
-            .controls {
-                justify-content: center;
-            }
-            
-            .tabs {
-                justify-content: center;
-            }
-            
-            .grid-2,
-            .grid-3 {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
     <div class="wrap" role="application" aria-label="IDarte presupuesto adaptado">
         <!-- CABECERA -->
         <header class="brand" role="banner">
             <div class="logo">
-                <!-- Logo placeholder - reemplazar con el SVG real -->
-                <div style="width: 60px; height: 60px; background: var(--id-primary); color: white; display: flex; align-items: center; justify-content: center; border-radius: 8px; font-weight: bold; font-size: 1.2rem;">
-                    ID
-                </div>
+                <img src="img/mi_nueva_textura_idarte.svg" alt="IDarte logotipo" class="idarte-logo">
             </div>
             <div class="meta">
-                <h1><span>IDarte · Euskadiko Diseinu Eskola Publikoa</span></h1>
-                <p class="muted"><span>BARNE DISEINU GRADUA - Neurketak eta Aurrekontuak</span></p>
+                <h1><span data-i18n="header.title">IDarte · Euskadiko Diseinu Eskola Publikoa</span></h1>
+                <p class="muted"><span data-i18n="header.subtitle">BARNE DISEINU GRADUA - Neurketak eta Aurrekontuak</span></p>
             </div>
             <div class="controls">
                 <select id="language-select">
                     <option value="eu">Euskera</option>
                     <option value="es">Castellano</option>
                 </select>
-                <button class="btn primary" id="download-report-btn">Deskargatu</button>
+                <button class="btn primary" id="download-report-btn" data-i18n="button.download" onclick="generatePDFReport()">Deskargatu</button>
             </div>
         </header>
 
@@ -438,241 +34,394 @@
             <section class="stage-left" id="main-sheet">
                 <!-- TABS -->
                 <div class="tabs" role="tablist">
-                    <button class="tab active">1 · Lokal</button>
-                    <button class="tab">2 · Pertsonala</button>
-                    <button class="tab">3 · Ekoizpena</button>
-                    <button class="tab">4 · Garraioa</button>
-                    <button class="tab">5 · Hazkuntza</button>
-                    <button class="tab">6 · Finantzaketa</button>
-                    <button class="tab">7 · Prezioa</button>
+                    <button class="tab active"><span data-i18n="tab.lokal">1 · Lokal</span></button>
+                    <button class="tab"><span data-i18n="tab.pertsonala">2 · Pertsonala</span></button>
+                    <button class="tab"><span data-i18n="tab.ekoizpena">3 · Ekoizpena</span></button>
+                    <button class="tab"><span data-i18n="tab.garraioa">4 · Garraioa</span></button>
+                    <button class="tab"><span data-i18n="tab.hazkuntza">5 · Hazkuntza</span></button>
+                    <button class="tab"><span data-i18n="tab.finantzaketa">6 · Finantzaketa</span></button>
+                    <button class="tab"><span data-i18n="tab.prezioa">7 · Prezioa</span></button>
                 </div>
 
-                <!-- PANEL 1: LOKALA -->
-                <div class="panel">
+                <!-- PANEL 1 · LOKALA -->
+                <div id="lokala-sheet" class="panel">
                     <h2>1 · Lokalaren Gastu Finkoak eta Inbertsioak</h2>
-                    
-                    <div class="card">
-                        <h3>A) Inbertsio amortizagarriak</h3>
-                        <table class="data">
-                            <thead>
-                                <tr>
-                                    <th>Kontzeptua</th>
-                                    <th>Kostua (€)</th>
-                                    <th>Amortizazio Urteak</th>
-                                    <th>Urteko Amortizazioa</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody id="lokala-amortizable-body">
-                                <!-- Filas dinámicas -->
-                            </tbody>
-                        </table>
-                        <button class="btn small secondary">+ Gehitu</button>
-                    </div>
+                    <h3>A) Inbertsio amortizagarriak</h3>
+                    <table class="data">
+                        <thead>
+                            <tr>
+                                <th>Kontzeptua</th>
+                                <th>Kostua (€)</th>
+                                <th>Amortizazio Urteak</th>
+                                <th>Urteko Amortizazioa</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="lokala-amortizable-body"></tbody>
+                    </table>
+                    <button class="btn small" onclick="addAmortizable('lokala')">+ Gehitu</button>
 
-                    <div class="card">
-                        <h3>B) Gastu finkoak</h3>
-                        <table class="data">
-                            <thead>
-                                <tr>
-                                    <th>Kontzeptua</th>
-                                    <th>Kostua (€)</th>
-                                    <th>Maiztasuna</th>
-                                    <th>Urteko Guztira</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody id="lokala-recurring-body">
-                                <!-- Filas dinámicas -->
-                            </tbody>
-                        </table>
-                        <button class="btn small secondary">+ Gehitu</button>
-                    </div>
+                    <h3>B) Gastu finkoak</h3>
+                    <table class="data">
+                        <thead>
+                            <tr>
+                                <th>Kontzeptua</th>
+                                <th>Kostua (€)</th>
+                                <th>Maiztasuna</th>
+                                <th>Urteko Guztira</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="lokala-recurring-body"></tbody>
+                    </table>
+                    <button class="btn small" onclick="addRecurring('lokala')">+ Gehitu</button>
                 </div>
 
-                <!-- PANEL 6: FINANTZAKETA (MEJORADO) -->
-                <div class="panel">
-                    <h2>6 · Finantzaketa Estrategia</h2>
-                    
-                    <div class="card">
-                        <h3>Bazkideen Ekarpenak</h3>
-                        <div class="grid-2">
-                            <div>
-                                <p>Definitutako bazkide kopurua: <span id="num-socios">3</span></p>
-                                <button class="btn small secondary">+ Gehitu Bazkidea</button>
-                                <button class="btn small secondary">- Kendu Bazkidea</button>
-                            </div>
-                            <div>
-                                <table class="data">
-                                    <thead>
-                                        <tr>
-                                            <th>Bazkidea</th>
-                                            <th>Kapitala (€)</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="socios-table-body">
-                                        <tr>
-                                            <td>Bazkide 1</td>
-                                            <td><input type="number" value="0" min="0" class="capital-input"></td>
-                                        </tr>
-                                        <tr>
-                                            <td>Bazkide 2</td>
-                                            <td><input type="number" value="0" min="0" class="capital-input"></td>
-                                        </tr>
-                                        <tr>
-                                            <td>Bazkide 3</td>
-                                            <td><input type="number" value="0" min="0" class="capital-input"></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <h3>Kutxa Errefortzua</h3>
-                        <div class="grid-2">
-                            <div>
-                                <label for="porcentaje-tesoreria">Urteko gastuen % finantziatu kutxa errefortzurako</label>
-                                <input type="number" id="porcentaje-tesoreria" value="0" min="0" max="100">
-                                <small style="color:#666">Normalean %10-%20 proiektuak ordainketa atzerapenen aurrean</small>
-                            </div>
-                            <div>
-                                <p><strong>Kutxa errefortzua: <span id="importe-tesoreria">0</span> €</strong></p>
-                                <p style="color:#666;font-size:0.9em">(Gastu totalen portzentai gisa kalkulatuta)</p>
-                            </div>
-                        </div>
-                    </div>
+                <!-- PANEL 2 · PERTSONALA -->
+                <div id="pertsonala-sheet" class="panel" style="display:none">
+                    <h2>2 · Pertsonalaren Gastuak</h2>
+                    <table class="data">
+                        <thead>
+                            <tr>
+                                <th>Lanpostua</th>
+                                <th>Urteko Soldata Gordina</th>
+                                <th>Gizarte Segurantza (%)</th>
+                                <th>Guztira</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="personnel-body"></tbody>
+                    </table>
+                    <button class="btn small" onclick="addPerson()">+ Gehitu Langilea</button>
                 </div>
 
-                <!-- PANEL 7: PREZIOA -->
-                <div class="panel">
-                    <h2>7 · Lanorduaren Prezioa eta Mozkinak</h2>
-                    <div class="grid-2">
-                        <div>
-                            <div class="card">
-                                <h4>Parametroak</h4>
-                                <label for="corporate-tax">Sozietateen Zerga (%)</label>
-                                <input id="corporate-tax" type="number" value="25">
-                                
-                                <label for="target-profit-margin">Helburuko Mozkin Gordina (%)</label>
-                                <input id="target-profit-margin" type="number" value="20">
-                                
-                                <label for="employee-count">Langile kopurua</label>
-                                <input id="employee-count" type="number" value="2">
-                                
-                                <label for="annual-hours-per-employee">Urteko orduak/lang</label>
-                                <input id="annual-hours-per-employee" type="number" value="1600">
-                            </div>
-                        </div>
-                        <div>
-                            <div class="card">
-                                <h4>Emaitzak</h4>
-                                <p>Gomendatutako orduko prezioa:</p>
-                                <p id="suggested-hourly-rate" class="value">€ 0.00</p>
-                                
-                                <p>Espero den mozkin garbia:</p>
-                                <p id="expected-net-profit" class="value">€ 0.00</p>
-                            </div>
-                        </div>
+                <!-- PANEL 3 · EKOIZPENA -->
+                <div id="ekoizpena-sheet" class="panel" style="display:none">
+                    <h2>3 · Ekoizpen Gastuak</h2>
+                    <table class="data">
+                        <thead>
+                            <tr>
+                                <th>Kontzeptua</th>
+                                <th>Kostua (€)</th>
+                                <th>Maiztasuna</th>
+                                <th>Urteko Guztira</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="ekoizpena-recurring-body"></tbody>
+                    </table>
+                    <button class="btn small" onclick="addRecurring('ekoizpena')">+ Gehitu Gastua</button>
+                </div>
+
+                <!-- PANEL 4 · GARRAIOA -->
+                <div id="garraioa-sheet" class="panel" style="display:none">
+                    <h2>4 · Garraio eta Logistika Gastuak</h2>
+                    <h3>A) Inbertsio amortizagarriak</h3>
+                    <table class="data">
+                        <thead>
+                            <tr>
+                                <th>Kontzeptua</th>
+                                <th>Kostua (€)</th>
+                                <th>Amortizazio Urteak</th>
+                                <th>Urteko Amortizazioa</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="garraioa-amortizable-body"></tbody>
+                    </table>
+                    <button class="btn small" onclick="addAmortizable('garraioa')">+ Gehitu Inbertsioa</button>
+
+                    <h3>B) Gastu finkoak</h3>
+                    <table class="data">
+                        <thead>
+                            <tr>
+                                <th>Kontzeptua</th>
+                                <th>Kostua (€)</th>
+                                <th>Maiztasuna</th>
+                                <th>Urteko Guztira</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="garraioa-recurring-body"></tbody>
+                    </table>
+                    <button class="btn small" onclick="addRecurring('garraioa')">+ Gehitu Gastua</button>
+                </div>
+
+                <!-- PANEL 5 · HAZKUNTZA -->
+                <div id="hazkuntza-sheet" class="panel" style="display:none">
+                    <h2>5 · Hazkuntza eta Garapen Gastuak</h2>
+                    <table class="data">
+                        <thead>
+                            <tr>
+                                <th>Kontzeptua</th>
+                                <th>Kostua (€)</th>
+                                <th>Maiztasuna</th>
+                                <th>Urteko Guztira</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="hazkuntza-recurring-body"></tbody>
+                    </table>
+                    <button class="btn small" onclick="addRecurring('hazkuntza')">+ Gehitu Gastua</button>
+                </div>
+
+              <!-- PANEL 6 · FINANTZAKETA - ACTUALIZADO -->
+<div id="finantzaketa-sheet" class="panel" style="display:none">
+    <h2>6 · Finantzaketa Estrategia</h2>
+    
+    <!-- Sección de Inversiones y Necesidades -->
+    <div class="section">
+        <h3>Inbertsio eta Finantzaketa Beharrak</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px">
+            <div>
+                <p><strong>Inbertsio Totala:</strong> <span id="total-inversion">€ 0.00</span></p>
+                <p><strong>Kutxa Errefortzua:</strong> <span id="tesoreria-calculada">€ 0.00</span></p>
+                <p><strong>Finantzaketa Behar Totala:</strong> <span id="necesidad-total">€ 0.00</span></p>
+            </div>
+            <div>
+                <label for="meses-tesoreria">Hilabeteko gastuak kutxa errefortzurako</label>
+                <input type="number" id="meses-tesoreria" value="3" min="1" max="12" oninput="updateAll()">
+                <small style="color:#666">Normalean 3-6 hilabete gastu finkoak</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección de Socios (MANTENIDO) -->
+    <div class="section">
+        <h3>Bazkideen Ekarpenak</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px">
+            <div>
+                <p>Definitutako bazkide kopurua: <span id="num-socios">3</span></p>
+                <button class="btn small" onclick="addSocio()">+ Gehitu Bazkidea</button>
+                <button class="btn small" onclick="removeLastSocio()">- Kendu Bazkidea</button>
+            </div>
+            <div>
+                <table class="data">
+                    <thead>
+                        <tr>
+                            <th>Bazkidea</th>
+                            <th>Kapitala (€)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="socios-table-body">
+                        <!-- Dinámico -->
+                    </tbody>
+                </table>
+                <p><strong>Bazkideek Emandako Guztira: <span id="total-aportacion-socios">€ 0.00</span></strong></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección de Financiación Externa - ACTUALIZADO -->
+    <div class="section">
+        <h3>Kanpoko Finantzaketa</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+            <div>
+                <label for="tipo-prestamo">Mailegu Mota</label>
+                <select id="tipo-prestamo" onchange="updateAll()">
+                    <option value="standard">Mailegu Estándarra</option>
+                    <option value="hipotecario">Hipoteka Mailegua</option>
+                </select>
+                
+                <label for="tae" style="margin-top:10px">TAE (%)</label>
+                <input type="number" id="tae" value="5" min="0" step="0.01" oninput="updateAll()">
+            </div>
+            <div>
+                <label for="plazo">Epea (urte)</label>
+                <input type="number" id="plazo" value="5" min="1" oninput="updateAll()">
+                
+                <label for="periodo-gracia" style="margin-top:10px">Ordainketa Atzerapena (hilabete)</label>
+                <input type="number" id="periodo-gracia" value="0" min="0" oninput="updateAll()">
+            </div>
+        </div>
+    </div>
+
+    <!-- Resultados de Cálculo - ACTUALIZADO -->
+    <div class="section" style="background:#f8f9fa;padding:20px;border-radius:8px;margin-top:20px">
+        <h3>Finantzaketaren Laburpena</h3>
+        
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px">
+            <div>
+                <h4>Finantzaketa Iturriak</h4>
+                <p>Bazkideek Emandako Guztira: <strong><span id="total-socios">€ 0.00</span></strong></p>
+                <p>Finantziatzeko Kantitatea: <strong><span id="cantidad-financiar">€ 0.00</span></strong></p>
+                <p>Maileguaren Kuota Anuala: <strong><span id="cuota-anual">€ 0.00</span></strong></p>
+            </div>
+            <div>
+                <h4>Eragiketa Ekonomikoa</h4>
+                <p>Urteko Gastu Operatiboak: <strong><span id="gastos-operativos-panel6">€ 0.00</span></strong></p>
+                <p>Urteko Finantzaketa Kostuak: <strong><span id="costes-financieros-panel6">€ 0.00</span></strong></p>
+                <p>Gastu Totalak: <strong><span id="gastos-totales-panel6">€ 0.00</span></strong></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- PANEL 7 · PREZIOA - MEJORADO -->
+<div id="prezioa-sheet" class="panel" style="display:none">
+    <h2>7 · Lanorduaren Prezioa eta Mozkinak</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div>
+            <label for="corporate-tax">Sozietateen Zerga (%)</label>
+            <input id="corporate-tax" type="number" value="25" oninput="actualizarCascada()" />
+            
+            <label for="target-profit-margin">Helburuko Mozkin Gordina (%)</label>
+            <input id="target-profit-margin" type="number" value="20" oninput="actualizarCascada()" />
+            
+            <label for="employee-count">Langile kopurua</label>
+            <input id="employee-count" type="number" value="2" oninput="actualizarCascada()" />
+            
+            <label for="annual-hours-per-employee">Urteko orduak/lang</label>
+            <input id="annual-hours-per-employee" type="number" value="1600" oninput="actualizarCascada()" />
+        </div>
+        <div>
+            <!-- DESGLOSE PEDAGÓGICO -->
+            <div class="card" style="background:#f8f9fa">
+                <h4>Nola kalkulatzen da orduko prezioa?</h4>
+                <div class="desglose-pedagogico">
+                    <div class="desglose-linea">
+                        <span>Gastu Operatiboak:</span>
+                        <span id="desglose-gastos-operativos">€ 0.00</span>
+                    </div>
+                    <div class="desglose-linea">
+                        <span>+ Finantzaketa Kostuak:</span>
+                        <span id="desglose-costes-financieros">€ 0.00</span>
+                    </div>
+                    <div class="desglose-linea" style="border-top:1px solid #ddd;padding-top:8px">
+                        <span><strong>Gastu Totalak:</strong></span>
+                        <span id="desglose-gastos-totales"><strong>€ 0.00</strong></span>
+                    </div>
+                    <div class="desglose-linea">
+                        <span>+ Mozkin Gordina (<span id="desglose-porcentaje-margen">20</span>%):</span>
+                        <span id="desglose-margen-bruto">€ 0.00</span>
+                    </div>
+                    <div class="desglose-linea" style="border-top:1px solid #ddd;padding-top:8px">
+                        <span><strong>Fakturazio Totala:</strong></span>
+                        <span id="desglose-facturacion-total"><strong>€ 0.00</strong></span>
+                    </div>
+                    <div class="desglose-linea">
+                        <span>÷ Urteko Orduak (<span id="desglose-total-horas">0</span>h):</span>
+                        <span></span>
+                    </div>
+                    <div class="desglose-linea" style="border-top:2px solid #333;padding-top:8px">
+                        <span><strong>Orduko Prezioa:</strong></span>
+                        <span id="desglose-precio-hora"><strong>€ 0.00</strong></span>
                     </div>
                 </div>
+            </div>
+
+            <!-- RESUMEN ACTUAL -->
+            <div class="card">
+                <h4>Gomendatutako orduko prezioa</h4>
+                <p id="suggested-hourly-rate" class="value">€ 0.00</p>
+            </div>
+            <div class="card">
+                <h4>Mozkin Gordina (Zergak aurre)</h4>
+                <p id="margen-bruto-panel7" class="value">€ 0.00</p>
+            </div>
+            <div class="card">
+                <h4>Espero den mozkin garbia</h4>
+                <p id="expected-net-profit" class="value">€ 0.00</p>
+            </div>
+            <div class="card">
+                <h4>Fakturazio beharrezkoa</h4>
+                <p id="required-annual-revenue" class="value">€ 0.00</p>
+            </div>
+        </div>
+    </div>
+</div>
             </section>
 
-            <!-- SIDEBAR -->
-            <aside class="sidebar">
-                <!-- Card 1: Facturación -->
-                <div class="card">
-                    <h4>Urteko Fakturazioa Beharrezkoa</h4>
-                    <p id="total-facturacion" class="value">€ 0.00</p>
-                    <div class="facturacion-desglose">
-                        <div class="desglose-item">
-                            <span class="desglose-label">Gastu Operatiboak:</span>
-                            <span id="gastos-operativos" class="desglose-value">€ 0.00</span>
-                        </div>
-                        <div class="desglose-item">
-                            <span class="desglose-label">Finantzaketa Kostuak:</span>
-                            <span id="costos-financieros" class="desglose-value">€ 0.00</span>
-                        </div>
-                        <div class="desglose-item">
-                            <span class="desglose-label">Mozkin Gordina:</span>
-                            <span id="margen-bruto" class="desglose-value">€ 0.00</span>
-                        </div>
-                    </div>
-                </div>
+       <!-- COLUMNA DERECHA -->
+<aside class="sidebar">
+  
+<!-- Card 1: Facturación Necesaria -->
+<div class="card">
+    <h4>Urteko Fakturazioa Beharrezkoa</h4>
+    <p id="total-facturacion" class="value">€ 0.00</p>
+    <div class="facturacion-desglose">
+        <div class="desglose-item">
+            <span class="desglose-label">Gastu Operatiboak:</span>
+            <span id="gastos-operativos" class="desglose-value">€ 0.00</span>
+        </div>
+        <div class="desglose-item">
+            <span class="desglose-label">Finantzaketa Kostuak (Kuota Anuala):</span>
+            <span id="costos-financieros" class="desglose-value">€ 0.00</span>
+        </div>
+        <div class="desglose-item">
+            <span class="desglose-label">Mozkin Gordina:</span>
+            <span id="margen-bruto" class="desglose-value">€ 0.00</span>
+        </div>
+    </div>
+</div>
 
-                <!-- Card 2: Precio/Hora -->
-                <div class="card">
-                    <h4>Gomendatutako Orduko Prezioa</h4>
-                    <p id="suggested-hourly-rate-sidebar" class="value">€ 0.00</p>
-                    <p class="muted">Langile kopurua: <span id="employee-count-sidebar">0</span></p>
-                    <p class="muted">Urteko orduak: <span id="annual-hours-sidebar">0</span></p>
-                </div>
+    <!-- Card 2: Precio/Hora -->
+    <div class="card">
+        <h4>Gomendatutako Orduko Prezioa</h4>
+        <p id="suggested-hourly-rate-sidebar" class="value">€ 0.00</p>
+        <p class="muted">Langile kopurua: <span id="employee-count-sidebar">0</span></p>
+        <p class="muted">Urteko orduak: <span id="annual-hours-sidebar">0</span></p>
+    </div>
 
-                <!-- Card 3: Resumen de Costes -->
-                <div class="card">
-                    <h4>Kostuen Laburpena</h4>
-                    <div class="cost-breakdown">
-                        <div class="cost-item">
-                            <span>Amortizazioak:</span>
-                            <span id="total-amortizaciones">€ 0.00</span>
-                        </div>
-                        <div class="cost-item">
-                            <span>Gastu Finkoak:</span>
-                            <span id="total-gastos-fijos">€ 0.00</span>
-                        </div>
-                        <div class="cost-item">
-                            <span>Pertsonala:</span>
-                            <span id="total-personal">€ 0.00</span>
-                        </div>
-                        <div class="cost-item">
-                            <span>Finantzaketa Guztira:</span>
-                            <span id="total-intereses">€ 0.00</span>
-                        </div>
-                    </div>
-                </div>
+   <!-- Card 3: Resumen de Costes -->
+<div class="card">
+    <h4>Kostuen Laburpena</h4>
+    <div class="cost-breakdown">
+        <div class="cost-item">
+            <span>Amortizazioak:</span>
+            <span id="total-amortizaciones">€ 0.00</span>
+        </div>
+        <div class="cost-item">
+            <span>Gastu Finkoak:</span>
+            <span id="total-gastos-fijos">€ 0.00</span>
+        </div>
+        <div class="cost-item">
+            <span>Pertsonala:</span>
+            <span id="total-personal">€ 0.00</span>
+        </div>
+        <div class="cost-item">
+            <span>Finantzaketa Guztira:</span>
+            <span id="total-intereses">€ 0.00</span>
+        </div>
+    </div>
+</div>
 
-                <!-- Card 4: Contacto -->
-                <div class="card contact-card">
-                    <h4>Kontaktua</h4>
-                    <p class="muted">Josu Ayerbe Guarás, Barne Diseinuko Graduko irakaslea</p>
-                    <p class="muted">josuayerbe@idarte.eus</p>
-                    <p class="muted">Portal de Betoño, 23 · Vitoria-Gasteiz</p>
-                </div>
-            </aside>
+    <!-- Card 4: Gráfico IDarte -->
+    <div class="card">
+        <div class="idarte-graphic">
+            <img src="img/fondo.png" alt="Detalle gráfico IDarte" loading="lazy">
+        </div>
+    </div>
+
+    <!-- Card 5: Contacto -->
+    <div class="card contact-card">
+        <h4>Kontaktua</h4>
+        <p class="muted">Josu Ayerbe Guarás, Barne Diseinuko Graduko irakaslea</p>
+        <p class="muted">josuayerbe@idarte.eus</p>
+        <p class="muted">Portal de Betoño, 23 · Vitoria-Gasteiz</p>
+    </div>
+</aside>    
         </main>
 
         <footer class="siteinfo">
-            <small>IDarte · Euskadiko Diseinu Eskola Publikoa — Escuela Pública de Diseño de Euskadi.</small>
+            <small data-i18n="footer.note">IDarte · Euskadiko Diseinu Eskola Publikoa — Escuela Pública de Diseño de Euskadi.</small>
         </footer>
     </div>
 
     <!-- Overlay de carga -->
-    <div id="loading-overlay">
-        <div style="text-align: center;">
-            <div style="font-size: 3rem; margin-bottom: 1rem;">⏳</div>
-            <p>Txostena prestatzen...</p>
+    <div id="loading-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);align-items:center;justify-content:center;z-index:9999">
+        <div style="background:white;padding:20px;border-radius:8px;display:flex;flex-direction:column;align-items:center">
+            <div style="width:48px;height:48px;border:6px solid #eee;border-top-color:var(--id-primary);border-radius:50%;animation:spin 1s linear infinite"></div>
+            <p style="margin-top:12px;color:#111827" data-i18n="loading">Txostena prestatzen...</p>
         </div>
     </div>
-
-    <script>
-        // Gestión básica de pestañas
-        document.addEventListener('DOMContentLoaded', function() {
-            const tabs = document.querySelectorAll('.tab');
-            const panels = document.querySelectorAll('.panel');
-            
-            tabs.forEach((tab, index) => {
-                tab.addEventListener('click', () => {
-                    // Remover active de todos
-                    tabs.forEach(t => t.classList.remove('active'));
-                    panels.forEach(p => p.style.display = 'none');
-                    
-                    // Activar actual
-                    tab.classList.add('active');
-                    panels[index].style.display = 'block';
-                });
-            });
-        });
-    </script>
+    <style>
+        @keyframes spin {
+            to {
+                transform: rotate(360deg)
+            }
+        }
+    </style>
+    <script src="js/logic.js"></script>
 </body>
 </html>

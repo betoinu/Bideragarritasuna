@@ -1,4 +1,4 @@
-{
+const translations = {
   "eu": {
     "header.title": "IDarte · Euskadiko Diseinu Eskola Publikoa",
     "header.subtitle": "BARNE DISEINU GRADUA - Neurketak eta Aurrekontuak",
@@ -16,7 +16,63 @@
     "contact.name": "Josu Ayerbe Guarás, Barne Diseinuko Graduko irakaslea",
     "contact.email": "josuayerbe@idarte.eus",
     "footer.note": "IDarte · Euskadiko Diseinu Eskola Publikoa — Escuela Pública de Diseño de Euskadi.",
-    "loading": "Txostena prestatzen..."
+    "loading": "Txostena prestatzen...",
+    
+    // Nuevas traducciones para el contenido
+    "panel.lokal.title": "1 · Lokalaren Gastu Finkoak eta Inbertsioak",
+    "panel.lokal.amortizables": "A) Inbertsio amortizagarriak",
+    "panel.lokal.gastos": "B) Gastu finkoak",
+    "panel.lokal.addAmortizable": "+ Gehitu",
+    "panel.lokal.addRecurring": "+ Gehitu",
+    
+    "panel.pertsonala.title": "2 · Pertsonalaren Gastuak",
+    "panel.pertsonala.addPerson": "+ Gehitu Langilea",
+    
+    "panel.ekoizpena.title": "3 · Ekoizpen Gastuak",
+    "panel.ekoizpena.addRecurring": "+ Gehitu Gastua",
+    
+    "panel.garraioa.title": "4 · Garraio eta Logistika Gastuak",
+    "panel.garraioa.amortizables": "A) Inbertsio amortizagarriak",
+    "panel.garraioa.gastos": "B) Gastu finkoak",
+    "panel.garraioa.addAmortizable": "+ Gehitu Inbertsioa",
+    "panel.garraioa.addRecurring": "+ Gehitu Gastua",
+    
+    "panel.hazkuntza.title": "5 · Hazkuntza eta Garapen Gastuak",
+    "panel.hazkuntza.addRecurring": "+ Gehitu Gastua",
+    
+    "panel.finantzaketa.title": "6 · Finantzaketa Estrategia",
+    "panel.finantzaketa.inversiones": "Inbertsio eta Finantzaketa Beharrak",
+    "panel.finantzaketa.bazkideak": "Bazkideen Ekarpenak",
+    "panel.finantzaketa.kanpoko": "Kanpoko Finantzaketa",
+    "panel.finantzaketa.laburpena": "Finantzaketaren Laburpena",
+    
+    "panel.prezioa.title": "7 · Lanorduaren Prezioa eta Mozkinak",
+    
+    // Textos de tablas
+    "table.concepto": "Kontzeptua",
+    "table.coste": "Kostua (€)",
+    "table.amortizacion": "Amortizazio Urteak",
+    "table.amortizacionAnual": "Urteko Amortizazioa",
+    "table.frecuencia": "Maiztasuna",
+    "table.totalAnual": "Urteko Guztira",
+    "table.lanpostua": "Lanpostua",
+    "table.soldata": "Urteko Soldata Gordina",
+    "table.gizarteSegurantza": "Gizarte Segurantza (%)",
+    "table.guztira": "Guztira",
+    "table.bazkidea": "Bazkidea",
+    "table.mota": "Mota",
+    "table.kapitala": "Kapitala (€)",
+    "table.ekintzak": "Ekintzak",
+    
+    // Tipos de socio
+    "socio.trabajador": "Langile Bazkidea",
+    "socio.capitalista": "Kapitalista Bazkidea",
+    
+    // Sidebar
+    "sidebar.facturacion": "Urteko Fakturazioa Beharrezkoa",
+    "sidebar.precioHora": "Gomendatutako Orduko Prezioa",
+    "sidebar.resumenCostes": "Kostuen Laburpena",
+    "sidebar.contacto": "Kontaktua"
   },
   "es": {
     "header.title": "IDarte · Escuela Pública de Diseño de Euskadi",
@@ -35,6 +91,62 @@
     "contact.name": "Josu Ayerbe Guarás, profesor del Grado en Diseño de Interiores",
     "contact.email": "josuayerbe@idarte.eus",
     "footer.note": "IDarte · Escuela Pública de Diseño de Euskadi — Euskadiko Diseinu Eskola Publikoa.",
-    "loading": "Preparando el informe..."
+    "loading": "Preparando el informe...",
+    
+    // Nuevas traducciones para el contenido
+    "panel.lokal.title": "1 · Gastos Fijos e Inversiones del Local",
+    "panel.lokal.amortizables": "A) Inversiones amortizables",
+    "panel.lokal.gastos": "B) Gastos fijos",
+    "panel.lokal.addAmortizable": "+ Añadir",
+    "panel.lokal.addRecurring": "+ Añadir",
+    
+    "panel.pertsonala.title": "2 · Gastos de Personal",
+    "panel.pertsonala.addPerson": "+ Añadir Empleado",
+    
+    "panel.ekoizpena.title": "3 · Gastos de Producción",
+    "panel.ekoizpena.addRecurring": "+ Añadir Gasto",
+    
+    "panel.garraioa.title": "4 · Gastos de Transporte y Logística",
+    "panel.garraioa.amortizables": "A) Inversiones amortizables",
+    "panel.garraioa.gastos": "B) Gastos fijos",
+    "panel.garraioa.addAmortizable": "+ Añadir Inversión",
+    "panel.garraioa.addRecurring": "+ Añadir Gasto",
+    
+    "panel.hazkuntza.title": "5 · Gastos de Crecimiento y Desarrollo",
+    "panel.hazkuntza.addRecurring": "+ Añadir Gasto",
+    
+    "panel.finantzaketa.title": "6 · Estrategia de Financiación",
+    "panel.finantzaketa.inversiones": "Necesidades de Inversión y Financiación",
+    "panel.finantzaketa.bazkideak": "Aportaciones de Socios",
+    "panel.finantzaketa.kanpoko": "Financiación Externa",
+    "panel.finantzaketa.laburpena": "Resumen de Financiación",
+    
+    "panel.prezioa.title": "7 · Precio por Hora y Beneficios",
+    
+    // Textos de tablas
+    "table.concepto": "Concepto",
+    "table.coste": "Coste (€)",
+    "table.amortizacion": "Años Amortización",
+    "table.amortizacionAnual": "Amortización Anual",
+    "table.frecuencia": "Frecuencia",
+    "table.totalAnual": "Total Anual",
+    "table.lanpostua": "Puesto de Trabajo",
+    "table.soldata": "Salario Bruto Anual",
+    "table.gizarteSegurantza": "Seguridad Social (%)",
+    "table.guztira": "Total",
+    "table.bazkidea": "Socio",
+    "table.mota": "Tipo",
+    "table.kapitala": "Capital (€)",
+    "table.ekintzak": "Acciones",
+    
+    // Tipos de socio
+    "socio.trabajador": "Socio Trabajador",
+    "socio.capitalista": "Socio Capitalista",
+    
+    // Sidebar
+    "sidebar.facturacion": "Facturación Anual Necesaria",
+    "sidebar.precioHora": "Precio por Hora Recomendado",
+    "sidebar.resumenCostes": "Resumen de Costes",
+    "sidebar.contacto": "Contacto"
   }
-}
+};

@@ -1004,28 +1004,29 @@ async function initializeAppAsync() {
         updateAll();
                 // 🕒 Recalcular financiación y pricing una vez el DOM esté completamente cargado
         // 🕒 Recalcular financiación y pricing una vez el DOM esté completamente cargado
-        setTimeout(() => {
-            console.log("🔁 Recalculando financiación y pricing tras carga inicial...");
-            try {
-    if (typeof calculateFinancing === "function") {
-        calculateFinancing();
-    }
+setTimeout(() => {
+    console.log("🔁 Recalculando financiación y pricing tras carga inicial...");
+    try {
+        if (typeof calculateFinancing === "function") {
+            calculateFinancing();
+        }
 
-    if (typeof calculateTotalCosts === "function") {
-        const total = calculateTotalCosts();
-        calculatePricing(total);
-    } else {
-        console.warn("⚠️ calculateTotalCosts no existe. Ejecutando cálculo directo de pricing.");
-        calculatePricing();
-    }
+        if (typeof calculateTotalCosts === "function") {
+            const total = calculateTotalCosts();
+            calculatePricing(total);
+        } else {
+            console.warn("⚠️ calculateTotalCosts no existe. Ejecutando cálculo directo de pricing.");
+            calculatePricing();
+        }
 
-    if (typeof updateRightSummary === "function") {
-        updateRightSummary();
-    }
+        if (typeof updateRightSummary === "function") {
+            updateRightSummary();
+        }
 
-} catch (error) {
-    console.warn("⚠️ Error al recalcular tras carga:", error);
-}
+    } catch (error) {
+        console.warn("⚠️ Error al recalcular tras carga:", error);
+    } // <-- ESTE 'catch' CIERRA EL 'try' DE ARRIBA
+}, 500);
 
 
 // 🧩 Forzar actualización visual del sidebar (Langile kopurua + Urteko orduak)
@@ -1047,7 +1048,7 @@ console.warn("⚠️ Error al recalcular tras carga:", err);
 }, 500);
 
 // Verificación final
-setTimeout(() => {
+(() => {
 console.log("🔍 Verificación final del estado...");
 const finalCheck = document.getElementById('suggested-hourly-rate-sidebar');
 if (finalCheck && finalCheck.textContent !== '€ 0.00') {

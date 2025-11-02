@@ -512,7 +512,7 @@ function calculatePricing(totalOperational = null) {
 }
 
 /* ===========================
-   SIDEBAR MEJORADO
+   SIDEBAR MEJORADO - CORREGIDO
    =========================== */
 function updateRightSummary(totalOperational = null) {
     if (totalOperational === null) {
@@ -524,19 +524,36 @@ function updateRightSummary(totalOperational = null) {
     const expectedProfit = safeNum(document.getElementById('expected-net-profit')?.dataset.value) || 0;
     const requiredRevenue = safeNum(document.getElementById('required-annual-revenue')?.dataset.value) || 0;
     const totalHours = safeNum(document.getElementById('total-available-hours')?.dataset.value) || 0;
-    const employeeCount = safeNum(document.getElementById('employee-count')?.value) || 0;
+    
+    // LANGILE KOPURUA - Pertsonal ataletik hartu, ez inputetik
+    const employeeCount = state.personnel.length;
 
     // Calcular desglose de costes
     const desgloseCostes = calcularDesgloseCostes();
     
-    // Calcular costos financieros
+    // Calcular costos financieros (intereses + amortización préstamo)
     const loanAmount = safeNum(document.getElementById('loan-amount')?.value) || 0;
     const loanTAE = safeNum(document.getElementById('loan-tae')?.value) || 5;
-    const costosFinancieros = loanAmount * (loanTAE / 100);
+    const loanTerm = safeNum(document.getElementById('plazo')?.value) || 5;
+    
+    // Intereses anuales
+    const interesesAnuales = loanAmount * (loanTAE / 100);
+    
+    // Amortización del préstamo (capital anual)
+    const amortizacionPrestamo = loanAmount / loanTerm;
+    
+    // Costos financieros totales
+    const costosFinancierosTotales = interesesAnuales + amortizacionPrestamo;
 
-    // Calcular margen bruto (beneficio antes de impuestos)
+    // Calcular margen bruto CORRECTO (beneficio antes de impuestos)
     const margin = safeNum(document.getElementById('target-profit-margin')?.value) || 20;
-    const margenBruto = (totalOperational + costosFinancieros) * (margin / 100);
+    const corporateTax = safeNum(document.getElementById('corporate-tax')?.value) || 25;
+    
+    // Margen bruto = beneficio antes de impuestos
+    const margenBruto = (totalOperational + interesesAnuales) * (margin / 100);
+    
+    // Beneficio neto = beneficio después de impuestos
+    const beneficioNeto = margenBruto * (1 - corporateTax / 100);
 
     // Actualizar sidebar
     const setFmt = (id, value) => {
@@ -549,56 +566,24 @@ function updateRightSummary(totalOperational = null) {
         if (el) el.textContent = text;
     };
 
-    // Card 1: Facturación Principal
+    // Card 1: Facturación Principal - SIN MARCO ESPECIAL
     setFmt('total-facturacion', requiredRevenue);
     setFmt('gastos-operativos', totalOperational);
-    setFmt('costos-financieros', costosFinancieros);
+    setFmt('costos-financieros', costosFinancierosTotales);
     setFmt('margen-bruto', margenBruto);
 
-    // Card 2: Precio/Hora
+    // Card 2: Precio/Hora - MISMO ESTILO QUE FACTURACIÓN
     setFmt('suggested-hourly-rate-sidebar', suggestedRate);
-    setText('employee-count-sidebar', employeeCount);
+    setText('employee-count-sidebar', employeeCount); // Ahora viene de state.personnel
     setText('annual-hours-sidebar', totalHours.toLocaleString());
 
     // Card 3: Desglose de Costes
     setFmt('total-amortizaciones', desgloseCostes.amortizaciones);
     setFmt('total-gastos-fijos', desgloseCostes.gastosFijos);
     setFmt('total-personal', desgloseCostes.personal);
-    setFmt('total-intereses', costosFinancieros);
+    setFmt('total-intereses', costosFinancierosTotales);
 }
 
-// Función para calcular desglose de costes
-function calcularDesgloseCostes() {
-    let amortizaciones = 0;
-    let gastosFijos = 0;
-    let personal = 0;
-
-    // Amortizaciones
-    state.amortizables.lokala.forEach(item => {
-        amortizaciones += safeNum(item.cost) / Math.max(1, safeNum(item.life));
-    });
-    state.amortizables.garraioa.forEach(item => {
-        amortizaciones += safeNum(item.cost) / Math.max(1, safeNum(item.life));
-    });
-
-    // Gastos fijos (recurrentes)
-    Object.values(state.recurrings).forEach(category => {
-        category.forEach(item => {
-            gastosFijos += safeNum(item.payment_cost) * Math.max(1, safeNum(item.frequency));
-        });
-    });
-
-    // Personal
-    state.personnel.forEach(person => {
-        personal += safeNum(person.gross) * (1 + safeNum(person.employer_ss) / 100);
-    });
-
-    return {
-        amortizaciones,
-        gastosFijos,
-        personal
-    };
-}
 /* ===========================
    PDF GENERATION
    =========================== */

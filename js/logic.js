@@ -245,7 +245,7 @@ function setupLanguageSelector() {
     }
 }
 
-const state = {
+window.state = {
   amortizables: { lokala: [], garraioa: [] },
   recurrings: { lokala: [], ekoizpena: [], garraioa: [], hazkuntza: [] },
   personnel: [],

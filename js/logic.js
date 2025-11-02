@@ -414,7 +414,9 @@ function calculateOperationalCosts() {
 
   return total;
 }
-
+function calculateTotalCosts() {
+    return calculateOperationalCosts();
+}
 function calculateFinancing() {
   const necesidades = calculateInvestmentNeeds();
   
@@ -1003,7 +1005,7 @@ async function initializeAppAsync() {
             console.log("🔁 Recalculando financiación y pricing tras carga inicial...");
             try {
                 calculateFinancing();
-                calculatePricing();
+                calculatePricing(calculateTotalCosts());
                 updateRightSummary();
 
                 // 🧩 Forzar actualización visual del sidebar (Langile kopurua + Urteko orduak)

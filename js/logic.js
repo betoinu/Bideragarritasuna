@@ -496,59 +496,62 @@ function actualizarCascada() {
     }, 500); // Aumentar delay para dar tiempo al DOM
 } // ← Este cierre corresponde a la función actualizarCascada
 
-// NUEVA FUNCIÓN: Calcular costes financieros completos - VERSIÓN ROBUSTA
+// NUEVA FUNCIÓN: Calcular costes financieros completos - VERSIÓN MEJORADA
 function calcularCostesFinancierosCompletos() {
-    console.log("🔍 DEBUG - Buscando costes financieros...");
+    console.log("🔍 CALCULANDO COSTES FINANCIEROS COMPLETOS...");
     
     let costesTotales = 0;
     
-    // MÉTODO 1: Buscar "Urteko Kuota Guztira" en el Panel 6
+    // MÉTODO PRINCIPAL: Usar "Urteko Kuota Guztira" del Panel 6
     const cuotaAnualSpan = document.getElementById('cuota-anual');
     if (cuotaAnualSpan && cuotaAnualSpan.textContent) {
         const cuotaText = cuotaAnualSpan.textContent;
         costesTotales = safeNum(cuotaText.replace(/[^\d.,]/g, '').replace(',', '.'));
-        console.log("✅ Costes de cuota-anual:", costesTotales);
+        console.log("✅ Costes financieros de 'Urteko Kuota Guztira':", costesTotales);
     }
     
-    // MÉTODO 2: Si es 0, calcular desde los inputs básicos
+    // MÉTODO ALTERNATIVO: Si no hay valor, calcular desde 0
     if (costesTotales === 0) {
-        console.log("🔧 Calculando costes desde inputs básicos...");
+        console.log("🔧 Calculando costes financieros desde cero...");
         
-        // Obtener cantidad a financiar del Panel 6
+        // 1. Obtener cantidad TOTAL a financiar (inversión + tesorería)
         let cantidadFinanciar = 0;
         const cantidadSpan = document.getElementById('cantidad-financiar');
         if (cantidadSpan && cantidadSpan.textContent) {
             cantidadFinanciar = safeNum(cantidadSpan.textContent.replace(/[^\d.,]/g, '').replace(',', '.'));
         }
         
-        // Si no hay cantidad, usar el valor por defecto
+        // 2. Si no hay cantidad, calcularla manualmente
         if (cantidadFinanciar === 0) {
-            cantidadFinanciar = 210127.5; // Valor por defecto del input
+            const necesidadesBase = safeNum(document.getElementById('necesidades-inversion')?.value) || 210127.5;
+            const porcentajeTesoreria = safeNum(document.getElementById('porcentaje-tesoreria')?.value) || 0;
+            const gastosAnuales = calculateTotalCosts();
+            const tesoreria = gastosAnuales * (porcentajeTesoreria / 100);
+            
+            cantidadFinanciar = necesidadesBase + tesoreria;
+            console.log("💰 Cantidad calculada manualmente:", { necesidadesBase, tesoreria, cantidadFinanciar });
         }
         
+        // 3. Calcular cuota anual
         const tae = safeNum(document.getElementById('tae')?.value) || 5;
         const plazo = safeNum(document.getElementById('plazo')?.value) || 5;
-        
-        console.log("📊 Valores para cálculo:", { cantidadFinanciar, tae, plazo });
         
         if (cantidadFinanciar > 0 && plazo > 0) {
             const tasaMensual = (tae / 100) / 12;
             const numPagos = plazo * 12;
             
             if (tasaMensual > 0) {
-                // Cálculo de cuota mensual
                 const cuotaMensual = cantidadFinanciar * tasaMensual * Math.pow(1 + tasaMensual, numPagos) / 
                                    (Math.pow(1 + tasaMensual, numPagos) - 1);
-                costesTotales = cuotaMensual * 12; // Cuota anual
+                costesTotales = cuotaMensual * 12;
             } else {
-                // Sin intereses
                 costesTotales = cantidadFinanciar / plazo;
             }
-            console.log("💰 Costes calculados:", costesTotales);
+            console.log("🔢 Cálculo financiero:", { cantidadFinanciar, tae, plazo, costesTotales });
         }
     }
     
-    console.log("💰 Costes financieros finales:", costesTotales);
+    console.log("💰 COSTES FINANCIEROS FINALES:", costesTotales);
     return costesTotales;
 }
 
@@ -1214,9 +1217,17 @@ function calcularFinanciacion() {
     // Calcular necesidades TOTALES de inversión (base + tesorería)
     const necesidadesInversionTotales = necesidadesInversionBase + importeTesoreria;
     
-    // Calcular cantidad a financiar
-    let cantidadFinanciar = necesidadesInversionTotales - totalSocios - totalCapitalistas;
-    cantidadFinanciar = Math.max(0, cantidadFinanciar);
+    // CALCULAR CANTIDAD TOTAL A FINANCIAR (inversión + tesorería)
+let cantidadFinanciar = necesidadesInversionTotales - totalSocios - totalCapitalistas;
+cantidadFinanciar = Math.max(0, cantidadFinanciar);
+
+console.log("💰 CANTIDAD A FINANCIAR:", {
+    necesidadesInversionTotales,
+    totalSocios,
+    totalCapitalistas, 
+    importeTesoreria,
+    cantidadFinanciar
+});
     
     // Calcular costos financieros
     const tae = parseFloat(document.getElementById('tae')?.value) || 0;

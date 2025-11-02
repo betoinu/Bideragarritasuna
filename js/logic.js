@@ -1,13 +1,9 @@
 /* =========================================
-// IDarte · VERSIÓN DEFINITIVA Y COMPLETA
-// By: Senior FullStack + MBA
+// IDarte · VERSIÓN DEFINITIVA
 // ========================================= */
 
-console.log("🚀 IDarte - Sistema Financiero Iniciado");
+console.log("🚀 IDarte - Sistema iniciado");
 
-/* ============
-   GLOBAL STATE
-   ============ */
 const state = {
   amortizables: { lokala: [], garraioa: [] },
   recurrings: { lokala: [], ekoizpena: [], garraioa: [], hazkuntza: [] },
@@ -19,51 +15,34 @@ const state = {
   }
 };
 
-/* =====================
-   UTILIDADES BÁSICAS
-   ===================== */
-function uid(prefix = 'id') { 
-  return prefix + '-' + Math.random().toString(36).slice(2, 9); 
-}
-
+// ===== UTILIDADES =====
+function uid(prefix = 'id') { return prefix + '-' + Math.random().toString(36).slice(2, 9); }
 function fmt(n) { 
   n = Number(n) || 0;
-  try {
-    return new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(n);
-  } catch (e) {
-    return '€' + n.toFixed(2).replace('.', ',');
-  }
+  return new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(n);
 }
-
 function safeNum(v) {
   if (v === '' || v === null || v === undefined) return 0;
   const num = Number(String(v).replace(',', '.'));
   return isNaN(num) ? 0 : num;
 }
 
-function qs(sel) { return document.querySelector(sel); }
-function qsa(sel) { return Array.from(document.querySelectorAll(sel)); }
-
-/* ===========================
-   DATOS PRECARGADOS COMPLETOS
-   (MISMO QUE EN VERSIÓN ANTERIOR)
-   =========================== */
+// ===== DATOS PRECARGADOS =====
 function preloadSampleData() {
-  console.log("📥 Cargando datos de ejemplo completos...");
+  console.log("📥 Cargando datos...");
   
-  // --- AMORTIZABLES --- (EXACTO IGUAL QUE ANTES)
+  // AMORTIZABLES
   state.amortizables.lokala = [
     { id: uid('am'), name: 'Lokalaren Erosketa (Amortizagarria)', cost: 120000, life: 20, category: 'lokala' },
     { id: uid('am'), name: 'Erreformaren Balioa (Amortizagarria)', cost: 30000, life: 10, category: 'lokala' },
     { id: uid('am'), name: 'Altzarien Erosketa', cost: 8000, life: 5, category: 'lokala' },
     { id: uid('am'), name: 'Hardware eta Softwarearen Hornitzea', cost: 4000, life: 4, category: 'lokala' }
   ];
-
   state.amortizables.garraioa = [
     { id: uid('am'), name: 'Garraio Ibilgailuaren Erosketa', cost: 20000, life: 5, category: 'garraioa' }
   ];
 
-  // --- GASTOS RECURRENTES --- (EXACTO IGUAL QUE ANTES)
+  // GASTOS RECURRENTES
   state.recurrings.lokala = [
     { id: uid('r'), name: 'Alokairua (Hilekoa)', payment_cost: 800, frequency: 12, category: 'lokala' },
     { id: uid('r'), name: 'Hornigaiak: Gutxieneko Kontsumoa (Argia, Ura)', payment_cost: 100, frequency: 12, category: 'lokala' },
@@ -72,14 +51,12 @@ function preloadSampleData() {
     { id: uid('r'), name: 'Bestelako Aseguruak (Lokala)', payment_cost: 450, frequency: 1, category: 'lokala' },
     { id: uid('r'), name: 'Telefonia eta Internet FINKOA', payment_cost: 80, frequency: 12, category: 'lokala' }
   ];
-
   state.recurrings.ekoizpena = [
     { id: uid('r'), name: 'EZA (Proiektu Bakoltzeko Gehigarria)', payment_cost: 200, frequency: 12, category: 'ekoizpena' },
     { id: uid('r'), name: 'Hirugarrenen Lan Laguntzaileak (Proiektuko Azpikontratak)', payment_cost: 1500, frequency: 12, category: 'ekoizpena' },
     { id: uid('r'), name: 'Material Gordinak / Kontsumigarri Espezifikoak', payment_cost: 400, frequency: 12, category: 'ekoizpena' },
     { id: uid('r'), name: 'Elkargo Tasak (Jarduerari lotuak)', payment_cost: 150, frequency: 1, category: 'ekoizpena' }
   ];
-
   state.recurrings.garraioa = [
     { id: uid('r'), name: 'Garraioa: Mantentze-lanak eta Konponketak', payment_cost: 500, frequency: 1, category: 'garraioa' },
     { id: uid('r'), name: 'Garraioa: Udal Tasak eta Zergak (Urteko)', payment_cost: 150, frequency: 1, category: 'garraioa' },
@@ -87,7 +64,6 @@ function preloadSampleData() {
     { id: uid('r'), name: 'Garraioa: Erregaia / Gasolina', payment_cost: 250, frequency: 12, category: 'garraioa' },
     { id: uid('r'), name: 'Dietak / Bazkariak (Desplazamenduak)', payment_cost: 150, frequency: 12, category: 'garraioa' }
   ];
-
   state.recurrings.hazkuntza = [
     { id: uid('r'), name: 'Prestakuntza Saioak eta Ikastaroak', payment_cost: 800, frequency: 1, category: 'hazkuntza' },
     { id: uid('r'), name: 'Aldizkari eta Ikerketa Harpidetzak', payment_cost: 100, frequency: 12, category: 'hazkuntza' },
@@ -95,127 +71,88 @@ function preloadSampleData() {
     { id: uid('r'), name: 'Patrozinioak / Networking Ekitaldiak', payment_cost: 500, frequency: 1, category: 'hazkuntza' }
   ];
 
-  // --- PERSONAL --- (EXACTO IGUAL QUE ANTES)
+  // PERSONAL
   state.personnel = [
     { id: uid('p'), role: 'Zuzendaria / Bazkidea', gross: 35000, employer_ss: 30 }
   ];
 
-  // --- FINANZAS ---
+  // SOCIOS
   state.finance.socios = [
     { id: uid('s'), name: 'Bazkide 1', aportacion: 0 },
     { id: uid('s'), name: 'Bazkide 2', aportacion: 0 },
     { id: uid('s'), name: 'Bazkide 3', aportacion: 0 }
   ];
-
-  console.log("✅ Datos precargados correctamente");
 }
 
-/* ===========================
-   CÁLCULOS FINANCIEROS
-   =========================== */
+// ===== CÁLCULOS =====
 function calculateOperationalCosts() {
   let total = 0;
-
-  // 1. Amortizaciones
-  state.amortizables.lokala.forEach(item => {
-    total += safeNum(item.cost) / Math.max(1, safeNum(item.life));
-  });
-  state.amortizables.garraioa.forEach(item => {
-    total += safeNum(item.cost) / Math.max(1, safeNum(item.life));
-  });
-
-  // 2. Gastos recurrentes
-  Object.values(state.recurrings).forEach(category => {
-    category.forEach(item => {
-      total += safeNum(item.payment_cost) * Math.max(1, safeNum(item.frequency));
-    });
-  });
-
-  // 3. Personal
-  state.personnel.forEach(person => {
-    total += safeNum(person.gross) * (1 + safeNum(person.employer_ss) / 100);
-  });
-
+  Object.values(state.amortizables).forEach(cat => cat.forEach(item => total += safeNum(item.cost) / Math.max(1, safeNum(item.life))));
+  Object.values(state.recurrings).forEach(cat => cat.forEach(item => total += safeNum(item.payment_cost) * safeNum(item.frequency)));
+  state.personnel.forEach(person => total += safeNum(person.gross) * (1 + safeNum(person.employer_ss) / 100));
   return total;
 }
 
 function calculateFinancing() {
-  // 1. Inversiones iniciales
-  let inversiones = 0;
-  state.amortizables.lokala.forEach(item => { inversiones += safeNum(item.cost); });
-  state.amortizables.garraioa.forEach(item => { inversiones += safeNum(item.cost); });
-
-  // 2. Tesorería (3 meses de gastos operativos)
   const costesOperativos = calculateOperationalCosts();
+  const inversiones = Object.values(state.amortizables).flat().reduce((sum, item) => sum + safeNum(item.cost), 0);
   const tesoreria = (costesOperativos / 12) * 3;
-  
-  // 3. Necesidades totales
   const necesidadesTotales = inversiones + tesoreria;
-
-  // 4. Aportaciones
-  let aportacionesSocios = 0;
-  state.finance.socios.forEach(socio => { aportacionesSocios += safeNum(socio.aportacion); });
   
-  let aportacionesCapitalistas = 0;
-  state.finance.capitalistas.forEach(cap => { aportacionesCapitalistas += safeNum(cap.aportacion); });
-  
+  const aportacionesSocios = state.finance.socios.reduce((sum, socio) => sum + safeNum(socio.aportacion), 0);
+  const aportacionesCapitalistas = state.finance.capitalistas.reduce((sum, cap) => sum + safeNum(cap.aportacion), 0);
   const financiacionPropia = aportacionesSocios + aportacionesCapitalistas;
-
-  // 5. Préstamo necesario
   const prestamoNecesario = Math.max(0, necesidadesTotales - financiacionPropia);
-
-  // 6. Calcular cuota del préstamo
+  
   const tae = state.finance.prestamo.tae;
   const plazo = state.finance.prestamo.plazo;
   let cuotaAnual = 0;
-
   if (prestamoNecesario > 0 && tae > 0 && plazo > 0) {
     const tasaMensual = (tae / 100) / 12;
     const numPagos = plazo * 12;
-    const cuotaMensual = prestamoNecesario * tasaMensual * Math.pow(1 + tasaMensual, numPagos) / 
-                        (Math.pow(1 + tasaMensual, numPagos) - 1);
+    const cuotaMensual = prestamoNecesario * tasaMensual * Math.pow(1 + tasaMensual, numPagos) / (Math.pow(1 + tasaMensual, numPagos) - 1);
     cuotaAnual = cuotaMensual * 12;
   }
-
-  return {
-    costesOperativos,
-    inversiones,
-    tesoreria,
-    necesidadesTotales,
-    financiacionPropia,
-    prestamoNecesario,
-    cuotaAnual
-  };
+  
+  return { costesOperativos, necesidadesTotales, financiacionPropia, prestamoNecesario, cuotaAnual, tesoreria };
 }
 
 function calculatePricing() {
   const financiacion = calculateFinancing();
-  const costesOperativos = financiacion.costesOperativos;
-  const costesFinancieros = financiacion.cuotaAnual;
-
-  // Parámetros con valores por defecto
   const margin = safeNum(document.getElementById('target-profit-margin')?.value) || 20;
   const corporateTax = safeNum(document.getElementById('corporate-tax')?.value) || 25;
   const employeeCount = Math.max(1, safeNum(document.getElementById('employee-count')?.value) || state.personnel.length);
   const annualHours = safeNum(document.getElementById('annual-hours-per-employee')?.value) || 1600;
   const totalHours = employeeCount * annualHours;
-
-  // Cálculos
-  const costesTotales = costesOperativos + costesFinancieros;
+  
+  const costesTotales = financiacion.costesOperativos + financiacion.cuotaAnual;
   const margenBruto = costesTotales * (margin / 100);
   const revenue = costesTotales + margenBruto;
   const hourlyRate = totalHours > 0 ? revenue / totalHours : 0;
-
-  // Margen neto
-  const taxAmount = margenBruto * (corporateTax / 100);
-  const netProfit = margenBruto - taxAmount;
-
+  const netProfit = margenBruto - (margenBruto * (corporateTax / 100));
+  
   // Actualizar UI
-  updateElement('total-available-hours', totalHours.toLocaleString());
   updateElement('suggested-hourly-rate', fmt(hourlyRate));
-  updateElement('expected-net-profit', fmt(netProfit));
   updateElement('required-annual-revenue', fmt(revenue));
-
+  updateElement('expected-net-profit', fmt(netProfit));
+  updateElement('total-available-hours', totalHours.toLocaleString());
+  
+  // Actualizar Panel 6
+  updateElement('total-necesidades', fmt(financiacion.necesidadesTotales));
+  updateElement('financiacion-propia', fmt(financiacion.financiacionPropia));
+  updateElement('prestamo-necesario', fmt(financiacion.prestamoNecesario));
+  updateElement('cuota-anual', fmt(financiacion.cuotaAnual));
+  updateElement('importe-tesoreria', fmt(financiacion.tesoreria));
+  
+  // Actualizar Sidebar
+  updateElement('total-facturacion', fmt(revenue));
+  updateElement('gastos-operativos', fmt(financiacion.costesOperativos));
+  updateElement('costos-financieros', fmt(financiacion.cuotaAnual));
+  updateElement('margen-bruto', fmt(margenBruto));
+  updateElement('suggested-hourly-rate-sidebar', fmt(hourlyRate));
+  updateElement('employee-count-sidebar', employeeCount);
+  updateElement('annual-hours-sidebar', totalHours.toLocaleString());
+  
   return revenue;
 }
 
@@ -224,17 +161,9 @@ function updateElement(id, value) {
   if (el) el.textContent = value;
 }
 
-/* ===========================
-   CRUD OPERATIONS COMPLETAS
-   =========================== */
+// ===== CRUD =====
 window.addAmortizable = function(cat) {
-  state.amortizables[cat].push({
-    id: uid('am'),
-    name: 'Elemento Nuevo',
-    cost: 1000,
-    life: 5,
-    category: cat
-  });
+  state.amortizables[cat].push({ id: uid('am'), name: 'Elemento Nuevo', cost: 1000, life: 5, category: cat });
   renderAllTables();
   updateAll();
 };
@@ -246,13 +175,7 @@ window.removeAmortizable = function(id, cat) {
 };
 
 window.addRecurring = function(cat) {
-  state.recurrings[cat].push({
-    id: uid('r'),
-    name: 'Gasto Nuevo',
-    payment_cost: 100,
-    frequency: 12,
-    category: cat
-  });
+  state.recurrings[cat].push({ id: uid('r'), name: 'Gasto Nuevo', payment_cost: 100, frequency: 12, category: cat });
   renderAllTables();
   updateAll();
 };
@@ -264,12 +187,7 @@ window.removeRecurring = function(id, cat) {
 };
 
 window.addPerson = function() {
-  state.personnel.push({
-    id: uid('p'),
-    role: 'Nuevo Empleado',
-    gross: 30000,
-    employer_ss: 30
-  });
+  state.personnel.push({ id: uid('p'), role: 'Nuevo Empleado', gross: 30000, employer_ss: 30 });
   renderAllTables();
   updateAll();
 };
@@ -281,11 +199,7 @@ window.removePersonnel = function(id) {
 };
 
 window.addSocio = function() {
-  state.finance.socios.push({
-    id: uid('s'),
-    name: 'Nuevo Socio',
-    aportacion: 0
-  });
+  state.finance.socios.push({ id: uid('s'), name: 'Nuevo Socio', aportacion: 0 });
   renderAllTables();
   updateAll();
 };
@@ -297,11 +211,7 @@ window.removeSocio = function(id) {
 };
 
 window.addCapitalista = function() {
-  state.finance.capitalistas.push({
-    id: uid('c'),
-    name: 'Nuevo Capitalista',
-    aportacion: 0
-  });
+  state.finance.capitalistas.push({ id: uid('c'), name: 'Nuevo Capitalista', aportacion: 0 });
   renderAllTables();
   updateAll();
 };
@@ -318,56 +228,40 @@ window.onFieldChange = function(e) {
   const field = el.dataset.field;
   const value = el.type === 'number' ? safeNum(el.value) : el.value;
 
-  // Buscar en todos los arrays
   let found = false;
-
-  // Amortizables
   ['lokala', 'garraioa'].forEach(cat => {
     const item = state.amortizables[cat].find(x => x.id === id);
     if (item) { item[field] = value; found = true; }
   });
-
-  // Recurrentes
   if (!found) {
     ['lokala', 'ekoizpena', 'garraioa', 'hazkuntza'].forEach(cat => {
       const item = state.recurrings[cat].find(x => x.id === id);
       if (item) { item[field] = value; found = true; }
     });
   }
-
-  // Personal
   if (!found) {
     const person = state.personnel.find(x => x.id === id);
     if (person) { person[field] = value; found = true; }
   }
-
-  // Socios
   if (!found) {
     const socio = state.finance.socios.find(x => x.id === id);
     if (socio) { socio[field] = value; found = true; }
   }
-
-  // Capitalistas
   if (!found) {
     const capitalista = state.finance.capitalistas.find(x => x.id === id);
     if (capitalista) { capitalista[field] = value; found = true; }
   }
-
   if (found) updateAll();
 };
 
-/* ===========================
-   RENDER DE TABLAS COMPLETO
-   =========================== */
+// ===== RENDER =====
 function renderAllTables() {
   renderTable(state.amortizables.lokala, 'lokala-amortizable-tbody', 'amort');
   renderTable(state.amortizables.garraioa, 'garraioa-amortizable-tbody', 'amort');
-  
   renderTable(state.recurrings.lokala, 'lokala-recurring-tbody', 'recur');
   renderTable(state.recurrings.ekoizpena, 'ekoizpena-recurring-tbody', 'recur');
   renderTable(state.recurrings.garraioa, 'garraioa-recurring-tbody', 'recur');
   renderTable(state.recurrings.hazkuntza, 'hazkuntza-recurring-tbody', 'recur');
-  
   renderTable(state.personnel, 'personnel-tbody', 'person');
   renderTable(state.finance.socios, 'socios-table-body', 'socio');
   renderTable(state.finance.capitalistas, 'capitalistas-table-body', 'capitalista');
@@ -375,11 +269,8 @@ function renderAllTables() {
 
 function renderTable(items, containerId, type) {
   const container = document.getElementById(containerId);
-  if (!container) {
-    console.warn("Contenedor no encontrado:", containerId);
-    return;
-  }
-
+  if (!container) return;
+  
   container.innerHTML = items.map(item => {
     if (type === 'amort') {
       return `
@@ -433,78 +324,50 @@ function renderTable(items, containerId, type) {
       `;
     }
   }).join('');
-
-  // Añadir event listeners
+  
   container.querySelectorAll('input[data-id]').forEach(input => {
     input.addEventListener('input', onFieldChange);
   });
 }
 
-/* ===========================
-   ACTUALIZACIÓN GLOBAL
-   =========================== */
+// ===== ACTUALIZACIÓN =====
 function updateAll() {
   calculatePricing();
-  updateFinancePanel();
 }
 
-function updateFinancePanel() {
-  const financiacion = calculateFinancing();
-  
-  // Actualizar Panel 6 si existe
-  updateElement('total-necesidades', fmt(financiacion.necesidadesTotales));
-  updateElement('financiacion-propia', fmt(financiacion.financiacionPropia));
-  updateElement('prestamo-necesario', fmt(financiacion.prestamoNecesario));
-  updateElement('cuota-anual', fmt(financiacion.cuotaAnual));
-  updateElement('importe-tesoreria', fmt(financiacion.tesoreria));
-}
-
-/* ===========================
-   INICIALIZACIÓN COMPLETA
-   =========================== */
+// ===== INICIALIZACIÓN =====
 function initializeApp() {
-  console.log("🎯 Inicializando IDarte...");
+  console.log("🎯 Inicializando motor financiero...");
   
-  // 1. Cargar datos precargados
   preloadSampleData();
-  
-  // 2. Renderizar tablas
   renderAllTables();
   
-  // 3. Configurar event listeners globales
-  const globalInputs = [
-    'target-profit-margin', 'corporate-tax', 'employee-count', 'annual-hours-per-employee',
-    'prestamo-tae', 'prestamo-plazo', 'porcentaje-tesoreria'
-  ];
-  
-  globalInputs.forEach(id => {
+  // Event listeners
+  ['target-profit-margin', 'corporate-tax', 'employee-count', 'annual-hours-per-employee',
+   'prestamo-tae', 'prestamo-plazo', 'porcentaje-tesoreria'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.addEventListener('input', updateAll);
   });
   
-  // 4. Conectar botones de añadir
-  const addButtons = {
-    'add-lokala-amortizable': () => addAmortizable('lokala'),
-    'add-garraioa-amortizable': () => addAmortizable('garraioa'),
-    'add-lokala-recurring': () => addRecurring('lokala'),
-    'add-ekoizpena-recurring': () => addRecurring('ekoizpena'),
-    'add-garraioa-recurring': () => addRecurring('garraioa'),
-    'add-hazkuntza-recurring': () => addRecurring('hazkuntza'),
-    'add-personnel': () => addPerson(),
-    'add-socio': () => addSocio(),
-    'add-capitalista': () => addCapitalista()
-  };
-  
-  Object.entries(addButtons).forEach(([id, handler]) => {
-    const btn = document.getElementById(id);
-    if (btn) btn.addEventListener('click', handler);
+  // Actualizar préstamo en state
+  document.getElementById('prestamo-tae')?.addEventListener('input', function() {
+    state.finance.prestamo.tae = safeNum(this.value);
+    updateAll();
+  });
+  document.getElementById('prestamo-plazo')?.addEventListener('input', function() {
+    state.finance.prestamo.plazo = safeNum(this.value);
+    updateAll();
   });
   
-  // 5. Cálculos iniciales
+  // Cálculos iniciales
   setTimeout(updateAll, 100);
   
   console.log("✅ IDarte completamente operativo");
 }
 
-// Iniciar aplicación
-window.addEventListener('load', initializeApp);
+// Iniciar cuando esté listo
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initializeApp);
+} else {
+  initializeApp();
+}

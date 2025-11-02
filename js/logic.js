@@ -591,11 +591,28 @@ function calculatePricing(totalOperational = null) {
     setFmt('expected-net-profit', margenNeto);
     setFmt('required-annual-revenue', revenue);
     
-    // Guardar valores para el sidebar
-    document.getElementById('suggested-hourly-rate').dataset.value = suggested;
-    document.getElementById('expected-net-profit').dataset.value = margenNeto;
-    document.getElementById('required-annual-revenue').dataset.value = revenue;
-    document.getElementById('total-available-hours').dataset.value = totalHours;
+    // Guardar valores para el sidebar - VERSIÓN SEGURA
+function guardarValoresSeguros(suggested, margenBruto, margenNeto, revenue, totalHours) {
+    try {
+        const suggestedEl = document.getElementById('suggested-hourly-rate');
+        const margenBrutoEl = document.getElementById('margen-bruto-panel7');
+        const expectedProfitEl = document.getElementById('expected-net-profit');
+        const requiredRevenueEl = document.getElementById('required-annual-revenue');
+        const totalHoursEl = document.getElementById('total-available-hours');
+        
+        if (suggestedEl && suggestedEl.dataset) suggestedEl.dataset.value = suggested;
+        if (margenBrutoEl && margenBrutoEl.dataset) margenBrutoEl.dataset.value = margenBruto;
+        if (expectedProfitEl && expectedProfitEl.dataset) expectedProfitEl.dataset.value = margenNeto;
+        if (requiredRevenueEl && requiredRevenueEl.dataset) requiredRevenueEl.dataset.value = revenue;
+        if (totalHoursEl && totalHoursEl.dataset) totalHoursEl.dataset.value = totalHours;
+        
+    } catch (error) {
+        console.warn("⚠️ Algunos elementos no están disponibles:", error);
+    }
+}
+
+// En calculatePricing, REEMPLAZA la sección "Guardar valores" con:
+guardarValoresSeguros(suggested, margenBruto, margenNeto, revenue, totalHours);
 
     // 6. ACTUALIZAR DESGLOSE PEDAGÓGICO (NUEVO)
     actualizarDesglosePedagogico(totalOperational, costosFinancieros, costesTotales, margenBruto, revenue, totalHours, suggested, margin);

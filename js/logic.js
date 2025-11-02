@@ -491,13 +491,8 @@ function calculatePricing(totalOperational = null) {
     const hours = safeNum(qs('#annual-hours-per-employee')?.value) || 1600;
     const totalHours = emp * hours;
 
-    // Calcular costos financieros
-    let costosFinancieros = 0;
-    const interesAnualSpan = document.getElementById('interes-anual');
-    if (interesAnualSpan) {
-        const interesText = interesAnualSpan.textContent;
-        costosFinancieros = safeNum(interesText.replace(/[^\d.,]/g, '').replace(',', '.'));
-    }
+        // Calcular costos financieros COMPLETOS (intereses + amortización)
+    let costosFinancieros = calcularCostesFinancierosCompletos();
 
     console.log("📊 Datos para pricing:", {
         totalOperational,
@@ -533,7 +528,27 @@ function calculatePricing(totalOperational = null) {
     document.getElementById('expected-net-profit').dataset.value = margenNeto;
     document.getElementById('required-annual-revenue').dataset.value = revenue;
     document.getElementById('total-available-hours').dataset.value = totalHours;
+
+// NUEVA FUNCIÓN: Calcular costes financieros completos usando "Urteko Kuota Guztira"
+function calcularCostesFinancierosCompletos() {
+    let costesTotales = 0;
     
+    // USAR DIRECTAMENTE "Urteko Kuota Guztira" que ya incluye intereses + amortización
+    const cuotaAnualSpan = document.getElementById('cuota-anual');
+    if (cuotaAnualSpan) {
+        const cuotaText = cuotaAnualSpan.textContent;
+        costesTotales = safeNum(cuotaText.replace(/[^\d.,]/g, '').replace(',', '.'));
+        console.log("💰 Costes financieros completos (de cuota-anual):", costesTotales);
+    } else {
+        console.warn("❌ No se encontró 'cuota-anual'");
+    }
+    
+    return costesTotales;
+}
+
+// AÑADE esta nueva función después de calculatePricing
+function updateRightSummaryWithMargins(totalOperational, margenBruto, costosFinancieros) {
+  
     // Actualizar sidebar con márgenes diferenciados
     updateRightSummaryWithMargins(totalOperational, margenBruto, costosFinancieros);
     
@@ -585,27 +600,8 @@ function updateRightSummary(totalOperational = null) {
         totalOperational = calculateTotalCosts();
     }
     
-    // Calcular costos financieros de forma robusta
-    let costosFinancieros = 0;
-    
-    // Método 1: Desde el panel de finantzaketa
-    const interesAnualSpan = document.getElementById('interes-anual');
-    if (interesAnualSpan) {
-        const interesText = interesAnualSpan.textContent;
-        costosFinancieros = safeNum(interesText.replace(/[^\d.,]/g, '').replace(',', '.'));
-    }
-    
-    // Método 2: Calcular directamente si el anterior falla
-    if (costosFinancieros === 0) {
-        const cantidadFinanciarSpan = document.getElementById('cantidad-financiar');
-        const tae = safeNum(document.getElementById('tae')?.value) || 5;
-        
-        if (cantidadFinanciarSpan) {
-            const cantidadText = cantidadFinanciarSpan.textContent;
-            const cantidadFinanciar = safeNum(cantidadText.replace(/[^\d.,]/g, '').replace(',', '.'));
-            costosFinancieros = cantidadFinanciar * (tae / 100);
-        }
-    }
+        // Calcular costos financieros COMPLETOS (intereses + amortización)
+    let costosFinancieros = calcularCostesFinancierosCompletos();
     
     console.log("💰 Costos financieros calculados:", costosFinancieros);
 

@@ -591,25 +591,32 @@ function updateAll() {
 }
 
 // ===== INICIALIZACIÓN =====
-function initializeApp() {
-  console.log("🎯 Inicializando IDarte...");
-  
-  preloadSampleData();
-  renderAllTables();
-  setupTabNavigation();
-  
-  const globalInputs = [
-    'target-profit-margin', 'corporate-tax', 'employee-count', 'annual-hours-per-employee',
-    'tae', 'plazo', 'periodo-gracia', 'meses-tesoreria'
-  ];
-  
-  globalInputs.forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.addEventListener('input', updateAll);
-  });
-  
-  setTimeout(updateAll, 100);
-  console.log("✅ IDarte completamente operativo");
+// ===== INICIALIZACIÓN MEJORADA CON JSON =====
+async function initializeApp() {
+    console.log("🎯 Inicializando IDarte con internacionalización JSON...");
+    
+    // Primero cargar las traducciones
+    await loadTranslations();
+    
+    // Luego el resto de la inicialización
+    setupLanguageSelector();
+    
+    preloadSampleData();
+    renderAllTables();
+    setupTabNavigation();
+    
+    const globalInputs = [
+        'target-profit-margin', 'corporate-tax', 'employee-count', 'annual-hours-per-employee',
+        'tae', 'plazo', 'periodo-gracia', 'meses-tesoreria'
+    ];
+    
+    globalInputs.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('input', updateAll);
+    });
+    
+    setTimeout(updateAll, 100);
+    console.log("✅ IDarte completamente operativo con internacionalización JSON");
 }
 
 // ===== GENERACIÓN DE PDF =====

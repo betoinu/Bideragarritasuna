@@ -271,7 +271,12 @@ function safeNum(v) {
 
 function updateElement(id, value) {
   const el = document.getElementById(id);
-  if (el) el.textContent = value;
+  if (el) {
+    el.textContent = value;
+    console.log(`✅ Elemento ${id} actualizado a:`, value);
+  } else {
+    console.error(`❌ Elemento con ID ${id} no encontrado`);
+  }
 }
 
 // ===== DATOS PRECARGADOS =====
@@ -447,13 +452,7 @@ function calculatePricing() {
   const impuestos = margenBruto * (corporateTax / 100);
   const beneficioNeto = margenBruto - impuestos;
 
-  console.log("📊 Datos para sidebar:", {
-    employeeCount,
-    annualHours, 
-    totalHours,
-    employeeCountElement: document.getElementById('employee-count-sidebar'),
-    annualHoursElement: document.getElementById('annual-hours-sidebar')
-  });
+  console.log("🔍 Debug sidebar - Empleados:", employeeCount, "Horas totales:", totalHours);
 
   // ACTUALIZAR PANEL 7
   updateElement('desglose-gastos-operativos', fmt(costesOperativos));
@@ -482,22 +481,29 @@ function calculatePricing() {
   updateElement('total-socios-display', fmt(financiacion.aportacionesTotales));
   updateElement('num-socios', state.finance.socios.length);
 
-  // ACTUALIZAR SIDEBAR - CORRECCIÓN APLICADA AQUÍ
+  // CORRECCIÓN DEFINITIVA PARA EL SIDEBAR
   updateElement('total-facturacion', fmt(facturacionNecesaria));
   updateElement('gastos-operativos', fmt(costesOperativos));
   updateElement('costos-financieros', fmt(costesFinancieros));
   updateElement('margen-bruto', fmt(margenBruto));
   updateElement('suggested-hourly-rate-sidebar', fmt(precioHora));
   
-  // CORRECCIÓN: Actualizar los elementos correctos del sidebar
-  const employeeCountSidebar = document.getElementById('employee-count-sidebar');
-  const annualHoursSidebar = document.getElementById('annual-hours-sidebar');
+  // CORRECCIÓN: Actualizar los spans específicos del sidebar
+  const employeeCountElement = document.getElementById('employee-count-sidebar');
+  const annualHoursElement = document.getElementById('annual-hours-sidebar');
   
-  if (employeeCountSidebar) {
-    employeeCountSidebar.textContent = employeeCount;
+  if (employeeCountElement) {
+    employeeCountElement.textContent = employeeCount.toString();
+    console.log("✅ employee-count-sidebar actualizado:", employeeCount);
+  } else {
+    console.error("❌ No se encontró employee-count-sidebar");
   }
-  if (annualHoursSidebar) {
-    annualHoursSidebar.textContent = totalHours.toLocaleString();
+  
+  if (annualHoursElement) {
+    annualHoursElement.textContent = totalHours.toLocaleString();
+    console.log("✅ annual-hours-sidebar actualizado:", totalHours);
+  } else {
+    console.error("❌ No se encontró annual-hours-sidebar");
   }
 
   // Resumen de costes

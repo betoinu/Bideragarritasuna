@@ -336,4 +336,43 @@ img {
 .section .input-group:last-child {
   margin-bottom: 0;
 }
+/* Estilos específicos para la tabla de socios */
+.data select {
+  padding: 6px 8px;
+  border: 1px solid #e6edf3;
+  border-radius: 6px;
+  background: white;
+  font-size: 0.9em;
+}
 
+.data input[type="number"] {
+  text-align: right;
+  padding: 6px 8px;
+  border: 1px solid #e6edf3;
+  border-radius: 6px;
+  background: white;
+  font-size: 0.9em;
+}
+
+/* Colores diferenciados para tipos de socio */
+.socio-trabajador {
+  background-color: rgba(83, 12, 237, 0.05);
+}
+
+.socio-capitalista {
+  background-color: rgba(35, 217, 183, 0.05);
+}
+
+/* Resumen visual mejorado */
+.resumen-socios {
+  display: flex;
+  gap: 15px;
+  margin-top: 10px;
+  font-size: 0.85em;
+}
+
+.resumen-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}

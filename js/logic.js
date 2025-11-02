@@ -454,69 +454,69 @@ function calculatePricing() {
 
   console.log("🔍 Debug sidebar - Empleados:", employeeCount, "Horas totales:", totalHours);
 
-  // ACTUALIZAR PANEL 7
-  updateElement('desglose-gastos-operativos', fmt(costesOperativos));
-  updateElement('desglose-costes-financieros', fmt(costesFinancieros));
-  updateElement('desglose-gastos-totales', fmt(costesTotales));
-  updateElement('desglose-porcentaje-margen', margin);
-  updateElement('desglose-margen-bruto', fmt(margenBruto));
-  updateElement('desglose-facturacion-total', fmt(facturacionNecesaria));
-  updateElement('desglose-total-horas', totalHours.toLocaleString());
-  updateElement('desglose-precio-hora', fmt(precioHora));
+  // ACTUALIZAR SOLO LOS ELEMENTOS QUE EXISTEN
+  safeUpdateElement('desglose-gastos-operativos', fmt(costesOperativos));
+  safeUpdateElement('desglose-costes-financieros', fmt(costesFinancieros));
+  safeUpdateElement('desglose-gastos-totales', fmt(costesTotales));
+  safeUpdateElement('desglose-porcentaje-margen', margin);
+  safeUpdateElement('desglose-margen-bruto', fmt(margenBruto));
+  safeUpdateElement('desglose-facturacion-total', fmt(facturacionNecesaria));
+  safeUpdateElement('desglose-total-horas', totalHours.toLocaleString());
+  safeUpdateElement('desglose-precio-hora', fmt(precioHora));
   
-  updateElement('suggested-hourly-rate', fmt(precioHora));
-  updateElement('margen-bruto-panel7', fmt(margenBruto));
-  updateElement('expected-net-profit', fmt(beneficioNeto));
-  updateElement('required-annual-revenue', fmt(facturacionNecesaria));
+  safeUpdateElement('suggested-hourly-rate', fmt(precioHora));
+  safeUpdateElement('margen-bruto-panel7', fmt(margenBruto));
+  safeUpdateElement('expected-net-profit', fmt(beneficioNeto));
+  safeUpdateElement('required-annual-revenue', fmt(facturacionNecesaria));
 
-  // ACTUALIZAR PANEL 6
-  updateElement('total-inversion', fmt(financiacion.inversiones));
-  updateElement('tesoreria-calculada', fmt(financiacion.tesoreria));
-  updateElement('necesidad-total', fmt(financiacion.necesidadesTotales));
-  updateElement('total-aportacion-socios', fmt(financiacion.aportacionesTotales));
-  updateElement('total-trabajadores', fmt(financiacion.aportacionesTrabajadores));
-  updateElement('total-capitalistas', fmt(financiacion.aportacionesCapitalistas));
-  updateElement('cantidad-financiar', fmt(financiacion.prestamoNecesario));
-  updateElement('cuota-anual-display', fmt(financiacion.cuotaAnual));
-  updateElement('total-socios-display', fmt(financiacion.aportacionesTotales));
-  updateElement('num-socios', state.finance.socios.length);
+  // ACTUALIZAR PANEL 6 - SOLO ELEMENTOS EXISTENTES
+  safeUpdateElement('total-inversion', fmt(financiacion.inversiones));
+  safeUpdateElement('tesoreria-calculada', fmt(financiacion.tesoreria));
+  safeUpdateElement('necesidad-total', fmt(financiacion.necesidadesTotales));
+  safeUpdateElement('total-aportacion-socios', fmt(financiacion.aportacionesTotales));
+  safeUpdateElement('total-trabajadores', fmt(financiacion.aportacionesTrabajadores));
+  safeUpdateElement('total-capitalistas', fmt(financiacion.aportacionesCapitalistas));
+  safeUpdateElement('cantidad-financiar', fmt(financiacion.prestamoNecesario));
+  safeUpdateElement('cuota-anual-display', fmt(financiacion.cuotaAnual));
+  safeUpdateElement('total-socios-display', fmt(financiacion.aportacionesTotales));
+  safeUpdateElement('num-socios', state.finance.socios.length);
 
-  // CORRECCIÓN DEFINITIVA PARA EL SIDEBAR
-  updateElement('total-facturacion', fmt(facturacionNecesaria));
-  updateElement('gastos-operativos', fmt(costesOperativos));
-  updateElement('costos-financieros', fmt(costesFinancieros));
-  updateElement('margen-bruto', fmt(margenBruto));
-  updateElement('suggested-hourly-rate-sidebar', fmt(precioHora));
+  // ACTUALIZAR SIDEBAR
+  safeUpdateElement('total-facturacion', fmt(facturacionNecesaria));
+  safeUpdateElement('gastos-operativos', fmt(costesOperativos));
+  safeUpdateElement('costos-financieros', fmt(costesFinancieros));
+  safeUpdateElement('margen-bruto', fmt(margenBruto));
+  safeUpdateElement('suggested-hourly-rate-sidebar', fmt(precioHora));
   
-  // CORRECCIÓN: Actualizar los spans específicos del sidebar
-  const employeeCountElement = document.getElementById('employee-count-sidebar');
-  const annualHoursElement = document.getElementById('annual-hours-sidebar');
-  
-  if (employeeCountElement) {
-    employeeCountElement.textContent = employeeCount.toString();
-    console.log("✅ employee-count-sidebar actualizado:", employeeCount);
-  } else {
-    console.error("❌ No se encontró employee-count-sidebar");
-  }
-  
-  if (annualHoursElement) {
-    annualHoursElement.textContent = totalHours.toLocaleString();
-    console.log("✅ annual-hours-sidebar actualizado:", totalHours);
-  } else {
-    console.error("❌ No se encontró annual-hours-sidebar");
-  }
+  // ACTUALIZAR ELEMENTOS DEL SIDEBAR ESPECÍFICOS
+  safeUpdateElement('employee-count-sidebar', employeeCount.toString());
+  safeUpdateElement('annual-hours-sidebar', totalHours.toLocaleString());
 
-  // Resumen de costes
+  // RESUMEN DE COSTES
   const totalAmortizaciones = calculateTotalAmortizations();
   const totalGastosFijos = calculateTotalRecurring();
   const totalPersonal = calculateTotalPersonnel();
   
-  updateElement('total-amortizaciones', fmt(totalAmortizaciones));
-  updateElement('total-gastos-fijos', fmt(totalGastosFijos));
-  updateElement('total-personal', fmt(totalPersonal));
-  updateElement('total-intereses', fmt(financiacion.interesAnual));
+  safeUpdateElement('total-amortizaciones', fmt(totalAmortizaciones));
+  safeUpdateElement('total-gastos-fijos', fmt(totalGastosFijos));
+  safeUpdateElement('total-personal', fmt(totalPersonal));
+  safeUpdateElement('total-intereses', fmt(financiacion.interesAnual));
 
   return { facturacionNecesaria, precioHora, margenBruto, beneficioNeto };
+}
+
+// FUNCIÓN AUXILIAR QUE NO GENERA ERRORES
+function safeUpdateElement(id, value) {
+  try {
+    const el = document.getElementById(id);
+    if (el) {
+      el.textContent = value;
+      console.log(`✅ Elemento ${id} actualizado a:`, value);
+    }
+    // Si no existe, no hacemos nada (evitamos errores)
+  } catch (error) {
+    console.warn(`⚠️ No se pudo actualizar ${id}:`, error);
+  }
 }
 
 // ===== FUNCIONES AUXILIARES =====

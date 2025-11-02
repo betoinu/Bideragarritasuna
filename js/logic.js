@@ -487,6 +487,9 @@ function calculateOperationalCosts() {
   return total;
 }
 
+calculateFinancing(); 
+calculateOperationalCosts();
+
 function calculatePricing() {
     console.log("🔍 INICIANDO calculatePricing() - Verificando elementos...");  
     
@@ -506,6 +509,12 @@ function calculatePricing() {
             window.pricingRetryCount = (window.pricingRetryCount || 0) + 1;
             console.log(`🔄 Reintento ${window.pricingRetryCount}/3 en 300ms`);
             setTimeout(calculatePricing, 300);
+            // 🔄 Actualizar visualmente el Panel 6 con los nuevos cálculos
+updateElement('gastos-operativos-panel6', fmt(necesidades.gastosOperativosAnuales || 0));
+updateElement('costes-financieros-panel6', fmt(calculateFinancing().cuotaAnual || 0));
+updateElement('gastos-totales-panel6', fmt(
+    (necesidades.gastosOperativosAnuales || 0) + (calculateFinancing().cuotaAnual || 0)
+));
             return;
         } else {
             console.error("❌ Demasiados reintentos, continuando sin elementos críticos");
@@ -569,7 +578,7 @@ function calculatePricing() {
         { id: 'margen-bruto', value: fmt(margenBruto) },
         { id: 'suggested-hourly-rate-sidebar', value: fmt(precioHora) },
         { id: 'employee-count-sidebar', value: employeeCount },
-        { id: 'annual-hours-sidebar', value: totalHours.toLocaleString() },
+        { id: 'annual-hours-sidebar', value: fmt(totalHours) },
         { id: 'total-amortizaciones', value: fmt(calculateTotalAmortizations()) },
         { id: 'total-gastos-fijos', value: fmt(calculateTotalRecurring()) },
         { id: 'total-personal', value: fmt(calculateTotalPersonnel()) },
@@ -987,7 +996,19 @@ async function initializeAppAsync() {
         
         // Forzar una actualización completa
         updateAll();
-        
+                // 🕒 Recalcular financiación y pricing una vez el DOM esté completamente cargado
+        setTimeout(() => {
+            console.log("🔁 Recalculando financiación y pricing tras carga inicial...");
+            try {
+                calculateFinancing();
+                calculatePricing(calculateTotalCosts());
+                updateRightSummary();
+                console.log("✅ Financiación y pricing recalculados correctamente.");
+            } catch (err) {
+                console.warn("⚠️ Error al recalcular tras carga:", err);
+            }
+        }, 500);
+
         // Verificación final
         setTimeout(() => {
             console.log("🔍 Verificación final del estado...");

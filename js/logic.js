@@ -1170,16 +1170,22 @@ function calcularFinanciacion() {
         necesidadesInput.value = necesidadesInversionBase;
     }
     
-    // NUEVO: Forzar actualizaciones después de calcular financiación
-    console.log("✅ Financiación calculada, actualizando interfaz...");
+        // NUEVO: Forzar actualizaciones COMPLETAS después de calcular financiación
+    console.log("✅ Financiación calculada, actualizando pricing...");
     
-    // Actualizar sidebar y pricing después de un breve delay
     setTimeout(() => {
         try {
             const totalOperational = calculateTotalCosts();
-            console.log("🔄 Actualizando sidebar después de financiación...");
+            console.log("🔄 Recalculando todo con nuevos costes financieros...");
+            
+            // 1. Recalcular pricing (que ahora incluye costes financieros)
+            const nuevaFacturacion = calculatePricing(totalOperational);
+            
+            // 2. Actualizar sidebar
             updateRightSummary(totalOperational);
-            calculatePricing(totalOperational);
+            
+            console.log("🎯 Nueva facturación calculada:", nuevaFacturacion);
+            
         } catch (error) {
             console.warn("⚠️ Error en actualización post-financiación:", error);
         }

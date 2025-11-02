@@ -265,8 +265,10 @@ function fmt(n) {
 
 function safeNum(v) {
   if (v === '' || v === null || v === undefined) return 0;
-  const num = Number(String(v).replace(',', '.'));
-  return isNaN(num) ? 0 : num;
+  // Eliminar espacios y caracteres no numéricos excepto punto y coma
+  const cleaned = String(v).replace(/[^\d,.-]/g, '').replace(',', '.');
+  const num = parseFloat(cleaned);
+  return isNaN(num) ? 0 : Math.max(0, num); // Evitar números negativos
 }
 
 function updateElement(id, value) {
@@ -447,9 +449,48 @@ function calculateOperationalCosts() {
 function calculatePricing() {
    
   console.log("🔍 INICIANDO calculatePricing() - Verificando elementos...");  
-// PRIMERO: Diagnóstico detallado de elementos críticos
+  
+  // PASO 1: Definir lista completa de elementos requeridos
+  const requiredElements = [
+    'employee-count-sidebar', 
+    'annual-hours-sidebar',
+    'desglose-gastos-operativos',
+    'desglose-costes-financieros',
+    'desglose-gastos-totales',
+    'desglose-porcentaje-margen',
+    'desglose-margen-bruto',
+    'desglose-facturacion-total',
+    'desglose-total-horas',
+    'desglose-precio-hora',
+    'suggested-hourly-rate',
+    'margen-bruto-panel7',
+    'expected-net-profit',
+    'required-annual-revenue',
+    'total-inversion',
+    'tesoreria-calculada',
+    'necesidad-total',
+    'total-aportacion-socios',
+    'total-trabajadores',
+    'total-capitalistas',
+    'cantidad-financiar',
+    'cuota-anual-display',
+    'total-socios-display',
+    'num-socios',
+    'total-facturacion',
+    'gastos-operativos',
+    'costos-financieros',
+    'margen-bruto',
+    'suggested-hourly-rate-sidebar',
+    'total-amortizaciones',
+    'total-gastos-fijos',
+    'total-personal',
+    'total-intereses'
+  ];
+
+  // PASO 2: Elementos para diagnóstico detallado
   const criticalIds = ['employee-count-sidebar', 'annual-hours-sidebar'];
   
+  // DIAGNÓSTICO: Verificar elementos críticos
   criticalIds.forEach(id => {
     const el = document.getElementById(id);
     console.log(`📋 ${id}:`, el ? `✅ EXISTE (${el.tagName})` : '❌ NO EXISTE');
@@ -460,6 +501,7 @@ function calculatePricing() {
     }
   });
 
+  // PASO 3: Verificar si faltan elementos requeridos
   const missing = requiredElements.filter(id => !document.getElementById(id));
   if (missing.length > 0) {
     console.warn("❌ Elementos requeridos faltantes, reintentando...", missing);
@@ -818,7 +860,11 @@ function setupTabNavigation() {
 
 // ===== ACTUALIZACIÓN GLOBAL =====
 function updateAll() {
-  calculatePricing();
+  // Usar debounce para evitar múltiples ejecuciones
+  if (window.updateTimeout) clearTimeout(window.updateTimeout);
+  window.updateTimeout = setTimeout(() => {
+    calculatePricing();
+  }, 100);
 }
 
 // Función para diagnosticar el estado del DOM
@@ -876,73 +922,257 @@ async function initializeApp() {
     }
 }
 
+// ===== INICIALIZACIÓN MEJORADA - MÁS ROBUSTA =====
 async function initializeAppAsync() {
+    console.log("🎯 Inicializando IDarte - Versión mejorada...");
+    
     try {
-        console.log("🔍 Fase 1: Verificando elementos del DOM...");
+        // FASE 1: Esperar a que el DOM esté completamente listo
+        console.log("🔍 Fase 1: Verificando estado del DOM...");
         
-        // VERIFICAR QUE LOS ELEMENTOS CRÍTICOS EXISTEN
+        if (!document.body) {
+            console.log("⏳ Body no disponible, esperando...");
+            await waitForElement('body', 1000);
+        }
+        
+        // FASE 2: Verificar elementos críticos con reintentos
+        console.log("🔍 Fase 2: Verificando elementos críticos...");
+        
         const criticalElements = [
-            'employee-count-sidebar', 'annual-hours-sidebar',
-            'desglose-porcentaje-margen', 'desglose-total-horas',
-            'cantidad-financiar', 'cuota-anual-display', 
-            'total-socios-display', 'num-socios'
+            'employee-count-sidebar', 
+            'annual-hours-sidebar',
+            'main-sheet',
+            'sidebar'
         ];
         
-        const missingElements = criticalElements.filter(id => !document.getElementById(id));
+        const missingElements = await waitForCriticalElements(criticalElements, 5, 200);
         
         if (missingElements.length > 0) {
-            console.warn("❌ Elementos faltantes:", missingElements);
-            // Reintentar después de un breve delay
-            setTimeout(initializeAppAsync, 100);
+            console.error("❌ No se pudieron cargar elementos críticos después de múltiples intentos:", missingElements);
+            showErrorToUser("No se pudieron cargar algunos componentes. Por favor, recarga la página.");
             return;
         }
         
-        console.log("✅ Todos los elementos críticos encontrados");
+        console.log("✅ Todos los elementos críticos cargados correctamente");
         
-        // Fase 2: Cargar traducciones
-        console.log("🔍 Fase 2: Cargando traducciones...");
+        // FASE 3: Cargar traducciones
+        console.log("🔍 Fase 3: Cargando sistema de internacionalización...");
         await loadTranslations();
         
-        // Fase 3: Configuración básica
-        console.log("🔍 Fase 3: Configurando componentes...");
+        // FASE 4: Configurar componentes básicos
+        console.log("🔍 Fase 4: Configurando componentes de la aplicación...");
         setupLanguageSelector();
-        preloadSampleData();
-        renderAllTables();
         setupTabNavigation();
         
-        // Fase 4: Event listeners
-        console.log("🔍 Fase 4: Configurando event listeners...");
-        const globalInputs = [
-            'target-profit-margin', 'corporate-tax', 'employee-count', 'annual-hours-per-employee',
-            'tae', 'plazo', 'periodo-gracia', 'meses-tesoreria'
-        ];
+        // FASE 5: Cargar datos y renderizar
+        console.log("🔍 Fase 5: Cargando datos y renderizando interfaces...");
+        preloadSampleData();
+        renderAllTables();
         
-        globalInputs.forEach(id => {
-            const el = document.getElementById(id);
-            if (el) {
-                el.addEventListener('input', updateAll);
-                console.log(`✅ Listener añadido para: ${id}`);
-            } else {
-                console.warn(`⚠️ No se pudo añadir listener para: ${id}`);
-            }
-        });
+        // FASE 6: Configurar event listeners
+        console.log("🔍 Fase 6: Configurando event listeners...");
+        setupGlobalEventListeners();
         
-        // Fase 5: Cálculos iniciales
-        console.log("🔍 Fase 5: Ejecutando cálculos iniciales...");
+        // FASE 7: Ejecutar cálculos iniciales
+        console.log("🔍 Fase 7: Ejecutando cálculos iniciales...");
         
         // Pequeña pausa para asegurar que todo está renderizado
-        setTimeout(() => {
-            console.log("✅ Inicialización completada - ejecutando updateAll()");
-            updateAll();
-        }, 300);
+        await new Promise(resolve => setTimeout(resolve, 150));
         
-        console.log("🎉 IDarte completamente operativo");
+        // Forzar una actualización completa
+        updateAll();
+        
+        // Verificación final
+        setTimeout(() => {
+            console.log("🔍 Verificación final del estado...");
+            const finalCheck = document.getElementById('suggested-hourly-rate-sidebar');
+            if (finalCheck && finalCheck.textContent !== '€ 0.00') {
+                console.log("🎉 IDarte completamente operativo y mostrando datos");
+            } else {
+                console.warn("⚠️ Los cálculos podrían no haberse ejecutado correctamente");
+                updateAll(); // Reintentar
+            }
+        }, 500);
         
     } catch (error) {
-        console.error("💥 Error crítico en inicialización:", error);
-        // Reintentar después de error
-        setTimeout(initializeAppAsync, 500);
+        console.error("💥 Error crítico durante la inicialización:", error);
+        showErrorToUser("Error al inicializar la aplicación. Por favor, recarga la página.");
     }
+}
+
+// ===== FUNCIONES AUXILIARES MEJORADAS =====
+
+/**
+ * Espera a que un elemento esté disponible en el DOM
+ */
+function waitForElement(selector, timeout = 5000) {
+    return new Promise((resolve, reject) => {
+        const startTime = Date.now();
+        
+        function checkElement() {
+            const element = typeof selector === 'string' ? 
+                document.querySelector(selector) : 
+                document.getElementById(selector);
+                
+            if (element) {
+                resolve(element);
+            } else if (Date.now() - startTime >= timeout) {
+                reject(new Error(`Timeout esperando por elemento: ${selector}`));
+            } else {
+                setTimeout(checkElement, 100);
+            }
+        }
+        
+        checkElement();
+    });
+}
+
+/**
+ * Espera a que múltiples elementos críticos estén disponibles
+ */
+async function waitForCriticalElements(elementIds, maxAttempts = 5, delay = 200) {
+    let attempts = 0;
+    let missingElements = [];
+    
+    while (attempts < maxAttempts) {
+        missingElements = elementIds.filter(id => !document.getElementById(id));
+        
+        if (missingElements.length === 0) {
+            console.log(`✅ Todos los elementos críticos cargados (intento ${attempts + 1}/${maxAttempts})`);
+            return [];
+        }
+        
+        attempts++;
+        
+        if (attempts < maxAttempts) {
+            console.log(`⏳ Esperando elementos críticos... (intento ${attempts}/${maxAttempts})`, missingElements);
+            await new Promise(resolve => setTimeout(resolve, delay));
+        }
+    }
+    
+    console.error(`❌ Elementos faltantes después de ${maxAttempts} intentos:`, missingElements);
+    return missingElements;
+}
+
+/**
+ * Configura todos los event listeners globales
+ */
+function setupGlobalEventListeners() {
+    console.log("🔧 Configurando event listeners globales...");
+    
+    const globalInputs = [
+        { id: 'target-profit-margin', event: 'input' },
+        { id: 'corporate-tax', event: 'input' },
+        { id: 'employee-count', event: 'input' },
+        { id: 'annual-hours-per-employee', event: 'input' },
+        { id: 'tae', event: 'input' },
+        { id: 'plazo', event: 'input' },
+        { id: 'periodo-gracia', event: 'input' },
+        { id: 'meses-tesoreria', event: 'input' },
+        { id: 'tipo-prestamo', event: 'change' }
+    ];
+    
+    let configuredListeners = 0;
+    
+    globalInputs.forEach(({ id, event }) => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.addEventListener(event, updateAll);
+            configuredListeners++;
+            console.log(`✅ Listener [${event}] añadido para: ${id}`);
+        } else {
+            console.warn(`⚠️ No se pudo encontrar elemento para listener: ${id}`);
+        }
+    });
+    
+    console.log(`🔧 ${configuredListeners}/${globalInputs.length} listeners configurados correctamente`);
+    
+    // Configurar event listeners para inputs dinámicos
+    setupDynamicEventListeners();
+}
+
+/**
+ * Configura event listeners para elementos que se crean dinámicamente
+ */
+function setupDynamicEventListeners() {
+    // Usar delegación de eventos para inputs dinámicos
+    document.addEventListener('input', function(e) {
+        if (e.target.matches('input[data-id], select[data-id]')) {
+            onFieldChange(e);
+        }
+    });
+    
+    document.addEventListener('change', function(e) {
+        if (e.target.matches('input[data-id], select[data-id]')) {
+            onFieldChange(e);
+        }
+    });
+    
+    console.log("✅ Event listeners dinámicos configurados");
+}
+
+/**
+ * Muestra un error al usuario de forma amigable
+ */
+function showErrorToUser(message) {
+    // Crear un overlay de error
+    const errorOverlay = document.createElement('div');
+    errorOverlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+        color: white;
+        font-family: Arial, sans-serif;
+    `;
+    
+    errorOverlay.innerHTML = `
+        <div style="background: white; color: #333; padding: 2rem; border-radius: 8px; text-align: center; max-width: 400px;">
+            <h3 style="color: #e53e3e; margin-bottom: 1rem;">Error de Inicialización</h3>
+            <p>${message}</p>
+            <button onclick="location.reload()" style="background: #3182ce; color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px; margin-top: 1rem; cursor: pointer;">
+                Recargar Página
+            </button>
+        </div>
+    `;
+    
+    document.body.appendChild(errorOverlay);
+}
+
+// ===== INICIALIZACIÓN PRINCIPAL CORREGIDA =====
+async function initializeApp() {
+    console.log("🚀 Iniciando aplicación IDarte...");
+    
+    // Estrategia de inicialización mejorada
+    if (document.readyState === 'loading') {
+        console.log("⏳ DOM aún cargando, esperando evento DOMContentLoaded...");
+        document.addEventListener('DOMContentLoaded', async function() {
+            console.log("✅ DOMContentLoaded disparado");
+            await initializeAppAsync();
+        });
+    } else {
+        console.log("✅ DOM ya está listo, inicializando directamente");
+        await initializeAppAsync();
+    }
+    
+    // Backup: también escuchar el evento load
+    window.addEventListener('load', function() {
+        console.log("📦 Evento load disparado - verificando estado");
+        setTimeout(() => {
+            // Verificar si la inicialización fue exitosa
+            const hourlyRate = document.getElementById('suggested-hourly-rate-sidebar');
+            if (!hourlyRate || hourlyRate.textContent === '€ 0.00') {
+                console.log("🔄 Reinicializando desde evento load...");
+                initializeAppAsync();
+            }
+        }, 1000);
+    });
 }
 
 // ===== GENERACIÓN DE PDF =====

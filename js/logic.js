@@ -447,167 +447,105 @@ function calculateOperationalCosts() {
 }
 
 function calculatePricing() {
-   
-  console.log("🔍 INICIANDO calculatePricing() - Verificando elementos...");  
-  
-  // PASO 1: Definir lista completa de elementos requeridos
-  const requiredElements = [
-    'employee-count-sidebar', 
-    'annual-hours-sidebar',
-    'desglose-gastos-operativos',
-    'desglose-costes-financieros',
-    'desglose-gastos-totales',
-    'desglose-porcentaje-margen',
-    'desglose-margen-bruto',
-    'desglose-facturacion-total',
-    'desglose-total-horas',
-    'desglose-precio-hora',
-    'suggested-hourly-rate',
-    'margen-bruto-panel7',
-    'expected-net-profit',
-    'required-annual-revenue',
-    'total-inversion',
-    'tesoreria-calculada',
-    'necesidad-total',
-    'total-aportacion-socios',
-    'total-trabajadores',
-    'total-capitalistas',
-    'cantidad-financiar',
-    'cuota-anual-display',
-    'total-socios-display',
-    'num-socios',
-    'total-facturacion',
-    'gastos-operativos',
-    'costos-financieros',
-    'margen-bruto',
-    'suggested-hourly-rate-sidebar',
-    'total-amortizaciones',
-    'total-gastos-fijos',
-    'total-personal',
-    'total-intereses'
-  ];
+    console.log("🔍 INICIANDO calculatePricing() - Verificando elementos...");  
+    
+    // LISTA MÍNIMA de elementos verdaderamente críticos
+    const criticalElements = [
+        'suggested-hourly-rate-sidebar',
+        'total-facturacion'
+    ];
 
-  // PASO 2: Elementos para diagnóstico detallado
-  const criticalIds = ['employee-count-sidebar', 'annual-hours-sidebar'];
-  
-  // DIAGNÓSTICO: Verificar elementos críticos
-  criticalIds.forEach(id => {
-    const el = document.getElementById(id);
-    console.log(`📋 ${id}:`, el ? `✅ EXISTE (${el.tagName})` : '❌ NO EXISTE');
-    if (el) {
-      console.log(`   Contenido actual: "${el.textContent}"`);
-      console.log(`   Padre: ${el.parentElement?.tagName}`);
-      console.log(`   Estilos display: ${window.getComputedStyle(el).display}`);
+    // Verificar solo elementos críticos
+    const missingCritical = criticalElements.filter(id => !document.getElementById(id));
+    if (missingCritical.length > 0) {
+        console.warn("❌ Elementos críticos faltantes:", missingCritical);
+        
+        // CONTROL DE REINTENTOS - máximo 3 intentos
+        if (!window.pricingRetryCount || window.pricingRetryCount < 3) {
+            window.pricingRetryCount = (window.pricingRetryCount || 0) + 1;
+            console.log(`🔄 Reintento ${window.pricingRetryCount}/3 en 300ms`);
+            setTimeout(calculatePricing, 300);
+            return;
+        } else {
+            console.error("❌ Demasiados reintentos, continuando sin elementos críticos");
+            // Continuar de todos modos para evitar bucle infinito
+        }
     }
-  });
 
-  // PASO 3: Verificar si faltan elementos requeridos
-  const missing = requiredElements.filter(id => !document.getElementById(id));
-  if (missing.length > 0) {
-    console.warn("❌ Elementos requeridos faltantes, reintentando...", missing);
-    console.log("📍 Estado del DOM - readyState:", document.readyState);
-    console.log("📍 Body existe:", !!document.body);
+    console.log("✅ Elementos críticos encontrados, procediendo con cálculos...");
     
-    // Verificar si el sidebar completo existe
-    const sidebar = document.querySelector('.sidebar');
-    console.log("📍 Sidebar existe:", !!sidebar);
-    if (sidebar) {
-      console.log("📍 Elementos en sidebar:");
-      sidebar.querySelectorAll('[id]').forEach(el => {
-        console.log(`   - ${el.id}: ${el.tagName}`);
-      });
-    }
-    
-    setTimeout(calculatePricing, 100);
-    return;
-  }
+    // RESETEAR CONTADOR cuando funciona
+    window.pricingRetryCount = 0;
 
-  console.log("✅ Todos los elementos críticos encontrados, procediendo con cálculos...");
-    
-  const financiacion = calculateFinancing();
-  const costesOperativos = financiacion.gastosOperativosAnuales;
-  const costesFinancieros = financiacion.cuotaAnual;
+    // CÁLCULOS PRINCIPALES
+    const financiacion = calculateFinancing();
+    const costesOperativos = financiacion.gastosOperativosAnuales;
+    const costesFinancieros = financiacion.cuotaAnual;
 
-  const margin = safeNum(document.getElementById('target-profit-margin')?.value) || 20;
-  const corporateTax = safeNum(document.getElementById('corporate-tax')?.value) || 25;
-  const employeeCount = Math.max(1, safeNum(document.getElementById('employee-count')?.value) || state.personnel.length);
-  const annualHours = safeNum(document.getElementById('annual-hours-per-employee')?.value) || 1600;
-  const totalHours = employeeCount * annualHours;
+    const margin = safeNum(document.getElementById('target-profit-margin')?.value) || 20;
+    const corporateTax = safeNum(document.getElementById('corporate-tax')?.value) || 25;
+    const employeeCount = Math.max(1, safeNum(document.getElementById('employee-count')?.value) || state.personnel.length);
+    const annualHours = safeNum(document.getElementById('annual-hours-per-employee')?.value) || 1600;
+    const totalHours = employeeCount * annualHours;
 
-  const costesTotales = costesOperativos + costesFinancieros;
-  const margenBruto = costesTotales * (margin / 100);
-  const facturacionNecesaria = costesTotales + margenBruto;
-  const precioHora = totalHours > 0 ? facturacionNecesaria / totalHours : 0;
+    const costesTotales = costesOperativos + costesFinancieros;
+    const margenBruto = costesTotales * (margin / 100);
+    const facturacionNecesaria = costesTotales + margenBruto;
+    const precioHora = totalHours > 0 ? facturacionNecesaria / totalHours : 0;
 
-  const impuestos = margenBruto * (corporateTax / 100);
-  const beneficioNeto = margenBruto - impuestos;
+    const impuestos = margenBruto * (corporateTax / 100);
+    const beneficioNeto = margenBruto - impuestos;
 
-  console.log("🔍 Calculando pricing - Empleados:", employeeCount, "Horas totales:", totalHours);
+    console.log("🔍 Calculando pricing - Empleados:", employeeCount, "Horas totales:", totalHours);
 
-  // ACTUALIZAR TODOS LOS ELEMENTOS (ahora sabemos que existen)
-  updateElement('desglose-gastos-operativos', fmt(costesOperativos));
-  updateElement('desglose-costes-financieros', fmt(costesFinancieros));
-  updateElement('desglose-gastos-totales', fmt(costesTotales));
-  updateElement('desglose-porcentaje-margen', margin);
-  updateElement('desglose-margen-bruto', fmt(margenBruto));
-  updateElement('desglose-facturacion-total', fmt(facturacionNecesaria));
-  updateElement('desglose-total-horas', totalHours.toLocaleString());
-  updateElement('desglose-precio-hora', fmt(precioHora));
-  
-  updateElement('suggested-hourly-rate', fmt(precioHora));
-  updateElement('margen-bruto-panel7', fmt(margenBruto));
-  updateElement('expected-net-profit', fmt(beneficioNeto));
-  updateElement('required-annual-revenue', fmt(facturacionNecesaria));
+    // ACTUALIZAR ELEMENTOS CON SEGURIDAD (sin generar errores)
+    const updates = [
+        { id: 'desglose-gastos-operativos', value: fmt(costesOperativos) },
+        { id: 'desglose-costes-financieros', value: fmt(costesFinancieros) },
+        { id: 'desglose-gastos-totales', value: fmt(costesTotales) },
+        { id: 'desglose-porcentaje-margen', value: margin },
+        { id: 'desglose-margen-bruto', value: fmt(margenBruto) },
+        { id: 'desglose-facturacion-total', value: fmt(facturacionNecesaria) },
+        { id: 'desglose-total-horas', value: totalHours.toLocaleString() },
+        { id: 'desglose-precio-hora', value: fmt(precioHora) },
+        { id: 'suggested-hourly-rate', value: fmt(precioHora) },
+        { id: 'margen-bruto-panel7', value: fmt(margenBruto) },
+        { id: 'expected-net-profit', value: fmt(beneficioNeto) },
+        { id: 'required-annual-revenue', value: fmt(facturacionNecesaria) },
+        { id: 'total-inversion', value: fmt(financiacion.inversiones) },
+        { id: 'tesoreria-calculada', value: fmt(financiacion.tesoreria) },
+        { id: 'necesidad-total', value: fmt(financiacion.necesidadesTotales) },
+        { id: 'total-aportacion-socios', value: fmt(financiacion.aportacionesTotales) },
+        { id: 'total-trabajadores', value: fmt(financiacion.aportacionesTrabajadores) },
+        { id: 'total-capitalistas', value: fmt(financiacion.aportacionesCapitalistas) },
+        { id: 'cantidad-financiar', value: fmt(financiacion.prestamoNecesario) },
+        { id: 'cuota-anual-display', value: fmt(financiacion.cuotaAnual) },
+        { id: 'total-socios-display', value: fmt(financiacion.aportacionesTotales) },
+        { id: 'num-socios', value: state.finance.socios.length },
+        { id: 'total-facturacion', value: fmt(facturacionNecesaria) },
+        { id: 'gastos-operativos', value: fmt(costesOperativos) },
+        { id: 'costos-financieros', value: fmt(costesFinancieros) },
+        { id: 'margen-bruto', value: fmt(margenBruto) },
+        { id: 'suggested-hourly-rate-sidebar', value: fmt(precioHora) },
+        { id: 'employee-count-sidebar', value: employeeCount },
+        { id: 'annual-hours-sidebar', value: totalHours.toLocaleString() },
+        { id: 'total-amortizaciones', value: fmt(calculateTotalAmortizations()) },
+        { id: 'total-gastos-fijos', value: fmt(calculateTotalRecurring()) },
+        { id: 'total-personal', value: fmt(calculateTotalPersonnel()) },
+        { id: 'total-intereses', value: fmt(financiacion.interesAnual) }
+    ];
 
-  // ACTUALIZAR PANEL 6
-  updateElement('total-inversion', fmt(financiacion.inversiones));
-  updateElement('tesoreria-calculada', fmt(financiacion.tesoreria));
-  updateElement('necesidad-total', fmt(financiacion.necesidadesTotales));
-  updateElement('total-aportacion-socios', fmt(financiacion.aportacionesTotales));
-  updateElement('total-trabajadores', fmt(financiacion.aportacionesTrabajadores));
-  updateElement('total-capitalistas', fmt(financiacion.aportacionesCapitalistas));
-  updateElement('cantidad-financiar', fmt(financiacion.prestamoNecesario));
-  updateElement('cuota-anual-display', fmt(financiacion.cuotaAnual));
-  updateElement('total-socios-display', fmt(financiacion.aportacionesTotales));
-  updateElement('num-socios', state.finance.socios.length);
+    // Actualizar todos los elementos de forma segura
+    let updatedCount = 0;
+    updates.forEach(({ id, value }) => {
+        if (UpdateElement(id, value)) {
+            updatedCount++;
+        }
+    });
 
-  // ACTUALIZAR SIDEBAR - ¡ESTOS ELEMENTOS SÍ EXISTEN!
-  updateElement('total-facturacion', fmt(facturacionNecesaria));
-  updateElement('gastos-operativos', fmt(costesOperativos));
-  updateElement('costos-financieros', fmt(costesFinancieros));
-  updateElement('margen-bruto', fmt(margenBruto));
-  updateElement('suggested-hourly-rate-sidebar', fmt(precioHora));
-  updateElement('employee-count-sidebar', employeeCount);
-  updateElement('annual-hours-sidebar', totalHours.toLocaleString());
-
-  // Resumen de costes
-  const totalAmortizaciones = calculateTotalAmortizations();
-  const totalGastosFijos = calculateTotalRecurring();
-  const totalPersonal = calculateTotalPersonnel();
-  
-  updateElement('total-amortizaciones', fmt(totalAmortizaciones));
-  updateElement('total-gastos-fijos', fmt(totalGastosFijos));
-  updateElement('total-personal', fmt(totalPersonal));
-  updateElement('total-intereses', fmt(financiacion.interesAnual));
-
- console.log("✅ calculatePricing() completado");
-  return { facturacionNecesaria, precioHora, margenBruto, beneficioNeto };
+    console.log(`✅ calculatePricing() completado - ${updatedCount}/${updates.length} elementos actualizados`);
+    return { facturacionNecesaria, precioHora, margenBruto, beneficioNeto };
 }
-
-// FUNCIÓN AUXILIAR QUE NO GENERA ERRORES
-function safeUpdateElement(id, value) {
-  try {
-    const el = document.getElementById(id);
-    if (el) {
-      el.textContent = value;
-      console.log(`✅ Elemento ${id} actualizado a:`, value);
-    }
-    // Si no existe, no hacemos nada (evitamos errores)
-  } catch (error) {
-    console.warn(`⚠️ No se pudo actualizar ${id}:`, error);
-  }
-}
-
 // ===== FUNCIONES AUXILIARES =====
 function calculateTotalAmortizations() {
   let total = 0;
@@ -700,6 +638,12 @@ window.addSocio = function() {
     tipo: 'trabajador',
     aportacion: 0
   });
+  renderAllTables();
+  updateAll();
+};
+
+window.removeSocio = function(id) {
+  state.finance.socios = state.finance.socios.filter(s => s.id !== id);
   renderAllTables();
   updateAll();
 };

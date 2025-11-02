@@ -462,11 +462,11 @@ function actualizarCascada() {
         try {
             console.log("🔧 Recargando todos los cálculos...");
             
-            // Recalcular costes operativos (por si cambió algo)
+            // Recalcular costes operativos
             const costesOperativos = calculateTotalCosts();
             console.log("📊 Costes operativos:", costesOperativos);
             
-            // Recalcular pricing con ambos costes
+            // Recalcular pricing
             calculatePricing(costesOperativos);
             
             // Actualizar sidebar
@@ -485,9 +485,16 @@ function actualizarCascada() {
             
         } catch (error) {
             console.error("❌ ERROR en actualización:", error);
+            // Forzar actualización básica como fallback
+            try {
+                calculatePricing();
+                updateRightSummary();
+            } catch (e) {
+                console.error("❌ ERROR incluso en fallback:", e);
+            }
         }
-    }, 300);
-}
+    }, 500); // Aumentar delay para dar tiempo al DOM
+} // ← Este cierre corresponde a la función actualizarCascada
 
 // NUEVA FUNCIÓN: Calcular costes financieros completos - VERSIÓN ROBUSTA
 function calcularCostesFinancierosCompletos() {
@@ -1338,6 +1345,73 @@ function debugSidebar() {
 
 // Llamar al debug después de init
 setTimeout(debugSidebar, 1000);
+
+// NUEVA FUNCIÓN: Verificar que todas las mejoras están implementadas
+function verificarMejoras() {
+    console.log("====================");
+    console.log("🔍 VERIFICANDO MEJORAS IMPLEMENTADAS");
+    console.log("====================");
+    
+    // Verificar funciones nuevas
+    const funciones = [
+        'actualizarCascada',
+        'actualizarDesglosePedagogico', 
+        'guardarValoresSeguros',
+        'calcularCostesFinancierosCompletos',
+        'verificarMejoras'
+    ];
+    
+    funciones.forEach(func => {
+        const existe = typeof window[func] === 'function';
+        console.log(`${existe ? '✅' : '❌'} ${func}: ${existe ? 'DEFINIDA' : 'FALTANTE'}`);
+    });
+    
+    // Verificar elementos HTML críticos del Panel 7
+    const elementosPanel7 = [
+        'margen-bruto-panel7',
+        'desglose-gastos-operativos',
+        'desglose-costes-financieros',
+        'desglose-gastos-totales',
+        'desglose-margen-bruto',
+        'desglose-facturacion-total',
+        'desglose-precio-hora',
+        'desglose-porcentaje-margen',
+        'desglose-total-horas'
+    ];
+    
+    elementosPanel7.forEach(id => {
+        const el = document.getElementById(id);
+        console.log(`${el ? '✅' : '❌'} ${id}: ${el ? 'EXISTE' : 'NO EXISTE'}`);
+        if (el) {
+            console.log(`   📝 Contenido: "${el.textContent}"`);
+        }
+    });
+    
+    // Verificar elementos del Panel 6 (financiación)
+    const elementosPanel6 = [
+        'cuota-anual',
+        'cantidad-financiar',
+        'tae',
+        'plazo'
+    ];
+    
+    elementosPanel6.forEach(id => {
+        const el = document.getElementById(id);
+        console.log(`${el ? '✅' : '❌'} ${id}: ${el ? 'EXISTE' : 'NO EXISTE'}`);
+    });
+    
+    console.log("====================");
+    console.log("✅ Verificación completada");
+    console.log("====================");
+}
+
+// Llamar a verificarMejoras después de init
+setTimeout(verificarMejoras, 1500);
+
+/* ===========================
+   EJECUCIÓN AUTOMÁTICA AL CARGAR
+   =========================== */
+window.addEventListener('load', init);
 
 /* ===========================
    EJECUCIÓN AUTOMÁTICA AL CARGAR

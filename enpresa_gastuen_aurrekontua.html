@@ -274,138 +274,138 @@
                     </div>
                 </div>
 
-                <!-- PANEL 7 - PREZIOA -->
-                <div id="prezioa-sheet" class="panel" style="display:none">
-                    <h2 data-i18n="panel.prezioa.title">7 · Lanorduaren Prezioa eta Mozkinak</h2>
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-                        <div>
-                            <label for="corporate-tax" data-i18n="pricing.sozietateZerga">Sozietateen Zerga (%)</label>
-                            <input id="corporate-tax" type="number" value="25" oninput="updateAll()" />
-                            
-                            <label for="target-profit-margin" data-i18n="pricing.mozkinMargina">Helburuko Mozkin Gordina (%)</label>
-                            <input id="target-profit-margin" type="number" value="20" oninput="updateAll()" />
-                            
-                            <label for="employee-count" data-i18n="pricing.langileKopurua">Langile kopurua</label>
-                            <input id="employee-count" type="number" value="2" oninput="updateAll()" />
-                            
-                            <label for="annual-hours-per-employee" data-i18n="pricing.urtekoOrduak">Urteko orduak/lang</label>
-                            <input id="annual-hours-per-employee" type="number" value="1600" oninput="updateAll()" />
-                        </div>
-                        <div>
-                            <!-- DESGLOSE PEDAGÓGICO -->
-                            <div class="card" style="background:#f8f9fa">
-                                <h4 data-i18n="pricing.nolaKalkulatzen">Nola kalkulatzen da orduko prezioa?</h4>
-                                <div class="desglose-pedagogico">
-                                    <div class="desglose-linea">
-                                        <span data-i18n="pricing.gastuOperatiboak">Gastu Operatiboak:</span>
-                                        <span id="desglose-gastos-operativos">€ 0.00</span>
-                                    </div>
-                                    <div class="desglose-linea">
-                                        <span data-i18n="pricing.finantzaketaKostuak">+ Finantzaketa Kostuak:</span>
-                                        <span id="desglose-costes-financieros">€ 0.00</span>
-                                    </div>
-                                    <div class="desglose-linea" style="border-top:1px solid #ddd;padding-top:8px">
-                                        <span><strong data-i18n="pricing.gastuTotalak">Gastu Totalak:</strong></span>
-                                        <span id="desglose-gastos-totales"><strong>€ 0.00</strong></span>
-                                    </div>
-                                    <div class="desglose-linea">
-                                        <span data-i18n="pricing.mozkinGordinaPorcentaje">+ Mozkin Gordina (<span id="desglose-porcentaje-margen">20</span>%):</span>
-                                        <span id="desglose-margen-bruto">€ 0.00</span>
-                                    </div>
-                                    <div class="desglose-linea" style="border-top:1px solid #ddd;padding-top:8px">
-                                        <span><strong data-i18n="pricing.fakturazioTotala">Fakturazio Totala:</strong></span>
-                                        <span id="desglose-facturacion-total"><strong>€ 0.00</strong></span>
-                                    </div>
-                                    <div class="desglose-linea">
-                                        <span data-i18n="pricing.urtekoOrduakDivision">÷ Urteko Orduak (<span id="desglose-total-horas">0</span>h):</span>
-                                        <span></span>
-                                    </div>
-                                    <div class="desglose-linea" style="border-top:2px solid #333;padding-top:8px">
-                                        <span><strong data-i18n="pricing.ordukoPrezioa">Orduko Prezioa:</strong></span>
-                                        <span id="desglose-precio-hora"><strong>€ 0.00</strong></span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- RESUMEN ACTUAL -->
-                            <div class="card">
-                                <h4 data-i18n="pricing.gomendatutakoPrezioa">Gomendatutako orduko prezioa</h4>
-                                <p id="suggested-hourly-rate" class="value">€ 0.00</p>
-                            </div>
-                            <div class="card">
-                                <h4 data-i18n="pricing.mozkinGordina">Mozkin Gordina (Zergak aurre)</h4>
-                                <p id="margen-bruto-panel7" class="value">€ 0.00</p>
-                            </div>
-                            <div class="card">
-                                <h4 data-i18n="pricing.mozkinGarbia">Espero den mozkin garbia</h4>
-                                <p id="expected-net-profit" class="value">€ 0.00</p>
-                            </div>
-                            <div class="card">
-                                <h4 data-i18n="pricing.fakturazioBeharrezkoa">Fakturazio beharrezkoa</h4>
-                                <p id="required-annual-revenue" class="value">€ 0.00</p>
-                            </div>
-                        </div>
+<!-- PANEL 7 - PREZIOA -->
+<div id="prezioa-sheet" class="panel" style="display:none">
+    <h2 data-i18n="panel.prezioa.title">7 · Lanorduaren Prezioa eta Mozkinak</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div>
+            <label for="corporate-tax" data-i18n="pricing.sozietateZerga">Sozietateen Zerga (%)</label>
+            <input id="corporate-tax" type="number" value="25" oninput="updateAll()" />
+            
+            <label for="target-profit-margin" data-i18n="pricing.mozkinMargina">Helburuko Mozkin Gordina (%)</label>
+            <input id="target-profit-margin" type="number" value="20" oninput="updateAll()" />
+            
+            <label for="employee-count" data-i18n="pricing.langileKopurua">Langile kopurua</label>
+            <input id="employee-count" type="number" value="2" oninput="updateAll()" />
+            
+            <label for="annual-hours-per-employee" data-i18n="pricing.urtekoOrduak">Urteko orduak/lang</label>
+            <input id="annual-hours-per-employee" type="number" value="1600" oninput="updateAll()" />
+        </div>
+        <div>
+            <!-- DESGLOSE PEDAGÓGICO -->
+            <div class="card" style="background:#f8f9fa">
+                <h4 data-i18n="pricing.nolaKalkulatzen">Nola kalkulatzen da orduko prezioa?</h4>
+                <div class="desglose-pedagogico">
+                    <div class="desglose-linea">
+                        <span data-i18n="pricing.gastuOperatiboak">Gastu Operatiboak:</span>
+                        <span id="desglose-gastos-operativos">€ 0.00</span>
+                    </div>
+                    <div class="desglose-linea">
+                        <span data-i18n="pricing.finantzaketaKostuak">+ Finantzaketa Kostuak:</span>
+                        <span id="desglose-costes-financieros">€ 0.00</span>
+                    </div>
+                    <div class="desglose-linea" style="border-top:1px solid #ddd;padding-top:8px">
+                        <span><strong data-i18n="pricing.gastuTotalak">Gastu Totalak:</strong></span>
+                        <span id="desglose-gastos-totales"><strong>€ 0.00</strong></span>
+                    </div>
+                    <div class="desglose-linea">
+                        <span data-i18n="pricing.mozkinGordinaPorcentaje">+ Mozkin Gordina (<span id="desglose-porcentaje-margen">20</span>%):</span>
+                        <span id="desglose-margen-bruto">€ 0.00</span>
+                    </div>
+                    <div class="desglose-linea" style="border-top:1px solid #ddd;padding-top:8px">
+                        <span><strong data-i18n="pricing.fakturazioTotala">Fakturazio Totala:</strong></span>
+                        <span id="desglose-facturacion-total"><strong>€ 0.00</strong></span>
+                    </div>
+                    <div class="desglose-linea">
+                        <span data-i18n="pricing.urtekoOrduakDivision">÷ Urteko Orduak (<span id="desglose-total-horas">0</span>h):</span>
+                        <span></span>
+                    </div>
+                    <div class="desglose-linea" style="border-top:2px solid #333;padding-top:8px">
+                        <span><strong data-i18n="pricing.ordukoPrezioa">Orduko Prezioa:</strong></span>
+                        <span id="desglose-precio-hora"><strong>€ 0.00</strong></span>
                     </div>
                 </div>
+            </div>
+
+            <!-- RESUMEN ACTUAL -->
+            <div class="card">
+                <h4 data-i18n="pricing.gomendatutakoPrezioa">Gomendatutako orduko prezioa</h4>
+                <p id="suggested-hourly-rate" class="value">€ 0.00</p>
+            </div>
+            <div class="card">
+                <h4 data-i18n="pricing.mozkinGordina">Mozkin Gordina (Zergak aurre)</h4>
+                <p id="margen-bruto-panel7" class="value">€ 0.00</p>
+            </div>
+            <div class="card">
+                <h4 data-i18n="pricing.mozkinGarbia">Espero den mozkin garbia</h4>
+                <p id="expected-net-profit" class="value">€ 0.00</p>
+            </div>
+            <div class="card">
+                <h4 data-i18n="pricing.fakturazioBeharrezkoa">Fakturazio beharrezkoa</h4>
+                <p id="required-annual-revenue" class="value">€ 0.00</p>
+            </div>
+        </div>
+    </div>
+</div>
             </section>
 
-            <!-- SIDEBAR (DENTRO DEL MAIN) -->
-            <aside class="sidebar">
-                <div class="card">
-                    <h4 data-i18n="sidebar.facturacion">Urteko Fakturazioa Beharrezkoa</h4>
-                    <p id="total-facturacion" class="value">€ 0.00</p>
-                    <div class="facturacion-desglose">
-                        <div class="desglose-item">
-                            <span class="desglose-label" data-i18n="sidebar.gastuOperatiboak">Gastu Operatiboak:</span>
-                            <span id="gastos-operativos" class="desglose-value">€ 0.00</span>
-                        </div>
-                        <div class="desglose-item">
-                            <span class="desglose-label" data-i18n="sidebar.finantzaketaKostuak">Finantzaketa Kostuak (Kuota Anuala):</span>
-                            <span id="costos-financieros" class="desglose-value">€ 0.00</span>
-                        </div>
-                        <div class="desglose-item">
-                            <span class="desglose-label" data-i18n="sidebar.mozkinGordina">Mozkin Gordina:</span>
-                            <span id="margen-bruto" class="desglose-value">€ 0.00</span>
-                        </div>
-                    </div>
-                </div>
+<!-- SIDEBAR (DENTRO DEL MAIN) -->
+<aside class="sidebar">
+    <div class="card">
+        <h4 data-i18n="sidebar.facturacion">Urteko Fakturazioa Beharrezkoa</h4>
+        <p id="total-facturacion" class="value">€ 0.00</p>
+        <div class="facturacion-desglose">
+            <div class="desglose-item">
+                <span class="desglose-label" data-i18n="sidebar.gastuOperatiboak">Gastu Operatiboak:</span>
+                <span id="gastos-operativos" class="desglose-value">€ 0.00</span>
+            </div>
+            <div class="desglose-item">
+                <span class="desglose-label" data-i18n="sidebar.finantzaketaKostuak">Finantzaketa Kostuak (Kuota Anuala):</span>
+                <span id="costos-financieros" class="desglose-value">€ 0.00</span>
+            </div>
+            <div class="desglose-item">
+                <span class="desglose-label" data-i18n="sidebar.mozkinGordina">Mozkin Gordina:</span>
+                <span id="margen-bruto" class="desglose-value">€ 0.00</span>
+            </div>
+        </div>
+    </div>
 
-                <div class="card">
-                    <h4 data-i18n="sidebar.precioHora">Gomendatutako Orduko Prezioa</h4>
-                    <p id="suggested-hourly-rate-sidebar" class="value">€ 0.00</p>
-                    <p class="muted" data-i18n="sidebar.langileKopurua">Langile kopurua: <span id="employee-count-sidebar">0</span></p>
-                    <p class="muted" data-i18n="sidebar.urtekoOrduak">Urteko orduak: <span id="annual-hours-sidebar">0</span></p>
-                </div>
+    <div class="card">
+        <h4 data-i18n="sidebar.precioHora">Gomendatutako Orduko Prezioa</h4>
+        <p id="suggested-hourly-rate-sidebar" class="value">€ 0.00</p>
+        <p class="muted" data-i18n="sidebar.langileKopurua">Langile kopurua: <span id="employee-count-sidebar">0</span></p>
+        <p class="muted" data-i18n="sidebar.urtekoOrduak">Urteko orduak: <span id="annual-hours-sidebar">0</span></p>
+    </div>
 
-                <div class="card">
-                    <h4 data-i18n="sidebar.resumenCostes">Kostuen Laburpena</h4>
-                    <div class="cost-breakdown">
-                        <div class="cost-item">
-                            <span data-i18n="sidebar.amortizazioak">Amortizazioak:</span>
-                            <span id="total-amortizaciones">€ 0.00</span>
-                        </div>
-                        <div class="cost-item">
-                            <span data-i18n="sidebar.gastuFinkoak">Gastu Finkoak:</span>
-                            <span id="total-gastos-fijos">€ 0.00</span>
-                        </div>
-                        <div class="cost-item">
-                            <span data-i18n="sidebar.pertsonala">Pertsonala:</span>
-                            <span id="total-personal">€ 0.00</span>
-                        </div>
-                        <div class="cost-item">
-                            <span data-i18n="sidebar.finantzaketaGuztira">Finantzaketa Guztira:</span>
-                            <span id="total-intereses">€ 0.00</span>
-                        </div>
-                    </div>
-                </div>
+    <div class="card">
+        <h4 data-i18n="sidebar.resumenCostes">Kostuen Laburpena</h4>
+        <div class="cost-breakdown">
+            <div class="cost-item">
+                <span data-i18n="sidebar.amortizazioak">Amortizazioak:</span>
+                <span id="total-amortizaciones">€ 0.00</span>
+            </div>
+            <div class="cost-item">
+                <span data-i18n="sidebar.gastuFinkoak">Gastu Finkoak:</span>
+                <span id="total-gastos-fijos">€ 0.00</span>
+            </div>
+            <div class="cost-item">
+                <span data-i18n="sidebar.pertsonala">Pertsonala:</span>
+                <span id="total-personal">€ 0.00</span>
+            </div>
+            <div class="cost-item">
+                <span data-i18n="sidebar.finantzaketaGuztira">Finantzaketa Guztira:</span>
+                <span id="total-intereses">€ 0.00</span>
+            </div>
+        </div>
+    </div>
 
-                <div class="card contact-card">
-                    <h4 data-i18n="contact.title">Kontaktua</h4>
-                    <p class="muted" data-i18n="contact.name">Josu Ayerbe Guarás, Barne Diseinuko Graduko irakaslea</p>
-                    <p class="muted" data-i18n="contact.email">josuayerbe@idarte.eus</p>
-                    <p class="muted" data-i18n="contact.address">Portal de Betoño, 23 · Vitoria-Gasteiz</p>
-                </div>
-            </aside>
+    <div class="card contact-card">
+        <h4 data-i18n="contact.title">Kontaktua</h4>
+        <p class="muted" data-i18n="contact.name">Josu Ayerbe Guarás, Barne Diseinuko Graduko irakaslea</p>
+        <p class="muted" data-i18n="contact.email">josuayerbe@idarte.eus</p>
+        <p class="muted" data-i18n="contact.address">Portal de Betoño, 23 · Vitoria-Gasteiz</p>
+    </div>
+</aside>
         </main>
 
         <footer class="siteinfo">

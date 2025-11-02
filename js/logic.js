@@ -2,7 +2,87 @@
 // IDarte · VERSIÓN CORREGIDA
 // ========================================= */
 
-console.log("🚀 IDarte - Sistema mejorado iniciado");
+console.log("🚀 IDarte - Sistema con internacionalización JSON iniciado");
+
+// ===== SISTEMA DE INTERNACIONALIZACIÓN CON JSON =====
+let currentLanguage = 'eu';
+let translations = {};
+
+// Cargar traducciones desde el JSON
+async function loadTranslations() {
+    try {
+        const response = await fetch('js/lang.json');
+        translations = await response.json();
+        console.log("✅ Traducciones cargadas correctamente");
+        applyTranslations();
+    } catch (error) {
+        console.error("❌ Error cargando traducciones:", error);
+        // Cargar traducciones por defecto en caso de error
+        translations = {
+            "eu": {
+                "header.title": "IDarte · Euskadiko Diseinu Eskola Publikoa",
+                "header.subtitle": "BARNE DISEINU GRADUA - Neurketak eta Aurrekontuak",
+                "button.download": "Deskargatu",
+                "tab.lokal": "1 · Lokal",
+                "tab.pertsonala": "2 · Pertsonala",
+                "tab.ekoizpena": "3 · Ekoizpena",
+                "tab.garraioa": "4 · Garraioa",
+                "tab.hazkuntza": "5 · Hazkuntza",
+                "tab.finantzaketa": "6 · Finantzaketa",
+                "tab.prezioa": "7 · Prezioa",
+                "footer.note": "IDarte · Euskadiko Diseinu Eskola Publikoa — Escuela Pública de Diseño de Euskadi.",
+                "loading": "Txostena prestatzen..."
+            },
+            "es": {
+                "header.title": "IDarte · Escuela Pública de Diseño de Euskadi",
+                "header.subtitle": "GRADO EN DISEÑO DE INTERIORES - Mediciones y Presupuestos",
+                "button.download": "Descargar",
+                "tab.lokal": "1 · Local",
+                "tab.pertsonala": "2 · Personal",
+                "tab.ekoizpena": "3 · Producción",
+                "tab.garraioa": "4 · Transporte",
+                "tab.hazkuntza": "5 · Crecimiento",
+                "tab.finantzaketa": "6 · Financiación",
+                "tab.prezioa": "7 · Precio",
+                "footer.note": "IDarte · Escuela Pública de Diseño de Euskadi — Euskadiko Diseinu Eskola Publikoa.",
+                "loading": "Preparando el informe..."
+            }
+        };
+        applyTranslations();
+    }
+}
+
+function setLanguage(lang) {
+    if (translations[lang]) {
+        currentLanguage = lang;
+        applyTranslations();
+    }
+}
+
+function getTranslation(key) {
+    return translations[currentLanguage]?.[key] || key;
+}
+
+function applyTranslations() {
+    // Traducir elementos con data-i18n
+    document.querySelectorAll('[data-i18n]').forEach(element => {
+        const key = element.getAttribute('data-i18n');
+        const translation = getTranslation(key);
+        if (translation && element.textContent !== translation) {
+            element.textContent = translation;
+        }
+    });
+}
+
+// ===== CONFIGURACIÓN DEL SELECTOR DE IDIOMA =====
+function setupLanguageSelector() {
+    const languageSelect = document.getElementById('language-select');
+    if (languageSelect) {
+        languageSelect.addEventListener('change', function() {
+            setLanguage(this.value);
+        });
+    }
+}
 
 const state = {
   amortizables: { lokala: [], garraioa: [] },

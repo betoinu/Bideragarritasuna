@@ -705,11 +705,6 @@ window.addSocio = function() {
 };
 
 // ¡ESTA ES LA FUNCIÓN QUE FALTABA!
-window.removeSocio = function(id) {
-  state.finance.socios = state.finance.socios.filter(s => s.id !== id);
-  renderAllTables();
-  updateAll();
-};
 
 window.removeLastSocio = function() {
   if (state.finance.socios.length > 1) {

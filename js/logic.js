@@ -1,8 +1,8 @@
 /* =========================================
-// IDarte · VERSIÓN DEFINITIVA CON DATOS PRECARGADOS COMPLETOS
+// IDarte · VERSIÓN MEJORADA CON CÁLCULOS FINANCIEROS COMPLETOS
 // ========================================= */
 
-console.log("🚀 IDarte - Sistema iniciado");
+console.log("🚀 IDarte - Sistema mejorado iniciado");
 
 const state = {
   amortizables: { lokala: [], garraioa: [] },
@@ -11,27 +11,29 @@ const state = {
   finance: { 
     socios: [], 
     capitalistas: [], 
-    prestamo: { tae: 5, plazo: 5 }
+    prestamo: { tae: 5, plazo: 5, periodoGracia: 0 }
   }
 };
 
 // ===== UTILIDADES =====
 function uid(prefix = 'id') { return prefix + '-' + Math.random().toString(36).slice(2, 9); }
+
 function fmt(n) { 
   n = Number(n) || 0;
   return new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(n);
 }
+
 function safeNum(v) {
   if (v === '' || v === null || v === undefined) return 0;
   const num = Number(String(v).replace(',', '.'));
   return isNaN(num) ? 0 : num;
 }
 
-// ===== DATOS PRECARGADOS COMPLETOS (IGUAL QUE TU VERSIÓN ORIGINAL) =====
+// ===== DATOS PRECARGADOS COMPLETOS =====
 function preloadSampleData() {
   console.log("📥 Cargando datos de ejemplo completos...");
   
-  // --- AMORTIZABLES --- (EXACTAMENTE IGUAL QUE ANTES)
+  // --- AMORTIZABLES ---
   state.amortizables.lokala = [
     { id: uid('am'), name: 'Lokalaren Erosketa (Amortizagarria)', cost: 120000, life: 20, category: 'lokala' },
     { id: uid('am'), name: 'Erreformaren Balioa (Amortizagarria)', cost: 30000, life: 10, category: 'lokala' },
@@ -43,7 +45,7 @@ function preloadSampleData() {
     { id: uid('am'), name: 'Garraio Ibilgailuaren Erosketa', cost: 20000, life: 5, category: 'garraioa' }
   ];
 
-  // --- GASTOS RECURRENTES --- (EXACTAMENTE IGUAL QUE ANTES)
+  // --- GASTOS RECURRENTES ---
   state.recurrings.lokala = [
     { id: uid('r'), name: 'Alokairua (Hilekoa)', payment_cost: 800, frequency: 12, category: 'lokala' },
     { id: uid('r'), name: 'Hornigaiak: Gutxieneko Kontsumoa (Argia, Ura)', payment_cost: 100, frequency: 12, category: 'lokala' },
@@ -75,7 +77,7 @@ function preloadSampleData() {
     { id: uid('r'), name: 'Patrozinioak / Networking Ekitaldiak', payment_cost: 500, frequency: 1, category: 'hazkuntza' }
   ];
 
-  // --- PERSONAL --- (EXACTAMENTE IGUAL QUE ANTES)
+  // --- PERSONAL ---
   state.personnel = [
     { id: uid('p'), role: 'Zuzendaria / Bazkidea', gross: 35000, employer_ss: 30 }
   ];
@@ -95,11 +97,87 @@ function preloadSampleData() {
   });
 }
 
-// ===== CÁLCULOS FINANCIEROS =====
+// ===== CÁLCULOS FINANCIEROS MEJORADOS =====
+function calculateInvestmentNeeds() {
+  // 1. Inversiones en activos fijos
+  let inversiones = 0;
+  state.amortizables.lokala.forEach(item => {
+    inversiones += safeNum(item.cost);
+  });
+  state.amortizables.garraioa.forEach(item => {
+    inversiones += safeNum(item.cost);
+  });
+
+  // 2. Gastos operativos anuales (sin amortizaciones)
+  const gastosOperativosAnuales = calculateOperationalCosts();
+  
+  // 3. Tesorería (n meses de gastos operativos)
+  const mesesTesoreria = safeNum(document.getElementById('meses-tesoreria')?.value) || 3;
+  const tesoreria = (gastosOperativosAnuales / 12) * mesesTesoreria;
+  
+  // 4. Necesidades totales de financiación
+  const necesidadesTotales = inversiones + tesoreria;
+
+  console.log("💰 Necesidades de inversión calculadas:", {
+    inversiones: fmt(inversiones),
+    gastosOperativos: fmt(gastosOperativosAnuales),
+    tesoreria: fmt(tesoreria),
+    necesidadesTotales: fmt(necesidadesTotales)
+  });
+
+  return {
+    inversiones,
+    gastosOperativosAnuales,
+    tesoreria,
+    necesidadesTotales
+  };
+}
+
+function calculateFinancing() {
+  const necesidades = calculateInvestmentNeeds();
+  
+  // 1. Aportaciones de socios
+  let aportacionesSocios = 0;
+  state.finance.socios.forEach(socio => {
+    aportacionesSocios += safeNum(socio.aportacion);
+  });
+  
+  // 2. Préstamo necesario
+  const prestamoNecesario = Math.max(0, necesidades.necesidadesTotales - aportacionesSocios);
+
+  // 3. Calcular cuota del préstamo (sistema francés)
+  const tae = safeNum(document.getElementById('tae')?.value) || 5;
+  const plazo = safeNum(document.getElementById('plazo')?.value) || 5;
+  const periodoGracia = safeNum(document.getElementById('periodo-gracia')?.value) || 0;
+  
+  let cuotaAnual = 0;
+  let interesAnual = 0;
+
+  if (prestamoNecesario > 0 && tae > 0 && plazo > 0) {
+    const tasaMensual = (tae / 100) / 12;
+    const numPagos = (plazo * 12) - periodoGracia;
+    
+    if (numPagos > 0) {
+      const cuotaMensual = prestamoNecesario * tasaMensual * Math.pow(1 + tasaMensual, numPagos) / 
+                          (Math.pow(1 + tasaMensual, numPagos) - 1);
+      cuotaAnual = cuotaMensual * 12;
+      interesAnual = cuotaAnual * numPagos / 12 - prestamoNecesario / (plazo - periodoGracia/12);
+    }
+  }
+
+  return {
+    ...necesidades,
+    aportacionesSocios,
+    prestamoNecesario,
+    cuotaAnual,
+    interesAnual
+  };
+}
+
 function calculateOperationalCosts() {
   let total = 0;
 
-  // 1. Amortizaciones
+  // 1. Amortizaciones (¡IMPORTANTE! Incluir en costes operativos)
   state.amortizables.lokala.forEach(item => {
     total += safeNum(item.cost) / Math.max(1, safeNum(item.life));
   });
@@ -114,136 +192,125 @@ function calculateOperationalCosts() {
     });
   });
 
-  // 3. Personal
+  // 3. Personal (coste total empleador)
   state.personnel.forEach(person => {
     total += safeNum(person.gross) * (1 + safeNum(person.employer_ss) / 100);
   });
 
-  console.log("💰 Costes operativos anuales calculados:", fmt(total));
   return total;
-}
-
-function calculateFinancing() {
-  // 1. Inversiones iniciales
-  let inversiones = 0;
-  state.amortizables.lokala.forEach(item => {
-    inversiones += safeNum(item.cost);
-  });
-  state.amortizables.garraioa.forEach(item => {
-    inversiones += safeNum(item.cost);
-  });
-
-  // 2. Tesorería (3 meses de gastos operativos)
-  const costesOperativos = calculateOperationalCosts();
-  const tesoreria = (costesOperativos / 12) * 3;
-  
-  // 3. Necesidades totales
-  const necesidadesTotales = inversiones + tesoreria;
-
-  // 4. Aportaciones de socios
-  let aportacionesSocios = 0;
-  state.finance.socios.forEach(socio => {
-    aportacionesSocios += safeNum(socio.aportacion);
-  });
-  
-  // 5. Aportaciones capitalistas
-  let aportacionesCapitalistas = 0;
-  state.finance.capitalistas.forEach(cap => {
-    aportacionesCapitalistas += safeNum(cap.aportacion);
-  });
-  
-  const financiacionPropia = aportacionesSocios + aportacionesCapitalistas;
-
-  // 6. Préstamo necesario
-  const prestamoNecesario = Math.max(0, necesidadesTotales - financiacionPropia);
-
-  // 7. Calcular cuota del préstamo
-  const tae = state.finance.prestamo.tae;
-  const plazo = state.finance.prestamo.plazo;
-  let cuotaAnual = 0;
-
-  if (prestamoNecesario > 0 && tae > 0 && plazo > 0) {
-    const tasaMensual = (tae / 100) / 12;
-    const numPagos = plazo * 12;
-    const cuotaMensual = prestamoNecesario * tasaMensual * Math.pow(1 + tasaMensual, numPagos) / 
-                        (Math.pow(1 + tasaMensual, numPagos) - 1);
-    cuotaAnual = cuotaMensual * 12;
-  }
-
-  console.log("🏦 Financiación calculada:", {
-    inversiones: fmt(inversiones),
-    tesoreria: fmt(tesoreria),
-    necesidades: fmt(necesidadesTotales),
-    financiacionPropia: fmt(financiacionPropia),
-    prestamo: fmt(prestamoNecesario),
-    cuotaAnual: fmt(cuotaAnual)
-  });
-
-  return {
-    costesOperativos,
-    inversiones,
-    tesoreria,
-    necesidadesTotales,
-    financiacionPropia,
-    prestamoNecesario,
-    cuotaAnual
-  };
 }
 
 function calculatePricing() {
   const financiacion = calculateFinancing();
-  const costesOperativos = financiacion.costesOperativos;
+  const costesOperativos = financiacion.gastosOperativosAnuales;
   const costesFinancieros = financiacion.cuotaAnual;
 
-  // Parámetros con valores por defecto
+  // Parámetros del negocio
   const margin = safeNum(document.getElementById('target-profit-margin')?.value) || 20;
   const corporateTax = safeNum(document.getElementById('corporate-tax')?.value) || 25;
   const employeeCount = Math.max(1, safeNum(document.getElementById('employee-count')?.value) || state.personnel.length);
   const annualHours = safeNum(document.getElementById('annual-hours-per-employee')?.value) || 1600;
   const totalHours = employeeCount * annualHours;
 
-  // Cálculos de pricing
+  // CÁLCULOS ECONÓMICOS CLAVE
   const costesTotales = costesOperativos + costesFinancieros;
   const margenBruto = costesTotales * (margin / 100);
-  const revenue = costesTotales + margenBruto;
-  const hourlyRate = totalHours > 0 ? revenue / totalHours : 0;
+  const facturacionNecesaria = costesTotales + margenBruto;
+  const precioHora = totalHours > 0 ? facturacionNecesaria / totalHours : 0;
 
-  // Margen neto después de impuestos
-  const taxAmount = margenBruto * (corporateTax / 100);
-  const netProfit = margenBruto - taxAmount;
+  // Cálculo de impuestos y beneficio neto
+  const beneficioBruto = margenBruto;
+  const impuestos = beneficioBruto * (corporateTax / 100);
+  const beneficioNeto = beneficioBruto - impuestos;
 
-  // Actualizar UI Panel 7
-  updateElement('total-available-hours', totalHours.toLocaleString());
-  updateElement('suggested-hourly-rate', fmt(hourlyRate));
-  updateElement('expected-net-profit', fmt(netProfit));
-  updateElement('required-annual-revenue', fmt(revenue));
+  // ACTUALIZAR PANEL 7
+  updateElement('desglose-gastos-operativos', fmt(costesOperativos));
+  updateElement('desglose-costes-financieros', fmt(costesFinancieros));
+  updateElement('desglose-gastos-totales', fmt(costesTotales));
+  updateElement('desglose-porcentaje-margen', margin);
+  updateElement('desglose-margen-bruto', fmt(margenBruto));
+  updateElement('desglose-facturacion-total', fmt(facturacionNecesaria));
+  updateElement('desglose-total-horas', totalHours.toLocaleString());
+  updateElement('desglose-precio-hora', fmt(precioHora));
+  
+  updateElement('suggested-hourly-rate', fmt(precioHora));
+  updateElement('margen-bruto-panel7', fmt(margenBruto));
+  updateElement('expected-net-profit', fmt(beneficioNeto));
+  updateElement('required-annual-revenue', fmt(facturacionNecesaria));
 
-  // Actualizar Panel 6
-  updateElement('total-necesidades', fmt(financiacion.necesidadesTotales));
-  updateElement('financiacion-propia', fmt(financiacion.financiacionPropia));
-  updateElement('prestamo-necesario', fmt(financiacion.prestamoNecesario));
+  // ACTUALIZAR PANEL 6
+  updateElement('total-inversion', fmt(financiacion.inversiones));
+  updateElement('tesoreria-calculada', fmt(financiacion.tesoreria));
+  updateElement('necesidad-total', fmt(financiacion.necesidadesTotales));
+  updateElement('total-aportacion-socios', fmt(financiacion.aportacionesSocios));
+  updateElement('cantidad-financiar', fmt(financiacion.prestamoNecesario));
   updateElement('cuota-anual', fmt(financiacion.cuotaAnual));
-  updateElement('importe-tesoreria', fmt(financiacion.tesoreria));
+  updateElement('gastos-operativos-panel6', fmt(costesOperativos));
+  updateElement('costes-financieros-panel6', fmt(costesFinancieros));
+  updateElement('gastos-totales-panel6', fmt(costesTotales));
 
-  // Actualizar Sidebar
-  updateElement('total-facturacion', fmt(revenue));
+  // ACTUALIZAR SIDEBAR
+  updateElement('total-facturacion', fmt(facturacionNecesaria));
   updateElement('gastos-operativos', fmt(costesOperativos));
   updateElement('costos-financieros', fmt(costesFinancieros));
   updateElement('margen-bruto', fmt(margenBruto));
-  updateElement('suggested-hourly-rate-sidebar', fmt(hourlyRate));
+  updateElement('suggested-hourly-rate-sidebar', fmt(precioHora));
   updateElement('employee-count-sidebar', employeeCount);
   updateElement('annual-hours-sidebar', totalHours.toLocaleString());
 
-  console.log("🎯 Pricing calculado:", {
-    costesOperativos: fmt(costesOperativos),
-    costesFinancieros: fmt(costesFinancieros),
-    costesTotales: fmt(costesTotales),
+  // Resumen de costes para sidebar
+  const totalAmortizaciones = calculateTotalAmortizations();
+  const totalGastosFijos = calculateTotalRecurring();
+  const totalPersonal = calculateTotalPersonnel();
+  
+  updateElement('total-amortizaciones', fmt(totalAmortizaciones));
+  updateElement('total-gastos-fijos', fmt(totalGastosFijos));
+  updateElement('total-personal', fmt(totalPersonal));
+  updateElement('total-intereses', fmt(financiacion.interesAnual));
+
+  console.log("🎯 Modelo de negocio calculado:", {
+    facturacionNecesaria: fmt(facturacionNecesaria),
+    precioHora: fmt(precioHora),
     margenBruto: fmt(margenBruto),
-    facturacion: fmt(revenue),
-    precioHora: fmt(hourlyRate)
+    beneficioNeto: fmt(beneficioNeto),
+    necesidadesFinanciacion: fmt(financiacion.necesidadesTotales)
   });
 
-  return revenue;
+  return {
+    facturacionNecesaria,
+    precioHora,
+    margenBruto,
+    beneficioNeto
+  };
+}
+
+// ===== FUNCIONES AUXILIARES =====
+function calculateTotalAmortizations() {
+  let total = 0;
+  Object.values(state.amortizables).forEach(category => {
+    category.forEach(item => {
+      total += safeNum(item.cost) / Math.max(1, safeNum(item.life));
+    });
+  });
+  return total;
+}
+
+function calculateTotalRecurring() {
+  let total = 0;
+  Object.values(state.recurrings).forEach(category => {
+    category.forEach(item => {
+      total += safeNum(item.payment_cost) * Math.max(1, safeNum(item.frequency));
+    });
+  });
+  return total;
+}
+
+function calculateTotalPersonnel() {
+  let total = 0;
+  state.personnel.forEach(person => {
+    total += safeNum(person.gross) * (1 + safeNum(person.employer_ss) / 100);
+  });
+  return total;
 }
 
 function updateElement(id, value) {
@@ -305,20 +372,24 @@ window.removePersonnel = function(id) {
   updateAll();
 };
 
+// ===== FUNCIONES DE GESTIÓN DE SOCIOS =====
 window.addSocio = function() {
+  const newNumber = state.finance.socios.length + 1;
   state.finance.socios.push({
     id: uid('s'),
-    name: 'Nuevo Socio',
+    name: `Bazkide ${newNumber}`,
     aportacion: 0
   });
   renderAllTables();
   updateAll();
 };
 
-window.removeSocio = function(id) {
-  state.finance.socios = state.finance.socios.filter(s => s.id !== id);
-  renderAllTables();
-  updateAll();
+window.removeLastSocio = function() {
+  if (state.finance.socios.length > 1) {
+    state.finance.socios.pop();
+    renderAllTables();
+    updateAll();
+  }
 };
 
 window.addCapitalista = function() {
@@ -383,15 +454,15 @@ window.onFieldChange = function(e) {
 
 // ===== RENDER DE TABLAS =====
 function renderAllTables() {
-  renderTable(state.amortizables.lokala, 'lokala-amortizable-tbody', 'amort');
-  renderTable(state.amortizables.garraioa, 'garraioa-amortizable-tbody', 'amort');
+  renderTable(state.amortizables.lokala, 'lokala-amortizable-body', 'amort');
+  renderTable(state.amortizables.garraioa, 'garraioa-amortizable-body', 'amort');
   
-  renderTable(state.recurrings.lokala, 'lokala-recurring-tbody', 'recur');
-  renderTable(state.recurrings.ekoizpena, 'ekoizpena-recurring-tbody', 'recur');
-  renderTable(state.recurrings.garraioa, 'garraioa-recurring-tbody', 'recur');
-  renderTable(state.recurrings.hazkuntza, 'hazkuntza-recurring-tbody', 'recur');
+  renderTable(state.recurrings.lokala, 'lokala-recurring-body', 'recur');
+  renderTable(state.recurrings.ekoizpena, 'ekoizpena-recurring-body', 'recur');
+  renderTable(state.recurrings.garraioa, 'garraioa-recurring-body', 'recur');
+  renderTable(state.recurrings.hazkuntza, 'hazkuntza-recurring-body', 'recur');
   
-  renderTable(state.personnel, 'personnel-tbody', 'person');
+  renderTable(state.personnel, 'personnel-body', 'person');
   renderTable(state.finance.socios, 'socios-table-body', 'socio');
   renderTable(state.finance.capitalistas, 'capitalistas-table-body', 'capitalista');
 }
@@ -405,34 +476,37 @@ function renderTable(items, containerId, type) {
 
   container.innerHTML = items.map(item => {
     if (type === 'amort') {
+      const amortizacionAnual = safeNum(item.cost) / Math.max(1, safeNum(item.life));
       return `
         <tr>
           <td><input value="${item.name}" data-id="${item.id}" data-field="name"></td>
           <td class="text-right"><input type="number" value="${item.cost}" data-id="${item.id}" data-field="cost"></td>
           <td class="text-center"><input type="number" value="${item.life}" data-id="${item.id}" data-field="life"></td>
-          <td class="text-right">${fmt(item.cost / Math.max(1, item.life))}</td>
+          <td class="text-right">${fmt(amortizacionAnual)}</td>
           <td><button onclick="removeAmortizable('${item.id}','${item.category}')" class="btn small">✕</button></td>
         </tr>
       `;
     }
     if (type === 'recur') {
+      const totalAnual = safeNum(item.payment_cost) * Math.max(1, safeNum(item.frequency));
       return `
         <tr>
           <td><input value="${item.name}" data-id="${item.id}" data-field="name"></td>
           <td class="text-right"><input type="number" value="${item.payment_cost}" data-id="${item.id}" data-field="payment_cost"></td>
           <td class="text-center"><input type="number" value="${item.frequency}" data-id="${item.id}" data-field="frequency"></td>
-          <td class="text-right">${fmt(item.payment_cost * item.frequency)}</td>
+          <td class="text-right">${fmt(totalAnual)}</td>
           <td><button onclick="removeRecurring('${item.id}','${item.category}')" class="btn small">✕</button></td>
         </tr>
       `;
     }
     if (type === 'person') {
+      const costeTotal = safeNum(item.gross) * (1 + safeNum(item.employer_ss) / 100);
       return `
         <tr>
           <td><input value="${item.role}" data-id="${item.id}" data-field="role"></td>
           <td class="text-right"><input type="number" value="${item.gross}" data-id="${item.id}" data-field="gross"></td>
           <td class="text-center"><input type="number" value="${item.employer_ss}" data-id="${item.id}" data-field="employer_ss"></td>
-          <td class="text-right">${fmt(item.gross * (1 + item.employer_ss / 100))}</td>
+          <td class="text-right">${fmt(costeTotal)}</td>
           <td><button onclick="removePersonnel('${item.id}')" class="btn small">✕</button></td>
         </tr>
       `;
@@ -468,20 +542,41 @@ function updateAll() {
   calculatePricing();
 }
 
-// ===== INICIALIZACIÓN =====
+// ===== NAVEGACIÓN ENTRE PESTAÑAS =====
+function setupTabNavigation() {
+  const tabs = document.querySelectorAll('.tab');
+  const panels = document.querySelectorAll('.panel');
+  
+  tabs.forEach((tab, index) => {
+    tab.addEventListener('click', () => {
+      // Remover clase active de todas las pestañas
+      tabs.forEach(t => t.classList.remove('active'));
+      // Ocultar todos los paneles
+      panels.forEach(p => p.style.display = 'none');
+      
+      // Activar pestaña clickeada
+      tab.classList.add('active');
+      
+      // Mostrar panel correspondiente
+      if (panels[index]) {
+        panels[index].style.display = 'block';
+      }
+    });
+  });
+}
+
+// ===== INICIALIZACIÓN MEJORADA =====
 function initializeApp() {
-  console.log("🎯 Inicializando IDarte con datos precargados...");
+  console.log("🎯 Inicializando IDarte con cálculos financieros mejorados...");
   
-  // 1. Cargar datos precargados (TODOS los elementos de tu versión original)
   preloadSampleData();
-  
-  // 2. Renderizar todas las tablas
   renderAllTables();
+  setupTabNavigation();
   
-  // 3. Configurar event listeners globales
+  // Configurar event listeners para todos los inputs globales
   const globalInputs = [
     'target-profit-margin', 'corporate-tax', 'employee-count', 'annual-hours-per-employee',
-    'prestamo-tae', 'prestamo-plazo', 'porcentaje-tesoreria'
+    'tae', 'plazo', 'periodo-gracia', 'meses-tesoreria'
   ];
   
   globalInputs.forEach(id => {
@@ -489,22 +584,42 @@ function initializeApp() {
     if (el) el.addEventListener('input', updateAll);
   });
   
-  // 4. Actualizar préstamo en state cuando cambien los inputs
-  document.getElementById('prestamo-tae')?.addEventListener('input', function() {
-    state.finance.prestamo.tae = safeNum(this.value);
-    updateAll();
-  });
-  
-  document.getElementById('prestamo-plazo')?.addEventListener('input', function() {
-    state.finance.prestamo.plazo = safeNum(this.value);
-    updateAll();
-  });
-  
-  // 5. Ejecutar cálculos iniciales
+  // Inicializar cálculos
   setTimeout(updateAll, 100);
   
-  console.log("✅ IDarte completamente operativo con todos los datos precargados");
+  console.log("✅ IDarte completamente operativo con modelo financiero integrado");
 }
 
-// Iniciar aplicación
+// ===== GENERACIÓN DE PDF =====
+window.generatePDFReport = function() {
+  const loadingOverlay = document.getElementById('loading-overlay');
+  if (loadingOverlay) loadingOverlay.style.display = 'flex';
+  
+  setTimeout(() => {
+    html2canvas(document.getElementById('main-sheet')).then(canvas => {
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jspdf.jsPDF('p', 'mm', 'a4');
+      const imgWidth = 210;
+      const pageHeight = 295;
+      const imgHeight = canvas.height * imgWidth / canvas.width;
+      let heightLeft = imgHeight;
+      let position = 0;
+      
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+      
+      while (heightLeft >= 0) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+      }
+      
+      pdf.save('IDarte-Aurrekontua.pdf');
+      if (loadingOverlay) loadingOverlay.style.display = 'none';
+    });
+  }, 500);
+};
+
+// Iniciar aplicación cuando se carga la página
 window.addEventListener('load', initializeApp);

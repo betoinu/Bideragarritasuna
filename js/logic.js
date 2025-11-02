@@ -1,88 +1,345 @@
 /* =========================================
-// IDarte · Motor Financiero Ultra-Simple
+// IDarte · VERSIÓN COMPLETA Y FUNCIONAL
 // ========================================= */
 
 const state = {
   amortizables: { lokala: [], garraioa: [] },
   recurrings: { lokala: [], ekoizpena: [], garraioa: [], hazkuntza: [] },
   personnel: [],
-  finance: { socios: [], capitalistas: [], prestamo: { tae: 5, plazo: 5 } }
+  finance: { 
+    socios: [], 
+    capitalistas: [], 
+    prestamo: { tae: 5, plazo: 5 },
+    tesoreria: 0
+  }
 };
 
-// ===== UTILIDADES (20 líneas) =====
-const fmt = n => new Intl.NumberFormat('es-ES', {style:'currency',currency:'EUR'}).format(n||0);
-const safeNum = v => isNaN(v=Number(String(v||0).replace(',','.'))) ? 0 : v;
-const uid = () => 'id-'+Math.random().toString(36).slice(2,9);
+// ===== UTILIDADES =====
+function uid() { return 'id-' + Math.random().toString(36).slice(2, 9); }
+function fmt(n) { 
+  return new Intl.NumberFormat('es-ES', {style:'currency',currency:'EUR'}).format(n||0);
+}
+function safeNum(v) {
+  if (v === '' || v === null || v === undefined) return 0;
+  const num = Number(String(v).replace(',', '.'));
+  return isNaN(num) ? 0 : num;
+}
+function qs(sel) { return document.querySelector(sel); }
+function qsa(sel) { return Array.from(document.querySelectorAll(sel)); }
 
-// ===== CÁLCULOS PRINCIPALES (30 líneas) =====
-function calcularCostesOperativos() {
+// ===== DATOS PRECARGADOS COMPLETOS =====
+function preloadSampleData() {
+  // AMORTIZABLES (igual que antes)
+  state.amortizables.lokala = [
+    { id: uid(), name: 'Lokalaren Erosketa (Amortizagarria)', cost: 120000, life: 20, category: 'lokala' },
+    { id: uid(), name: 'Erreformaren Balioa (Amortizagarria)', cost: 30000, life: 10, category: 'lokala' },
+    { id: uid(), name: 'Altzarien Erosketa', cost: 8000, life: 5, category: 'lokala' },
+    { id: uid(), name: 'Hardware eta Softwarearen Hornitzea', cost: 4000, life: 4, category: 'lokala' }
+  ];
+  state.amortizables.garraioa = [
+    { id: uid(), name: 'Garraio Ibilgailuaren Erosketa', cost: 20000, life: 5, category: 'garraioa' }
+  ];
+
+  // GASTOS RECURRENTES (igual que antes)
+  state.recurrings.lokala = [
+    { id: uid(), name: 'Alokairua (Hilekoa)', payment_cost: 800, frequency: 12, category: 'lokala' },
+    { id: uid(), name: 'Hornigaiak: Gutxieneko Kontsumoa (Argia, Ura)', payment_cost: 100, frequency: 12, category: 'lokala' },
+    { id: uid(), name: 'Erantzukizun Zibileko Asegurua (Urteko Prima FINKOA)', payment_cost: 600, frequency: 1, category: 'lokala' },
+    { id: uid(), name: 'Zergak eta Udal Tasak (Lokala)', payment_cost: 1200, frequency: 1, category: 'lokala' },
+    { id: uid(), name: 'Bestelako Aseguruak (Lokala)', payment_cost: 450, frequency: 1, category: 'lokala' },
+    { id: uid(), name: 'Telefonia eta Internet FINKOA', payment_cost: 80, frequency: 12, category: 'lokala' }
+  ];
+  state.recurrings.ekoizpena = [
+    { id: uid(), name: 'EZA (Proiektu Bakoltzeko Gehigarria)', payment_cost: 200, frequency: 12, category: 'ekoizpena' },
+    { id: uid(), name: 'Hirugarrenen Lan Laguntzaileak (Proiektuko Azpikontratak)', payment_cost: 1500, frequency: 12, category: 'ekoizpena' },
+    { id: uid(), name: 'Material Gordinak / Kontsumigarri Espezifikoak', payment_cost: 400, frequency: 12, category: 'ekoizpena' },
+    { id: uid(), name: 'Elkargo Tasak (Jarduerari lotuak)', payment_cost: 150, frequency: 1, category: 'ekoizpena' }
+  ];
+  state.recurrings.garraioa = [
+    { id: uid(), name: 'Garraioa: Mantentze-lanak eta Konponketak', payment_cost: 500, frequency: 1, category: 'garraioa' },
+    { id: uid(), name: 'Garraioa: Udal Tasak eta Zergak (Urteko)', payment_cost: 150, frequency: 1, category: 'garraioa' },
+    { id: uid(), name: 'Garraioa: Asegurua (Urteko)', payment_cost: 500, frequency: 1, category: 'garraioa' },
+    { id: uid(), name: 'Garraioa: Erregaia / Gasolina', payment_cost: 250, frequency: 12, category: 'garraioa' },
+    { id: uid(), name: 'Dietak / Bazkariak (Desplazamenduak)', payment_cost: 150, frequency: 12, category: 'garraioa' }
+  ];
+  state.recurrings.hazkuntza = [
+    { id: uid(), name: 'Prestakuntza Saioak eta Ikastaroak', payment_cost: 800, frequency: 1, category: 'hazkuntza' },
+    { id: uid(), name: 'Aldizkari eta Ikerketa Harpidetzak', payment_cost: 100, frequency: 12, category: 'hazkuntza' },
+    { id: uid(), name: 'Komunikazioa Sareetan / Marketing digitala', payment_cost: 300, frequency: 12, category: 'hazkuntza' },
+    { id: uid(), name: 'Patrozinioak / Networking Ekitaldiak', payment_cost: 500, frequency: 1, category: 'hazkuntza' }
+  ];
+
+  // PERSONAL (igual que antes)
+  state.personnel = [
+    { id: uid(), role: 'Zuzendaria / Bazkidea', gross: 35000, employer_ss: 30 }
+  ];
+
+  // SOCIOS BÁSICOS
+  state.finance.socios = [
+    { id: uid(), name: 'Bazkide 1', aportacion: 0 },
+    { id: uid(), name: 'Bazkide 2', aportacion: 0 },
+    { id: uid(), name: 'Bazkide 3', aportacion: 0 }
+  ];
+}
+
+// ===== CÁLCULOS FINANCIEROS =====
+function calculateOperationalCosts() {
   let total = 0;
-  Object.values(state.amortizables).flat().forEach(i => total += safeNum(i.cost)/Math.max(1,safeNum(i.life)));
-  Object.values(state.recurrings).flat().forEach(c => c.forEach(g => total += safeNum(g.payment_cost)*safeNum(g.frequency)));
-  state.personnel.forEach(p => total += safeNum(p.gross)*(1+safeNum(p.employer_ss)/100));
+  
+  // Amortizaciones
+  Object.values(state.amortizables).forEach(categoria => {
+    categoria.forEach(item => {
+      total += safeNum(item.cost) / Math.max(1, safeNum(item.life));
+    });
+  });
+  
+  // Gastos recurrentes
+  Object.values(state.recurrings).forEach(categoria => {
+    categoria.forEach(item => {
+      total += safeNum(item.payment_cost) * safeNum(item.frequency);
+    });
+  });
+  
+  // Personal
+  state.personnel.forEach(person => {
+    total += safeNum(person.gross) * (1 + safeNum(person.employer_ss) / 100);
+  });
+  
   return total;
 }
 
-function calcularFinanciacion() {
-  const costesOp = calcularCostesOperativos();
-  const inversiones = Object.values(state.amortizables).flat().reduce((sum,i) => sum+safeNum(i.cost), 0);
-  const tesoreria = (costesOp/12)*3;
-  const necesidades = inversiones + tesoreria;
+function calculateFinancing() {
+  const costesOperativos = calculateOperationalCosts();
   
-  const aportaciones = [...state.finance.socios, ...state.finance.capitalistas].reduce((sum,a) => sum+safeNum(a.aportacion), 0);
-  const prestamo = Math.max(0, necesidades - aportaciones);
+  // Inversiones iniciales
+  let inversiones = 0;
+  Object.values(state.amortizables).forEach(categoria => {
+    categoria.forEach(item => {
+      inversiones += safeNum(item.cost);
+    });
+  });
   
-  // Calcular cuota préstamo
+  // Tesorería (3 meses de gastos operativos)
+  const tesoreria = (costesOperativos / 12) * 3;
+  const necesidadesTotales = inversiones + tesoreria;
+  
+  // Aportaciones socios
+  const aportacionesSocios = state.finance.socios.reduce((sum, socio) => sum + safeNum(socio.aportacion), 0);
+  const aportacionesCapitalistas = state.finance.capitalistas.reduce((sum, cap) => sum + safeNum(cap.aportacion), 0);
+  const financiacionPropia = aportacionesSocios + aportacionesCapitalistas;
+  
+  // Préstamo necesario
+  const prestamoNecesario = Math.max(0, necesidadesTotales - financiacionPropia);
+  
+  // Calcular cuota del préstamo
   const tae = state.finance.prestamo.tae;
   const plazo = state.finance.prestamo.plazo;
   let cuotaAnual = 0;
-  if (prestamo > 0 && tae > 0) {
-    const mensual = (tae/100)/12;
-    const pagos = plazo*12;
-    cuotaAnual = (prestamo * mensual * Math.pow(1+mensual, pagos) / (Math.pow(1+mensual, pagos)-1)) * 12;
+  
+  if (prestamoNecesario > 0 && tae > 0 && plazo > 0) {
+    const tasaMensual = (tae / 100) / 12;
+    const numPagos = plazo * 12;
+    const cuotaMensual = prestamoNecesario * tasaMensual * Math.pow(1 + tasaMensual, numPagos) / 
+                        (Math.pow(1 + tasaMensual, numPagos) - 1);
+    cuotaAnual = cuotaMensual * 12;
   }
   
-  return { costesOp, necesidades, aportaciones, prestamo, cuotaAnual };
+  return {
+    costesOperativos,
+    necesidadesTotales,
+    financiacionPropia,
+    prestamoNecesario,
+    cuotaAnual,
+    tesoreria
+  };
 }
 
-function calcularPricing() {
-  const { costesOp, cuotaAnual } = calcularFinanciacion();
+function calculatePricing() {
+  const financiacion = calculateFinancing();
+  const costesOperativos = financiacion.costesOperativos;
+  const costesFinancieros = financiacion.cuotaAnual;
+  
+  // Parámetros de pricing (con valores por defecto)
   const margin = safeNum(document.getElementById('target-profit-margin')?.value) || 20;
-  const employees = Math.max(1, safeNum(document.getElementById('employee-count')?.value) || state.personnel.length);
-  const hours = employees * (safeNum(document.getElementById('annual-hours-per-employee')?.value) || 1600);
+  const corporateTax = safeNum(document.getElementById('corporate-tax')?.value) || 25;
+  const employeeCount = Math.max(1, safeNum(document.getElementById('employee-count')?.value) || state.personnel.length);
+  const annualHours = safeNum(document.getElementById('annual-hours-per-employee')?.value) || 1600;
+  const totalHours = employeeCount * annualHours;
   
-  const costesTotales = costesOp + cuotaAnual;
-  const facturacion = costesTotales * (1 + margin/100);
-  const precioHora = hours > 0 ? facturacion / hours : 0;
+  // Cálculos
+  const costesTotales = costesOperativos + costesFinancieros;
+  const margenBruto = costesTotales * (margin / 100);
+  const revenue = costesTotales + margenBruto;
+  const hourlyRate = totalHours > 0 ? revenue / totalHours : 0;
   
-  // Actualizar UI directamente
-  document.getElementById('suggested-hourly-rate')?.textContent = fmt(precioHora);
-  document.getElementById('required-annual-revenue')?.textContent = fmt(facturacion);
-  document.getElementById('total-available-hours')?.textContent = hours.toLocaleString();
+  // Margen neto
+  const taxAmount = margenBruto * (corporateTax / 100);
+  const netProfit = margenBruto - taxAmount;
   
-  return { costesOp, cuotaAnual, facturacion, precioHora };
+  // Actualizar Panel 7
+  updateElement('total-available-hours', totalHours.toLocaleString());
+  updateElement('suggested-hourly-rate', fmt(hourlyRate));
+  updateElement('expected-net-profit', fmt(netProfit));
+  updateElement('required-annual-revenue', fmt(revenue));
+  
+  // Actualizar Panel 6
+  updateElement('total-necesidades', fmt(financiacion.necesidadesTotales));
+  updateElement('financiacion-propia', fmt(financiacion.financiacionPropia));
+  updateElement('prestamo-necesario', fmt(financiacion.prestamoNecesario));
+  updateElement('cuota-anual', fmt(financiacion.cuotaAnual));
+  updateElement('importe-tesoreria', fmt(financiacion.tesoreria));
+  
+  return revenue;
 }
 
-// ===== CRUD SIMPLIFICADO (40 líneas) =====
-window.addAmortizable = cat => { state.amortizables[cat].push({id:uid(),name:'Nuevo',cost:1000,life:5}); renderAll(); updateAll(); };
-window.addRecurring = cat => { state.recurrings[cat].push({id:uid(),name:'Nuevo',payment_cost:100,frequency:12}); renderAll(); updateAll(); };
-window.addPerson = () => { state.personnel.push({id:uid(),role:'Empleado',gross:30000,employer_ss:30}); renderAll(); updateAll(); };
-window.addSocio = () => { state.finance.socios.push({id:uid(),name:'Socio',aportacion:0}); renderAll(); updateAll(); };
-window.addCapitalista = () => { state.finance.capitalistas.push({id:uid(),name:'Capitalista',aportacion:0}); renderAll(); updateAll(); };
+function updateElement(id, value) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = value;
+}
 
-window.removeItem = (id, arrayName, subArray) => {
-  if (subArray) state[arrayName][subArray] = state[arrayName][subArray].filter(x => x.id !== id);
-  else state[arrayName] = state[arrayName].filter(x => x.id !== id);
-  renderAll(); updateAll();
+// ===== CRUD COMPLETO =====
+window.addAmortizable = function(cat) {
+  state.amortizables[cat].push({
+    id: uid(),
+    name: 'Elemento Nuevo',
+    cost: 1000,
+    life: 5,
+    category: cat
+  });
+  renderAllTables();
+  updateAll();
 };
 
-// ===== RENDER SIMPLIFICADO (30 líneas) =====
-function renderAll() {
+window.removeAmortizable = function(id, cat) {
+  state.amortizables[cat] = state.amortizables[cat].filter(x => x.id !== id);
+  renderAllTables();
+  updateAll();
+};
+
+window.addRecurring = function(cat) {
+  state.recurrings[cat].push({
+    id: uid(),
+    name: 'Gasto Nuevo',
+    payment_cost: 100,
+    frequency: 12,
+    category: cat
+  });
+  renderAllTables();
+  updateAll();
+};
+
+window.removeRecurring = function(id, cat) {
+  state.recurrings[cat] = state.recurrings[cat].filter(x => x.id !== id);
+  renderAllTables();
+  updateAll();
+};
+
+window.addPerson = function() {
+  state.personnel.push({
+    id: uid(),
+    role: 'Nuevo Empleado',
+    gross: 30000,
+    employer_ss: 30
+  });
+  renderAllTables();
+  updateAll();
+};
+
+window.removePersonnel = function(id) {
+  state.personnel = state.personnel.filter(p => p.id !== id);
+  renderAllTables();
+  updateAll();
+};
+
+window.addSocio = function() {
+  state.finance.socios.push({
+    id: uid(),
+    name: 'Nuevo Socio',
+    aportacion: 0
+  });
+  renderAllTables();
+  updateAll();
+};
+
+window.removeSocio = function(id) {
+  state.finance.socios = state.finance.socios.filter(s => s.id !== id);
+  renderAllTables();
+  updateAll();
+};
+
+window.addCapitalista = function() {
+  state.finance.capitalistas.push({
+    id: uid(),
+    name: 'Nuevo Capitalista',
+    aportacion: 0
+  });
+  renderAllTables();
+  updateAll();
+};
+
+window.removeCapitalista = function(id) {
+  state.finance.capitalistas = state.finance.capitalistas.filter(c => c.id !== id);
+  renderAllTables();
+  updateAll();
+};
+
+window.onFieldChange = function(e) {
+  const el = e.target;
+  const id = el.dataset.id;
+  const field = el.dataset.field;
+  const value = el.type === 'number' ? safeNum(el.value) : el.value;
+  
+  // Buscar en todos los arrays
+  let found = false;
+  
+  // Amortizables
+  ['lokala', 'garraioa'].forEach(cat => {
+    const item = state.amortizables[cat].find(x => x.id === id);
+    if (item) { item[field] = value; found = true; }
+  });
+  
+  // Recurrentes
+  if (!found) {
+    ['lokala', 'ekoizpena', 'garraioa', 'hazkuntza'].forEach(cat => {
+      const item = state.recurrings[cat].find(x => x.id === id);
+      if (item) { item[field] = value; found = true; }
+    });
+  }
+  
+  // Personal
+  if (!found) {
+    const person = state.personnel.find(x => x.id === id);
+    if (person) { person[field] = value; found = true; }
+  }
+  
+  // Socios
+  if (!found) {
+    const socio = state.finance.socios.find(x => x.id === id);
+    if (socio) { socio[field] = value; found = true; }
+  }
+  
+  // Capitalistas
+  if (!found) {
+    const capitalista = state.finance.capitalistas.find(x => x.id === id);
+    if (capitalista) { capitalista[field] = value; found = true; }
+  }
+  
+  if (found) updateAll();
+};
+
+// ===== RENDER DE TABLAS =====
+function renderAllTables() {
   renderTable(state.amortizables.lokala, 'lokala-amortizable-tbody', 'amort');
+  renderTable(state.amortizables.garraioa, 'garraioa-amortizable-tbody', 'amort');
+  
   renderTable(state.recurrings.lokala, 'lokala-recurring-tbody', 'recur');
+  renderTable(state.recurrings.ekoizpena, 'ekoizpena-recurring-tbody', 'recur');
+  renderTable(state.recurrings.garraioa, 'garraioa-recurring-tbody', 'recur');
+  renderTable(state.recurrings.hazkuntza, 'hazkuntza-recurring-tbody', 'recur');
+  
   renderTable(state.personnel, 'personnel-tbody', 'person');
-  renderTable(state.finance.socios, 'socios-tbody', 'socio');
-  renderTable(state.finance.capitalistas, 'capitalistas-tbody', 'socio');
+  renderTable(state.finance.socios, 'socios-table-body', 'socio');
+  renderTable(state.finance.capitalistas, 'capitalistas-table-body', 'capitalista');
 }
 
 function renderTable(items, containerId, type) {
@@ -90,52 +347,88 @@ function renderTable(items, containerId, type) {
   if (!container) return;
   
   container.innerHTML = items.map(item => {
-    const base = `<td><input value="${item.name}" data-id="${item.id}"></td>`;
-    if (type === 'amort') return `<tr>${base}<td><input type="number" value="${item.cost}" data-id="${item.id}"></td><td><input type="number" value="${item.life}" data-id="${item.id}"></td><td>${fmt(item.cost/item.life)}</td><td><button onclick="removeItem('${item.id}', 'amortizables', 'lokala')">✕</button></td></tr>`;
-    if (type === 'recur') return `<tr>${base}<td><input type="number" value="${item.payment_cost}" data-id="${item.id}"></td><td><input type="number" value="${item.frequency}" data-id="${item.id}"></td><td>${fmt(item.payment_cost*item.frequency)}</td><td><button onclick="removeItem('${item.id}', 'recurrings', 'lokala')">✕</button></td></tr>`;
-    if (type === 'person') return `<tr>${base}<td><input type="number" value="${item.gross}" data-id="${item.id}"></td><td><input type="number" value="${item.employer_ss}" data-id="${item.id}"></td><td>${fmt(item.gross*(1+item.employer_ss/100))}</td><td><button onclick="removeItem('${item.id}', 'personnel')">✕</button></td></tr>`;
-    if (type === 'socio') return `<tr>${base}<td><input type="number" value="${item.aportacion}" data-id="${item.id}"></td><td><button onclick="removeItem('${item.id}', 'finance', item.name.includes('Socio')?'socios':'capitalistas')">✕</button></td></tr>`;
+    if (type === 'amort') {
+      return `
+        <tr>
+          <td><input value="${item.name}" data-id="${item.id}" data-field="name"></td>
+          <td class="text-right"><input type="number" value="${item.cost}" data-id="${item.id}" data-field="cost"></td>
+          <td class="text-center"><input type="number" value="${item.life}" data-id="${item.id}" data-field="life"></td>
+          <td class="text-right">${fmt(item.cost / Math.max(1, item.life))}</td>
+          <td><button onclick="removeAmortizable('${item.id}','${item.category}')" class="btn small">✕</button></td>
+        </tr>
+      `;
+    }
+    if (type === 'recur') {
+      return `
+        <tr>
+          <td><input value="${item.name}" data-id="${item.id}" data-field="name"></td>
+          <td class="text-right"><input type="number" value="${item.payment_cost}" data-id="${item.id}" data-field="payment_cost"></td>
+          <td class="text-center"><input type="number" value="${item.frequency}" data-id="${item.id}" data-field="frequency"></td>
+          <td class="text-right">${fmt(item.payment_cost * item.frequency)}</td>
+          <td><button onclick="removeRecurring('${item.id}','${item.category}')" class="btn small">✕</button></td>
+        </tr>
+      `;
+    }
+    if (type === 'person') {
+      return `
+        <tr>
+          <td><input value="${item.role}" data-id="${item.id}" data-field="role"></td>
+          <td class="text-right"><input type="number" value="${item.gross}" data-id="${item.id}" data-field="gross"></td>
+          <td class="text-center"><input type="number" value="${item.employer_ss}" data-id="${item.id}" data-field="employer_ss"></td>
+          <td class="text-right">${fmt(item.gross * (1 + item.employer_ss / 100))}</td>
+          <td><button onclick="removePersonnel('${item.id}')" class="btn small">✕</button></td>
+        </tr>
+      `;
+    }
+    if (type === 'socio') {
+      return `
+        <tr>
+          <td>${item.name}</td>
+          <td><input type="number" value="${item.aportacion}" data-id="${item.id}" data-field="aportacion"></td>
+          <td><button onclick="removeSocio('${item.id}')" class="btn small">✕</button></td>
+        </tr>
+      `;
+    }
+    if (type === 'capitalista') {
+      return `
+        <tr>
+          <td>${item.name}</td>
+          <td><input type="number" value="${item.aportacion}" data-id="${item.id}" data-field="aportacion"></td>
+          <td><button onclick="removeCapitalista('${item.id}')" class="btn small">✕</button></td>
+        </tr>
+      `;
+    }
   }).join('');
-
-  container.querySelectorAll('input').forEach(input => {
-    input.addEventListener('input', e => {
-      const item = findItem(e.target.dataset.id);
-      if (item) item[e.target.previousElementSibling?.textContent ? 'name' : e.target.type === 'number' ? 'cost' : 'name'] = safeNum(e.target.value);
-      updateAll();
-    });
+  
+  // Añadir event listeners
+  container.querySelectorAll('input[data-id]').forEach(input => {
+    input.addEventListener('input', onFieldChange);
   });
 }
 
-function findItem(id) {
-  return [...Object.values(state.amortizables).flat(), ...Object.values(state.recurrings).flat(), ...state.personnel, ...state.finance.socios, ...state.finance.capitalistas].find(x => x.id === id);
-}
-
-// ===== ACTUALIZACIÓN GLOBAL (10 líneas) =====
+// ===== ACTUALIZACIÓN GLOBAL =====
 function updateAll() {
-  const { costesOp, necesidades, aportaciones, prestamo, cuotaAnual } = calcularFinanciacion();
-  const { facturacion, precioHora } = calcularPricing();
-  
-  // Actualizar Panel 6
-  document.getElementById('total-necesidades')?.textContent = fmt(necesidades);
-  document.getElementById('financiacion-propia')?.textContent = fmt(aportaciones);
-  document.getElementById('prestamo-necesario')?.textContent = fmt(prestamo);
-  document.getElementById('cuota-anual')?.textContent = fmt(cuotaAnual);
+  calculatePricing();
 }
 
-// ===== INICIALIZACIÓN (10 líneas) =====
+// ===== INICIALIZACIÓN =====
 function init() {
-  // Datos de ejemplo
-  state.amortizables.lokala.push({id:uid(), name:'Mobiliario', cost:15000, life:10});
-  state.recurrings.lokala.push({id:uid(), name:'Alquiler', payment_cost:1200, frequency:12});
-  state.personnel.push({id:uid(), role:'Diseñador', gross:35000, employer_ss:30});
-  state.finance.socios.push({id:uid(), name:'Socio 1', aportacion:50000});
+  preloadSampleData();
+  renderAllTables();
   
-  // Event listeners
-  ['target-profit-margin','employee-count','annual-hours-per-employee','prestamo-tae','prestamo-plazo'].forEach(id => {
-    document.getElementById(id)?.addEventListener('input', updateAll);
+  // Configurar event listeners globales
+  ['target-profit-margin', 'corporate-tax', 'employee-count', 'annual-hours-per-employee', 
+   'prestamo-tae', 'prestamo-plazo', 'porcentaje-tesoreria'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', updateAll);
   });
   
-  renderAll(); updateAll();
+  // Botones de añadir
+  document.getElementById('add-socio-btn')?.addEventListener('click', addSocio);
+  document.getElementById('add-capitalista-btn')?.addEventListener('click', addCapitalista);
+  
+  // Cálculos iniciales
+  setTimeout(updateAll, 100);
 }
 
 window.addEventListener('load', init);

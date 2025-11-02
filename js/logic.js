@@ -479,36 +479,99 @@ function updateAll() {
    SALARIO / PRECIO HORA - CORREGIDA
    =========================== */
 function calculatePricing(totalOperational = null) {
-  // Si no se pasa el total, calcularlo
-  if (totalOperational === null) {
-    totalOperational = calculateTotalCosts();
-  }
-  
-  const margin = safeNum(qs('#target-profit-margin')?.value) || 20;
-  const emp = Math.max(1, safeNum(qs('#employee-count')?.value) || 1);
-  const hours = safeNum(qs('#annual-hours-per-employee')?.value) || 1600;
-  const totalHours = emp * hours;
+    console.log("🎯 Calculando pricing con márgenes diferenciados...");
+    
+    if (totalOperational === null) {
+        totalOperational = calculateTotalCosts();
+    }
+    
+    const margin = safeNum(qs('#target-profit-margin')?.value) || 20;
+    const corporateTax = safeNum(qs('#corporate-tax')?.value) || 25;
+    const emp = Math.max(1, safeNum(qs('#employee-count')?.value) || 1);
+    const hours = safeNum(qs('#annual-hours-per-employee')?.value) || 1600;
+    const totalHours = emp * hours;
 
-  const profit = totalOperational * (margin / 100);
-  const revenue = totalOperational + profit;
-  const suggested = totalHours > 0 ? revenue / totalHours : 0;
+    // Calcular costos financieros
+    let costosFinancieros = 0;
+    const interesAnualSpan = document.getElementById('interes-anual');
+    if (interesAnualSpan) {
+        const interesText = interesAnualSpan.textContent;
+        costosFinancieros = safeNum(interesText.replace(/[^\d.,]/g, '').replace(',', '.'));
+    }
 
-  // Actualizar interfaz
-  const setFmt = (id, value) => {
-    const el = document.getElementById(id);
-    if (el) el.textContent = fmt(value);
-  };
+    console.log("📊 Datos para pricing:", {
+        totalOperational,
+        margin,
+        corporateTax,
+        costosFinancieros
+    });
 
-  setFmt('total-available-hours', totalHours);
-  setFmt('suggested-hourly-rate', suggested);
-  setFmt('expected-net-profit', profit);
-  setFmt('required-annual-revenue', revenue);
-  
-  // Guardar valores numéricos para el resumen
-  document.getElementById('suggested-hourly-rate').dataset.value = suggested;
-  document.getElementById('expected-net-profit').dataset.value = profit;
-  document.getElementById('required-annual-revenue').dataset.value = revenue;
-  document.getElementById('total-available-hours').dataset.value = totalHours;
+    // MARGEN BRUTO (antes de impuestos e intereses)
+    const margenBruto = totalOperational * (margin / 100);
+    
+    // MARGEN NETO (después de impuestos)
+    const beneficioAntesImpuestos = margenBruto - costosFinancieros;
+    const impuestos = Math.max(0, beneficioAntesImpuestos * (corporateTax / 100));
+    const margenNeto = beneficioAntesImpuestos - impuestos;
+
+    const revenue = totalOperational + margenBruto;
+    const suggested = totalHours > 0 ? revenue / totalHours : 0;
+
+    // Actualizar interfaz PANEL 7
+    const setFmt = (id, value) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = fmt(value);
+    };
+
+    setFmt('total-available-hours', totalHours);
+    setFmt('suggested-hourly-rate', suggested);
+    setFmt('expected-net-profit', margenNeto); // Ahora muestra margen NETO
+    setFmt('required-annual-revenue', revenue);
+    
+    // Guardar valores para el sidebar
+    document.getElementById('suggested-hourly-rate').dataset.value = suggested;
+    document.getElementById('expected-net-profit').dataset.value = margenNeto;
+    document.getElementById('required-annual-revenue').dataset.value = revenue;
+    document.getElementById('total-available-hours').dataset.value = totalHours;
+    
+    // Actualizar sidebar con márgenes diferenciados
+    updateRightSummaryWithMargins(totalOperational, margenBruto, costosFinancieros);
+    
+    console.log("✅ Pricing calculado:", {
+        margenBruto,
+        margenNeto,
+        revenue,
+        suggested
+    });
+}
+
+// AÑADE esta nueva función después de calculatePricing
+function updateRightSummaryWithMargins(totalOperational, margenBruto, costosFinancieros) {
+    console.log("🔄 Actualizando sidebar con márgenes...");
+    
+    const actualizarElemento = (id, valor, esMoneda = true) => {
+        const elemento = document.getElementById(id);
+        if (elemento) {
+            elemento.textContent = esMoneda ? fmt(valor) : valor;
+            console.log(`✅ ${id}: ${elemento.textContent}`);
+        } else {
+            console.warn(`❌ Elemento no encontrado: ${id}`);
+        }
+    };
+
+    const requiredRevenue = safeNum(document.getElementById('required-annual-revenue')?.dataset.value) || 0;
+    
+    actualizarElemento('total-facturacion', requiredRevenue);
+    actualizarElemento('gastos-operativos', totalOperational);
+    actualizarElemento('costos-financieros', costosFinancieros);
+    actualizarElemento('margen-bruto', margenBruto); // Ahora muestra margen BRUTO real
+    
+    console.log("📈 Márgenes actualizados en sidebar:", {
+        totalOperational,
+        margenBruto,
+        costosFinancieros,
+        requiredRevenue
+    });
 }
 
 /* ===========================
@@ -516,52 +579,62 @@ function calculatePricing(totalOperational = null) {
    SIDEBAR MEJORADO - CORREGIDO Y ROBUSTO
    =========================== */
 function updateRightSummary(totalOperational = null) {
-    console.log("🔄 Actualizando sidebar...");
+    console.log("🔄 Actualizando sidebar principal...");
     
     if (totalOperational === null) {
         totalOperational = calculateTotalCosts();
     }
     
-    // Validar que los elementos críticos existen
-    const requiredRevenueEl = document.getElementById('required-annual-revenue');
-    const suggestedRateEl = document.getElementById('suggested-hourly-rate');
+    // Calcular costos financieros de forma robusta
+    let costosFinancieros = 0;
     
-    if (!requiredRevenueEl || !suggestedRateEl) {
-        console.warn("❌ Elementos críticos del pricing no encontrados");
-        return;
+    // Método 1: Desde el panel de finantzaketa
+    const interesAnualSpan = document.getElementById('interes-anual');
+    if (interesAnualSpan) {
+        const interesText = interesAnualSpan.textContent;
+        costosFinancieros = safeNum(interesText.replace(/[^\d.,]/g, '').replace(',', '.'));
     }
+    
+    // Método 2: Calcular directamente si el anterior falla
+    if (costosFinancieros === 0) {
+        const cantidadFinanciarSpan = document.getElementById('cantidad-financiar');
+        const tae = safeNum(document.getElementById('tae')?.value) || 5;
+        
+        if (cantidadFinanciarSpan) {
+            const cantidadText = cantidadFinanciarSpan.textContent;
+            const cantidadFinanciar = safeNum(cantidadText.replace(/[^\d.,]/g, '').replace(',', '.'));
+            costosFinancieros = cantidadFinanciar * (tae / 100);
+        }
+    }
+    
+    console.log("💰 Costos financieros calculados:", costosFinancieros);
 
-    // Obtener valores de pricing DE FORMA SEGURA
+    // Obtener valores de pricing
     let suggestedRate = 0;
     let requiredRevenue = 0;
     let totalHours = 0;
 
     try {
-        suggestedRate = safeNum(suggestedRateEl.dataset.value) || safeNum(suggestedRateEl.textContent.replace(/[^\d.,]/g, '').replace(',', '.'));
-        requiredRevenue = safeNum(requiredRevenueEl.dataset.value) || safeNum(requiredRevenueEl.textContent.replace(/[^\d.,]/g, '').replace(',', '.'));
+        suggestedRate = safeNum(document.getElementById('suggested-hourly-rate')?.dataset.value) || 0;
+        requiredRevenue = safeNum(document.getElementById('required-annual-revenue')?.dataset.value) || 0;
         
         const totalHoursEl = document.getElementById('total-available-hours');
         if (totalHoursEl) {
-            totalHours = safeNum(totalHoursEl.dataset.value) || safeNum(totalHoursEl.textContent.replace(/[^\d.,]/g, ''));
+            totalHours = safeNum(totalHoursEl.dataset.value) || 0;
         }
     } catch (error) {
         console.warn("❌ Error obteniendo datos de pricing:", error);
     }
+
+    // Calcular márgenes
+    const margin = safeNum(document.getElementById('target-profit-margin')?.value) || 20;
+    const margenBruto = totalOperational * (margin / 100);
 
     // LANGILE KOPURUA - de state.personnel (REAL)
     const employeeCount = state.personnel.length;
 
     // Calcular desglose de costes
     const desgloseCostes = calcularDesgloseCostes();
-    
-    // Calcular costos financieros (SOLO intereses, no amortización)
-    const loanAmount = safeNum(document.getElementById('loan-amount')?.value) || 0;
-    const loanTAE = safeNum(document.getElementById('loan-tae')?.value) || 5;
-    const costosFinancieros = loanAmount * (loanTAE / 100);
-
-    // Calcular margen bruto CORRECTO
-    const margin = safeNum(document.getElementById('target-profit-margin')?.value) || 20;
-    const margenBruto = (totalOperational + costosFinancieros) * (margin / 100);
 
     console.log("📊 Datos sidebar:", {
         totalOperational,
@@ -808,6 +881,65 @@ function bindGlobalInputs() {
     console.log("✅ Todos los event listeners configurados");
 }
 
+function bindFinantzaketaInputs() {
+    console.log("🔧 Configurando event listeners para panel 6...");
+    
+    // Porcentaje de tesorería
+    const porcentajeTesoreria = document.getElementById('porcentaje-tesoreria');
+    if (porcentajeTesoreria) {
+        porcentajeTesoreria.addEventListener('input', function() {
+            console.log("📊 Porcentaje tesorería cambiado:", this.value);
+            if (typeof calcularFinanciacion === 'function') {
+                calcularFinanciacion();
+            }
+            updateAll();
+        });
+        console.log("✅ Listener añadido a porcentaje-tesoreria");
+    }
+    
+    // Otros inputs del panel 6
+    const inputsFinantzaketa = [
+        'necesidades-inversion', 'tipo-prestamo', 'tae', 'plazo'
+    ];
+    
+    inputsFinantzaketa.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('input', function() {
+                console.log(`📊 ${id} cambiado:`, this.value);
+                if (typeof calcularFinanciacion === 'function') {
+                    calcularFinanciacion();
+                }
+                updateAll();
+            });
+            console.log(`✅ Listener añadido a ${id}`);
+        }
+    });
+    
+    // Inputs de capital de socios (ya deberían existir, pero por si acaso)
+    document.querySelectorAll('.capital-input').forEach(input => {
+        input.addEventListener('input', function() {
+            console.log("📊 Capital socio cambiado");
+            if (typeof calcularFinanciacion === 'function') {
+                calcularFinanciacion();
+            }
+            updateAll();
+        });
+    });
+    
+    // Inputs de socios capitalistas
+    document.querySelectorAll('.capitalista-input').forEach(input => {
+        input.addEventListener('input', function() {
+            console.log("📊 Capitalista cambiado");
+            if (typeof calcularFinanciacion === 'function') {
+                calcularFinanciacion();
+            }
+            updateAll();
+        });
+    });
+}
+
+
 /* ===========================
    TABS / PESTAÑAS
    =========================== */
@@ -832,11 +964,8 @@ function initTabs() {
   panels.forEach((p, i) => p.style.display = i === 0 ? 'block' : 'none');
 }
 
-/* ===========================
-   INIT PRINCIPAL - CORREGIDO
-   =========================== */
 async function init(){
-  console.log("🚀 Iniciando aplicación...");
+  console.log("🚀 Iniciando aplicación con mejoras...");
   
   // 1. Cargar idioma
   await loadTranslations(localStorage.getItem('selectedLanguage') || 'eu');
@@ -849,26 +978,38 @@ async function init(){
   // 3. Inicializar interfaz
   initTabs();
   bindGlobalInputs();
+  
+  // 4. NUEVO: Configurar event listeners para panel 6
+  bindFinantzaketaInputs();
 
-  // 4. Inicializar panel de finantzaketa SI EXISTE
+  // 5. Inicializar panel de finantzaketa SI EXISTE
   if (typeof initFinantzaketaPanel === 'function') {
       console.log("✅ Inicializando panel finantzaketa");
       initFinantzaketaPanel();
   }
 
-  // 5. Cálculos iniciales (UNA SOLA VEZ)
-  console.log("🔄 Ejecutando cálculos iniciales...");
-  updateAll();
+  // 6. Cálculos iniciales (con delay para asegurar que el DOM esté listo)
+  setTimeout(() => {
+      console.log("🔄 Ejecutando cálculos iniciales...");
+      
+      // Forzar cálculo de financiación si existe
+      if (typeof calcularFinanciacion === 'function') {
+          console.log("💰 Calculando financiación inicial...");
+          calcularFinanciacion();
+      }
+      
+      // Actualización completa
+      updateAll();
+      
+      // Verificar que todo funciona
+      verificarMejoras();
+  }, 800);
 
-  // 6. Configurar selector de idioma
+  // 7. Configurar selector de idioma
   const sel = document.getElementById('language-select');
   if (sel) sel.value = localStorage.getItem('selectedLanguage') || 'eu';
 
-  // 7. Debug final
-  setTimeout(() => {
-      console.log("✅ Aplicación inicializada correctamente");
-      debugSidebar();
-  }, 500);
+  console.log("✅ Aplicación inicializada correctamente con todas las mejoras");
 }
 
 // ===== FINANZAKETA PANEL FUNCTIONS =====
@@ -954,8 +1095,10 @@ function removeCapitalista(button) {
     }
 }
 
-// Calcular financiación con tesorería
+// Calcular financiación con tesorería - VERSIÓN MEJORADA
 function calcularFinanciacion() {
+    console.log("💰 Calculando financiación...");
+    
     // Calcular total aportado por socios
     let totalSocios = 0;
     document.querySelectorAll('.capital-input').forEach(input => {
@@ -1006,6 +1149,14 @@ function calcularFinanciacion() {
         interesAnual = 0;
     }
     
+    console.log("📊 Resultados financiación:", {
+        totalSocios,
+        totalCapitalistas,
+        importeTesoreria,
+        cantidadFinanciar,
+        interesAnual
+    });
+    
     // Actualizar la interfaz
     const totalSociosSpan = document.getElementById('total-socios');
     const totalCapitalistasSpan = document.getElementById('total-capitalistas');
@@ -1030,8 +1181,20 @@ function calcularFinanciacion() {
         necesidadesInput.value = necesidadesInversionBase;
     }
     
-    // Actualizar el sidebar con la facturación necesaria
-    updateSidebarWithFacturacion();
+    // NUEVO: Forzar actualizaciones después de calcular financiación
+    console.log("✅ Financiación calculada, actualizando interfaz...");
+    
+    // Actualizar sidebar y pricing después de un breve delay
+    setTimeout(() => {
+        try {
+            const totalOperational = calculateTotalCosts();
+            console.log("🔄 Actualizando sidebar después de financiación...");
+            updateRightSummary(totalOperational);
+            calculatePricing(totalOperational);
+        } catch (error) {
+            console.warn("⚠️ Error en actualización post-financiación:", error);
+        }
+    }, 150);
 }
 
 // Actualizar sidebar con facturación (usando la función existente de pricing)
@@ -1054,11 +1217,6 @@ function updateSidebarWithFacturacion() {
         }
     }
 }
-
-// Llamar a initFinantzaketaPanel cuando se cargue la página
-document.addEventListener('DOMContentLoaded', function() {
-    initFinantzaketaPanel();
-});
 
 /* ===========================
    DEBUG TEMPORAL - SIDEBAR

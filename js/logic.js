@@ -180,6 +180,8 @@ function applyTranslations() {
             element.textContent = translation;
         }
     });
+    // FORZAR ACTUALIZACIÓN DE CÁLCULOS DESPUÉS DE TRADUCCIONES
+    setTimeout(updateAll, 100);
 }
 
 function setupLanguageSelector() {
@@ -387,9 +389,13 @@ function calculatePricing() {
         { id: 'gastos-operativos', value: fmt(costesOperativos) },
         { id: 'costos-financieros', value: fmt(costesFinancieros) },
         { id: 'margen-bruto', value: fmt(margenBruto) },
-        { id: 'total-inversion-sidebar', value: fmt(financiacion.inversiones) },
-        { id: 'total-aportacion-socios-sidebar', value: fmt(financiacion.aportacionesTotales) },
-        { id: 'cantidad-financiar-sidebar', value: fmt(financiacion.prestamoNecesario) },
+      { id: 'total-inversion-sidebar', value: fmt(financiacion.inversiones) },
+      { id: 'total-aportacion-socios-sidebar', value: fmt(financiacion.aportacionesTotales) },
+      { id: 'cantidad-financiar-sidebar', value: fmt(financiacion.prestamoNecesario) },
+        { id: 'gastos-operativos-sidebar', value: fmt(costesOperativos) },
+      { id: 'costos-financieros-sidebar', value: fmt(costesFinancieros) },
+      { id: 'margen-bruto-sidebar', value: fmt(margenBruto) },
+
         
         // Resumen financiero
         { id: 'total-inversion', value: fmt(financiacion.inversiones) },

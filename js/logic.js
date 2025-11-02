@@ -489,34 +489,60 @@ function actualizarCascada() {
     }, 300);
 }
 
-// NUEVA FUNCIÓN: Calcular costes financieros completos usando "Urteko Kuota Guztira"
+// NUEVA FUNCIÓN: Calcular costes financieros completos - VERSIÓN ROBUSTA
 function calcularCostesFinancierosCompletos() {
-    // VERIFICAR múltiples fuentes
-    let costes = 0;
+    console.log("🔍 DEBUG - Buscando costes financieros...");
     
-    // Fuente 1: Cuota anual directa
-    const cuotaAnualEl = document.getElementById('cuota-anual');
-    if (cuotaAnualEl) {
-        costes = safeNum(cuotaAnualEl.textContent.replace(/[^\d.,]/g, '').replace(',', '.'));
+    let costesTotales = 0;
+    
+    // MÉTODO 1: Buscar "Urteko Kuota Guztira" en el Panel 6
+    const cuotaAnualSpan = document.getElementById('cuota-anual');
+    if (cuotaAnualSpan && cuotaAnualSpan.textContent) {
+        const cuotaText = cuotaAnualSpan.textContent;
+        costesTotales = safeNum(cuotaText.replace(/[^\d.,]/g, '').replace(',', '.'));
+        console.log("✅ Costes de cuota-anual:", costesTotales);
     }
     
-    // Fuente 2: Calcular si no hay valor
-    if (costes === 0) {
-        const cantidad = safeNum(document.getElementById('cantidad-financiar')?.textContent.replace(/[^\d.,]/g, '').replace(',', '.')) || 0;
-        const tae = safeNum(document.getElementById('tae')?.value) || 5;
-        const plazo = safeNum(document.getElementById('plazo')?.value) || 1;
+    // MÉTODO 2: Si es 0, calcular desde los inputs básicos
+    if (costesTotales === 0) {
+        console.log("🔧 Calculando costes desde inputs básicos...");
         
-        if (cantidad > 0) {
-            const mensual = (tae/100/12) > 0 ? 
-                cantidad * (tae/100/12) * Math.pow(1 + (tae/100/12), plazo*12) / 
-                (Math.pow(1 + (tae/100/12), plazo*12) - 1) :
-                cantidad / (plazo*12);
-            costes = mensual * 12;
+        // Obtener cantidad a financiar del Panel 6
+        let cantidadFinanciar = 0;
+        const cantidadSpan = document.getElementById('cantidad-financiar');
+        if (cantidadSpan && cantidadSpan.textContent) {
+            cantidadFinanciar = safeNum(cantidadSpan.textContent.replace(/[^\d.,]/g, '').replace(',', '.'));
+        }
+        
+        // Si no hay cantidad, usar el valor por defecto
+        if (cantidadFinanciar === 0) {
+            cantidadFinanciar = 210127.5; // Valor por defecto del input
+        }
+        
+        const tae = safeNum(document.getElementById('tae')?.value) || 5;
+        const plazo = safeNum(document.getElementById('plazo')?.value) || 5;
+        
+        console.log("📊 Valores para cálculo:", { cantidadFinanciar, tae, plazo });
+        
+        if (cantidadFinanciar > 0 && plazo > 0) {
+            const tasaMensual = (tae / 100) / 12;
+            const numPagos = plazo * 12;
+            
+            if (tasaMensual > 0) {
+                // Cálculo de cuota mensual
+                const cuotaMensual = cantidadFinanciar * tasaMensual * Math.pow(1 + tasaMensual, numPagos) / 
+                                   (Math.pow(1 + tasaMensual, numPagos) - 1);
+                costesTotales = cuotaMensual * 12; // Cuota anual
+            } else {
+                // Sin intereses
+                costesTotales = cantidadFinanciar / plazo;
+            }
+            console.log("💰 Costes calculados:", costesTotales);
         }
     }
     
-    console.log("💰 Costes financieros finales:", costes);
-    return costes;
+    console.log("💰 Costes financieros finales:", costesTotales);
+    return costesTotales;
 }
 
 function calculatePricing(totalOperational = null) {

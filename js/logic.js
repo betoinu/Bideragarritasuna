@@ -1,528 +1,141 @@
 /* =========================================
-// IDarte · Business Plan Financial Engine
-// VERSIÓN DEFINITIVA - by Senior FullStack + MBA
+// IDarte · Motor Financiero Ultra-Simple
 // ========================================= */
 
-console.log("🚀 IDarte - Motor Financiero Iniciado");
-
-/* ============
-   GLOBAL STATE
-   ============ */
 const state = {
-  // Paneles 1-4: Costes operativos
-  amortizables: { 
-    lokala: [],  // Inversiones local
-    garraioa: [] // Inversiones transporte
-  },
-  recurrings: {
-    lokala: [],     // Gastos fijos local
-    ekoizpena: [],  // Gastos producción
-    garraioa: [],   // Gastos transporte  
-    hazkuntza: []   // Gastos crecimiento
-  },
-  personnel: [],    // Costes personal
-  
-  // Panel 6: Financiación
-  finance: {
-    socios: [],
-    capitalistas: [],
-    tesoreria: 0,
-    prestamo: {
-      cantidad: 0,
-      tae: 5,
-      plazo: 5,
-      cuotaAnual: 0
-    }
-  }
+  amortizables: { lokala: [], garraioa: [] },
+  recurrings: { lokala: [], ekoizpena: [], garraioa: [], hazkuntza: [] },
+  personnel: [],
+  finance: { socios: [], capitalistas: [], prestamo: { tae: 5, plazo: 5 } }
 };
 
-/* =====================
-   CORE BUSINESS ENGINE
-   ===================== */
-function uid() { return 'id-' + Math.random().toString(36).substr(2, 9); }
+// ===== UTILIDADES (20 líneas) =====
+const fmt = n => new Intl.NumberFormat('es-ES', {style:'currency',currency:'EUR'}).format(n||0);
+const safeNum = v => isNaN(v=Number(String(v||0).replace(',','.'))) ? 0 : v;
+const uid = () => 'id-'+Math.random().toString(36).slice(2,9);
 
-function fmt(n) {
-  n = Number(n) || 0;
-  return new Intl.NumberFormat('es-ES', { 
-    style: 'currency', currency: 'EUR' 
-  }).format(n);
-}
-
-function safeNum(v) {
-  if (v === '' || v === null || v === undefined) return 0;
-  const num = Number(String(v).replace(',', '.'));
-  return isNaN(num) ? 0 : num;
-}
-
-/* ===========================
-   MOTOR DE CÁLCULOS PRINCIPALES
-   =========================== */
-
-/**
- * CALCULA COSTES OPERATIVOS ANUALES (Paneles 1-5)
- * - Amortizaciones
- * - Gastos recurrentes  
- * - Personal
- */
-function calculateOperationalCosts() {
+// ===== CÁLCULOS PRINCIPALES (30 líneas) =====
+function calcularCostesOperativos() {
   let total = 0;
-
-  // 1. AMORTIZACIONES (inversiones convertidas a gasto anual)
-  Object.values(state.amortizables).forEach(categoria => {
-    categoria.forEach(inversion => {
-      const amortizacionAnual = safeNum(inversion.cost) / Math.max(1, safeNum(inversion.life));
-      total += amortizacionAnual;
-    });
-  });
-
-  // 2. GASTOS RECURRENTES ANUALES
-  Object.values(state.recurrings).forEach(categoria => {
-    categoria.forEach(gasto => {
-      const costoAnual = safeNum(gasto.payment_cost) * safeNum(gasto.frequency);
-      total += costoAnual;
-    });
-  });
-
-  // 3. COSTES DE PERSONAL (salario bruto + seguridad social empresa)
-  state.personnel.forEach(empleado => {
-    const costeTotalEmpleado = safeNum(empleado.gross) * (1 + safeNum(empleado.employer_ss) / 100);
-    total += costeTotalEmpleado;
-  });
-
-  console.log("💰 Costes operativos anuales:", fmt(total));
+  Object.values(state.amortizables).flat().forEach(i => total += safeNum(i.cost)/Math.max(1,safeNum(i.life)));
+  Object.values(state.recurrings).flat().forEach(c => c.forEach(g => total += safeNum(g.payment_cost)*safeNum(g.frequency)));
+  state.personnel.forEach(p => total += safeNum(p.gross)*(1+safeNum(p.employer_ss)/100));
   return total;
 }
 
-/**
- * CALCULA NECESIDADES DE FINANCIACIÓN (Panel 6)
- * - Inversiones iniciales
- * - Capital de trabajo (tesorería)
- * - Financiación necesaria
- */
-function calculateFundingNeeds() {
-  let necesidades = 0;
-
-  // 1. INVERSIONES INICIALES (día 0)
-  Object.values(state.amortizables).forEach(categoria => {
-    categoria.forEach(inversion => {
-      necesidades += safeNum(inversion.cost);
-    });
-  });
-
-  // 2. CAPITAL DE TRABAJO (3 meses de gastos operativos)
-  const gastosOperativosAnuales = calculateOperationalCosts();
-  const tesoreriaNecesaria = (gastosOperativosAnuales / 12) * 3;
-  necesidades += tesoreriaNecesaria;
-
-  console.log("🏦 Necesidades totales de financiación:", fmt(necesidades));
-  return necesidades;
-}
-
-/**
- * MOTOR DE FINANCIACIÓN (Panel 6)
- * Calcula estructura óptima de financiación
- */
-function calculateFinancing() {
-  const necesidadesTotales = calculateFundingNeeds();
+function calcularFinanciacion() {
+  const costesOp = calcularCostesOperativos();
+  const inversiones = Object.values(state.amortizables).flat().reduce((sum,i) => sum+safeNum(i.cost), 0);
+  const tesoreria = (costesOp/12)*3;
+  const necesidades = inversiones + tesoreria;
   
-  // 1. APORTACIONES DE SOCIOS
-  let aportacionSocios = 0;
-  state.finance.socios.forEach(socio => {
-    aportacionSocios += safeNum(socio.aportacion);
-  });
-
-  // 2. APORTACIONES CAPITALISTAS
-  let aportacionCapitalistas = 0;
-  state.finance.capitalistas.forEach(capitalista => {
-    aportacionCapitalistas += safeNum(capitalista.aportacion);
-  });
-
-  // 3. CALCULAR PRÉSTAMO NECESARIO
-  const financiacionPropia = aportacionSocios + aportacionCapitalistas;
-  const prestamoNecesario = Math.max(0, necesidadesTotales - financiacionPropia);
-
-  // 4. CALCULAR COSTE FINANCIERO
+  const aportaciones = [...state.finance.socios, ...state.finance.capitalistas].reduce((sum,a) => sum+safeNum(a.aportacion), 0);
+  const prestamo = Math.max(0, necesidades - aportaciones);
+  
+  // Calcular cuota préstamo
+  const tae = state.finance.prestamo.tae;
+  const plazo = state.finance.prestamo.plazo;
   let cuotaAnual = 0;
-  let interesAnual = 0;
-
-  if (prestamoNecesario > 0 && state.finance.prestamo.tae > 0 && state.finance.prestamo.plazo > 0) {
-    const tasaMensual = (state.finance.prestamo.tae / 100) / 12;
-    const numPagos = state.finance.prestamo.plazo * 12;
-    
-    if (tasaMensual > 0) {
-      const cuotaMensual = prestamoNecesario * tasaMensual * Math.pow(1 + tasaMensual, numPagos) / 
-                          (Math.pow(1 + tasaMensual, numPagos) - 1);
-      cuotaAnual = cuotaMensual * 12;
-      interesAnual = (cuotaMensual * numPagos - prestamoNecesario) / state.finance.prestamo.plazo;
-    }
+  if (prestamo > 0 && tae > 0) {
+    const mensual = (tae/100)/12;
+    const pagos = plazo*12;
+    cuotaAnual = (prestamo * mensual * Math.pow(1+mensual, pagos) / (Math.pow(1+mensual, pagos)-1)) * 12;
   }
-
-  state.finance.prestamo.cantidad = prestamoNecesario;
-  state.finance.prestamo.cuotaAnual = cuotaAnual;
-
-  // 5. ACTUALIZAR UI PANEL 6
-  updateFinancePanel(necesidadesTotales, financiacionPropia, prestamoNecesario, cuotaAnual, interesAnual);
-
-  return {
-    necesidadesTotales,
-    financiacionPropia, 
-    prestamoNecesario,
-    costeFinancieroAnual: cuotaAnual
-  };
-}
-
-/**
- * MOTOR DE PRICING (Panel 7)
- * Calcula precio/hora considerando TODOS los costes
- */
-function calculatePricing() {
-  // 1. COSTES TOTALES = Operativos + Financieros
-  const costesOperativos = calculateOperationalCosts();
-  const costesFinancieros = state.finance.prestamo.cuotaAnual;
-  const costesTotales = costesOperativos + costesFinancieros;
-
-  // 2. PARÁMETROS DE PRICING
-  const margenBrutoObjetivo = safeNum(document.getElementById('target-profit-margin')?.value) || 20;
-  const impuestoSociedades = safeNum(document.getElementById('corporate-tax')?.value) || 25;
-  const numEmpleados = Math.max(1, safeNum(document.getElementById('employee-count')?.value) || state.personnel.length);
-  const horasProductivasPorEmpleado = safeNum(document.getElementById('annual-hours-per-employee')?.value) || 1600;
-  const totalHorasProductivas = numEmpleados * horasProductivasPorEmpleado;
-
-  // 3. CÁLCULOS DE PRICING
-  const margenBruto = costesTotales * (margenBrutoObjetivo / 100);
-  const facturacionNecesaria = costesTotales + margenBruto;
-  const precioHora = totalHorasProductivas > 0 ? facturacionNecesaria / totalHorasProductivas : 0;
-
-  // 4. MARGEN NETO (después de impuestos)
-  const impuestos = margenBruto * (impuestoSociedades / 100);
-  const margenNeto = margenBruto - impuestos;
-
-  // 5. ACTUALIZAR UI PANEL 7
-  updatePricingPanel(costesTotales, margenBruto, facturacionNecesaria, precioHora, margenNeto, totalHorasProductivas);
-
-  console.log("🎯 Pricing calculado:", {
-    costesOperativos: fmt(costesOperativos),
-    costesFinancieros: fmt(costesFinancieros),
-    costesTotales: fmt(costesTotales),
-    margenBruto: fmt(margenBruto),
-    facturacionNecesaria: fmt(facturacionNecesaria),
-    precioHora: fmt(precioHora),
-    horasProductivas: totalHorasProductivas
-  });
-
-  return facturacionNecesaria;
-}
-
-/* ===========================
-   SISTEMA DE ACTUALIZACIÓN
-   =========================== */
-
-/**
- * ACTUALIZACIÓN MAESTRA - Orquesta todos los cálculos
- */
-function updateAllCalculations() {
-  console.log("🔄 Ejecutando actualización maestra...");
   
-  try {
-    // 1. Calcular financiación (Panel 6)
-    const financiacion = calculateFinancing();
-    
-    // 2. Calcular pricing con financiación incluida (Panel 7)
-    const facturacion = calculatePricing();
-    
-    // 3. Actualizar dashboard resumen
-    updateSummaryDashboard(financiacion, facturacion);
-    
-    console.log("✅ Actualización maestra completada");
-    
-  } catch (error) {
-    console.error("❌ Error en actualización maestra:", error);
-  }
+  return { costesOp, necesidades, aportaciones, prestamo, cuotaAnual };
 }
 
-/* ===========================
-   SISTEMA DE INTERFAZ
-   =========================== */
-
-/**
- * ACTUALIZA PANEL 6 - Financiación
- */
-function updateFinancePanel(necesidades, propia, prestamo, cuotaAnual, interesAnual) {
-  const elements = {
-    'total-necesidades': necesidades,
-    'financiacion-propia': propia,
-    'prestamo-necesario': prestamo,
-    'cuota-anual': cuotaAnual,
-    'interes-anual': interesAnual
-  };
-
-  Object.entries(elements).forEach(([id, value]) => {
-    const element = document.getElementById(id);
-    if (element) element.textContent = fmt(value);
-  });
-}
-
-/**
- * ACTUALIZA PANEL 7 - Pricing
- */
-function updatePricingPanel(costesTotales, margenBruto, facturacion, precioHora, margenNeto, horas) {
-  const elements = {
-    'total-costes': costesTotales,
-    'margen-bruto': margenBruto,
-    'facturacion-needed': facturacion,
-    'precio-hora': precioHora,
-    'margen-neto': margenNeto,
-    'horas-productivas': horas
-  };
-
-  Object.entries(elements).forEach(([id, value]) => {
-    const element = document.getElementById(id);
-    if (element) {
-      if (id === 'horas-productivas') {
-        element.textContent = value.toLocaleString();
-      } else {
-        element.textContent = fmt(value);
-      }
-    }
-  });
-}
-
-/**
- * ACTUALIZA DASHBOARD RESUMEN
- */
-function updateSummaryDashboard(financiacion, facturacion) {
-  const costesOperativos = calculateOperationalCosts();
-  const costesFinancieros = state.finance.prestamo.cuotaAnual;
+function calcularPricing() {
+  const { costesOp, cuotaAnual } = calcularFinanciacion();
+  const margin = safeNum(document.getElementById('target-profit-margin')?.value) || 20;
+  const employees = Math.max(1, safeNum(document.getElementById('employee-count')?.value) || state.personnel.length);
+  const hours = employees * (safeNum(document.getElementById('annual-hours-per-employee')?.value) || 1600);
   
-  const elements = {
-    'resumen-facturacion': facturacion,
-    'resumen-costes-operativos': costesOperativos,
-    'resumen-costes-financieros': costesFinancieros,
-    'resumen-margen-bruto': facturacion - costesOperativos - costesFinancieros,
-    'resumen-precio-hora': document.getElementById('precio-hora')?.textContent || '€0'
-  };
-
-  Object.entries(elements).forEach(([id, value]) => {
-    const element = document.getElementById(id);
-    if (element) element.textContent = fmt(value);
-  });
+  const costesTotales = costesOp + cuotaAnual;
+  const facturacion = costesTotales * (1 + margin/100);
+  const precioHora = hours > 0 ? facturacion / hours : 0;
+  
+  // Actualizar UI directamente
+  document.getElementById('suggested-hourly-rate')?.textContent = fmt(precioHora);
+  document.getElementById('required-annual-revenue')?.textContent = fmt(facturacion);
+  document.getElementById('total-available-hours')?.textContent = hours.toLocaleString();
+  
+  return { costesOp, cuotaAnual, facturacion, precioHora };
 }
 
-/* ===========================
-   SISTEMA DE DATOS - CRUD
-   =========================== */
+// ===== CRUD SIMPLIFICADO (40 líneas) =====
+window.addAmortizable = cat => { state.amortizables[cat].push({id:uid(),name:'Nuevo',cost:1000,life:5}); renderAll(); updateAll(); };
+window.addRecurring = cat => { state.recurrings[cat].push({id:uid(),name:'Nuevo',payment_cost:100,frequency:12}); renderAll(); updateAll(); };
+window.addPerson = () => { state.personnel.push({id:uid(),role:'Empleado',gross:30000,employer_ss:30}); renderAll(); updateAll(); };
+window.addSocio = () => { state.finance.socios.push({id:uid(),name:'Socio',aportacion:0}); renderAll(); updateAll(); };
+window.addCapitalista = () => { state.finance.capitalistas.push({id:uid(),name:'Capitalista',aportacion:0}); renderAll(); updateAll(); };
 
-// GESTIÓN DE INVERSIONES (Amortizables)
-window.addInvestment = function(categoria) {
-  state.amortizables[categoria].push({
-    id: uid(),
-    name: 'Nueva Inversión',
-    cost: 10000,
-    life: 5,
-    category: categoria
-  });
-  renderTables();
-  updateAllCalculations();
+window.removeItem = (id, arrayName, subArray) => {
+  if (subArray) state[arrayName][subArray] = state[arrayName][subArray].filter(x => x.id !== id);
+  else state[arrayName] = state[arrayName].filter(x => x.id !== id);
+  renderAll(); updateAll();
 };
 
-window.removeInvestment = function(id, categoria) {
-  state.amortizables[categoria] = state.amortizables[categoria].filter(item => item.id !== id);
-  renderTables();
-  updateAllCalculations();
-};
-
-// GESTIÓN DE GASTOS RECURRENTES
-window.addExpense = function(categoria) {
-  state.recurrings[categoria].push({
-    id: uid(),
-    name: 'Nuevo Gasto',
-    payment_cost: 100,
-    frequency: 12,
-    category: categoria
-  });
-  renderTables();
-  updateAllCalculations();
-};
-
-window.removeExpense = function(id, categoria) {
-  state.recurrings[categoria] = state.recurrings[categoria].filter(item => item.id !== id);
-  renderTables();
-  updateAllCalculations();
-};
-
-// GESTIÓN DE PERSONAL
-window.addEmployee = function() {
-  state.personnel.push({
-    id: uid(),
-    role: 'Nuevo Empleado',
-    gross: 30000,
-    employer_ss: 30
-  });
-  renderTables();
-  updateAllCalculations();
-};
-
-window.removeEmployee = function(id) {
-  state.personnel = state.personnel.filter(emp => emp.id !== id);
-  renderTables();
-  updateAllCalculations();
-};
-
-// GESTIÓN DE FINANCIACIÓN
-window.addSocio = function() {
-  state.finance.socios.push({
-    id: uid(),
-    name: 'Nuevo Socio',
-    aportacion: 0
-  });
-  renderFinanceTables();
-  updateAllCalculations();
-};
-
-window.addCapitalista = function() {
-  state.finance.capitalistas.push({
-    id: uid(),
-    name: 'Nuevo Capitalista', 
-    aportacion: 0
-  });
-  renderFinanceTables();
-  updateAllCalculations();
-};
-
-/* ===========================
-   SISTEMA DE RENDER
-   =========================== */
-
-function renderTables() {
-  renderTable(state.amortizables.lokala, 'inversiones-lokal-table', 'investment');
-  renderTable(state.recurrings.lokala, 'gastos-lokal-table', 'expense');
-  renderTable(state.personnel, 'personal-table', 'employee');
-}
-
-function renderFinanceTables() {
-  renderTable(state.finance.socios, 'socios-table', 'investor');
-  renderTable(state.finance.capitalistas, 'capitalistas-table', 'investor');
+// ===== RENDER SIMPLIFICADO (30 líneas) =====
+function renderAll() {
+  renderTable(state.amortizables.lokala, 'lokala-amortizable-tbody', 'amort');
+  renderTable(state.recurrings.lokala, 'lokala-recurring-tbody', 'recur');
+  renderTable(state.personnel, 'personnel-tbody', 'person');
+  renderTable(state.finance.socios, 'socios-tbody', 'socio');
+  renderTable(state.finance.capitalistas, 'capitalistas-tbody', 'socio');
 }
 
 function renderTable(items, containerId, type) {
   const container = document.getElementById(containerId);
   if (!container) return;
-
+  
   container.innerHTML = items.map(item => {
-    if (type === 'investment') {
-      return `
-        <tr>
-          <td><input value="${item.name}" data-id="${item.id}" data-field="name"></td>
-          <td><input type="number" value="${item.cost}" data-id="${item.id}" data-field="cost"></td>
-          <td><input type="number" value="${item.life}" data-id="${item.id}" data-field="life"></td>
-          <td>${fmt(item.cost / Math.max(1, item.life))}</td>
-          <td><button onclick="removeInvestment('${item.id}', '${item.category}')">✕</button></td>
-        </tr>
-      `;
-    }
-    // ... más templates para otros tipos
+    const base = `<td><input value="${item.name}" data-id="${item.id}"></td>`;
+    if (type === 'amort') return `<tr>${base}<td><input type="number" value="${item.cost}" data-id="${item.id}"></td><td><input type="number" value="${item.life}" data-id="${item.id}"></td><td>${fmt(item.cost/item.life)}</td><td><button onclick="removeItem('${item.id}', 'amortizables', 'lokala')">✕</button></td></tr>`;
+    if (type === 'recur') return `<tr>${base}<td><input type="number" value="${item.payment_cost}" data-id="${item.id}"></td><td><input type="number" value="${item.frequency}" data-id="${item.id}"></td><td>${fmt(item.payment_cost*item.frequency)}</td><td><button onclick="removeItem('${item.id}', 'recurrings', 'lokala')">✕</button></td></tr>`;
+    if (type === 'person') return `<tr>${base}<td><input type="number" value="${item.gross}" data-id="${item.id}"></td><td><input type="number" value="${item.employer_ss}" data-id="${item.id}"></td><td>${fmt(item.gross*(1+item.employer_ss/100))}</td><td><button onclick="removeItem('${item.id}', 'personnel')">✕</button></td></tr>`;
+    if (type === 'socio') return `<tr>${base}<td><input type="number" value="${item.aportacion}" data-id="${item.id}"></td><td><button onclick="removeItem('${item.id}', 'finance', item.name.includes('Socio')?'socios':'capitalistas')">✕</button></td></tr>`;
   }).join('');
 
-  // Añadir event listeners
-  container.querySelectorAll('input[data-id]').forEach(input => {
-    input.addEventListener('input', handleFieldChange);
+  container.querySelectorAll('input').forEach(input => {
+    input.addEventListener('input', e => {
+      const item = findItem(e.target.dataset.id);
+      if (item) item[e.target.previousElementSibling?.textContent ? 'name' : e.target.type === 'number' ? 'cost' : 'name'] = safeNum(e.target.value);
+      updateAll();
+    });
   });
 }
 
-function handleFieldChange(e) {
-  const target = e.target;
-  const id = target.dataset.id;
-  const field = target.dataset.field;
-  const value = target.type === 'number' ? safeNum(target.value) : target.value;
-
-  // Buscar y actualizar en todos los arrays del state
-  updateStateItem(id, field, value);
-  updateAllCalculations();
+function findItem(id) {
+  return [...Object.values(state.amortizables).flat(), ...Object.values(state.recurrings).flat(), ...state.personnel, ...state.finance.socios, ...state.finance.capitalistas].find(x => x.id === id);
 }
 
-function updateStateItem(id, field, value) {
-  // Buscar en amortizables
-  for (const [categoria, items] of Object.entries(state.amortizables)) {
-    const item = items.find(x => x.id === id);
-    if (item) { item[field] = value; return; }
-  }
+// ===== ACTUALIZACIÓN GLOBAL (10 líneas) =====
+function updateAll() {
+  const { costesOp, necesidades, aportaciones, prestamo, cuotaAnual } = calcularFinanciacion();
+  const { facturacion, precioHora } = calcularPricing();
   
-  // Buscar en recurrentes
-  for (const [categoria, items] of Object.entries(state.recurrings)) {
-    const item = items.find(x => x.id === id);
-    if (item) { item[field] = value; return; }
-  }
-  
-  // Buscar en personal
-  const employee = state.personnel.find(x => x.id === id);
-  if (employee) { employee[field] = value; return; }
-  
-  // Buscar en financiación
-  const socio = state.finance.socios.find(x => x.id === id);
-  if (socio) { socio[field] = value; return; }
-  
-  const capitalista = state.finance.capitalistas.find(x => x.id === id);
-  if (capitalista) { capitalista[field] = value; return; }
+  // Actualizar Panel 6
+  document.getElementById('total-necesidades')?.textContent = fmt(necesidades);
+  document.getElementById('financiacion-propia')?.textContent = fmt(aportaciones);
+  document.getElementById('prestamo-necesario')?.textContent = fmt(prestamo);
+  document.getElementById('cuota-anual')?.textContent = fmt(cuotaAnual);
 }
 
-/* ===========================
-   CONFIGURACIÓN DEL SISTEMA
-   =========================== */
-
-function initializeEventListeners() {
-  // Inputs de pricing
-  ['target-profit-margin', 'corporate-tax', 'employee-count', 'annual-hours-per-employee'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.addEventListener('input', updateAllCalculations);
+// ===== INICIALIZACIÓN (10 líneas) =====
+function init() {
+  // Datos de ejemplo
+  state.amortizables.lokala.push({id:uid(), name:'Mobiliario', cost:15000, life:10});
+  state.recurrings.lokala.push({id:uid(), name:'Alquiler', payment_cost:1200, frequency:12});
+  state.personnel.push({id:uid(), role:'Diseñador', gross:35000, employer_ss:30});
+  state.finance.socios.push({id:uid(), name:'Socio 1', aportacion:50000});
+  
+  // Event listeners
+  ['target-profit-margin','employee-count','annual-hours-per-employee','prestamo-tae','prestamo-plazo'].forEach(id => {
+    document.getElementById(id)?.addEventListener('input', updateAll);
   });
-
-  // Inputs de financiación
-  ['prestamo-tae', 'prestamo-plazo'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) {
-      el.addEventListener('input', function() {
-        state.finance.prestamo[this.id.replace('prestamo-', '')] = safeNum(this.value);
-        updateAllCalculations();
-      });
-    }
-  });
+  
+  renderAll(); updateAll();
 }
 
-function loadSampleData() {
-  // Datos de ejemplo realistas
-  state.amortizables.lokala = [{
-    id: uid(), name: 'Mobiliario Oficina', cost: 15000, life: 10, category: 'lokala'
-  }];
-  
-  state.recurrings.lokala = [{
-    id: uid(), name: 'Alquiler Mensual', payment_cost: 1200, frequency: 12, category: 'lokala'
-  }];
-  
-  state.personnel = [{
-    id: uid(), role: 'Diseñador Senior', gross: 35000, employer_ss: 30
-  }];
-  
-  state.finance.socios = [{
-    id: uid(), name: 'Socio Fundador', aportacion: 50000
-  }];
-
-  renderTables();
-  renderFinanceTables();
-}
-
-/* ===========================
-   INICIALIZACIÓN
-   =========================== */
-
-function initializeApp() {
-  console.log("🎯 Inicializando Motor Financiero IDarte...");
-  
-  loadSampleData();
-  initializeEventListeners();
-  updateAllCalculations();
-  
-  console.log("✅ IDarte completamente operativo");
-}
-
-// Iniciar aplicación
-window.addEventListener('load', initializeApp);
+window.addEventListener('load', init);

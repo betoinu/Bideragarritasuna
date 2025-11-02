@@ -93,11 +93,63 @@ function updateStaticTexts() {
         const title = document.querySelector(`#${panelId} h2`);
         if (title) title.textContent = getTranslation(translationKey);
     });
+
+    // Actualizar subtítulos y secciones dentro de paneles
+    updatePanelSections();
     
-    // Actualizar textos de botones específicos
+    // Actualizar textos de botones
+    updateButtons();
+    
+    // Actualizar textos de formularios
+    updateFormLabels();
+    
+    // Actualizar textos de tablas
+    updateTableHeaders();
+    
+    // Actualizar sidebar
+    updateSidebar();
+    
+    // Actualizar textos de ayuda
+    updateHelpTexts();
+}
+
+function updatePanelSections() {
+    // Panel 1 - Lokala
+    const lokalaAmort = document.querySelector('#lokala-sheet h3:nth-child(2)');
+    if (lokalaAmort) lokalaAmort.textContent = getTranslation('panel.lokal.amortizables');
+    
+    const lokalaGastos = document.querySelector('#lokala-sheet h3:nth-child(4)');
+    if (lokalaGastos) lokalaGastos.textContent = getTranslation('panel.lokal.gastos');
+
+    // Panel 4 - Garraioa
+    const garraioaAmort = document.querySelector('#garraioa-sheet h3:nth-child(2)');
+    if (garraioaAmort) garraioaAmort.textContent = getTranslation('panel.garraioa.amortizables');
+    
+    const garraioaGastos = document.querySelector('#garraioa-sheet h3:nth-child(4)');
+    if (garraioaGastos) garraioaGastos.textContent = getTranslation('panel.garraioa.gastos');
+
+    // Panel 6 - Finantzaketa
+    const financeSections = document.querySelectorAll('#finantzaketa-sheet h3');
+    if (financeSections.length >= 1) {
+        financeSections[0].textContent = getTranslation('finance.inversiones');
+    }
+    if (financeSections.length >= 2) {
+        financeSections[1].textContent = getTranslation('finance.bazkideEkarpenak');
+    }
+    if (financeSections.length >= 3) {
+        financeSections[2].textContent = getTranslation('finance.kanpokoFinantzaketa');
+    }
+
+    // Panel 7 - Prezioa
+    const pricingTitle = document.querySelector('#prezioa-sheet h4');
+    if (pricingTitle) pricingTitle.textContent = getTranslation('pricing.nolaKalkulatzen');
+}
+
+function updateButtons() {
     const buttons = document.querySelectorAll('.btn.small');
     buttons.forEach(btn => {
-        if (btn.textContent.includes('+ Gehitu') || btn.textContent.includes('+ Añadir') || btn.textContent.includes('+ Add')) {
+        const btnText = btn.textContent.trim();
+        if (btnText.includes('+') || btnText === '+ Gehitu' || btnText === '+ Añadir' || btnText === '+ Add') {
             if (btn.onclick && btn.onclick.toString().includes('addAmortizable')) {
                 btn.textContent = getTranslation('button.addAmortizable');
             } else if (btn.onclick && btn.onclick.toString().includes('addRecurring')) {
@@ -110,11 +162,23 @@ function updateStaticTexts() {
                 btn.textContent = getTranslation('button.add');
             }
         }
-        if (btn.textContent.includes('- Kendu') || btn.textContent.includes('- Quitar') || btn.textContent.includes('- Remove')) {
+        if (btnText.includes('-') || btnText === '- Kendu Bazkidea' || btnText === '- Quitar Socio' || btnText === '- Remove Partner') {
             btn.textContent = getTranslation('button.removeSocio');
         }
+        if (btnText === '✕') {
+            btn.textContent = getTranslation('button.remove');
+        }
     });
+}
+
+function updateFormLabels() {
+    // Actualizar labels de formularios
+    const mesesTesoreriaLabel = document.querySelector('label[for="meses-tesoreria"]');
+    if (mesesTesoreriaLabel) mesesTesoreriaLabel.textContent = getTranslation('form.mesesTesoreria');
     
+    const mesesTesoreriaHelp = document.querySelector('#meses-tesoreria + small');
+    if (mesesTesoreriaHelp) mesesTesoreriaHelp.textContent = getTranslation('form.mesesTesoreriaHelp');
+
     // Actualizar opciones del selector de tipos de socio
     document.querySelectorAll('select[data-field="tipo"] option').forEach(option => {
         if (option.value === 'trabajador') {
@@ -123,8 +187,53 @@ function updateStaticTexts() {
             option.textContent = getTranslation('socio.capitalista');
         }
     });
+
+    // Actualizar opciones del selector de tipos de préstamo
+    const loanOptions = document.querySelectorAll('#tipo-prestamo option');
+    if (loanOptions.length >= 1) {
+        loanOptions[0].textContent = getTranslation('form.maileguEstandarra');
+    }
+    if (loanOptions.length >= 2) {
+        loanOptions[1].textContent = getTranslation('form.maileguHipotekario');
+    }
 }
 
+function updateTableHeaders() {
+    // Actualizar encabezados de tablas
+    const tables = document.querySelectorAll('table.data thead th');
+    tables.forEach(th => {
+        const text = th.textContent.trim();
+        if (text === 'Kontzeptua' || text === 'Concepto' || text === 'Concept') {
+            th.textContent = getTranslation('table.concepto');
+        } else if (text.includes('Kostua') || text.includes('Coste') || text.includes('Cost')) {
+            th.textContent = getTranslation('table.coste');
+        }
+        // ... añadir más mapeos según necesites
+    });
+}
+
+function updateSidebar() {
+    // Actualizar textos del sidebar
+    const sidebarTitles = document.querySelectorAll('.card h4');
+    sidebarTitles.forEach(title => {
+        const text = title.textContent.trim();
+        if (text === 'Urteko Fakturazioa Beharrezkoa' || text === 'Facturación Anual Necesaria' || text === 'Required Annual Revenue') {
+            title.textContent = getTranslation('sidebar.facturacion');
+        }
+        // ... añadir más mapeos
+    });
+}
+
+function updateHelpTexts() {
+    // Actualizar textos de ayuda
+    const helpTexts = document.querySelectorAll('small');
+    helpTexts.forEach(small => {
+        const text = small.textContent.trim();
+        if (text.includes('Normalean %10-%20') || text.includes('Normalmente 10%-20%') || text.includes('Normally 10%-20%')) {
+            small.textContent = getTranslation('help.kutxaInfo');
+        }
+    });
+}
 
 // ===== CONFIGURACIÓN DEL SELECTOR DE IDIOMA =====
 function setupLanguageSelector() {

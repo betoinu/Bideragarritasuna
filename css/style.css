@@ -62,17 +62,6 @@ aside.sidebar{position:sticky;top:28px;height:fit-content;align-self:start;backg
 footer.siteinfo{margin-top:18px;text-align:center;color:var(--muted);font-size:13px}
 @media (max-width:1000px){main.stage{grid-template-columns:1fr}aside.sidebar{position:relative;border-left:6px solid var(--id-primary)}}
 .muted{color:var(--muted)}
-
-/* === COMPONENTES SIDEBAR (sin cambios de estilo) === */
-.facturacion-desglose{margin-top:15px;padding-top:15px;border-top:1px solid rgba(15,23,42,0.04)}
-.desglose-item{display:flex;justify-content:space-between;margin-bottom:8px;font-size:0.9em}
-.desglose-label{color:var(--muted)}
-.desglose-value{font-weight:600;color:#111827}
-.cost-breakdown{margin-top:10px}
-.cost-item{display:flex;justify-content:space-between;margin-bottom:6px;font-size:0.85em;color:var(--muted)}
-.cost-item span:last-child{font-weight:600;color:#111827}
-
-/* === COMPONENTES EXISTENTES (manteniendo formato original) === */
 .pill{display:inline-block;padding:6px 8px;border-radius:999px;font-weight:700;font-size:12px}
 .color-swatch{width:36px;height:36px;border-radius:8px;border:1px solid rgba(0,0,0,0.06)}
 .grid-small{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
@@ -81,24 +70,146 @@ table.min-w{width:100%;border-collapse:collapse}
 table.min-w td, table.min-w th{padding:8px;border-top:1px solid #f1f5f9}
 input[type=number], input[type=text], select{padding:10px;border-radius:8px;border:1px solid #e6edf3}
 
-/* === CABECERA IDARTE (manteniendo formato original) === */
-header.brand{display:flex;align-items:center;justify-content:space-between;gap:1.5rem;flex-wrap:wrap;padding:10px 0}
-.logo{display:flex;align-items:center;justify-content:center;height:auto;min-height:unset;padding-left:12px}
-img{overflow:visible !important;max-width:100%;height:auto}
-.tabs{display:flex;flex-wrap:nowrap;overflow-x:auto;gap:4px}
-.tabs button{flex:1 1 auto;white-space:nowrap;padding:8px 12px;min-width:120px;text-align:center}
-.tabs{scroll-behavior:smooth;scrollbar-width:thin;scrollbar-color:#ccc transparent}
-.idarte-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin-top:12px;align-items:center}
-.idarte-grid img{width:100%;height:auto;border-radius:8px;object-fit:contain}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;align-items:center;margin-top:12px;max-width:600px}
-.form-grid label{font-weight:500;text-align:right;padding-right:8px}
-.form-grid input{width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:6px;font-size:1rem}
-@media (max-width:600px){.form-grid{grid-template-columns:1fr}.form-grid label{text-align:left;padding-right:0}}
-.idarte-logo{filter:brightness(0) saturate(100%) invert(21%) sepia(95%) saturate(6800%) hue-rotate(253deg) brightness(94%) contrast(107%)}
-.tab{cursor:pointer;border:1px solid rgba(15,23,42,0.04);background:linear-gradient(180deg, rgba(16,24,40,0.03), rgba(16,24,40,0.01));padding:10px 12px;border-radius:10px;font-weight:700;font-size:13px;transition:all 0.2s ease}
-.tab.active{background:white;border-left:4px solid var(--id-primary);box-shadow:0 8px 18px rgba(83,12,237,0.06)}
-.panel{animation:fadeIn 0.3s ease}
-@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+/* === CABECERA IDARTE ARMONIZADA === */
+header.brand {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  padding: 10px 0;
+}
 
-/* === RESPONSIVE SIDEBAR (manteniendo formato original) === */
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: auto;
+  min-height: unset;
+  padding-left: 12px;
+}
+
+img {
+  overflow: visible !important;
+  max-width: 100%;
+  height: auto;
+}
+.tabs {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: 4px;
+}
+
+.tabs button {
+  flex: 1 1 auto;
+  white-space: nowrap;
+  padding: 8px 12px;
+  min-width: 120px;
+  text-align: center;
+}
+.tabs {
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: #ccc transparent;
+}
+.idarte-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+  align-items: center;
+}
+
+.idarte-grid img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  object-fit: contain;
+}
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 16px;
+  align-items: center;
+  margin-top: 12px;
+  max-width: 600px;
+}
+
+.form-grid label {
+  font-weight: 500;
+  text-align: right;
+  padding-right: 8px;
+}
+
+.form-grid input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+@media (max-width: 600px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-grid label {
+    text-align: left;
+    padding-right: 0;
+  }
+}
+.idarte-logo {
+  filter: brightness(0) saturate(100%) invert(21%) sepia(95%) saturate(6800%) hue-rotate(253deg) brightness(94%) contrast(107%);
+}
+
+.tab {
+  cursor: pointer;
+  border: 1px solid rgba(15,23,42,0.04);
+  background: linear-gradient(180deg, rgba(16,24,40,0.03), rgba(16,24,40,0.01));
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 13px;
+  transition: all 0.2s ease;
+}
+
+.tab.active {
+  background: white;
+  border-left: 4px solid var(--id-primary);
+  box-shadow: 0 8px 18px rgba(83,12,237,0.06);
+}
+.panel {
+  animation: fadeIn 0.3s ease;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* === DETALLE GRÁFICO IDARTE EN SIDEBAR === */
+.idarte-graphic {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+
+.idarte-graphic img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  opacity: 0.9;
+}
+
+/* === COMPONENTES SIDEBAR === */
+.facturacion-desglose{margin-top:15px;padding-top:15px;border-top:1px solid rgba(15,23,42,0.04)}
+.desglose-item{display:flex;justify-content:space-between;margin-bottom:8px;font-size:0.9em}
+.desglose-label{color:var(--muted)}
+.desglose-value{font-weight:600;color:#111827}
+.cost-breakdown{margin-top:10px}
+.cost-item{display:flex;justify-content:space-between;margin-bottom:6px;font-size:0.85em;color:var(--muted)}
+.cost-item span:last-child{font-weight:600;color:#111827}
+
+/* === RESPONSIVE SIDEBAR === */
 @media (max-width:768px){.desglose-item{flex-direction:column;align-items:flex-start}.desglose-value{margin-top:2px}}

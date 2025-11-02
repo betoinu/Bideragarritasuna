@@ -255,3 +255,71 @@ img {
         margin-top: 2px;
     }
 }
+/* === SIDEBAR MEJORADO - SIMPLIFICADO === */
+
+/* Eliminar marcos especiales y mantener estilo original */
+.sidebar .card.highlight,
+.sidebar .value.highlight-value {
+    /* Quitamos estilos especiales para que todo sea uniforme */
+}
+
+.sidebar .value {
+    font-size: 20px;
+    margin: 0;
+    font-weight: 800;
+    color: var(--id-primary);
+    text-align: center;
+}
+
+/* Desglose de facturación - estilo limpio */
+.facturacion-desglose {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(15,23,42,0.04);
+}
+
+.desglose-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 0.9em;
+}
+
+.desglose-label {
+    color: var(--muted);
+}
+
+.desglose-value {
+    font-weight: 600;
+    color: #111827;
+}
+
+/* Desglose de costes */
+.cost-breakdown {
+    margin-top: 10px;
+}
+
+.cost-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    font-size: 0.85em;
+    color: var(--muted);
+}
+
+.cost-item span:last-child {
+    font-weight: 600;
+    color: #111827;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .desglose-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .desglose-value {
+        margin-top: 2px;
+    }
+}

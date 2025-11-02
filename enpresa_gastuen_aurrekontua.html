@@ -286,44 +286,75 @@
     </div>
 </div>
 
-                <!-- PANEL 7 · PREZIOA -->
+                <!-- PANEL 7 · LANORDUAREN PREZIOA ETA MOZKINAK -->
                 <div id="prezioa-sheet" class="panel" style="display:none">
-                    <h2>7 · Lanorduaren Prezioa eta Mozkinak</h2>
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-                        <div>
-                            <label for="corporate-tax">Sozietateen Zerga (%)</label>
-                            <input id="corporate-tax" type="number" value="25" oninput="actualizarCascada()" />
-                            <label for="target-profit-margin">Helburuko Mozkin (%)</label>
-                            <input id="target-profit-margin" type="number" value="20" oninput="actualizarCascada()" />
-                            <label for="employee-count">Langile kopurua</label>
-                            <input id="employee-count" type="number" value="2" oninput="actualizarCascada()" />
-                            <label for="annual-hours-per-employee">Urteko orduak/lang</label>
-                            <input id="annual-hours-per-employee" type="number" value="1600" oninput="actualizarCascada()" />
-                        </div>
-                        <div>
-                            <div class="card">
-                                <h4>Urteko lan-orduak guzt.</h4>
-                                <p id="total-available-hours" class="value">0</p>
-                            </div>
-                            <div class="card">
-                                <h4>Gomendatutako orduko prezioa</h4>
-                                <p id="suggested-hourly-rate" class="value">€ 0.00</p>
-                            </div>
-                            <div class="card">
-                                <h4>Espero den mozkin garbia</h4>
-                                <p id="expected-net-profit" class="value">€ 0.00</p>
-                            </div>
-                            <div class="card">
-                                <h4>Fakturazio beharrezkoa</h4>
-                                <p id="required-annual-revenue" class="value">€ 0.00</p>
-                            </div>
-                            <div class="card">
-                                <h4>Mozkin Gordina</h4>
-                                <p id="margen-bruto-panel7" class="value">€ 0.00</p>
-                            </div>
-                        </div>
+    <h2>7 · Lanorduaren Prezioa eta Mozkinak</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div>
+            <label for="corporate-tax">Sozietateen Zerga (%)</label>
+            <input id="corporate-tax" type="number" value="25" oninput="actualizarCascada()" />
+            
+            <label for="target-profit-margin">Helburuko Mozkin Gordina (%)</label>
+            <input id="target-profit-margin" type="number" value="20" oninput="actualizarCascada()" />
+            
+            <label for="employee-count">Langile kopurua</label>
+            <input id="employee-count" type="number" value="2" oninput="actualizarCascada()" />
+            
+            <label for="annual-hours-per-employee">Urteko orduak/lang</label>
+            <input id="annual-hours-per-employee" type="number" value="1600" oninput="actualizarCascada()" />
+        </div>
+        <div>
+            <!-- DESGLOSE PEDAGÓGICO -->
+            <div class="card" style="background:#f8f9fa">
+                <h4>Nola kalkulatzen da orduko prezioa?</h4>
+                <div class="desglose-pedagogico">
+                    <div class="desglose-linea">
+                        <span>Gastu Operatiboak:</span>
+                        <span id="desglose-gastos-operativos">€ 0.00</span>
+                    </div>
+                    <div class="desglose-linea">
+                        <span>+ Finantzaketa Kostuak:</span>
+                        <span id="desglose-costes-financieros">€ 0.00</span>
+                    </div>
+                    <div class="desglose-linea" style="border-top:1px solid #ddd;padding-top:8px">
+                        <span><strong>Gastu Totalak:</strong></span>
+                        <span id="desglose-gastos-totales"><strong>€ 0.00</strong></span>
+                    </div>
+                    <div class="desglose-linea">
+                        <span>+ Mozkin Gordina (<span id="desglose-porcentaje-margen">20</span>%):</span>
+                        <span id="desglose-margen-bruto">€ 0.00</span>
+                    </div>
+                    <div class="desglose-linea" style="border-top:1px solid #ddd;padding-top:8px">
+                        <span><strong>Fakturazio Totala:</strong></span>
+                        <span id="desglose-facturacion-total"><strong>€ 0.00</strong></span>
+                    </div>
+                    <div class="desglose-linea">
+                        <span>÷ Urteko Orduak (<span id="desglose-total-horas">0</span>h):</span>
+                        <span></span>
+                    </div>
+                    <div class="desglose-linea" style="border-top:2px solid #333;padding-top:8px">
+                        <span><strong>Orduko Prezioa:</strong></span>
+                        <span id="desglose-precio-hora"><strong>€ 0.00</strong></span>
                     </div>
                 </div>
+            </div>
+
+            <!-- RESUMEN ACTUAL (mantener compatibilidad) -->
+            <div class="card">
+                <h4>Gomendatutako orduko prezioa</h4>
+                <p id="suggested-hourly-rate" class="value">€ 0.00</p>
+            </div>
+            <div class="card">
+                <h4>Mozkin Gordina (Zergak aurre)</h4>
+                <p id="margen-bruto-panel7" class="value">€ 0.00</p>
+            </div>
+            <div class="card">
+                <h4>Fakturazio beharrezkoa</h4>
+                <p id="required-annual-revenue" class="value">€ 0.00</p>
+            </div>
+        </div>
+    </div>
+</div>
             </section>
 
        <!-- COLUMNA DERECHA -->

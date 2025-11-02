@@ -107,7 +107,7 @@ async function loadTranslations() {
                 "sidebar.financingSummary": "Finantzaketaren Laburpena",
                 "sidebar.totalInvestment": "Inbertsio Totala",
                 "sidebar.partnerContributions": "Bazkide Ekarpenak",
-                "sidebar.loanNeeded": "Mailegu Beharrezkoa"
+                "sidebar.loanNeeded": "Mailegu Beharrezkoa",
                 "button.remove": "✕"
             },
             "es": {
@@ -153,7 +153,7 @@ async function loadTranslations() {
                 "sidebar.financingSummary": "Resumen de Financiación",
                 "sidebar.totalInvestment": "Inversión Total",
                 "sidebar.partnerContributions": "Aportaciones Socios",
-                "sidebar.loanNeeded": "Préstamo Necesario"
+                "sidebar.loanNeeded": "Préstamo Necesario",
                 "button.remove": "✕"
             }
         };

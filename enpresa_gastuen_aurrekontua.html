@@ -3,64 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel de Control - Dashboard Completo</title>
+    <title>Panel de Control - IDarte</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary-color: #3498db;
-            --secondary-color: #2c3e50;
-            --accent-color: #e74c3c;
-            --success-color: #2ecc71;
-            --warning-color: #f39c12;
-            --light-color: #ecf0f1;
-            --dark-color: #34495e;
-            --sidebar-width: 250px;
-            --header-height: 60px;
+            --primary-color: #1a237e;
+            --secondary-color: #3949ab;
+            --accent-color: #e53935;
+            --success-color: #43a047;
+            --warning-color: #ffb300;
+            --light-color: #f5f5f5;
+            --dark-color: #121212;
+            --sidebar-width: 280px;
+            --header-height: 70px;
         }
         
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', sans-serif;
         }
         
         body {
             display: flex;
             min-height: 100vh;
-            background-color: #f5f7fa;
+            background-color: #f8f9fa;
             color: #333;
         }
         
         /* Sidebar Styles */
         .sidebar {
             width: var(--sidebar-width);
-            background: linear-gradient(to bottom, var(--secondary-color), var(--dark-color));
+            background: linear-gradient(180deg, var(--primary-color) 0%, var(--secondary-color) 100%);
             color: white;
             height: 100vh;
             position: fixed;
             overflow-y: auto;
             transition: all 0.3s;
             z-index: 1000;
+            box-shadow: 3px 0 10px rgba(0, 0, 0, 0.1);
         }
         
         .sidebar-header {
-            padding: 20px;
+            padding: 25px 20px;
             text-align: center;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+        
+        .logo {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #ffeb3b, #ff9800);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-weight: bold;
+            color: var(--primary-color);
+            font-size: 1.5rem;
         }
         
         .sidebar-header h2 {
-            font-size: 1.5rem;
+            font-size: 1.6rem;
+            font-weight: 700;
             margin-bottom: 5px;
         }
         
         .sidebar-header p {
-            font-size: 0.8rem;
-            opacity: 0.7;
+            font-size: 0.85rem;
+            opacity: 0.8;
+            font-weight: 300;
         }
         
         .sidebar-menu {
-            padding: 15px 0;
+            padding: 20px 0;
         }
         
         .sidebar-menu ul {
@@ -74,38 +101,42 @@
         .sidebar-menu a {
             display: flex;
             align-items: center;
-            padding: 12px 20px;
+            padding: 14px 25px;
             color: white;
             text-decoration: none;
             transition: all 0.3s;
+            font-weight: 500;
         }
         
         .sidebar-menu a:hover, .sidebar-menu a.active {
-            background-color: rgba(255, 255, 255, 0.1);
-            border-left: 4px solid var(--primary-color);
+            background-color: rgba(255, 255, 255, 0.15);
+            border-left: 4px solid #ffeb3b;
         }
         
         .sidebar-menu i {
-            margin-right: 10px;
+            margin-right: 12px;
             font-size: 1.2rem;
+            width: 20px;
+            text-align: center;
         }
         
         .sidebar-footer {
             position: absolute;
             bottom: 0;
             width: 100%;
-            padding: 15px;
+            padding: 20px;
             text-align: center;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             font-size: 0.8rem;
             opacity: 0.7;
+            background-color: rgba(0, 0, 0, 0.1);
         }
         
         /* Main Content Styles */
         .main-content {
             flex: 1;
             margin-left: var(--sidebar-width);
-            padding: 20px;
+            padding: 25px;
             transition: all 0.3s;
         }
         
@@ -114,73 +145,115 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 30px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #ddd;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e0e0e0;
         }
         
         .header h1 {
-            font-size: 1.8rem;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+        }
+        
+        .header h1 i {
+            margin-right: 12px;
             color: var(--secondary-color);
         }
         
         .user-info {
             display: flex;
             align-items: center;
+            background: white;
+            padding: 10px 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
         }
         
         .user-info img {
-            width: 40px;
-            height: 40px;
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
-            margin-right: 10px;
+            margin-right: 12px;
+            border: 2px solid var(--secondary-color);
+        }
+        
+        .user-details {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .user-name {
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+        
+        .user-role {
+            font-size: 0.85rem;
+            color: #666;
         }
         
         /* Dashboard Grid */
         .dashboard-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
+            gap: 25px;
             margin-bottom: 30px;
         }
         
         .card {
             background: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            transition: transform 0.3s;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 25px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border-left: 4px solid var(--primary-color);
         }
         
         .card:hover {
             transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
         }
         
         .card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 18px;
         }
         
         .card-title {
-            font-size: 1.2rem;
+            font-size: 1.25rem;
             font-weight: 600;
             color: var(--secondary-color);
         }
         
         .card-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 1.2rem;
+            font-size: 1.4rem;
         }
         
         .card-content {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .card-content h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--dark-color);
+        }
+        
+        .card-content p {
+            color: #666;
+            font-size: 0.95rem;
         }
         
         .card-footer {
@@ -189,66 +262,97 @@
             align-items: center;
             font-size: 0.9rem;
             color: #777;
+            padding-top: 15px;
+            border-top: 1px solid #f0f0f0;
         }
         
         /* Panel 6 Styles - Mejorado */
         .panel-6 {
             grid-column: span 2;
             background: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 25px;
             margin-bottom: 30px;
+            border-left: 4px solid var(--accent-color);
         }
         
         .panel-6-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
         
         .panel-6-title {
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: var(--secondary-color);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+        }
+        
+        .panel-6-title i {
+            margin-right: 10px;
+            color: var(--accent-color);
         }
         
         .panel-6-controls {
             display: flex;
-            gap: 10px;
+            gap: 12px;
         }
         
         .panel-6-controls button {
-            background: var(--primary-color);
+            background: var(--secondary-color);
             color: white;
             border: none;
-            padding: 8px 15px;
-            border-radius: 4px;
+            padding: 10px 18px;
+            border-radius: 6px;
             cursor: pointer;
             transition: background 0.3s;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         
         .panel-6-controls button:hover {
-            background: #2980b9;
+            background: var(--primary-color);
+        }
+        
+        .panel-6-controls button.export {
+            background: var(--success-color);
+        }
+        
+        .panel-6-controls button.export:hover {
+            background: #388e3c;
         }
         
         .panel-6-content {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 20px;
+            gap: 25px;
         }
         
         .data-section {
             background: #f8f9fa;
-            padding: 15px;
-            border-radius: 6px;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #e9ecef;
         }
         
         .data-section h3 {
-            margin-bottom: 10px;
-            font-size: 1.1rem;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            font-weight: 600;
             color: var(--secondary-color);
+            display: flex;
+            align-items: center;
+        }
+        
+        .data-section h3 i {
+            margin-right: 8px;
+            color: var(--primary-color);
         }
         
         .data-list {
@@ -256,31 +360,88 @@
         }
         
         .data-list li {
-            padding: 8px 0;
-            border-bottom: 1px solid #eee;
+            padding: 12px 0;
+            border-bottom: 1px solid #e9ecef;
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
         }
         
         .data-list li:last-child {
             border-bottom: none;
         }
         
+        .data-item-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        
         .progress-bar {
-            height: 8px;
+            height: 10px;
             background: #e0e0e0;
-            border-radius: 4px;
-            margin-top: 5px;
+            border-radius: 5px;
             overflow: hidden;
         }
         
         .progress {
             height: 100%;
-            background: var(--primary-color);
-            border-radius: 4px;
+            border-radius: 5px;
+        }
+        
+        /* Galería de Imágenes */
+        .gallery-section {
+            margin-top: 30px;
+        }
+        
+        .gallery-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .gallery-title i {
+            margin-right: 10px;
+            color: var(--accent-color);
+        }
+        
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .gallery-item {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+            height: 180px;
+        }
+        
+        .gallery-item:hover {
+            transform: scale(1.03);
+        }
+        
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
         
         /* Responsive */
+        @media (max-width: 1200px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .panel-6 {
+                grid-column: span 2;
+            }
+        }
+        
         @media (max-width: 992px) {
             .dashboard-grid {
                 grid-template-columns: 1fr;
@@ -305,6 +466,14 @@
                 display: none;
             }
             
+            .logo-container {
+                justify-content: center;
+            }
+            
+            .logo {
+                margin-right: 0;
+            }
+            
             .sidebar-menu a {
                 justify-content: center;
                 padding: 15px;
@@ -317,17 +486,55 @@
             
             .main-content {
                 margin-left: 70px;
+                padding: 15px;
+            }
+            
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .user-info {
+                align-self: flex-end;
+            }
+            
+            .panel-6-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .panel-6-controls {
+                align-self: flex-end;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+            
+            .user-info {
+                padding: 8px 12px;
+            }
+            
+            .user-info img {
+                width: 35px;
+                height: 35px;
             }
         }
     </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="sidebar-header">
-            <h2>Panel de Control</h2>
-            <p>Administración General</p>
+            <div class="logo-container">
+                <div class="logo">ID</div>
+                <h2>IDarte</h2>
+            </div>
+            <p>Panel de Control Corporativo</p>
         </div>
         
         <div class="sidebar-menu">
@@ -335,25 +542,28 @@
                 <li><a href="#" class="active"><i class="fas fa-home"></i> <span>Dashboard</span></a></li>
                 <li><a href="#"><i class="fas fa-chart-bar"></i> <span>Estadísticas</span></a></li>
                 <li><a href="#"><i class="fas fa-users"></i> <span>Usuarios</span></a></li>
+                <li><a href="#"><i class="fas fa-palette"></i> <span>Proyectos</span></a></li>
                 <li><a href="#"><i class="fas fa-cog"></i> <span>Configuración</span></a></li>
                 <li><a href="#"><i class="fas fa-file-alt"></i> <span>Reportes</span></a></li>
                 <li><a href="#"><i class="fas fa-bell"></i> <span>Notificaciones</span></a></li>
-                <li><a href="#"><i class="fas fa-question-circle"></i> <span>Ayuda</span></a></li>
             </ul>
         </div>
         
         <div class="sidebar-footer">
-            <p>Versión 2.1.5</p>
+            <p>IDarte v3.2.1 &copy; 2023</p>
         </div>
     </div>
     
     <!-- Main Content -->
     <div class="main-content">
         <div class="header">
-            <h1>Dashboard Principal</h1>
+            <h1><i class="fas fa-tachometer-alt"></i> Dashboard Principal</h1>
             <div class="user-info">
-                <img src="https://ui-avatars.com/api/?name=Usuario+Demo&background=3498db&color=fff" alt="Usuario">
-                <span>Usuario Demo</span>
+                <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80" alt="Usuario">
+                <div class="user-details">
+                    <span class="user-name">Alex Rodríguez</span>
+                    <span class="user-role">Director Creativo</span>
+                </div>
             </div>
         </div>
         
@@ -362,54 +572,54 @@
             <!-- Card 1 -->
             <div class="card">
                 <div class="card-header">
-                    <div class="card-title">Ventas Totales</div>
+                    <div class="card-title">Proyectos Activos</div>
                     <div class="card-icon" style="background-color: var(--primary-color);">
-                        <i class="fas fa-shopping-cart"></i>
+                        <i class="fas fa-palette"></i>
                     </div>
                 </div>
                 <div class="card-content">
-                    <h3>$24,580</h3>
-                    <p>+12.5% respecto al mes anterior</p>
+                    <h3>18</h3>
+                    <p>+3 nuevos este mes</p>
                 </div>
                 <div class="card-footer">
                     <span>Actualizado hoy</span>
-                    <span><i class="fas fa-arrow-up" style="color: var(--success-color);"></i> 12.5%</span>
+                    <span><i class="fas fa-arrow-up" style="color: var(--success-color);"></i> 20%</span>
                 </div>
             </div>
             
             <!-- Card 2 -->
             <div class="card">
                 <div class="card-header">
-                    <div class="card-title">Usuarios Activos</div>
+                    <div class="card-title">Clientes Satisfechos</div>
                     <div class="card-icon" style="background-color: var(--success-color);">
-                        <i class="fas fa-users"></i>
+                        <i class="fas fa-smile"></i>
                     </div>
                 </div>
                 <div class="card-content">
-                    <h3>1,248</h3>
-                    <p>+32 nuevos usuarios esta semana</p>
+                    <h3>94%</h3>
+                    <p>+2% respecto al trimestre anterior</p>
                 </div>
                 <div class="card-footer">
-                    <span>Última actualización: hace 2h</span>
-                    <span><i class="fas fa-arrow-up" style="color: var(--success-color);"></i> 2.6%</span>
+                    <span>Encuesta Q3 2023</span>
+                    <span><i class="fas fa-arrow-up" style="color: var(--success-color);"></i> 2%</span>
                 </div>
             </div>
             
             <!-- Card 3 -->
             <div class="card">
                 <div class="card-header">
-                    <div class="card-title">Tasa de Conversión</div>
+                    <div class="card-title">Presupuesto Utilizado</div>
                     <div class="card-icon" style="background-color: var(--warning-color);">
-                        <i class="fas fa-chart-line"></i>
+                        <i class="fas fa-coins"></i>
                     </div>
                 </div>
                 <div class="card-content">
-                    <h3>4.8%</h3>
-                    <p>+0.7% respecto al mes anterior</p>
+                    <h3>78%</h3>
+                    <p>Quedan $24,500 disponibles</p>
                 </div>
                 <div class="card-footer">
-                    <span>Actualizado hoy</span>
-                    <span><i class="fas fa-arrow-up" style="color: var(--success-color);"></i> 0.7%</span>
+                    <span>Presupuesto anual: $110,000</span>
+                    <span><i class="fas fa-chart-pie" style="color: var(--warning-color);"></i></span>
                 </div>
             </div>
             
@@ -422,12 +632,12 @@
                     </div>
                 </div>
                 <div class="card-content">
-                    <h3>3:42 min</h3>
-                    <p>-0.5 min respecto al mes anterior</p>
+                    <h3>12 días</h3>
+                    <p>Por proyecto entregado</p>
                 </div>
                 <div class="card-footer">
-                    <span>Actualizado hoy</span>
-                    <span><i class="fas fa-arrow-down" style="color: var(--accent-color);"></i> 0.5 min</span>
+                    <span>Meta: 10 días</span>
+                    <span><i class="fas fa-arrow-down" style="color: var(--accent-color);"></i> 2 días</span>
                 </div>
             </div>
         </div>
@@ -435,80 +645,115 @@
         <!-- Panel 6 Mejorado -->
         <div class="panel-6">
             <div class="panel-6-header">
-                <div class="panel-6-title">Métricas de Rendimiento</div>
+                <div class="panel-6-title"><i class="fas fa-chart-line"></i> Métricas de Rendimiento</div>
                 <div class="panel-6-controls">
                     <button><i class="fas fa-sync-alt"></i> Actualizar</button>
-                    <button><i class="fas fa-download"></i> Exportar</button>
+                    <button class="export"><i class="fas fa-download"></i> Exportar</button>
                 </div>
             </div>
             
             <div class="panel-6-content">
                 <div class="data-section">
-                    <h3>Rendimiento por Departamento</h3>
+                    <h3><i class="fas fa-users-cog"></i> Rendimiento por Equipo</h3>
                     <ul class="data-list">
                         <li>
-                            <span>Ventas</span>
-                            <span>92%</span>
+                            <div class="data-item-header">
+                                <span>Diseño Gráfico</span>
+                                <span>88%</span>
+                            </div>
                             <div class="progress-bar">
-                                <div class="progress" style="width: 92%;"></div>
+                                <div class="progress" style="width: 88%; background-color: var(--primary-color);"></div>
                             </div>
                         </li>
                         <li>
-                            <span>Marketing</span>
-                            <span>78%</span>
+                            <div class="data-item-header">
+                                <span>Desarrollo Web</span>
+                                <span>76%</span>
+                            </div>
                             <div class="progress-bar">
-                                <div class="progress" style="width: 78%;"></div>
+                                <div class="progress" style="width: 76%; background-color: var(--secondary-color);"></div>
                             </div>
                         </li>
                         <li>
-                            <span>Desarrollo</span>
-                            <span>85%</span>
+                            <div class="data-item-header">
+                                <span>Marketing Digital</span>
+                                <span>92%</span>
+                            </div>
                             <div class="progress-bar">
-                                <div class="progress" style="width: 85%;"></div>
+                                <div class="progress" style="width: 92%; background-color: var(--success-color);"></div>
                             </div>
                         </li>
                         <li>
-                            <span>Soporte</span>
-                            <span>88%</span>
+                            <div class="data-item-header">
+                                <span>Gestión de Proyectos</span>
+                                <span>81%</span>
+                            </div>
                             <div class="progress-bar">
-                                <div class="progress" style="width: 88%;"></div>
+                                <div class="progress" style="width: 81%; background-color: var(--warning-color);"></div>
                             </div>
                         </li>
                     </ul>
                 </div>
                 
                 <div class="data-section">
-                    <h3>Objetivos del Trimestre</h3>
+                    <h3><i class="fas fa-bullseye"></i> Objetivos del Trimestre</h3>
                     <ul class="data-list">
                         <li>
-                            <span>Ingresos</span>
-                            <span>$125K / $150K</span>
+                            <div class="data-item-header">
+                                <span>Nuevos Clientes</span>
+                                <span>24/30</span>
+                            </div>
                             <div class="progress-bar">
-                                <div class="progress" style="width: 83%;"></div>
+                                <div class="progress" style="width: 80%; background-color: var(--primary-color);"></div>
                             </div>
                         </li>
                         <li>
-                            <span>Nuevos Clientes</span>
-                            <span>240 / 300</span>
+                            <div class="data-item-header">
+                                <span>Proyectos Entregados</span>
+                                <span>18/25</span>
+                            </div>
                             <div class="progress-bar">
-                                <div class="progress" style="width: 80%;"></div>
+                                <div class="progress" style="width: 72%; background-color: var(--secondary-color);"></div>
                             </div>
                         </li>
                         <li>
-                            <span>Proyectos Completados</span>
-                            <span>18 / 25</span>
+                            <div class="data-item-header">
+                                <span>Ingresos Generados</span>
+                                <span>$98K/$120K</span>
+                            </div>
                             <div class="progress-bar">
-                                <div class="progress" style="width: 72%;"></div>
+                                <div class="progress" style="width: 82%; background-color: var(--success-color);"></div>
                             </div>
                         </li>
                         <li>
-                            <span>Satisfacción del Cliente</span>
-                            <span>4.7 / 5.0</span>
+                            <div class="data-item-header">
+                                <span>Certificaciones</span>
+                                <span>3/5</span>
+                            </div>
                             <div class="progress-bar">
-                                <div class="progress" style="width: 94%;"></div>
+                                <div class="progress" style="width: 60%; background-color: var(--warning-color);"></div>
                             </div>
                         </li>
                     </ul>
+                </div>
+            </div>
+            
+            <!-- Galería de Imágenes -->
+            <div class="gallery-section">
+                <h3 class="gallery-title"><i class="fas fa-images"></i> Galería de Proyectos Recientes</h3>
+                <div class="gallery-grid">
+                    <div class="gallery-item">
+                        <img src="https://images.unsplash.com/photo-1558655146-9f40138edfeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80" alt="Diseño Web">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="https://images.unsplash.com/photo-1561070791-2526d30994b5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80" alt="Identidad Corporativa">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="https://images.unsplash.com/photo-1565688534245-05d6b5be184a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80" alt="Diseño de App">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="https://images.unsplash.com/photo-1581276879432-15e50529f34b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80" alt="Marketing Digital">
+                    </div>
                 </div>
             </div>
         </div>
@@ -524,8 +769,8 @@
                     </div>
                 </div>
                 <div class="card-content">
-                    <h3>12</h3>
-                    <p>3 tareas con alta prioridad</p>
+                    <h3>7</h3>
+                    <p>2 tareas con alta prioridad</p>
                 </div>
                 <div class="card-footer">
                     <span>Ver todas las tareas</span>
@@ -536,14 +781,14 @@
             <!-- Card 6 -->
             <div class="card">
                 <div class="card-header">
-                    <div class="card-title">Solicitudes de Soporte</div>
-                    <div class="card-icon" style="background-color: var(--warning-color);">
+                    <div class="card-title">Solicitudes de Clientes</div>
+                    <div class="card-icon" style="background-color: var(--secondary-color);">
                         <i class="fas fa-headset"></i>
                     </div>
                 </div>
                 <div class="card-content">
-                    <h3>24</h3>
-                    <p>8 sin asignar</p>
+                    <h3>14</h3>
+                    <p>5 sin asignar</p>
                 </div>
                 <div class="card-footer">
                     <span>Ver solicitudes</span>
@@ -556,21 +801,22 @@
     <script>
         // Funcionalidad básica para el sidebar
         document.addEventListener('DOMContentLoaded', function() {
-            // Alternar sidebar en dispositivos móviles
-            const sidebar = document.querySelector('.sidebar');
-            const mainContent = document.querySelector('.main-content');
-            
             // Simular funcionalidad de botones en el panel 6
             const refreshBtn = document.querySelector('.panel-6-controls button:first-child');
-            const exportBtn = document.querySelector('.panel-6-controls button:last-child');
+            const exportBtn = document.querySelector('.panel-6-controls button.export');
             
             refreshBtn.addEventListener('click', function() {
-                alert('Actualizando datos...');
-                // En una implementación real, aquí se recargarían los datos
+                const icon = this.querySelector('i');
+                icon.className = 'fas fa-spinner fa-spin';
+                
+                setTimeout(() => {
+                    icon.className = 'fas fa-sync-alt';
+                    alert('Datos actualizados correctamente');
+                }, 1500);
             });
             
             exportBtn.addEventListener('click', function() {
-                alert('Exportando datos...');
+                alert('Iniciando descarga del reporte...');
                 // En una implementación real, aquí se exportarían los datos
             });
             
@@ -582,6 +828,19 @@
                     menuItems.forEach(i => i.classList.remove('active'));
                     this.classList.add('active');
                 });
+            });
+            
+            // Efecto de carga inicial
+            const cards = document.querySelectorAll('.card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'opacity 0.5s, transform 0.5s';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 100 * index);
             });
         });
     </script>

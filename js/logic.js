@@ -11,7 +11,7 @@ let translations = {};
 // Cargar traducciones desde el JSON
 async function loadTranslations() {
     try {
-        const response = await fetch('js/lang.json');
+        const response = await fetch('lang/lang.json');
         translations = await response.json();
         console.log("✅ Traducciones cargadas correctamente");
         applyTranslations();

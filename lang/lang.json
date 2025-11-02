@@ -4,7 +4,7 @@
     "header.subtitle": "BARNE DISEINU GRADUA - Neurketak eta Aurrekontuak",
     "button.download": "Deskargatu",
     "tab.lokal": "1 · Lokal",
-    "tab.pertsonala": "2 · Pertsonala",
+    "tab.pertsonala": "2 · Pertsonala", 
     "tab.ekoizpena": "3 · Ekoizpena",
     "tab.garraioa": "4 · Garraioa",
     "tab.hazkuntza": "5 · Hazkuntza",
@@ -15,9 +15,10 @@
     "contact.title": "Kontaktua",
     "contact.name": "Josu Ayerbe Guarás, Barne Diseinuko Graduko irakaslea",
     "contact.email": "josuayerbe@idarte.eus",
+    "contact.address": "Portal de Betoño, 23 · Vitoria-Gasteiz",
     "footer.note": "IDarte · Euskadiko Diseinu Eskola Publikoa — Escuela Pública de Diseño de Euskadi.",
     "loading": "Txostena prestatzen...",
-    
+
     "panel.lokal.title": "1 · Lokalaren Gastu Finkoak eta Inbertsioak",
     "panel.lokal.amortizables": "A) Inbertsio amortizagarriak",
     "panel.lokal.gastos": "B) Gastu finkoak",
@@ -29,7 +30,7 @@
     "panel.hazkuntza.title": "5 · Hazkuntza eta Garapen Gastuak",
     "panel.finantzaketa.title": "6 · Finantzaketa Estrategia",
     "panel.prezioa.title": "7 · Lanorduaren Prezioa eta Mozkinak",
-    
+
     "table.concepto": "Kontzeptua",
     "table.coste": "Kostua (€)",
     "table.amortizacion": "Amortizazio Urteak",
@@ -44,24 +45,32 @@
     "table.mota": "Mota",
     "table.kapitala": "Kapitala (€)",
     "table.ekintzak": "Ekintzak",
-    
+
     "button.add": "+ Gehitu",
-    "button.addAmortizable": "+ Gehitu Inbertsioa",
-    "button.addRecurring": "+ Gehitu Gastua",
+    "button.addAmortizable": "+ Gehitu",
+    "button.addRecurring": "+ Gehitu",
     "button.addPerson": "+ Gehitu Langilea",
     "button.addSocio": "+ Gehitu Bazkidea",
     "button.removeSocio": "- Kendu Bazkidea",
-    
+    "button.remove": "✕",
+
     "socio.trabajador": "Langile Bazkidea",
     "socio.capitalista": "Kapitalista Bazkidea",
-    
+
     "sidebar.facturacion": "Urteko Fakturazioa Beharrezkoa",
     "sidebar.precioHora": "Gomendatutako Orduko Prezioa",
     "sidebar.resumenCostes": "Kostuen Laburpena",
     "sidebar.contacto": "Kontaktua",
     "sidebar.langileKopurua": "Langile kopurua",
     "sidebar.urtekoOrduak": "Urteko orduak",
-    
+    "sidebar.gastuOperatiboak": "Gastu Operatiboak",
+    "sidebar.finantzaketaKostuak": "Finantzaketa Kostuak (Kuota Anuala)",
+    "sidebar.mozkinGordina": "Mozkin Gordina",
+    "sidebar.amortizazioak": "Amortizazioak",
+    "sidebar.gastuFinkoak": "Gastu Finkoak",
+    "sidebar.pertsonala": "Pertsonala",
+    "sidebar.finantzaketaGuztira": "Finantzaketa Guztira",
+
     "finance.inversiones": "Inbertsio eta Finantzaketa Beharrak",
     "finance.inversionTotal": "Inbertsio Totala",
     "finance.kutxaErrefortzua": "Kutxa Errefortzua",
@@ -69,7 +78,18 @@
     "finance.bazkideEkarpenak": "Bazkideen Ekarpenak",
     "finance.kanpokoFinantzaketa": "Kanpoko Finantzaketa",
     "finance.finantzaketaLaburpena": "Finantzaketaren Laburpena",
-    
+    "finance.bazkideKopurua": "Definitutako bazkide kopurua",
+    "finance.bazkideEkarpenGuztira": "Bazkideek Emandako Guztira",
+    "finance.finantzaketaIturriak": "Finantzaketa Iturriak",
+    "finance.kostuFinantzarioak": "Kostu Finantzarioak",
+    "finance.urtekoInteresak": "Urteko Interesak",
+    "finance.hilabetekoKuota": "Hilabeteko Kuota",
+    "finance.urtekoKuota": "Urteko Kuota Guztira",
+    "finance.eragiketaEkonomikoa": "Eragiketa Ekonomikoa",
+    "finance.urtekoGastuOperatiboak": "Urteko Gastu Operatiboak",
+    "finance.urtekoFinantzaketaKostuak": "Urteko Finantzaketa Kostuak",
+    "finance.gastuTotalak": "Gastu Totalak",
+
     "pricing.sozietateZerga": "Sozietateen Zerga (%)",
     "pricing.mozkinMargina": "Helburuko Mozkin Gordina (%)",
     "pricing.langileKopurua": "Langile kopurua",
@@ -77,7 +97,29 @@
     "pricing.gomendatutakoPrezioa": "Gomendatutako orduko prezioa",
     "pricing.mozkinGordina": "Mozkin Gordina (Zergak aurre)",
     "pricing.mozkinGarbia": "Espero den mozkin garbia",
-    "pricing.fakturazioBeharrezkoa": "Fakturazio beharrezkoa"
+    "pricing.fakturazioBeharrezkoa": "Fakturazio beharrezkoa",
+    "pricing.nolaKalkulatzen": "Nola kalkulatzen da orduko prezioa?",
+    "pricing.gastuOperatiboak": "Gastu Operatiboak",
+    "pricing.finantzaketaKostuak": "+ Finantzaketa Kostuak",
+    "pricing.gastuTotalak": "Gastu Totalak",
+    "pricing.mozkinGordinaPorcentaje": "+ Mozkin Gordina",
+    "pricing.fakturazioTotala": "Fakturazio Totala",
+    "pricing.urtekoOrduakDivision": "÷ Urteko Orduak",
+    "pricing.ordukoPrezioa": "Orduko Prezioa",
+
+    "form.mesesTesoreria": "Hilabeteko gastuak kutxa errefortzurako",
+    "form.mesesTesoreriaHelp": "Normalean 3-6 hilabete gastu finkoak",
+    "form.maileguMota": "Mailegu Mota",
+    "form.maileguEstandarra": "Mailegu Estándarra",
+    "form.maileguHipotekario": "Hipoteka Mailegua",
+    "form.tae": "TAE (%)",
+    "form.epea": "Epea (urte)",
+    "form.ordainketaAtzerapena": "Ordainketa Atzerapena (hilabete)",
+    "form.bazkideLangile": "Langile Bazkidea",
+    "form.bazkideKapitalista": "Kapitalista Bazkidea",
+
+    "help.kutxaInfo": "Normalean %10-%20 proiektuen ordainketa atzerapenen aurrean",
+    "help.ordainketaAtzerapena": "Hilabete kopurua interesak bakarrik ordaintzeko"
   },
   "es": {
     "header.title": "IDarte · Escuela Pública de Diseño de Euskadi",
@@ -95,9 +137,10 @@
     "contact.title": "Contacto",
     "contact.name": "Josu Ayerbe Guarás, profesor del Grado en Diseño de Interiores",
     "contact.email": "josuayerbe@idarte.eus",
+    "contact.address": "Portal de Betoño, 23 · Vitoria-Gasteiz",
     "footer.note": "IDarte · Escuela Pública de Diseño de Euskadi — Euskadiko Diseinu Eskola Publikoa.",
     "loading": "Preparando el informe...",
-    
+
     "panel.lokal.title": "1 · Gastos Fijos e Inversiones del Local",
     "panel.lokal.amortizables": "A) Inversiones amortizables",
     "panel.lokal.gastos": "B) Gastos fijos",
@@ -109,7 +152,7 @@
     "panel.hazkuntza.title": "5 · Gastos de Crecimiento y Desarrollo",
     "panel.finantzaketa.title": "6 · Estrategia de Financiación",
     "panel.prezioa.title": "7 · Precio por Hora y Beneficios",
-    
+
     "table.concepto": "Concepto",
     "table.coste": "Coste (€)",
     "table.amortizacion": "Años Amortización",
@@ -124,24 +167,32 @@
     "table.mota": "Tipo",
     "table.kapitala": "Capital (€)",
     "table.ekintzak": "Acciones",
-    
+
     "button.add": "+ Añadir",
-    "button.addAmortizable": "+ Añadir Inversión",
-    "button.addRecurring": "+ Añadir Gasto",
+    "button.addAmortizable": "+ Añadir",
+    "button.addRecurring": "+ Añadir",
     "button.addPerson": "+ Añadir Empleado",
     "button.addSocio": "+ Añadir Socio",
     "button.removeSocio": "- Quitar Socio",
-    
+    "button.remove": "✕",
+
     "socio.trabajador": "Socio Trabajador",
     "socio.capitalista": "Socio Capitalista",
-    
+
     "sidebar.facturacion": "Facturación Anual Necesaria",
     "sidebar.precioHora": "Precio por Hora Recomendado",
     "sidebar.resumenCostes": "Resumen de Costes",
     "sidebar.contacto": "Contacto",
     "sidebar.langileKopurua": "Número de empleados",
     "sidebar.urtekoOrduak": "Horas anuales",
-    
+    "sidebar.gastuOperatiboak": "Gastos Operativos",
+    "sidebar.finantzaketaKostuak": "Costes de Financiación (Cuota Anual)",
+    "sidebar.mozkinGordina": "Margen Bruto",
+    "sidebar.amortizazioak": "Amortizaciones",
+    "sidebar.gastuFinkoak": "Gastos Fijos",
+    "sidebar.pertsonala": "Personal",
+    "sidebar.finantzaketaGuztira": "Financiación Total",
+
     "finance.inversiones": "Necesidades de Inversión y Financiación",
     "finance.inversionTotal": "Inversión Total",
     "finance.kutxaErrefortzua": "Refuerzo de Caja",
@@ -149,7 +200,18 @@
     "finance.bazkideEkarpenak": "Aportaciones de Socios",
     "finance.kanpokoFinantzaketa": "Financiación Externa",
     "finance.finantzaketaLaburpena": "Resumen de Financiación",
-    
+    "finance.bazkideKopurua": "Número de socios definidos",
+    "finance.bazkideEkarpenGuztira": "Total Aportado por Socios",
+    "finance.finantzaketaIturriak": "Fuentes de Financiación",
+    "finance.kostuFinantzarioak": "Costes Financieros",
+    "finance.urtekoInteresak": "Intereses Anuales",
+    "finance.hilabetekoKuota": "Cuota Mensual",
+    "finance.urtekoKuota": "Cuota Total Anual",
+    "finance.eragiketaEkonomikoa": "Operación Económica",
+    "finance.urtekoGastuOperatiboak": "Gastos Operativos Anuales",
+    "finance.urtekoFinantzaketaKostuak": "Costes de Financiación Anuales",
+    "finance.gastuTotalak": "Gastos Totales",
+
     "pricing.sozietateZerga": "Impuesto de Sociedades (%)",
     "pricing.mozkinMargina": "Margen de Beneficio Bruto Objetivo (%)",
     "pricing.langileKopurua": "Número de empleados",
@@ -157,7 +219,29 @@
     "pricing.gomendatutakoPrezioa": "Precio por hora recomendado",
     "pricing.mozkinGordina": "Beneficio Bruto (Antes de impuestos)",
     "pricing.mozkinGarbia": "Beneficio Neto esperado",
-    "pricing.fakturazioBeharrezkoa": "Facturación necesaria"
+    "pricing.fakturazioBeharrezkoa": "Facturación necesaria",
+    "pricing.nolaKalkulatzen": "¿Cómo se calcula el precio por hora?",
+    "pricing.gastuOperatiboak": "Gastos Operativos",
+    "pricing.finantzaketaKostuak": "+ Costes de Financiación",
+    "pricing.gastuTotalak": "Gastos Totales",
+    "pricing.mozkinGordinaPorcentaje": "+ Margen Bruto",
+    "pricing.fakturazioTotala": "Facturación Total",
+    "pricing.urtekoOrduakDivision": "÷ Horas Anuales",
+    "pricing.ordukoPrezioa": "Precio por Hora",
+
+    "form.mesesTesoreria": "Meses de gastos para refuerzo de caja",
+    "form.mesesTesoreriaHelp": "Normalmente 3-6 meses de gastos fijos",
+    "form.maileguMota": "Tipo de Préstamo",
+    "form.maileguEstandarra": "Préstamo Estándar",
+    "form.maileguHipotekario": "Préstamo Hipotecario",
+    "form.tae": "TAE (%)",
+    "form.epea": "Plazo (años)",
+    "form.ordainketaAtzerapena": "Periodo de Gracia (meses)",
+    "form.bazkideLangile": "Socio Trabajador",
+    "form.bazkideKapitalista": "Socio Capitalista",
+
+    "help.kutxaInfo": "Normalmente 10%-20% para retrasos en pagos de proyectos",
+    "help.ordainketaAtzerapena": "Número de meses para pagar solo intereses"
   },
   "en": {
     "header.title": "IDarte · Public Design School of Euskadi",
@@ -175,9 +259,10 @@
     "contact.title": "Contact",
     "contact.name": "Josu Ayerbe Guarás, Interior Design Degree Professor",
     "contact.email": "josuayerbe@idarte.eus",
+    "contact.address": "Portal de Betoño, 23 · Vitoria-Gasteiz",
     "footer.note": "IDarte · Public Design School of Euskadi — Euskadiko Diseinu Eskola Publikoa.",
     "loading": "Preparing report...",
-    
+
     "panel.lokal.title": "1 · Fixed Costs and Investments for Premises",
     "panel.lokal.amortizables": "A) Depreciable investments",
     "panel.lokal.gastos": "B) Fixed costs",
@@ -189,7 +274,7 @@
     "panel.hazkuntza.title": "5 · Growth and Development Costs",
     "panel.finantzaketa.title": "6 · Financing Strategy",
     "panel.prezioa.title": "7 · Hourly Rate and Profits",
-    
+
     "table.concepto": "Concept",
     "table.coste": "Cost (€)",
     "table.amortizacion": "Depreciation Years",
@@ -204,24 +289,32 @@
     "table.mota": "Type",
     "table.kapitala": "Capital (€)",
     "table.ekintzak": "Actions",
-    
+
     "button.add": "+ Add",
-    "button.addAmortizable": "+ Add Investment",
-    "button.addRecurring": "+ Add Expense",
+    "button.addAmortizable": "+ Add",
+    "button.addRecurring": "+ Add",
     "button.addPerson": "+ Add Employee",
     "button.addSocio": "+ Add Partner",
     "button.removeSocio": "- Remove Partner",
-    
+    "button.remove": "✕",
+
     "socio.trabajador": "Working Partner",
     "socio.capitalista": "Capital Partner",
-    
+
     "sidebar.facturacion": "Required Annual Revenue",
     "sidebar.precioHora": "Recommended Hourly Rate",
     "sidebar.resumenCostes": "Cost Summary",
     "sidebar.contacto": "Contact",
     "sidebar.langileKopurua": "Number of employees",
     "sidebar.urtekoOrduak": "Annual hours",
-    
+    "sidebar.gastuOperatiboak": "Operating Expenses",
+    "sidebar.finantzaketaKostuak": "Financing Costs (Annual Fee)",
+    "sidebar.mozkinGordina": "Gross Margin",
+    "sidebar.amortizazioak": "Depreciations",
+    "sidebar.gastuFinkoak": "Fixed Costs",
+    "sidebar.pertsonala": "Staff",
+    "sidebar.finantzaketaGuztira": "Total Financing",
+
     "finance.inversiones": "Investment and Financing Needs",
     "finance.inversionTotal": "Total Investment",
     "finance.kutxaErrefortzua": "Cash Reserve",
@@ -229,7 +322,18 @@
     "finance.bazkideEkarpenak": "Partner Contributions",
     "finance.kanpokoFinantzaketa": "External Financing",
     "finance.finantzaketaLaburpena": "Financing Summary",
-    
+    "finance.bazkideKopurua": "Defined number of partners",
+    "finance.bazkideEkarpenGuztira": "Total Partner Contributions",
+    "finance.finantzaketaIturriak": "Funding Sources",
+    "finance.kostuFinantzarioak": "Financial Costs",
+    "finance.urtekoInteresak": "Annual Interest",
+    "finance.hilabetekoKuota": "Monthly Payment",
+    "finance.urtekoKuota": "Total Annual Payment",
+    "finance.eragiketaEkonomikoa": "Economic Operation",
+    "finance.urtekoGastuOperatiboak": "Annual Operating Expenses",
+    "finance.urtekoFinantzaketaKostuak": "Annual Financing Costs",
+    "finance.gastuTotalak": "Total Expenses",
+
     "pricing.sozietateZerga": "Corporate Tax (%)",
     "pricing.mozkinMargina": "Target Gross Profit Margin (%)",
     "pricing.langileKopurua": "Number of employees",
@@ -237,6 +341,28 @@
     "pricing.gomendatutakoPrezioa": "Recommended hourly rate",
     "pricing.mozkinGordina": "Gross Profit (Before taxes)",
     "pricing.mozkinGarbia": "Expected Net Profit",
-    "pricing.fakturazioBeharrezkoa": "Required revenue"
+    "pricing.fakturazioBeharrezkoa": "Required Revenue",
+    "pricing.nolaKalkulatzen": "How is the hourly rate calculated?",
+    "pricing.gastuOperatiboak": "Operating Expenses",
+    "pricing.finantzaketaKostuak": "+ Financing Costs",
+    "pricing.gastuTotalak": "Total Expenses",
+    "pricing.mozkinGordinaPorcentaje": "+ Gross Margin",
+    "pricing.fakturazioTotala": "Total Revenue",
+    "pricing.urtekoOrduakDivision": "÷ Annual Hours",
+    "pricing.ordukoPrezioa": "Hourly Rate",
+
+    "form.mesesTesoreria": "Months of expenses for cash reserve",
+    "form.mesesTesoreriaHelp": "Normally 3-6 months of fixed expenses",
+    "form.maileguMota": "Loan Type",
+    "form.maileguEstandarra": "Standard Loan",
+    "form.maileguHipotekario": "Mortgage Loan",
+    "form.tae": "APR (%)",
+    "form.epea": "Term (years)",
+    "form.ordainketaAtzerapena": "Grace Period (months)",
+    "form.bazkideLangile": "Working Partner",
+    "form.bazkideKapitalista": "Capital Partner",
+
+    "help.kutxaInfo": "Normally 10%-20% for project payment delays",
+    "help.ordainketaAtzerapena": "Number of months to pay only interest"
   }
 }

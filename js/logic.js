@@ -799,6 +799,16 @@ async function init(){
   // AÑADIR ESTA LÍNEA NADA MÁS:
   if (typeof updateFinanceStrategy === 'function') updateFinanceStrategy();
 
+  // FORZAR ACTUALIZACIÓN DEL SIDEBAR - AÑADIR ESTA NUEVA LÍNEA
+  setTimeout(() => {
+    const totalOperational = calculateTotalCosts();
+    updateRightSummary(totalOperational);
+    console.log("🔄 Sidebar actualizado forzadamente");
+    
+    // Debug adicional
+    debugSidebar();
+  }, 800);
+
   // Selección de idioma actual
   const sel = document.getElementById('language-select');
   if (sel) sel.value = localStorage.getItem('selectedLanguage') || 'eu';

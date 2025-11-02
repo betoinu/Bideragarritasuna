@@ -1211,3 +1211,16 @@ window.generatePDFReport = function() {
     });
   }, 500);
 };
+  // ===== INICIALIZACIÓN AUTOMÁTICA =====
+// Ejecutar cuando el DOM esté listo
+console.log("🔧 Configurando inicialización automática...");
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log("✅ DOMContentLoaded - Inicializando IDarte");
+        initializeApp();
+    });
+} else {
+    console.log("✅ DOM ya listo - Inicializando IDarte inmediatamente");
+    initializeApp();
+}  

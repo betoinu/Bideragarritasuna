@@ -903,7 +903,7 @@ function bindFinantzaketaInputs() {
             if (typeof calcularFinanciacion === 'function') {
                 calcularFinanciacion();
             }
-            updateAll();
+            actualizarCascada();
         });
         console.log("✅ Listener añadido a porcentaje-tesoreria");
     }
@@ -921,7 +921,7 @@ function bindFinantzaketaInputs() {
                 if (typeof calcularFinanciacion === 'function') {
                     calcularFinanciacion();
                 }
-                updateAll();
+                actualizarCascada();
             });
             console.log(`✅ Listener añadido a ${id}`);
         }
@@ -934,7 +934,7 @@ function bindFinantzaketaInputs() {
             if (typeof calcularFinanciacion === 'function') {
                 calcularFinanciacion();
             }
-            updateAll();
+            actualizarCascada();
         });
     });
     
@@ -945,7 +945,7 @@ function bindFinantzaketaInputs() {
             if (typeof calcularFinanciacion === 'function') {
                 calcularFinanciacion();
             }
-            updateAll();
+            actualizarCascada();
         });
     });
 }

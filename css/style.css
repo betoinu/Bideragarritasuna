@@ -376,3 +376,149 @@ img {
   align-items: center;
   gap: 5px;
 }
+/* ESTILOS DEL SIDEBAR - VERSIÓN ANTERIOR */
+.sidebar {
+    background: #f8f9fa;
+    padding: 20px;
+    border-left: 1px solid #e9ecef;
+    max-width: 320px;
+    min-width: 280px;
+    height: fit-content;
+    position: sticky;
+    top: 20px;
+    border-radius: 8px;
+    margin-left: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.sidebar-section {
+    margin-bottom: 25px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.sidebar-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.sidebar-section h4 {
+    color: #2d3748;
+    font-size: 1.1em;
+    font-weight: 600;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--id-primary, #3182ce);
+}
+
+.sidebar-value {
+    font-size: 1.5em;
+    font-weight: 700;
+    color: var(--id-primary, #3182ce);
+    margin: 10px 0;
+}
+
+.sidebar-breakdown {
+    background: #fff;
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid #e9ecef;
+}
+
+.sidebar-breakdown p {
+    margin: 6px 0;
+    font-size: 0.9em;
+    color: #4a5568;
+}
+
+.sidebar-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: #fff;
+    border-radius: 6px;
+    border: 1px solid #e9ecef;
+}
+
+.stat-item.highlight {
+    background: var(--id-primary, #3182ce);
+    color: white;
+    border: none;
+}
+
+.stat-item.highlight strong {
+    color: white;
+}
+
+.cost-breakdown {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.cost-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid #f1f3f4;
+}
+
+.cost-item:last-child {
+    border-bottom: none;
+}
+
+.cost-label {
+    font-size: 0.9em;
+    color: #4a5568;
+}
+
+.cost-value {
+    font-weight: 600;
+    color: #2d3748;
+}
+
+.financing-summary {
+    background: #fff;
+    padding: 15px;
+    border-radius: 6px;
+    border: 1px solid #e9ecef;
+}
+
+.finance-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #f1f3f4;
+}
+
+.finance-item:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.muted {
+    color: #718096;
+    font-size: 0.85em;
+    margin-bottom: 8px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .sidebar {
+        max-width: 100%;
+        margin-left: 0;
+        margin-top: 20px;
+        position: static;
+    }
+}

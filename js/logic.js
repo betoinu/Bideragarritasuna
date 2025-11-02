@@ -937,7 +937,6 @@ async function initializeAppAsync() {
             'employee-count-sidebar', 
             'annual-hours-sidebar',
             'main-sheet',
-            'sidebar'
         ];
         
         const missingElements = await waitForCriticalElements(criticalElements, 5, 200);

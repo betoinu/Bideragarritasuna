@@ -997,17 +997,32 @@ async function initializeAppAsync() {
         // Forzar una actualización completa
         updateAll();
                 // 🕒 Recalcular financiación y pricing una vez el DOM esté completamente cargado
+        // 🕒 Recalcular financiación y pricing una vez el DOM esté completamente cargado
         setTimeout(() => {
             console.log("🔁 Recalculando financiación y pricing tras carga inicial...");
             try {
                 calculateFinancing();
                 calculatePricing(calculateTotalCosts());
                 updateRightSummary();
-                console.log("✅ Financiación y pricing recalculados correctamente.");
+
+                // 🧩 Forzar actualización visual del sidebar (Langile kopurua + Urteko orduak)
+                const employeeCount = state.personnel.length;
+                const annualHours = (safeNum(document.getElementById('annual-hours-per-employee')?.value) || 1600) * employeeCount;
+
+                const empEl = document.getElementById('employee-count-sidebar');
+                const hoursEl = document.getElementById('annual-hours-sidebar');
+
+                if (empEl) empEl.textContent = employeeCount.toString();
+                if (hoursEl) hoursEl.textContent = annualHours.toLocaleString('es-ES');
+
+                console.log(`👥 Langile kopurua: ${employeeCount} · ⏱ Urteko orduak: ${annualHours}`);
+
+                console.log("✅ Financiación, pricing y sidebar recalculados correctamente.");
             } catch (err) {
                 console.warn("⚠️ Error al recalcular tras carga:", err);
             }
         }, 500);
+
 
         // Verificación final
         setTimeout(() => {

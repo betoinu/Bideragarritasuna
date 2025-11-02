@@ -447,6 +447,14 @@ function calculatePricing() {
   const impuestos = margenBruto * (corporateTax / 100);
   const beneficioNeto = margenBruto - impuestos;
 
+  console.log("📊 Datos para sidebar:", {
+    employeeCount,
+    annualHours, 
+    totalHours,
+    employeeCountElement: document.getElementById('employee-count-sidebar'),
+    annualHoursElement: document.getElementById('annual-hours-sidebar')
+  });
+
   // ACTUALIZAR PANEL 7
   updateElement('desglose-gastos-operativos', fmt(costesOperativos));
   updateElement('desglose-costes-financieros', fmt(costesFinancieros));

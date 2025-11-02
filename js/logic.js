@@ -512,76 +512,150 @@ function calculatePricing(totalOperational = null) {
 }
 
 /* ===========================
-   SIDEBAR MEJORADO - CORREGIDO
+   /* ===========================
+   SIDEBAR MEJORADO - CORREGIDO Y ROBUSTO
    =========================== */
 function updateRightSummary(totalOperational = null) {
+    console.log("🔄 Actualizando sidebar...");
+    
     if (totalOperational === null) {
         totalOperational = calculateTotalCosts();
     }
     
-    // Obtener valores de pricing
-    const suggestedRate = safeNum(document.getElementById('suggested-hourly-rate')?.dataset.value) || 0;
-    const expectedProfit = safeNum(document.getElementById('expected-net-profit')?.dataset.value) || 0;
-    const requiredRevenue = safeNum(document.getElementById('required-annual-revenue')?.dataset.value) || 0;
-    const totalHours = safeNum(document.getElementById('total-available-hours')?.dataset.value) || 0;
+    // Validar que los elementos críticos existen
+    const requiredRevenueEl = document.getElementById('required-annual-revenue');
+    const suggestedRateEl = document.getElementById('suggested-hourly-rate');
     
-    // LANGILE KOPURUA - Pertsonal ataletik hartu, ez inputetik
+    if (!requiredRevenueEl || !suggestedRateEl) {
+        console.warn("❌ Elementos críticos del pricing no encontrados");
+        return;
+    }
+
+    // Obtener valores de pricing DE FORMA SEGURA
+    let suggestedRate = 0;
+    let requiredRevenue = 0;
+    let totalHours = 0;
+
+    try {
+        suggestedRate = safeNum(suggestedRateEl.dataset.value) || safeNum(suggestedRateEl.textContent.replace(/[^\d.,]/g, '').replace(',', '.'));
+        requiredRevenue = safeNum(requiredRevenueEl.dataset.value) || safeNum(requiredRevenueEl.textContent.replace(/[^\d.,]/g, '').replace(',', '.'));
+        
+        const totalHoursEl = document.getElementById('total-available-hours');
+        if (totalHoursEl) {
+            totalHours = safeNum(totalHoursEl.dataset.value) || safeNum(totalHoursEl.textContent.replace(/[^\d.,]/g, ''));
+        }
+    } catch (error) {
+        console.warn("❌ Error obteniendo datos de pricing:", error);
+    }
+
+    // LANGILE KOPURUA - de state.personnel (REAL)
     const employeeCount = state.personnel.length;
 
     // Calcular desglose de costes
     const desgloseCostes = calcularDesgloseCostes();
     
-    // Calcular costos financieros (intereses + amortización préstamo)
+    // Calcular costos financieros (SOLO intereses, no amortización)
     const loanAmount = safeNum(document.getElementById('loan-amount')?.value) || 0;
     const loanTAE = safeNum(document.getElementById('loan-tae')?.value) || 5;
-    const loanTerm = safeNum(document.getElementById('plazo')?.value) || 5;
-    
-    // Intereses anuales
-    const interesesAnuales = loanAmount * (loanTAE / 100);
-    
-    // Amortización del préstamo (capital anual)
-    const amortizacionPrestamo = loanAmount / loanTerm;
-    
-    // Costos financieros totales
-    const costosFinancierosTotales = interesesAnuales + amortizacionPrestamo;
+    const costosFinancieros = loanAmount * (loanTAE / 100);
 
-    // Calcular margen bruto CORRECTO (beneficio antes de impuestos)
+    // Calcular margen bruto CORRECTO
     const margin = safeNum(document.getElementById('target-profit-margin')?.value) || 20;
-    const corporateTax = safeNum(document.getElementById('corporate-tax')?.value) || 25;
-    
-    // Margen bruto = beneficio antes de impuestos
-    const margenBruto = (totalOperational + interesesAnuales) * (margin / 100);
-    
-    // Beneficio neto = beneficio después de impuestos
-    const beneficioNeto = margenBruto * (1 - corporateTax / 100);
+    const margenBruto = (totalOperational + costosFinancieros) * (margin / 100);
 
-    // Actualizar sidebar
-    const setFmt = (id, value) => {
-        const el = document.getElementById(id);
-        if (el) el.textContent = fmt(value);
+    console.log("📊 Datos sidebar:", {
+        totalOperational,
+        requiredRevenue,
+        suggestedRate,
+        employeeCount,
+        costosFinancieros,
+        margenBruto
+    });
+
+    // Actualizar sidebar - MÉTODO ROBUSTO
+    const actualizarElemento = (id, valor, esMoneda = true) => {
+        const elemento = document.getElementById(id);
+        if (elemento) {
+            elemento.textContent = esMoneda ? fmt(valor) : valor;
+        } else {
+            console.warn(`Elemento no encontrado: ${id}`);
+        }
     };
 
-    const setText = (id, text) => {
-        const el = document.getElementById(id);
-        if (el) el.textContent = text;
-    };
+    // Card 1: Facturación Principal
+    actualizarElemento('total-facturacion', requiredRevenue);
+    actualizarElemento('gastos-operativos', totalOperational);
+    actualizarElemento('costos-financieros', costosFinancieros);
+    actualizarElemento('margen-bruto', margenBruto);
 
-    // Card 1: Facturación Principal - SIN MARCO ESPECIAL
-    setFmt('total-facturacion', requiredRevenue);
-    setFmt('gastos-operativos', totalOperational);
-    setFmt('costos-financieros', costosFinancierosTotales);
-    setFmt('margen-bruto', margenBruto);
-
-    // Card 2: Precio/Hora - MISMO ESTILO QUE FACTURACIÓN
-    setFmt('suggested-hourly-rate-sidebar', suggestedRate);
-    setText('employee-count-sidebar', employeeCount); // Ahora viene de state.personnel
-    setText('annual-hours-sidebar', totalHours.toLocaleString());
+    // Card 2: Precio/Hora
+    actualizarElemento('suggested-hourly-rate-sidebar', suggestedRate);
+    actualizarElemento('employee-count-sidebar', employeeCount, false);
+    actualizarElemento('annual-hours-sidebar', totalHours.toLocaleString(), false);
 
     // Card 3: Desglose de Costes
-    setFmt('total-amortizaciones', desgloseCostes.amortizaciones);
-    setFmt('total-gastos-fijos', desgloseCostes.gastosFijos);
-    setFmt('total-personal', desgloseCostes.personal);
-    setFmt('total-intereses', costosFinancierosTotales);
+    actualizarElemento('total-amortizaciones', desgloseCostes.amortizaciones);
+    actualizarElemento('total-gastos-fijos', desgloseCostes.gastosFijos);
+    actualizarElemento('total-personal', desgloseCostes.personal);
+    actualizarElemento('total-intereses', costosFinancieros);
+
+    console.log("✅ Sidebar actualizado correctamente");
+}
+
+/* ===========================
+   FUNCIONES FALTANTES - SIDEBAR
+   =========================== */
+function calcularDesgloseCostes() {
+    let amortizaciones = 0;
+    let gastosFijos = 0;
+    let personal = 0;
+
+    // Amortizaciones
+    state.amortizables.lokala.forEach(item => {
+        amortizaciones += safeNum(item.cost) / Math.max(1, safeNum(item.life));
+    });
+    state.amortizables.garraioa.forEach(item => {
+        amortizaciones += safeNum(item.cost) / Math.max(1, safeNum(item.life));
+    });
+
+    // Gastos fijos (recurrentes)
+    Object.values(state.recurrings).forEach(category => {
+        category.forEach(item => {
+            gastosFijos += safeNum(item.payment_cost) * Math.max(1, safeNum(item.frequency));
+        });
+    });
+
+    // Personal
+    state.personnel.forEach(person => {
+        personal += safeNum(person.gross) * (1 + safeNum(person.employer_ss) / 100);
+    });
+
+    return { amortizaciones, gastosFijos, personal };
+}
+
+function debugSidebar() {
+    console.log("=== 🔍 DEBUG SIDEBAR ===");
+    
+    // Verificar que los elementos existen
+    const elementos = [
+        'total-facturacion', 'gastos-operativos', 'costos-financieros', 'margen-bruto',
+        'suggested-hourly-rate-sidebar', 'employee-count-sidebar', 'annual-hours-sidebar',
+        'total-amortizaciones', 'total-gastos-fijos', 'total-personal', 'total-intereses'
+    ];
+    
+    elementos.forEach(id => {
+        const el = document.getElementById(id);
+        console.log(`${id}:`, el ? "✅ EXISTE" : "❌ NO EXISTE");
+    });
+    
+    // Verificar datos de cálculo
+    const totalOperational = calculateTotalCosts();
+    const requiredRevenue = safeNum(document.getElementById('required-annual-revenue')?.dataset.value) || 0;
+    
+    console.log("📊 Datos calculados:", {
+        totalOperational,
+        requiredRevenue
+    });
 }
 
 /* ===========================
@@ -678,58 +752,60 @@ function preloadSampleData() {
 }
 
   /* ===========================
-   INIT + EVENTOS GLOBALES
+   BIND GLOBAL INPUTS - CORREGIDO
    =========================== */
 function bindGlobalInputs() {
-  const sel = document.getElementById('language-select');
-  if (sel) sel.addEventListener('change', e => applyTranslations(e.target.value));
-
-  // Capital de socios → actualiza finanzas y totales
-  ['partner-capital-1', 'partner-capital-2', 'partner-capital-3'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.addEventListener('input', updateAll);
-  });
-
-  // Préstamo → recalcula finanzas y costes
-  ['loan-amount', 'loan-tae', 'loan-term'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.addEventListener('input', updateAll);
-  });
-
-  // Inputs de precio/hora → solo recalcula pricing (no updateAll completo)
-  ['corporate-tax', 'target-profit-margin', 'employee-count', 'annual-hours-per-employee'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) {
-      el.addEventListener('input', () => {
-        const totalOperational = calculateTotalCosts();
-        calculatePricing(totalOperational);
-        updateRightSummary(totalOperational);
-      });
+    console.log("🔧 Configurando event listeners...");
+    
+    // Selector de idioma - SOLO UNA FORMA
+    const languageSelect = document.getElementById('language-select');
+    if (languageSelect) {
+        // Eliminar cualquier event listener anterior
+        languageSelect.replaceWith(languageSelect.cloneNode(true));
+        const newSelect = document.getElementById('language-select');
+        
+        newSelect.addEventListener('change', e => {
+            applyTranslations(e.target.value);
+        });
+        console.log("✅ Selector de idioma configurado");
     }
-  });
 
-  // Botón PDF - eliminar onclick del HTML y usar solo event listener
-  const dl = document.getElementById('download-report-btn');
-  if (dl) {
-    dl.removeAttribute('onclick');
-    dl.addEventListener('click', generatePDFReport);
-  }
-   
-   // AÑADIR estos event listeners:
-  ['partner-capital-1', 'partner-capital-2', 'partner-capital-3'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.addEventListener('input', () => {
-      updateFinanceStrategy();
-      updateAll();
+    // Botón PDF - SOLO event listener, no onclick
+    const dl = document.getElementById('download-report-btn');
+    if (dl) {
+        dl.addEventListener('click', generatePDFReport);
+        console.log("✅ Botón PDF configurado");
+    }
+    
+    // Inputs de capital de socios
+    ['partner-capital-1', 'partner-capital-2', 'partner-capital-3'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('input', updateAll);
+        }
     });
-  });
 
-  ['loan-amount', 'loan-tae', 'loan-term'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.addEventListener('input', () => {
-      updateLoanCalculation();
+    // Inputs de préstamo
+    ['loan-amount', 'loan-tae', 'loan-term'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('input', updateAll);
+        }
     });
-  });
+
+    // Inputs de pricing
+    ['corporate-tax', 'target-profit-margin', 'employee-count', 'annual-hours-per-employee'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('input', () => {
+                const totalOperational = calculateTotalCosts();
+                calculatePricing(totalOperational);
+                updateRightSummary(totalOperational);
+            });
+        }
+    });
+
+    console.log("✅ Todos los event listeners configurados");
 }
 
 /* ===========================
@@ -757,46 +833,42 @@ function initTabs() {
 }
 
 /* ===========================
-   INIT PRINCIPAL
+   INIT PRINCIPAL - CORREGIDO
    =========================== */
 async function init(){
-  // Idioma inicial
+  console.log("🚀 Iniciando aplicación...");
+  
+  // 1. Cargar idioma
   await loadTranslations(localStorage.getItem('selectedLanguage') || 'eu');
 
-  // Construir paneles (por compatibilidad)
+  // 2. Construir paneles y datos
   buildPanelsIfEmpty();
-
-  // Datos de ejemplo iniciales
   preloadSampleData();
-
-  // Render de tablas
   renderAllTables();
 
-  // Tabs
+  // 3. Inicializar interfaz
   initTabs();
-
-  // Inputs y botones
   bindGlobalInputs();
 
-  // Cálculos iniciales - ESTO ES LO MÁS IMPORTANTE
+  // 4. Inicializar panel de finantzaketa SI EXISTE
+  if (typeof initFinantzaketaPanel === 'function') {
+      console.log("✅ Inicializando panel finantzaketa");
+      initFinantzaketaPanel();
+  }
+
+  // 5. Cálculos iniciales (UNA SOLA VEZ)
+  console.log("🔄 Ejecutando cálculos iniciales...");
   updateAll();
 
-  // AÑADIR ESTA LÍNEA NADA MÁS:
-  if (typeof updateFinanceStrategy === 'function') updateFinanceStrategy();
-
-  // FORZAR ACTUALIZACIÓN DEL SIDEBAR - AÑADIR ESTA NUEVA LÍNEA
-  setTimeout(() => {
-    const totalOperational = calculateTotalCosts();
-    updateRightSummary(totalOperational);
-    console.log("🔄 Sidebar actualizado forzadamente");
-    
-    // Debug adicional
-    debugSidebar();
-  }, 800);
-
-  // Selección de idioma actual
+  // 6. Configurar selector de idioma
   const sel = document.getElementById('language-select');
   if (sel) sel.value = localStorage.getItem('selectedLanguage') || 'eu';
+
+  // 7. Debug final
+  setTimeout(() => {
+      console.log("✅ Aplicación inicializada correctamente");
+      debugSidebar();
+  }, 500);
 }
 
 // ===== FINANZAKETA PANEL FUNCTIONS =====

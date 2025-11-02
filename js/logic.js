@@ -1282,4 +1282,11 @@ if (document.readyState === 'loading') {
 } else {
     console.log("✅ DOM ya listo - Inicializando IDarte inmediatamente");
     initializeApp();
+    
+    // === 🔧 Exposición global de funciones principales ===
+window.calculatePricing = calculatePricing;
+if (typeof calculateFinancing !== "undefined") window.calculateFinancing = calculateFinancing;
+if (typeof calculateTotalCosts !== "undefined") window.calculateTotalCosts = calculateTotalCosts;
+if (typeof updateRightSummary !== "undefined") window.updateRightSummary = updateRightSummary;
+
 }  

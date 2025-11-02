@@ -358,6 +358,8 @@ function preloadSampleData() {
 // ===== CÁLCULOS FINANCIEROS =====
 function calculateInvestmentNeeds() {
   let inversiones = 0;
+  
+  // Calcular inversiones totales en amortizables
   state.amortizables.lokala.forEach(item => {
     inversiones += safeNum(item.cost);
   });
@@ -365,12 +367,51 @@ function calculateInvestmentNeeds() {
     inversiones += safeNum(item.cost);
   });
 
+  // Calcular gastos operativos ANUALES correctamente
   const gastosOperativosAnuales = calculateOperationalCosts();
   const mesesTesoreria = safeNum(document.getElementById('meses-tesoreria')?.value) || 3;
-  const tesoreria = (gastosOperativosAnuales / 12) * mesesTesoreria;
+  
+  // Tesorería = gastos mensuales * meses de cobertura
+  const gastosMensuales = gastosOperativosAnuales / 12;
+  const tesoreria = gastosMensuales * mesesTesoreria;
+  
   const necesidadesTotales = inversiones + tesoreria;
 
-  return { inversiones, gastosOperativosAnuales, tesoreria, necesidadesTotales };
+  return { 
+    inversiones, 
+    gastosOperativosAnuales, 
+    tesoreria, 
+    necesidadesTotales 
+  };
+}
+
+function calculateOperationalCosts() {
+  let total = 0;
+
+  // 1. Amortizaciones anuales
+  Object.values(state.amortizables).forEach(category => {
+    category.forEach(item => {
+      const cost = safeNum(item.cost);
+      const life = Math.max(1, safeNum(item.life));
+      total += cost / life;
+    });
+  });
+
+  // 2. Gastos recurrentes anuales
+  Object.values(state.recurrings).forEach(category => {
+    category.forEach(item => {
+      total += safeNum(item.payment_cost) * Math.max(1, safeNum(item.frequency));
+    });
+  });
+
+  // 3. Costes de personal anuales
+  state.personnel.forEach(person => {
+    const gross = safeNum(person.gross);
+    const employerSS = safeNum(person.employer_ss) / 100;
+    total += gross * (1 + employerSS);
+  });
+
+  return total;
 }
 
 function calculateFinancing() {
@@ -845,19 +886,46 @@ function diagnoseDOM() {
   }
 }
 
-// ===== INICIALIZACIÓN CORREGIDA =====
+// ===== INICIALIZACIÓN SIMPLIFICADA Y ROBUSTA =====
 async function initializeApp() {
-    console.log("🎯 Inicializando IDarte...");
+    console.log("🎯 Inicializando IDarte - Versión corregida...");
     
-    // ESTRATEGIA: Esperar a que TODO el DOM esté listo
+    // Estrategia simple: esperar a que el DOM esté listo
     if (document.readyState === 'loading') {
-        console.log("⏳ DOM aún cargando, esperando...");
-        document.addEventListener('DOMContentLoaded', async function() {
-            await initializeAppAsync();
-        });
+        document.addEventListener('DOMContentLoaded', initializeAppCore);
     } else {
-        console.log("✅ DOM ya está listo, inicializando directamente");
-        await initializeAppAsync();
+        initializeAppCore();
+    }
+}
+
+function initializeAppCore() {
+    console.log("✅ DOM listo, inicializando componentes...");
+    
+    try {
+        // 1. Cargar traducciones primero
+        loadTranslations();
+        
+        // 2. Configurar componentes básicos
+        setupLanguageSelector();
+        setupTabNavigation();
+        
+        // 3. Cargar datos de ejemplo
+        preloadSampleData();
+        
+        // 4. Renderizar tablas
+        renderAllTables();
+        
+        // 5. Configurar event listeners globales
+        setupGlobalEventListeners();
+        
+        // 6. Ejecutar cálculos iniciales después de un breve delay
+        setTimeout(() => {
+            updateAll();
+            console.log("✅ IDarte completamente inicializado");
+        }, 300);
+        
+    } catch (error) {
+        console.error("💥 Error en inicialización:", error);
     }
 }
 
@@ -1143,12 +1211,3 @@ window.generatePDFReport = function() {
     });
   }, 500);
 };
-
-// Al final del archivo, añade:
-window.addEventListener('load', function() {
-    console.log("🚀 Página completamente cargada");
-    // Ejecutar diagnóstico
-    setTimeout(diagnoseDOM, 100);
-    // Inicializar la app
-    initializeApp();
-});

@@ -538,7 +538,7 @@ function calculatePricing() {
     // Actualizar todos los elementos de forma segura
     let updatedCount = 0;
     updates.forEach(({ id, value }) => {
-        if (UpdateElement(id, value)) {
+        if (updateElement(id, value)) {
             updatedCount++;
         }
     });

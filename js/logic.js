@@ -222,15 +222,16 @@ function calculatePricing() {
   updateElement('required-annual-revenue', fmt(facturacionNecesaria));
 
   // ACTUALIZAR PANEL 6
-  updateElement('total-inversion', fmt(financiacion.inversiones));
-  updateElement('tesoreria-calculada', fmt(financiacion.tesoreria));
-  updateElement('necesidad-total', fmt(financiacion.necesidadesTotales));
-  updateElement('total-aportacion-socios', fmt(financiacion.aportacionesTotales));
-  updateElement('total-trabajadores', fmt(financiacion.aportacionesTrabajadores));
-  updateElement('total-capitalistas', fmt(financiacion.aportacionesCapitalistas));
-  updateElement('cantidad-financiar', fmt(financiacion.prestamoNecesario));
-  updateElement('cuota-anual', fmt(financiacion.cuotaAnual));
-  updateElement('num-socios', state.finance.socios.length);
+updateElement('total-inversion', fmt(financiacion.inversiones));
+updateElement('tesoreria-calculada', fmt(financiacion.tesoreria));
+updateElement('necesidad-total', fmt(financiacion.necesidadesTotales));
+updateElement('total-aportacion-socios', fmt(financiacion.aportacionesTotales));
+updateElement('total-trabajadores', fmt(financiacion.aportacionesTrabajadores));
+updateElement('total-capitalistas', fmt(financiacion.aportacionesCapitalistas));
+updateElement('cantidad-financiar', fmt(financiacion.prestamoNecesario));
+updateElement('cuota-anual-display', fmt(financiacion.cuotaAnual));  // ← CAMBIADO
+updateElement('total-socios-display', fmt(financiacion.aportacionesTotales));  // ← NUEVA
+updateElement('num-socios', state.finance.socios.length);
 
   // ACTUALIZAR SIDEBAR
   updateElement('total-facturacion', fmt(facturacionNecesaria));

@@ -475,9 +475,23 @@ function updateAll() {
   }
 }
 
-/* ===========================
-   SALARIO / PRECIO HORA - CORREGIDA
-   =========================== */
+// NUEVA FUNCIÓN: Calcular costes financieros completos usando "Urteko Kuota Guztira"
+function calcularCostesFinancierosCompletos() {
+    let costesTotales = 0;
+    
+    // USAR DIRECTAMENTE "Urteko Kuota Guztira" que ya incluye intereses + amortización
+    const cuotaAnualSpan = document.getElementById('cuota-anual');
+    if (cuotaAnualSpan) {
+        const cuotaText = cuotaAnualSpan.textContent;
+        costesTotales = safeNum(cuotaText.replace(/[^\d.,]/g, '').replace(',', '.'));
+        console.log("💰 Costes financieros completos (de cuota-anual):", costesTotales);
+    } else {
+        console.warn("❌ No se encontró 'cuota-anual'");
+    }
+    
+    return costesTotales;
+}
+
 function calculatePricing(totalOperational = null) {
     console.log("🎯 Calculando pricing con márgenes diferenciados...");
     
@@ -491,7 +505,7 @@ function calculatePricing(totalOperational = null) {
     const hours = safeNum(qs('#annual-hours-per-employee')?.value) || 1600;
     const totalHours = emp * hours;
 
-        // Calcular costos financieros COMPLETOS (intereses + amortización)
+    // Calcular costos financieros COMPLETOS (intereses + amortización)
     let costosFinancieros = calcularCostesFinancierosCompletos();
 
     console.log("📊 Datos para pricing:", {
@@ -528,27 +542,7 @@ function calculatePricing(totalOperational = null) {
     document.getElementById('expected-net-profit').dataset.value = margenNeto;
     document.getElementById('required-annual-revenue').dataset.value = revenue;
     document.getElementById('total-available-hours').dataset.value = totalHours;
-
-// NUEVA FUNCIÓN: Calcular costes financieros completos usando "Urteko Kuota Guztira"
-function calcularCostesFinancierosCompletos() {
-    let costesTotales = 0;
     
-    // USAR DIRECTAMENTE "Urteko Kuota Guztira" que ya incluye intereses + amortización
-    const cuotaAnualSpan = document.getElementById('cuota-anual');
-    if (cuotaAnualSpan) {
-        const cuotaText = cuotaAnualSpan.textContent;
-        costesTotales = safeNum(cuotaText.replace(/[^\d.,]/g, '').replace(',', '.'));
-        console.log("💰 Costes financieros completos (de cuota-anual):", costesTotales);
-    } else {
-        console.warn("❌ No se encontró 'cuota-anual'");
-    }
-    
-    return costesTotales;
-}
-
-// AÑADE esta nueva función después de calculatePricing
-function updateRightSummaryWithMargins(totalOperational, margenBruto, costosFinancieros) {
-  
     // Actualizar sidebar con márgenes diferenciados
     updateRightSummaryWithMargins(totalOperational, margenBruto, costosFinancieros);
     
@@ -588,7 +582,6 @@ function updateRightSummaryWithMargins(totalOperational, margenBruto, costosFina
         requiredRevenue
     });
 }
-
 /* ===========================
    /* ===========================
    SIDEBAR MEJORADO - CORREGIDO Y ROBUSTO

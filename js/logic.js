@@ -778,12 +778,19 @@ function updateAll() {
 async function initializeApp() {
     console.log("🎯 Inicializando IDarte con internacionalización JSON...");
     
-    // Primero cargar las traducciones
+    // Esperar a que el DOM esté completamente cargado
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeAppAsync();
+        });
+    } else {
+        initializeAppAsync();
+    }
+}
+
+async function initializeAppAsync() {
     await loadTranslations();
-    
-    // Luego el resto de la inicialización
     setupLanguageSelector();
-    
     preloadSampleData();
     renderAllTables();
     setupTabNavigation();
@@ -798,7 +805,12 @@ async function initializeApp() {
         if (el) el.addEventListener('input', updateAll);
     });
     
-    setTimeout(updateAll, 100);
+    // Pequeña pausa para asegurar que todo está renderizado
+    setTimeout(() => {
+        console.log("✅ DOM completamente cargado - actualizando cálculos");
+        updateAll();
+    }, 200);
+    
     console.log("✅ IDarte completamente operativo con internacionalización JSON");
 }
 

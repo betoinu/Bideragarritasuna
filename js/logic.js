@@ -471,25 +471,34 @@ function calculatePricing() {
   updateElement('required-annual-revenue', fmt(facturacionNecesaria));
 
   // ACTUALIZAR PANEL 6
-updateElement('total-inversion', fmt(financiacion.inversiones));
-updateElement('tesoreria-calculada', fmt(financiacion.tesoreria));
-updateElement('necesidad-total', fmt(financiacion.necesidadesTotales));
-updateElement('total-aportacion-socios', fmt(financiacion.aportacionesTotales));
-updateElement('total-trabajadores', fmt(financiacion.aportacionesTrabajadores));
-updateElement('total-capitalistas', fmt(financiacion.aportacionesCapitalistas));
-updateElement('cantidad-financiar', fmt(financiacion.prestamoNecesario));
-updateElement('cuota-anual-display', fmt(financiacion.cuotaAnual));  // ← CAMBIADO
-updateElement('total-socios-display', fmt(financiacion.aportacionesTotales));  // ← NUEVA
-updateElement('num-socios', state.finance.socios.length);
+  updateElement('total-inversion', fmt(financiacion.inversiones));
+  updateElement('tesoreria-calculada', fmt(financiacion.tesoreria));
+  updateElement('necesidad-total', fmt(financiacion.necesidadesTotales));
+  updateElement('total-aportacion-socios', fmt(financiacion.aportacionesTotales));
+  updateElement('total-trabajadores', fmt(financiacion.aportacionesTrabajadores));
+  updateElement('total-capitalistas', fmt(financiacion.aportacionesCapitalistas));
+  updateElement('cantidad-financiar', fmt(financiacion.prestamoNecesario));
+  updateElement('cuota-anual-display', fmt(financiacion.cuotaAnual));
+  updateElement('total-socios-display', fmt(financiacion.aportacionesTotales));
+  updateElement('num-socios', state.finance.socios.length);
 
-  // ACTUALIZAR SIDEBAR
+  // ACTUALIZAR SIDEBAR - CORRECCIÓN APLICADA AQUÍ
   updateElement('total-facturacion', fmt(facturacionNecesaria));
   updateElement('gastos-operativos', fmt(costesOperativos));
   updateElement('costos-financieros', fmt(costesFinancieros));
   updateElement('margen-bruto', fmt(margenBruto));
   updateElement('suggested-hourly-rate-sidebar', fmt(precioHora));
-  updateElement('employee-count-sidebar', employeeCount);
-  updateElement('annual-hours-sidebar', totalHours.toLocaleString());
+  
+  // CORRECCIÓN: Actualizar los elementos correctos del sidebar
+  const employeeCountSidebar = document.getElementById('employee-count-sidebar');
+  const annualHoursSidebar = document.getElementById('annual-hours-sidebar');
+  
+  if (employeeCountSidebar) {
+    employeeCountSidebar.textContent = employeeCount;
+  }
+  if (annualHoursSidebar) {
+    annualHoursSidebar.textContent = totalHours.toLocaleString();
+  }
 
   // Resumen de costes
   const totalAmortizaciones = calculateTotalAmortizations();

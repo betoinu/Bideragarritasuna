@@ -1427,13 +1427,61 @@ function verificarMejoras() {
 // Llamar a verificarMejoras después de init
 setTimeout(verificarMejoras, 1500);
 
-/* ===========================
-   EJECUCIÓN AUTOMÁTICA AL CARGAR
-   =========================== */
-window.addEventListener('load', init);
+// NUEVA FUNCIÓN: Verificar influencia de la tesorería
+function verificarInfluenciaTesorería() {
+    console.log("====================");
+    console.log("🔍 VERIFICANDO INFLUENCIA DE TESORERÍA");
+    console.log("====================");
+    
+    // Obtener valores actuales
+    const porcentajeTesoreria = safeNum(document.getElementById('porcentaje-tesoreria')?.value) || 0;
+    const importeTesoreriaEl = document.getElementById('importe-tesoreria');
+    const importeTesoreria = importeTesoreriaEl ? safeNum(importeTesoreriaEl.textContent.replace(/[^\d.,]/g, '').replace(',', '.')) || 0 : 0;
+    
+    const cantidadFinanciarEl = document.getElementById('cantidad-financiar');
+    const cantidadFinanciar = cantidadFinanciarEl ? safeNum(cantidadFinanciarEl.textContent.replace(/[^\d.,]/g, '').replace(',', '.')) || 0 : 0;
+    
+    const cuotaAnualEl = document.getElementById('cuota-anual');
+    const cuotaAnual = cuotaAnualEl ? safeNum(cuotaAnualEl.textContent.replace(/[^\d.,]/g, '').replace(',', '.')) || 0 : 0;
+    
+    const costesFinancieros = calcularCostesFinancierosCompletos();
+    
+    console.log("📊 VALORES ACTUALES:", {
+        porcentajeTesoreria: porcentajeTesoreria + '%',
+        importeTesoreria: fmt(importeTesoreria),
+        cantidadFinanciar: fmt(cantidadFinanciar),
+        cuotaAnual: fmt(cuotaAnual),
+        costesFinancieros: fmt(costesFinancieros)
+    });
+    
+    // Simular cambio para ver influencia potencial
+    const gastosAnuales = calculateTotalCosts();
+    const tesoreria10 = gastosAnuales * 0.10;
+    const tesoreria20 = gastosAnuales * 0.20;
+    
+    console.log("📈 INFLUENCIA POTENCIAL:");
+    console.log("   - Gastos anuales:", fmt(gastosAnuales));
+    console.log("   - Tesorería 10%:", fmt(tesoreria10));
+    console.log("   - Tesorería 20%:", fmt(tesoreria20));
+    console.log("   - Diferencia 10% vs 20%:", fmt(tesoreria20 - tesoreria10));
+    
+    // Verificar si la tesorería afecta a la cantidad a financiar
+    const necesidadesBase = safeNum(document.getElementById('necesidades-inversion')?.value) || 210127.5;
+    console.log("💰 RELACIÓN TESORERÍA -> FINANCIACIÓN:");
+    console.log("   - Necesidades base:", fmt(necesidadesBase));
+    console.log("   + Tesorería actual:", fmt(importeTesoreria));
+    console.log("   = Total a financiar:", fmt(necesidadesBase + importeTesoreria));
+    console.log("   vs Cantidad financiar actual:", fmt(cantidadFinanciar));
+    
+    console.log("====================");
+    console.log("✅ Verificación tesorería completada");
+    console.log("====================");
+}
+
+// Llamar a verificarInfluenciaTesorería después de init
+setTimeout(verificarInfluenciaTesorería, 2500);
 
 /* ===========================
    EJECUCIÓN AUTOMÁTICA AL CARGAR
    =========================== */
 window.addEventListener('load', init);
-

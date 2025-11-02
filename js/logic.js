@@ -275,7 +275,8 @@ function updateElement(id, value) {
     el.textContent = value;
     console.log(`✅ Elemento ${id} actualizado a:`, value);
   } else {
-    console.error(`❌ Elemento con ID ${id} no encontrado`);
+    console.warn(`⚠️ Elemento con ID ${id} no encontrado - pero SÍ existe en el HTML`);
+    // Esto nos ayudará a debuggear
   }
 }
 
@@ -452,55 +453,53 @@ function calculatePricing() {
   const impuestos = margenBruto * (corporateTax / 100);
   const beneficioNeto = margenBruto - impuestos;
 
-  console.log("🔍 Debug sidebar - Empleados:", employeeCount, "Horas totales:", totalHours);
+  console.log("🔍 Calculando pricing - Empleados:", employeeCount, "Horas totales:", totalHours);
 
-  // ACTUALIZAR SOLO LOS ELEMENTOS QUE EXISTEN
-  safeUpdateElement('desglose-gastos-operativos', fmt(costesOperativos));
-  safeUpdateElement('desglose-costes-financieros', fmt(costesFinancieros));
-  safeUpdateElement('desglose-gastos-totales', fmt(costesTotales));
-  safeUpdateElement('desglose-porcentaje-margen', margin);
-  safeUpdateElement('desglose-margen-bruto', fmt(margenBruto));
-  safeUpdateElement('desglose-facturacion-total', fmt(facturacionNecesaria));
-  safeUpdateElement('desglose-total-horas', totalHours.toLocaleString());
-  safeUpdateElement('desglose-precio-hora', fmt(precioHora));
+  // ACTUALIZAR TODOS LOS ELEMENTOS (ahora sabemos que existen)
+  updateElement('desglose-gastos-operativos', fmt(costesOperativos));
+  updateElement('desglose-costes-financieros', fmt(costesFinancieros));
+  updateElement('desglose-gastos-totales', fmt(costesTotales));
+  updateElement('desglose-porcentaje-margen', margin);
+  updateElement('desglose-margen-bruto', fmt(margenBruto));
+  updateElement('desglose-facturacion-total', fmt(facturacionNecesaria));
+  updateElement('desglose-total-horas', totalHours.toLocaleString());
+  updateElement('desglose-precio-hora', fmt(precioHora));
   
-  safeUpdateElement('suggested-hourly-rate', fmt(precioHora));
-  safeUpdateElement('margen-bruto-panel7', fmt(margenBruto));
-  safeUpdateElement('expected-net-profit', fmt(beneficioNeto));
-  safeUpdateElement('required-annual-revenue', fmt(facturacionNecesaria));
+  updateElement('suggested-hourly-rate', fmt(precioHora));
+  updateElement('margen-bruto-panel7', fmt(margenBruto));
+  updateElement('expected-net-profit', fmt(beneficioNeto));
+  updateElement('required-annual-revenue', fmt(facturacionNecesaria));
 
-  // ACTUALIZAR PANEL 6 - SOLO ELEMENTOS EXISTENTES
-  safeUpdateElement('total-inversion', fmt(financiacion.inversiones));
-  safeUpdateElement('tesoreria-calculada', fmt(financiacion.tesoreria));
-  safeUpdateElement('necesidad-total', fmt(financiacion.necesidadesTotales));
-  safeUpdateElement('total-aportacion-socios', fmt(financiacion.aportacionesTotales));
-  safeUpdateElement('total-trabajadores', fmt(financiacion.aportacionesTrabajadores));
-  safeUpdateElement('total-capitalistas', fmt(financiacion.aportacionesCapitalistas));
-  safeUpdateElement('cantidad-financiar', fmt(financiacion.prestamoNecesario));
-  safeUpdateElement('cuota-anual-display', fmt(financiacion.cuotaAnual));
-  safeUpdateElement('total-socios-display', fmt(financiacion.aportacionesTotales));
-  safeUpdateElement('num-socios', state.finance.socios.length);
+  // ACTUALIZAR PANEL 6
+  updateElement('total-inversion', fmt(financiacion.inversiones));
+  updateElement('tesoreria-calculada', fmt(financiacion.tesoreria));
+  updateElement('necesidad-total', fmt(financiacion.necesidadesTotales));
+  updateElement('total-aportacion-socios', fmt(financiacion.aportacionesTotales));
+  updateElement('total-trabajadores', fmt(financiacion.aportacionesTrabajadores));
+  updateElement('total-capitalistas', fmt(financiacion.aportacionesCapitalistas));
+  updateElement('cantidad-financiar', fmt(financiacion.prestamoNecesario));
+  updateElement('cuota-anual-display', fmt(financiacion.cuotaAnual));
+  updateElement('total-socios-display', fmt(financiacion.aportacionesTotales));
+  updateElement('num-socios', state.finance.socios.length);
 
-  // ACTUALIZAR SIDEBAR
-  safeUpdateElement('total-facturacion', fmt(facturacionNecesaria));
-  safeUpdateElement('gastos-operativos', fmt(costesOperativos));
-  safeUpdateElement('costos-financieros', fmt(costesFinancieros));
-  safeUpdateElement('margen-bruto', fmt(margenBruto));
-  safeUpdateElement('suggested-hourly-rate-sidebar', fmt(precioHora));
-  
-  // ACTUALIZAR ELEMENTOS DEL SIDEBAR ESPECÍFICOS
-  safeUpdateElement('employee-count-sidebar', employeeCount.toString());
-  safeUpdateElement('annual-hours-sidebar', totalHours.toLocaleString());
+  // ACTUALIZAR SIDEBAR - ¡ESTOS ELEMENTOS SÍ EXISTEN!
+  updateElement('total-facturacion', fmt(facturacionNecesaria));
+  updateElement('gastos-operativos', fmt(costesOperativos));
+  updateElement('costos-financieros', fmt(costesFinancieros));
+  updateElement('margen-bruto', fmt(margenBruto));
+  updateElement('suggested-hourly-rate-sidebar', fmt(precioHora));
+  updateElement('employee-count-sidebar', employeeCount);
+  updateElement('annual-hours-sidebar', totalHours.toLocaleString());
 
-  // RESUMEN DE COSTES
+  // Resumen de costes
   const totalAmortizaciones = calculateTotalAmortizations();
   const totalGastosFijos = calculateTotalRecurring();
   const totalPersonal = calculateTotalPersonnel();
   
-  safeUpdateElement('total-amortizaciones', fmt(totalAmortizaciones));
-  safeUpdateElement('total-gastos-fijos', fmt(totalGastosFijos));
-  safeUpdateElement('total-personal', fmt(totalPersonal));
-  safeUpdateElement('total-intereses', fmt(financiacion.interesAnual));
+  updateElement('total-amortizaciones', fmt(totalAmortizaciones));
+  updateElement('total-gastos-fijos', fmt(totalGastosFijos));
+  updateElement('total-personal', fmt(totalPersonal));
+  updateElement('total-intereses', fmt(financiacion.interesAnual));
 
   return { facturacionNecesaria, precioHora, margenBruto, beneficioNeto };
 }

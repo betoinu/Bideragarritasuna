@@ -236,3 +236,104 @@ img {
     margin-bottom: 12px;
     font-size: 1.1em;
 }
+/* Añadir al final del CSS existente */
+
+/* Mejoras visuales para los nuevos elementos */
+.section {
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(15,23,42,0.06);
+}
+
+.section:last-child {
+  border-bottom: none;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.input-group label {
+  font-weight: 600;
+  font-size: 0.9em;
+  color: var(--muted);
+}
+
+.input-group input, .input-group select {
+  padding: 10px 12px;
+  border: 1px solid #e6edf3;
+  border-radius: 8px;
+  font-size: 1em;
+}
+
+/* Mejoras para el desglose pedagógico */
+.desglose-pedagogico {
+  background: white;
+  padding: 16px;
+  border-radius: 8px;
+  border-left: 4px solid var(--id-primary);
+}
+
+.card {
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(16,24,40,0.1);
+}
+/* Añadir estas reglas al final del CSS */
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.input-group label {
+  font-weight: 600;
+  font-size: 0.85em;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.input-group input, 
+.input-group select {
+  padding: 10px 12px;
+  border: 1px solid #e6edf3;
+  border-radius: 8px;
+  font-size: 1em;
+  background: white;
+  transition: all 0.2s ease;
+}
+
+.input-group input:focus, 
+.input-group select:focus {
+  outline: none;
+  border-color: var(--id-primary);
+  box-shadow: 0 0 0 3px rgba(83, 12, 237, 0.1);
+}
+
+/* Mejora específica para la sección de financiación */
+.section .input-group {
+  margin-bottom: 12px;
+}/* Para pantallas pequeñas */
+@media (max-width: 768px) {
+  .section > div[style*="grid-template-columns"] {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+  
+  .input-group {
+    margin-bottom: 12px;
+  }
+}
+
+.section .input-group:last-child {
+  margin-bottom: 0;
+}
+

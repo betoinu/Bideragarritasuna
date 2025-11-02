@@ -270,13 +270,23 @@ function safeNum(v) {
 }
 
 function updateElement(id, value) {
-  const el = document.getElementById(id);
-  if (el) {
-    el.textContent = value;
-    console.log(`✅ Elemento ${id} actualizado a:`, value);
-  } else {
-    console.warn(`⚠️ Elemento con ID ${id} no encontrado - pero SÍ existe en el HTML`);
-    // Esto nos ayudará a debuggear
+  try {
+    const el = document.getElementById(id);
+    if (el) {
+      // Verificar el tipo de elemento y actualizar correctamente
+      if (el.tagName === 'INPUT' || el.tagName === 'SELECT') {
+        el.value = value;
+      } else {
+        el.textContent = value;
+      }
+      return true; // Éxito
+    } else {
+      console.warn(`⚠️ Elemento con ID "${id}" no encontrado en el DOM`);
+      return false; // Falla
+    }
+  } catch (error) {
+    console.error(`💥 Error actualizando elemento ${id}:`, error);
+    return false;
   }
 }
 
@@ -435,6 +445,43 @@ function calculateOperationalCosts() {
 }
 
 function calculatePricing() {
+   
+  console.log("🔍 INICIANDO calculatePricing() - Verificando elementos...");  
+// PRIMERO: Diagnóstico detallado de elementos críticos
+  const criticalIds = ['employee-count-sidebar', 'annual-hours-sidebar'];
+  
+  criticalIds.forEach(id => {
+    const el = document.getElementById(id);
+    console.log(`📋 ${id}:`, el ? `✅ EXISTE (${el.tagName})` : '❌ NO EXISTE');
+    if (el) {
+      console.log(`   Contenido actual: "${el.textContent}"`);
+      console.log(`   Padre: ${el.parentElement?.tagName}`);
+      console.log(`   Estilos display: ${window.getComputedStyle(el).display}`);
+    }
+  });
+
+  const missing = requiredElements.filter(id => !document.getElementById(id));
+  if (missing.length > 0) {
+    console.warn("❌ Elementos requeridos faltantes, reintentando...", missing);
+    console.log("📍 Estado del DOM - readyState:", document.readyState);
+    console.log("📍 Body existe:", !!document.body);
+    
+    // Verificar si el sidebar completo existe
+    const sidebar = document.querySelector('.sidebar');
+    console.log("📍 Sidebar existe:", !!sidebar);
+    if (sidebar) {
+      console.log("📍 Elementos en sidebar:");
+      sidebar.querySelectorAll('[id]').forEach(el => {
+        console.log(`   - ${el.id}: ${el.tagName}`);
+      });
+    }
+    
+    setTimeout(calculatePricing, 100);
+    return;
+  }
+
+  console.log("✅ Todos los elementos críticos encontrados, procediendo con cálculos...");
+    
   const financiacion = calculateFinancing();
   const costesOperativos = financiacion.gastosOperativosAnuales;
   const costesFinancieros = financiacion.cuotaAnual;
@@ -501,6 +548,7 @@ function calculatePricing() {
   updateElement('total-personal', fmt(totalPersonal));
   updateElement('total-intereses', fmt(financiacion.interesAnual));
 
+ console.log("✅ calculatePricing() completado");
   return { facturacionNecesaria, precioHora, margenBruto, beneficioNeto };
 }
 
@@ -773,45 +821,128 @@ function updateAll() {
   calculatePricing();
 }
 
-// ===== INICIALIZACIÓN =====
-// ===== INICIALIZACIÓN MEJORADA CON JSON =====
-async function initializeApp() {
-    console.log("🎯 Inicializando IDarte con internacionalización JSON...");
+// Función para diagnosticar el estado del DOM
+function diagnoseDOM() {
+  console.log("🔍 DIAGNÓSTICO DEL DOM:");
+  console.log("Estado readyState:", document.readyState);
+  console.log("Elementos en body:", document.body ? "EXISTE" : "NO EXISTE");
+  
+  const criticalElements = {
+    'employee-count-sidebar': 'Sidebar - empleados',
+    'annual-hours-sidebar': 'Sidebar - horas', 
+    'desglose-porcentaje-margen': 'Panel 7 - % margen',
+    'desglose-total-horas': 'Panel 7 - horas totales',
+    'cantidad-financiar': 'Panel 6 - cantidad financiar',
+    'cuota-anual-display': 'Panel 6 - cuota anual',
+    'total-socios-display': 'Panel 6 - total socios',
+    'num-socios': 'Panel 6 - num socios'
+  };
+  
+  Object.entries(criticalElements).forEach(([id, desc]) => {
+    const element = document.getElementById(id);
+    console.log(`- ${desc} (${id}):`, element ? "✅ EXISTE" : "❌ NO EXISTE");
     
-    // Esperar a que el DOM esté completamente cargado
+    if (element) {
+      console.log(`  > Contenido actual: "${element.textContent}"`);
+      console.log(`  > Tipo: ${element.tagName}, Clases: ${element.className}`);
+    }
+  });
+  
+  // Verificar también el sidebar completo
+  const sidebar = document.querySelector('.sidebar');
+  console.log("Sidebar completo:", sidebar ? "EXISTE" : "NO EXISTE");
+  
+  if (sidebar) {
+    console.log("Elementos dentro del sidebar:");
+    sidebar.querySelectorAll('[id]').forEach(el => {
+      console.log(`  - ${el.id}: ${el.tagName}`);
+    });
+  }
+}
+
+// ===== INICIALIZACIÓN CORREGIDA =====
+async function initializeApp() {
+    console.log("🎯 Inicializando IDarte...");
+    
+    // ESTRATEGIA: Esperar a que TODO el DOM esté listo
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeAppAsync();
+        console.log("⏳ DOM aún cargando, esperando...");
+        document.addEventListener('DOMContentLoaded', async function() {
+            await initializeAppAsync();
         });
     } else {
-        initializeAppAsync();
+        console.log("✅ DOM ya está listo, inicializando directamente");
+        await initializeAppAsync();
     }
 }
 
 async function initializeAppAsync() {
-    await loadTranslations();
-    setupLanguageSelector();
-    preloadSampleData();
-    renderAllTables();
-    setupTabNavigation();
-    
-    const globalInputs = [
-        'target-profit-margin', 'corporate-tax', 'employee-count', 'annual-hours-per-employee',
-        'tae', 'plazo', 'periodo-gracia', 'meses-tesoreria'
-    ];
-    
-    globalInputs.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.addEventListener('input', updateAll);
-    });
-    
-    // Pequeña pausa para asegurar que todo está renderizado
-    setTimeout(() => {
-        console.log("✅ DOM completamente cargado - actualizando cálculos");
-        updateAll();
-    }, 200);
-    
-    console.log("✅ IDarte completamente operativo con internacionalización JSON");
+    try {
+        console.log("🔍 Fase 1: Verificando elementos del DOM...");
+        
+        // VERIFICAR QUE LOS ELEMENTOS CRÍTICOS EXISTEN
+        const criticalElements = [
+            'employee-count-sidebar', 'annual-hours-sidebar',
+            'desglose-porcentaje-margen', 'desglose-total-horas',
+            'cantidad-financiar', 'cuota-anual-display', 
+            'total-socios-display', 'num-socios'
+        ];
+        
+        const missingElements = criticalElements.filter(id => !document.getElementById(id));
+        
+        if (missingElements.length > 0) {
+            console.warn("❌ Elementos faltantes:", missingElements);
+            // Reintentar después de un breve delay
+            setTimeout(initializeAppAsync, 100);
+            return;
+        }
+        
+        console.log("✅ Todos los elementos críticos encontrados");
+        
+        // Fase 2: Cargar traducciones
+        console.log("🔍 Fase 2: Cargando traducciones...");
+        await loadTranslations();
+        
+        // Fase 3: Configuración básica
+        console.log("🔍 Fase 3: Configurando componentes...");
+        setupLanguageSelector();
+        preloadSampleData();
+        renderAllTables();
+        setupTabNavigation();
+        
+        // Fase 4: Event listeners
+        console.log("🔍 Fase 4: Configurando event listeners...");
+        const globalInputs = [
+            'target-profit-margin', 'corporate-tax', 'employee-count', 'annual-hours-per-employee',
+            'tae', 'plazo', 'periodo-gracia', 'meses-tesoreria'
+        ];
+        
+        globalInputs.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.addEventListener('input', updateAll);
+                console.log(`✅ Listener añadido para: ${id}`);
+            } else {
+                console.warn(`⚠️ No se pudo añadir listener para: ${id}`);
+            }
+        });
+        
+        // Fase 5: Cálculos iniciales
+        console.log("🔍 Fase 5: Ejecutando cálculos iniciales...");
+        
+        // Pequeña pausa para asegurar que todo está renderizado
+        setTimeout(() => {
+            console.log("✅ Inicialización completada - ejecutando updateAll()");
+            updateAll();
+        }, 300);
+        
+        console.log("🎉 IDarte completamente operativo");
+        
+    } catch (error) {
+        console.error("💥 Error crítico en inicialización:", error);
+        // Reintentar después de error
+        setTimeout(initializeAppAsync, 500);
+    }
 }
 
 // ===== GENERACIÓN DE PDF =====
@@ -845,4 +976,11 @@ window.generatePDFReport = function() {
   }, 500);
 };
 
-window.addEventListener('load', initializeApp);
+// Al final del archivo, añade:
+window.addEventListener('load', function() {
+    console.log("🚀 Página completamente cargada");
+    // Ejecutar diagnóstico
+    setTimeout(diagnoseDOM, 100);
+    // Inicializar la app
+    initializeApp();
+});

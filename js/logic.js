@@ -617,7 +617,7 @@ function updateRightSummary(totalOperational = null) {
 
     // Calcular márgenes
     const margin = safeNum(document.getElementById('target-profit-margin')?.value) || 20;
-    const margenBruto = totalOperational * (margin / 100);
+    const margenBruto = (totalOperational + costosFinancieros) * (margin / 100);
 
     // LANGILE KOPURUA - de state.personnel (REAL)
     const employeeCount = state.personnel.length;

@@ -865,33 +865,29 @@ function bindGlobalInputs() {
         console.log("✅ Botón PDF configurado");
     }
     
-    // Inputs de capital de socios
-    ['partner-capital-1', 'partner-capital-2', 'partner-capital-3'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) {
-            el.addEventListener('input', updateAll);
-        }
-    });
+// Inputs de capital de socios
+['partner-capital-1', 'partner-capital-2', 'partner-capital-3'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+        el.addEventListener('input', actualizarCascada); // ← CAMBIADO
+    }
+});
 
-    // Inputs de préstamo
-    ['loan-amount', 'loan-tae', 'loan-term'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) {
-            el.addEventListener('input', updateAll);
-        }
-    });
+// Inputs de préstamo  
+['loan-amount', 'loan-tae', 'loan-term'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+        el.addEventListener('input', actualizarCascada); // ← CAMBIADO
+    }
+});
 
-    // Inputs de pricing
-    ['corporate-tax', 'target-profit-margin', 'employee-count', 'annual-hours-per-employee'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) {
-            el.addEventListener('input', () => {
-                const totalOperational = calculateTotalCosts();
-                calculatePricing(totalOperational);
-                updateRightSummary(totalOperational);
-            });
-        }
-    });
+// Inputs de pricing
+['corporate-tax', 'target-profit-margin', 'employee-count', 'annual-hours-per-employee'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+        el.addEventListener('input', actualizarCascada); // ← SIMPLIFICADO
+    }
+});
 
     console.log("✅ Todos los event listeners configurados");
 }

@@ -186,31 +186,93 @@ function applyTranslations() {
         const key = element.getAttribute('data-i18n');
         const translation = getTranslation(key);
         
-        if (translation && translation !== key) {
-            element.textContent = translation;
-            elementosTraducidos++;
-        } else {
-            elementosConProblemas.push(key);
+        if (translation) {
+            // DETECCIÓN DEL PROBLEMA DE sidebar.workforce
+            const tieneProblemaTextoVacio = (
+                element.textContent === '' && 
+                element.firstChild && 
+                element.firstChild.nodeType === 3 && 
+                element.firstChild.data === key
+            );
+            
+            const textoEsClave = element.textContent === key;
+            
+            if (tieneProblemaTextoVacio || textoEsClave) {
+                // SOLUCIÓN: Recrear el nodo de texto completamente
+                while (element.firstChild) {
+                    element.removeChild(element.firstChild);
+                }
+                element.appendChild(document.createTextNode(translation));
+                elementosTraducidos++;
+                
+                if (tieneProblemaTextoVacio) {
+                    console.log(`✅ Corregido elemento con texto vacío: ${key}`);
+                }
+            } else if (element.textContent !== translation) {
+                // Elemento ya tiene otro texto (posiblemente ya traducido)
+                elementosConProblemas.push(key);
+            }
         }
     });
     
     console.log(`✅ ${elementosTraducidos} elementos traducidos`);
     
-    // REINTENTAR elementos problemáticos después de un delay
+    // REINTENTO para elementos problemáticos después de un delay
     if (elementosConProblemas.length > 0) {
-        console.log(`⏳ Reintentando ${elementosConProblemas.length} elementos...`);
+        console.log(`⏳ ${elementosConProblemas.length} elementos necesitan reintento:`, elementosConProblemas);
+        
         setTimeout(() => {
+            let reintentosExitosos = 0;
             elementosConProblemas.forEach(key => {
                 const element = document.querySelector(`[data-i18n="${key}"]`);
                 const translation = getTranslation(key);
-                if (element && translation) {
+                
+                if (element && translation && element.textContent !== translation) {
+                    // Forzar la traducción en el reintento
                     element.textContent = translation;
+                    reintentosExitosos++;
                     console.log(`✅ Reintento exitoso: ${key}`);
                 }
             });
+            console.log(`🎯 ${reintentosExitosos} reintentos exitosos`);
         }, 1000);
     }
 }
+// Añade esta función después de applyTranslations
+function setupTranslationProtection() {
+    console.log("🛡️ Configurando protección de traducciones...");
+    
+    // Observar cambios en elementos traducidos
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.type === 'characterData') {
+                const element = mutation.target.parentElement;
+                if (element && element.getAttribute('data-i18n')) {
+                    const key = element.getAttribute('data-i18n');
+                    const translation = getTranslation(key);
+                    
+                    if (translation && mutation.target.data !== translation) {
+                        console.log(`🛡️ Protección: Corrigiendo ${key} de "${mutation.target.data}" a "${translation}"`);
+                        mutation.target.data = translation;
+                    }
+                }
+            }
+        });
+    });
+    
+    // Aplicar observador a todos los elementos con data-i18n
+    document.querySelectorAll('[data-i18n]').forEach(element => {
+        observer.observe(element, {
+            characterData: true,
+            subtree: true,
+            childList: true
+        });
+    });
+    
+    console.log("✅ Protección de traducciones activada");
+}
+
+// Llama a esta función en initializeApp(), después de applyTranslations()
 
 function setupLanguageSelector() {
     const languageSelect = document.getElementById('language-select');
@@ -842,7 +904,12 @@ async function initializeApp() {
         preloadSampleData();
         renderAllTables();
         setupGlobalEventListeners();
-        
+
+ // 🔧 NUEVO: Configurar protección de traducciones después de que todo esté renderizado
+        setTimeout(() => {
+            setupTranslationProtection();
+        }, 500);
+      
         // Cálculos iniciales
         await new Promise(resolve => setTimeout(resolve, 300));
         updateAll();

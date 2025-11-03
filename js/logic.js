@@ -471,15 +471,21 @@ function calculatePricing() {
         { id: 'gastos-totales-panel6', value: fmt(costesTotales) },
         
         // Panel 7 - Pricing
-        { id: 'desglose-porcentaje-margen', value: margin },
-        { id: 'desglose-margen-bruto', value: fmt(margenBruto) },
-        { id: 'desglose-facturacion-total', value: fmt(facturacionNecesaria) },
-        { id: 'desglose-total-horas', value: totalHours.toLocaleString() },
-        { id: 'desglose-precio-hora', value: fmt(precioHora) },
-        { id: 'suggested-hourly-rate', value: fmt(precioHora) },
-        { id: 'margen-bruto-panel7', value: fmt(margenBruto) },
-        { id: 'expected-net-profit', value: fmt(beneficioNeto) },
-        { id: 'required-annual-revenue', value: fmt(facturacionNecesaria) },
+    { id: 'desglose-gastos-operativos', value: fmt(costesOperativos) },
+    { id: 'desglose-costes-financieros', value: fmt(costesFinancieros) },
+    { id: 'desglose-gastos-totales', value: fmt(costesTotales) },
+    
+    // ELEMENTOS QUE SÍ ESTABAN
+    { id: 'desglose-porcentaje-margen', value: margin },
+    { id: 'desglose-margen-bruto', value: fmt(margenBruto) },
+    { id: 'desglose-facturacion-total', value: fmt(facturacionNecesaria) },
+    { id: 'desglose-total-horas', value: totalHours.toLocaleString() },
+    { id: 'desglose-precio-hora', value: fmt(precioHora) },
+    { id: 'suggested-hourly-rate', value: fmt(precioHora) },
+    { id: 'margen-bruto-panel7', value: fmt(margenBruto) },
+    { id: 'expected-net-profit', value: fmt(beneficioNeto) },
+    { id: 'required-annual-revenue', value: fmt(facturacionNecesaria) },
+      
         
         // Sidebar
         { id: 'suggested-hourly-rate-sidebar', value: fmt(precioHora) },

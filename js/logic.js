@@ -39,9 +39,10 @@ function updateElement(id, value) {
   try {
     const el = document.getElementById(id);
     if (el) {
-      // Verificar si el valor actual es diferente
+      // Convertir valor a string para usar trim()
+      const stringValue = String(value);
       const currentValue = el.textContent.trim();
-      const newValue = value.trim();
+      const newValue = stringValue.trim();
       
       if (currentValue !== newValue) {
         if (el.tagName === 'INPUT' || el.tagName === 'SELECT') {
@@ -53,7 +54,7 @@ function updateElement(id, value) {
         return true;
       } else {
         console.log(`⏭️ ${id} ya tiene el valor correcto: "${currentValue}"`);
-        return true; // No es error, ya está actualizado
+        return true;
       }
     } else {
       console.warn(`⚠️ Elemento con ID "${id}" no encontrado en el DOM`);

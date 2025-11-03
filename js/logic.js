@@ -125,6 +125,7 @@ async function loadTranslations() {
                 'sidebar.totalInvestment': 'Inbertsio Totala',
                 'sidebar.partnerContributions': 'Bazkide Ekarpenak',
                 'sidebar.loanNeeded': 'Mailegu Beharrezkoa',
+                "sidebar.workforce": "Langile eta Orduak",
                 "button.remove": "✕"
             },
             "es": {
@@ -188,6 +189,7 @@ async function loadTranslations() {
                 'sidebar.financingSummary': 'Resumen de Financiación',
                 'sidebar.totalInvestment': 'Inversión Total',
                 'sidebar.partnerContributions': 'Aportaciones Socios',
+                 "sidebar.workforce": "Personal y Horas",
                 'sidebar.loanNeeded': 'Préstamo Necesario'
             }
         };

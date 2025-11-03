@@ -500,7 +500,7 @@ function calculatePricing() {
         { id: 'total-amortizaciones', value: fmt(calculateTotalAmortizations()) },
         { id: 'total-gastos-fijos', value: fmt(calculateTotalRecurring()) },
         { id: 'total-personal', value: fmt(calculateTotalPersonnel()) },
-        { id: 'total-intereses', value: fmt(financiacion.interesAnual) }
+        { id: 'costos-financieros', value: fmt(costesFinancieros) }
     ];
 
     let updatedCount = 0;

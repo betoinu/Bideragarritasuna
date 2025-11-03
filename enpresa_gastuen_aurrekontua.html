@@ -349,61 +349,42 @@
     </div>
 </div>
             </section>
-<!-- 🔹 SIDEBAR CORREGIDO -->
-<aside class="sidebar-section" id="main-sidebar">
-  <h3 data-i18n="sidebar.resumenCostes">Kostuen Laburpena</h3>
+<!-- 🧭 SIDEBAR PRINCIPAL - LABURPENA / RESUMEN -->
+<aside id="sidebar-section" style="background:#f8f9fa;padding:20px;border-radius:12px;width:320px">
 
-  <div class="sidebar-item">
-    <p><strong data-i18n="sidebar.langileKopurua">Langile kopurua</strong>:
-      <span id="employee-count-sidebar">0</span>
-    </p>
-    <p><strong data-i18n="sidebar.urtekoOrduak">Urteko orduak</strong>:
-      <span id="annual-hours-sidebar">0</span>
-    </p>
-  </div>
+  <!-- 🔹 BLOQUE 1: DATOS DE ACTIVIDAD -->
+  <section class="sidebar-block" style="margin-bottom:20px">
+    <h4 data-i18n="sidebar.workforce">Langile eta Orduak</h4>
+    <p><strong data-i18n="sidebar.langileKopurua">Langile kopurua:</strong> <span id="employee-count-sidebar">0</span></p>
+    <p><strong data-i18n="sidebar.urtekoOrduak">Urteko orduak:</strong> <span id="annual-hours-sidebar">0</span></p>
+  </section>
 
-  <div class="sidebar-item">
-    <p><strong data-i18n="sidebar.gastuOperatiboak">Gastu Operatiboak</strong>:
-      <span id="gastos-operativos-panel6">€ 0.00</span>
-    </p>
-    <p><strong data-i18n="sidebar.finantzaketaKostuak">Finantzaketa Kostuak</strong>:
-      <span id="costes-financieros-panel6">€ 0.00</span>
-    </p>
-    <p><strong data-i18n="sidebar.mozkinGordina">Mozkin Gordina</strong>:
-      <span id="margen-bruto">€ 0.00</span>
-    </p>
-  </div>
+  <!-- 🔹 BLOQUE 2: GASTUAK ETA FINANTZAKETA -->
+  <section class="sidebar-block" style="margin-bottom:20px">
+    <h4 data-i18n="sidebar.resumenCostes">Kostuen Laburpena</h4>
+    <p><strong data-i18n="sidebar.gastuOperatiboak">Gastu Operatiboak:</strong> <span id="gastos-operativos-panel6">€ 0.00</span></p>
+    <p><strong data-i18n="sidebar.finantzaketaKostuak">Finantzaketa Kostuak:</strong> <span id="costes-financieros-panel6">€ 0.00</span></p>
+    <p><strong data-i18n="sidebar.amortizazioak">Amortizazioak:</strong> <span id="total-amortizaciones">€ 0.00</span></p>
+    <p><strong data-i18n="sidebar.gastuFinkoak">Gastu Finkoak:</strong> <span id="total-gastos-fijos">€ 0.00</span></p>
+    <p><strong data-i18n="sidebar.pertsonala">Pertsonala:</strong> <span id="total-personal">€ 0.00</span></p>
+    <p><strong data-i18n="sidebar.finantzaketaGuztira">Finantzaketa Guztira:</strong> <span id="total-intereses">€ 0.00</span></p>
+  </section>
 
-  <div class="sidebar-item">
-    <p><strong data-i18n="sidebar.facturacion">Urteko Fakturazioa Beharrezkoa</strong>:
-      <span id="total-facturacion">€ 0.00</span>
-    </p>
-    <p><strong data-i18n="sidebar.precioHora">Orduko Prezio Gomendatua</strong>:
-      <span id="suggested-hourly-rate-sidebar">€ 0.00</span>
-    </p>
-  </div>
+  <!-- 🔹 BLOQUE 3: EMAITZAK ETA FAKTURAZIOA -->
+  <section class="sidebar-block" style="margin-bottom:20px">
+    <h4 data-i18n="sidebar.facturacion">Fakturazioa eta Mozkina</h4>
+    <p><strong data-i18n="sidebar.mozkinGordina">Mozkin Gordina:</strong> <span id="margen-bruto">€ 0.00</span></p>
+    <p><strong data-i18n="sidebar.precioHora">Orduko Prezioa:</strong> <span id="suggested-hourly-rate-sidebar">€ 0.00</span></p>
+    <p><strong data-i18n="pricing.fakturazioTotala">Urteko Fakturazioa:</strong> <span id="total-facturacion">€ 0.00</span></p>
+  </section>
 
-  <div class="sidebar-item">
-    <p><strong data-i18n="sidebar.amortizazioak">Amortizazioak</strong>:
-      <span id="total-amortizaciones">€ 0.00</span>
-    </p>
-    <p><strong data-i18n="sidebar.gastuFinkoak">Gastu Finkoak</strong>:
-      <span id="total-gastos-fijos">€ 0.00</span>
-    </p>
-    <p><strong data-i18n="sidebar.pertsonala">Pertsonala</strong>:
-      <span id="total-personal">€ 0.00</span>
-    </p>
-    <p><strong data-i18n="sidebar.finantzaketaGuztira">Finantzaketa Guztira</strong>:
-      <span id="total-intereses">€ 0.00</span>
-    </p>
-  </div>
-
-  <div class="sidebar-footer">
+  <!-- 🔹 BLOQUE 4: KONTAKTUA -->
+  <section class="sidebar-block">
     <h4 data-i18n="sidebar.contacto">Kontaktua</h4>
-    <p>Josu Ayerbe Guarás<br>
-      <small>josuayerbe@idarte.eus</small>
-    </p>
-  </div>
+    <p><strong>Josu Ayerbe</strong><br>
+       <small>Barne Diseinua - IDarte</small></p>
+  </section>
+
 </aside>
         </main>
 

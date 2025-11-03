@@ -349,81 +349,61 @@
     </div>
 </div>
             </section>
-<!-- SIDEBAR CORREGIDO -->
-<aside class="sidebar">
-    <!-- 🧾 LABURPEN OROKORRA -->
-    <section class="sidebar-section">
-        <h4 data-i18n="sidebar.facturacion">Urteko Fakturazioa Beharrezkoa</h4>
-        <p class="muted" data-i18n="sidebar.facturacion">Gastu guztiak + Interesak + Mozkina + Zergak</p>
-        <p class="sidebar-value" id="total-facturacion">€ 0.00</p>
-        
-        <div class="sidebar-breakdown">
-            <p><span data-i18n="sidebar.gastuOperatiboak">Gastu Operatiboak</span>: <span id="gastos-operativos-sidebar">€ 0.00</span></p>
-            <p><span data-i18n="sidebar.finantzaketaKostuak">Kostu Finantzarioak</span>: <span id="costos-financieros-sidebar">€ 0.00</span></p>
-            <p><span data-i18n="sidebar.mozkinGordina">Mozkin Brutoa</span>: <span id="margen-bruto-sidebar">€ 0.00</span></p>
-        </div>
-    </section>
+<!-- 🔹 SIDEBAR CORREGIDO -->
+<aside class="sidebar-section" id="main-sidebar">
+  <h3 data-i18n="sidebar.resumenCostes">Kostuen Laburpena</h3>
 
-    <!-- 👥 LANGILE ETA ORDUAK -->
-    <section class="sidebar-section">
-        <h4 data-i18n="sidebar.workforce">Langile eta Orduak</h4>
-        <div class="sidebar-stats">
-            <div class="stat-item">
-                <span data-i18n="sidebar.langileKopurua">Langile Kopurua</span>:
-                <strong id="employee-count-sidebar">0</strong>
-            </div>
-            <div class="stat-item">
-                <span data-i18n="sidebar.urtekoOrduak">Urteko Orduak</span>:
-                <strong id="annual-hours-sidebar">0</strong>
-            </div>
-            <div class="stat-item highlight">
-                <span data-i18n="sidebar.precioHora">Orduko Prezioa</span>:
-                <strong id="suggested-hourly-rate-sidebar">€ 0.00</strong>
-            </div>
-        </div>
-    </section>
+  <div class="sidebar-item">
+    <p><strong data-i18n="sidebar.langileKopurua">Langile kopurua</strong>:
+      <span id="employee-count-sidebar">0</span>
+    </p>
+    <p><strong data-i18n="sidebar.urtekoOrduak">Urteko orduak</strong>:
+      <span id="annual-hours-sidebar">0</span>
+    </p>
+  </div>
 
-    <!-- 🧩 KOSTUEN DESGLOSEA -->
-    <section class="sidebar-section">
-        <h4 data-i18n="sidebar.resumenCostes">Kostuen Desglosea</h4>
-        <div class="cost-breakdown">
-            <div class="cost-item">
-                <span class="cost-label" data-i18n="sidebar.amortizazioak">Amortizazioak</span>:
-                <span class="cost-value" id="total-amortizaciones">€ 0.00</span>
-            </div>
-            <div class="cost-item">
-                <span class="cost-label" data-i18n="sidebar.gastuFinkoak">Gastu Finkoak</span>:
-                <span class="cost-value" id="total-gastos-fijos">€ 0.00</span>
-            </div>
-            <div class="cost-item">
-                <span class="cost-label" data-i18n="sidebar.pertsonala">Langileen Kostua</span>:
-                <span class="cost-value" id="total-personal">€ 0.00</span>
-            </div>
-            <div class="cost-item">
-                <span class="cost-label" data-i18n="sidebar.finantzaketaKostuak">Interesak</span>:
-                <span class="cost-value" id="total-intereses">€ 0.00</span>
-            </div>
-        </div>
-    </section>
+  <div class="sidebar-item">
+    <p><strong data-i18n="sidebar.gastuOperatiboak">Gastu Operatiboak</strong>:
+      <span id="gastos-operativos-panel6">€ 0.00</span>
+    </p>
+    <p><strong data-i18n="sidebar.finantzaketaKostuak">Finantzaketa Kostuak</strong>:
+      <span id="costes-financieros-panel6">€ 0.00</span>
+    </p>
+    <p><strong data-i18n="sidebar.mozkinGordina">Mozkin Gordina</strong>:
+      <span id="margen-bruto">€ 0.00</span>
+    </p>
+  </div>
 
-    <!-- 💰 FINANTZAKETA LABURPENA -->
-    <section class="sidebar-section">
-        <h4 data-i18n="sidebar.finantzaketaGuztira">Finantzaketaren Laburpena</h4>
-        <div class="financing-summary">
-            <div class="finance-item">
-                <span data-i18n="finance.inversionTotal">Inbertsio Totala</span>:
-                <span id="total-inversion-sidebar">€ 0.00</span>
-            </div>
-            <div class="finance-item">
-                <span data-i18n="finance.bazkideEkarpenGuztira">Bazkide Ekarpenak</span>:
-                <span id="total-aportacion-socios-sidebar">€ 0.00</span>
-            </div>
-            <div class="finance-item">
-                <span data-i18n="finance.finantzaketaBehar">Mailegu Beharrezkoa</span>:
-                <span id="cantidad-financiar-sidebar">€ 0.00</span>
-            </div>
-        </div>
-    </section>
+  <div class="sidebar-item">
+    <p><strong data-i18n="sidebar.facturacion">Urteko Fakturazioa Beharrezkoa</strong>:
+      <span id="total-facturacion">€ 0.00</span>
+    </p>
+    <p><strong data-i18n="sidebar.precioHora">Orduko Prezio Gomendatua</strong>:
+      <span id="suggested-hourly-rate-sidebar">€ 0.00</span>
+    </p>
+  </div>
+
+  <div class="sidebar-item">
+    <p><strong data-i18n="sidebar.amortizazioak">Amortizazioak</strong>:
+      <span id="total-amortizaciones">€ 0.00</span>
+    </p>
+    <p><strong data-i18n="sidebar.gastuFinkoak">Gastu Finkoak</strong>:
+      <span id="total-gastos-fijos">€ 0.00</span>
+    </p>
+    <p><strong data-i18n="sidebar.pertsonala">Pertsonala</strong>:
+      <span id="total-personal">€ 0.00</span>
+    </p>
+    <p><strong data-i18n="sidebar.finantzaketaGuztira">Finantzaketa Guztira</strong>:
+      <span id="total-intereses">€ 0.00</span>
+    </p>
+  </div>
+
+  <div class="sidebar-footer">
+    <h4 data-i18n="sidebar.contacto">Kontaktua</h4>
+    <p>Josu Ayerbe Guarás<br>
+      <small>josuayerbe@idarte.eus</small>
+    </p>
+  </div>
 </aside>
         </main>
 

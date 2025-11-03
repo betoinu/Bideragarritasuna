@@ -349,75 +349,48 @@
     </div>
 </div>
             </section>
-<!-- 🔹 SIDEBAR FUNCIONAL CON TRADUCCIÓN CORREGIDA -->
+<!-- 🔹 SIDEBAR ORIGINAL (restaurado + título corregido) -->
 <aside class="sidebar" id="main-sidebar">
+
   <h3 data-i18n="summary.title">Laburpen Orokorra</h3>
 
-  <!-- 🧭 Personal y Horas -->
+  <!-- 🔸 Gráfico general de costes -->
+  <div class="chart-container">
+    <canvas id="cost-distribution-chart" width="300" height="300"></canvas>
+  </div>
+
+  <!-- 🔹 Bloque 1: Personal y horas -->
   <div class="sidebar-section">
     <h4 data-i18n="sidebar.langileKopurua">Langile kopurua eta urteko orduak</h4>
-    <p>
-      <strong data-i18n="sidebar.langileKopurua">Langile kopurua:</strong>
-      <span id="employee-count-sidebar">0</span>
-    </p>
-    <p>
-      <strong data-i18n="sidebar.urtekoOrduak">Urteko orduak:</strong>
-      <span id="annual-hours-sidebar">0</span>
-    </p>
+    <p><strong data-i18n="sidebar.langileKopurua">Langile kopurua:</strong> <span id="employee-count-sidebar">0</span></p>
+    <p><strong data-i18n="sidebar.urtekoOrduak">Urteko orduak:</strong> <span id="annual-hours-sidebar">0</span></p>
   </div>
 
-  <!-- 💰 Costes Generales -->
+  <!-- 🔹 Bloque 2: Gastos operativos y financieros -->
   <div class="sidebar-section">
     <h4 data-i18n="sidebar.resumenCostes">Kostuen Laburpena</h4>
-    <p>
-      <strong data-i18n="sidebar.gastuOperatiboak">Gastu Operatiboak:</strong>
-      <span id="gastos-operativos">€ 0.00</span>
-    </p>
-    <p>
-      <strong data-i18n="sidebar.finantzaketaKostuak">Finantzaketa Kostuak (Kuota Anuala):</strong>
-      <span id="costos-financieros">€ 0.00</span>
-    </p>
-    <p>
-      <strong data-i18n="sidebar.mozkinGordina">Mozkin Gordina:</strong>
-      <span id="margen-bruto">€ 0.00</span>
-    </p>
+    <p><strong data-i18n="sidebar.gastuOperatiboak">Gastu Operatiboak:</strong> <span id="gastos-operativos">€ 0.00</span></p>
+    <p><strong data-i18n="sidebar.finantzaketaKostuak">Finantzaketa Kostuak:</strong> <span id="costos-financieros">€ 0.00</span></p>
+    <p><strong data-i18n="sidebar.mozkinGordina">Mozkin Gordina:</strong> <span id="margen-bruto">€ 0.00</span></p>
   </div>
 
-  <!-- 📊 Resumen Financiero -->
-  <div class="sidebar-section">
-    <h4 data-i18n="sidebar.facturacion">Urteko Fakturazioa Beharrezkoa</h4>
-    <p>
-      <strong data-i18n="sidebar.facturacion">Urteko Fakturazioa:</strong>
-      <span id="total-facturacion">€ 0.00</span>
-    </p>
-    <p>
-      <strong data-i18n="sidebar.precioHora">Orduko Prezioa:</strong>
-      <span id="suggested-hourly-rate-sidebar">€ 0.00</span>
-    </p>
+  <!-- 🔹 Bloque 3: Facturación y precio hora -->
+  <div class="sidebar-section highlight">
+    <h4 data-i18n="sidebar.facturacion">Urteko Fakturazioa eta Orduko Prezioa</h4>
+    <p><strong data-i18n="sidebar.facturacion">Fakturazioa Beharrezkoa:</strong> <span id="total-facturacion">€ 0.00</span></p>
+    <p><strong data-i18n="sidebar.precioHora">Gomendatutako Orduko Prezioa:</strong> <span id="suggested-hourly-rate-sidebar">€ 0.00</span></p>
   </div>
 
-  <!-- 🧮 Desglose de Financiación -->
+  <!-- 🔹 Bloque 4: Desglose total de financiación -->
   <div class="sidebar-section">
     <h4 data-i18n="sidebar.finantzaketaGuztira">Finantzaketa Guztira</h4>
-    <p>
-      <strong data-i18n="sidebar.amortizazioak">Amortizazioak:</strong>
-      <span id="total-amortizaciones">€ 0.00</span>
-    </p>
-    <p>
-      <strong data-i18n="sidebar.gastuFinkoak">Gastu Finkoak:</strong>
-      <span id="total-gastos-fijos">€ 0.00</span>
-    </p>
-    <p>
-      <strong data-i18n="sidebar.pertsonala">Pertsonala:</strong>
-      <span id="total-personal">€ 0.00</span>
-    </p>
-    <p>
-      <strong data-i18n="sidebar.finantzaketaKostuak">Finantzaketa Kostuak:</strong>
-      <span id="total-intereses">€ 0.00</span>
-    </p>
+    <p><strong data-i18n="sidebar.amortizazioak">Amortizazioak:</strong> <span id="total-amortizaciones">€ 0.00</span></p>
+    <p><strong data-i18n="sidebar.gastuFinkoak">Gastu Finkoak:</strong> <span id="total-gastos-fijos">€ 0.00</span></p>
+    <p><strong data-i18n="sidebar.pertsonala">Pertsonala:</strong> <span id="total-personal">€ 0.00</span></p>
+    <p><strong data-i18n="sidebar.finantzaketaKostuak">Finantzaketa Kostuak:</strong> <span id="total-intereses">€ 0.00</span></p>
   </div>
 
-  <!-- 📬 Contacto -->
+  <!-- 🔹 Bloque 5: Contacto -->
   <div class="sidebar-section">
     <h4 data-i18n="sidebar.contacto">Kontaktua</h4>
     <p>
@@ -425,6 +398,7 @@
       <span data-i18n="contact.email">josuayerbe@idarte.eus</span>
     </p>
   </div>
+
 </aside>
 
         </main>

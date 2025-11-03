@@ -36,24 +36,34 @@ function safeNum(v) {
 }
 
 function updateElement(id, value) {
-    try {
-        const el = document.getElementById(id);
-        if (el) {
-            if (el.tagName === 'INPUT' || el.tagName === 'SELECT') {
-                el.value = value;
-            } else {
-                el.textContent = value;
-            }
-            return true;
+  try {
+    const el = document.getElementById(id);
+    if (el) {
+      // Verificar si el valor actual es diferente
+      const currentValue = el.textContent.trim();
+      const newValue = value.trim();
+      
+      if (currentValue !== newValue) {
+        if (el.tagName === 'INPUT' || el.tagName === 'SELECT') {
+          el.value = value;
+        } else {
+          el.textContent = value;
         }
-        console.warn(`⚠️ Elemento no encontrado: ${id}`);
-        return false;
-    } catch (error) {
-        console.error(`💥 Error actualizando ${id}:`, error);
-        return false;
+        console.log(`✅ ${id} actualizado: "${currentValue}" → "${newValue}"`);
+        return true;
+      } else {
+        console.log(`⏭️ ${id} ya tiene el valor correcto: "${currentValue}"`);
+        return true; // No es error, ya está actualizado
+      }
+    } else {
+      console.warn(`⚠️ Elemento con ID "${id}" no encontrado en el DOM`);
+      return false;
     }
+  } catch (error) {
+    console.error(`💥 Error actualizando elemento ${id}:`, error);
+    return false;
+  }
 }
-
 // ===== SISTEMA DE INTERNACIONALIZACIÓN =====
 async function loadTranslations() {
     try {
@@ -500,7 +510,7 @@ function calculatePricing() {
         { id: 'total-amortizaciones', value: fmt(calculateTotalAmortizations()) },
         { id: 'total-gastos-fijos', value: fmt(calculateTotalRecurring()) },
         { id: 'total-personal', value: fmt(calculateTotalPersonnel()) },
-        { id: 'costos-financieros', value: fmt(costesFinancieros) }
+        { id: 'total-intereses', value: fmt(costesFinancieros) }
     ];
 
     let updatedCount = 0;

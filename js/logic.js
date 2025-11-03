@@ -177,15 +177,39 @@ function getTranslation(key) {
 }
 
 function applyTranslations() {
+    console.log("🔤 Aplicando traducciones...");
+    
+    let elementosTraducidos = 0;
+    let elementosConProblemas = [];
+    
     document.querySelectorAll('[data-i18n]').forEach(element => {
         const key = element.getAttribute('data-i18n');
         const translation = getTranslation(key);
-        if (translation && element.textContent !== translation) {
+        
+        if (translation && translation !== key) {
             element.textContent = translation;
+            elementosTraducidos++;
+        } else {
+            elementosConProblemas.push(key);
         }
     });
-    // FORZAR ACTUALIZACIÓN DE CÁLCULOS DESPUÉS DE TRADUCCIONES
-    setTimeout(updateAll, 100);
+    
+    console.log(`✅ ${elementosTraducidos} elementos traducidos`);
+    
+    // REINTENTAR elementos problemáticos después de un delay
+    if (elementosConProblemas.length > 0) {
+        console.log(`⏳ Reintentando ${elementosConProblemas.length} elementos...`);
+        setTimeout(() => {
+            elementosConProblemas.forEach(key => {
+                const element = document.querySelector(`[data-i18n="${key}"]`);
+                const translation = getTranslation(key);
+                if (element && translation) {
+                    element.textContent = translation;
+                    console.log(`✅ Reintento exitoso: ${key}`);
+                }
+            });
+        }, 1000);
+    }
 }
 
 function setupLanguageSelector() {

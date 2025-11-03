@@ -349,57 +349,75 @@
     </div>
 </div>
             </section>
-<!-- 🔹 SIDEBAR ORIGINAL (restaurado + título corregido) -->
-<aside class="sidebar" id="main-sidebar">
+<!-- COLUMNA DERECHA -->
+<aside class="sidebar">
+  
+<!-- Card 1: Facturación Necesaria -->
+<div class="card">
+    <h4>Urteko Fakturazioa Beharrezkoa</h4>
+    <p id="total-facturacion" class="value">€ 0.00</p>
+    <div class="facturacion-desglose">
+        <div class="desglose-item">
+            <span class="desglose-label">Gastu Operatiboak:</span>
+            <span id="gastos-operativos" class="desglose-value">€ 0.00</span>
+        </div>
+        <div class="desglose-item">
+            <span class="desglose-label">Finantzaketa Kostuak (Kuota Anuala):</span>
+            <span id="costos-financieros" class="desglose-value">€ 0.00</span>
+        </div>
+        <div class="desglose-item">
+            <span class="desglose-label">Mozkin Gordina:</span>
+            <span id="margen-bruto" class="desglose-value">€ 0.00</span>
+        </div>
+    </div>
+</div>
 
-  <h3 data-i18n="summary.title">Laburpen Orokorra</h3>
+    <!-- Card 2: Precio/Hora -->
+    <div class="card">
+        <h4>Gomendatutako Orduko Prezioa</h4>
+        <p id="suggested-hourly-rate-sidebar" class="value">€ 0.00</p>
+        <p class="muted">Langile kopurua: <span id="employee-count-sidebar">0</span></p>
+        <p class="muted">Urteko orduak: <span id="annual-hours-sidebar">0</span></p>
+    </div>
 
-  <!-- 🔸 Gráfico general de costes -->
-  <div class="chart-container">
-    <canvas id="cost-distribution-chart" width="300" height="300"></canvas>
-  </div>
+   <!-- Card 3: Resumen de Costes -->
+<div class="card">
+    <h4>Kostuen Laburpena</h4>
+    <div class="cost-breakdown">
+        <div class="cost-item">
+            <span>Amortizazioak:</span>
+            <span id="total-amortizaciones">€ 0.00</span>
+        </div>
+        <div class="cost-item">
+            <span>Gastu Finkoak:</span>
+            <span id="total-gastos-fijos">€ 0.00</span>
+        </div>
+        <div class="cost-item">
+            <span>Pertsonala:</span>
+            <span id="total-personal">€ 0.00</span>
+        </div>
+        <div class="cost-item">
+            <span>Finantzaketa Guztira:</span>
+            <span id="total-intereses">€ 0.00</span>
+        </div>
+    </div>
+</div>
 
-  <!-- 🔹 Bloque 1: Personal y horas -->
-  <div class="sidebar-section">
-    <h4 data-i18n="sidebar.langileKopurua">Langile kopurua eta urteko orduak</h4>
-    <p><strong data-i18n="sidebar.langileKopurua">Langile kopurua:</strong> <span id="employee-count-sidebar">0</span></p>
-    <p><strong data-i18n="sidebar.urtekoOrduak">Urteko orduak:</strong> <span id="annual-hours-sidebar">0</span></p>
-  </div>
+    <!-- Card 4: Gráfico IDarte -->
+    <div class="card">
+        <div class="idarte-graphic">
+            <img src="img/fondo.png" alt="Detalle gráfico IDarte" loading="lazy">
+        </div>
+    </div>
 
-  <!-- 🔹 Bloque 2: Gastos operativos y financieros -->
-  <div class="sidebar-section">
-    <h4 data-i18n="sidebar.resumenCostes">Kostuen Laburpena</h4>
-    <p><strong data-i18n="sidebar.gastuOperatiboak">Gastu Operatiboak:</strong> <span id="gastos-operativos">€ 0.00</span></p>
-    <p><strong data-i18n="sidebar.finantzaketaKostuak">Finantzaketa Kostuak:</strong> <span id="costos-financieros">€ 0.00</span></p>
-    <p><strong data-i18n="sidebar.mozkinGordina">Mozkin Gordina:</strong> <span id="margen-bruto">€ 0.00</span></p>
-  </div>
-
-  <!-- 🔹 Bloque 3: Facturación y precio hora -->
-  <div class="sidebar-section highlight">
-    <h4 data-i18n="sidebar.facturacion">Urteko Fakturazioa eta Orduko Prezioa</h4>
-    <p><strong data-i18n="sidebar.facturacion">Fakturazioa Beharrezkoa:</strong> <span id="total-facturacion">€ 0.00</span></p>
-    <p><strong data-i18n="sidebar.precioHora">Gomendatutako Orduko Prezioa:</strong> <span id="suggested-hourly-rate-sidebar">€ 0.00</span></p>
-  </div>
-
-  <!-- 🔹 Bloque 4: Desglose total de financiación -->
-  <div class="sidebar-section">
-    <h4 data-i18n="sidebar.finantzaketaGuztira">Finantzaketa Guztira</h4>
-    <p><strong data-i18n="sidebar.amortizazioak">Amortizazioak:</strong> <span id="total-amortizaciones">€ 0.00</span></p>
-    <p><strong data-i18n="sidebar.gastuFinkoak">Gastu Finkoak:</strong> <span id="total-gastos-fijos">€ 0.00</span></p>
-    <p><strong data-i18n="sidebar.pertsonala">Pertsonala:</strong> <span id="total-personal">€ 0.00</span></p>
-    <p><strong data-i18n="sidebar.finantzaketaKostuak">Finantzaketa Kostuak:</strong> <span id="total-intereses">€ 0.00</span></p>
-  </div>
-
-  <!-- 🔹 Bloque 5: Contacto -->
-  <div class="sidebar-section">
-    <h4 data-i18n="sidebar.contacto">Kontaktua</h4>
-    <p>
-      <span data-i18n="contact.name">Josu Ayerbe Guarás</span><br>
-      <span data-i18n="contact.email">josuayerbe@idarte.eus</span>
-    </p>
-  </div>
-
-</aside>
+    <!-- Card 5: Contacto -->
+    <div class="card contact-card">
+        <h4>Kontaktua</h4>
+        <p class="muted">Josu Ayerbe Guarás, Barne Diseinuko Graduko irakaslea</p>
+        <p class="muted">josuayerbe@idarte.eus</p>
+        <p class="muted">Portal de Betoño, 23 · Vitoria-Gasteiz</p>
+    </div>
+</aside>    
 
         </main>
 

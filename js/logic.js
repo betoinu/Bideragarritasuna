@@ -474,6 +474,8 @@ function calculatePricing() {
     { id: 'desglose-gastos-operativos', value: fmt(costesOperativos) },
     { id: 'desglose-costes-financieros', value: fmt(costesFinancieros) },
     { id: 'desglose-gastos-totales', value: fmt(costesTotales) },
+      // En panel7Updates DEBE estar esta línea:
+    { id: 'desglose-total-horas', value: totalHours.toLocaleString() },
     
     // ELEMENTOS QUE SÍ ESTABAN
     { id: 'desglose-porcentaje-margen', value: margin },
@@ -501,6 +503,11 @@ function calculatePricing() {
         { id: 'gastos-operativos-sidebar', value: fmt(costesOperativos) },
       { id: 'costos-financieros-sidebar', value: fmt(costesFinancieros) },
       { id: 'margen-bruto-sidebar', value: fmt(margenBruto) },
+          // RESUMEN DE COSTES (que SÍ existen en tu HTML)
+    { id: 'total-amortizaciones', value: fmt(calculateTotalAmortizations()) },
+    { id: 'total-gastos-fijos', value: fmt(calculateTotalRecurring()) },
+    { id: 'total-personal', value: fmt(calculateTotalPersonnel()) },
+    { id: 'total-intereses', value: fmt(financiacion.interesAnual) },
 
         
         // Resumen financiero

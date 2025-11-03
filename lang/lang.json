@@ -70,6 +70,7 @@
     "sidebar.gastuFinkoak": "Gastu Finkoak",
     "sidebar.pertsonala": "Pertsonala",
     "sidebar.finantzaketaGuztira": "Finantzaketa Guztira",
+    "sidebar.workforce": "Langile eta Orduak",
 
     "finance.inversiones": "Inbertsio eta Finantzaketa Beharrak",
     "finance.inversionTotal": "Inbertsio Totala",
@@ -192,6 +193,8 @@
     "sidebar.gastuFinkoak": "Gastos Fijos",
     "sidebar.pertsonala": "Personal",
     "sidebar.finantzaketaGuztira": "Financiación Total",
+    "sidebar.workforce": "Personal y Horas",
+
 
     "finance.inversiones": "Necesidades de Inversión y Financiación",
     "finance.inversionTotal": "Inversión Total",
@@ -314,6 +317,8 @@
     "sidebar.gastuFinkoak": "Fixed Costs",
     "sidebar.pertsonala": "Staff",
     "sidebar.finantzaketaGuztira": "Total Financing",
+    "sidebar.workforce": "Workforce and Hours",
+
 
     "finance.inversiones": "Investment and Financing Needs",
     "finance.inversionTotal": "Total Investment",
@@ -366,3 +371,4 @@
     "help.ordainketaAtzerapena": "Number of months to pay only interest"
   }
 }
+

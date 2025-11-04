@@ -108,6 +108,10 @@
     "language.euskera": "Euskera",
     "language.espanol": "Español",
     "language.english": "English",
+
+    "table.productivo": "Produktiboa",
+    "pricing.urtekoOrduakLangile": "Urteko orduak langileko", 
+    "pricing.urtekoOrduakHelp": "(Normalean 1600-1800 ordu)",
     
     "footer.note": "IDarte · Euskadiko Diseinu Eskola Publikoa — Escuela Pública de Diseño de Euskadi.",
     "loading": "Txostena prestatzen..."
@@ -221,6 +225,10 @@
     "language.euskera": "Euskera",
     "language.espanol": "Español",
     "language.english": "English",
+
+    "table.productivo": "Productivo",
+    "pricing.urtekoOrduakLangile": "Horas anuales por trabajador",
+    "pricing.urtekoOrduakHelp": "(Normalmente 1600-1800 horas)",
     
     "footer.note": "IDarte · Escuela Pública de Diseño de Euskadi — Euskadiko Diseinu Eskola Publikoa.",
     "loading": "Preparando el informe..."
@@ -334,8 +342,13 @@
     "language.euskera": "Basque",
     "language.espanol": "Spanish",
     "language.english": "English",
+
+    "table.productivo": "Productive", 
+    "pricing.urtekoOrduakLangile": "Annual hours per employee",
+    "pricing.urtekoOrduakHelp": "(Typically 1600-1800 hours)",
     
     "footer.note": "IDarte · Public Design School of Euskadi — Euskadiko Diseinu Eskola Publikoa.",
     "loading": "Preparing report..."
   }
 }
+

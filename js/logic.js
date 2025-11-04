@@ -321,7 +321,13 @@ function calculatePricing() {
 
     const margin = safeNum(document.getElementById('target-profit-margin')?.value) || 20;
     const corporateTax = safeNum(document.getElementById('corporate-tax')?.value) || 25;
-    const employeeCount = Math.max(1, safeNum(document.getElementById('employee-count')?.value) || state.personnel.length);
+
+    const personalProductivo = state.personnel.filter(persona => 
+        persona.esProductivo !== false // Asume true por defecto
+    ).length;
+    
+    const employeeCount = Math.max(1, personalProductivo);
+      
     const annualHours = safeNum(document.getElementById('annual-hours-per-employee')?.value) || 1600;
     const totalHours = employeeCount * annualHours;
 
@@ -339,6 +345,8 @@ function calculatePricing() {
 
     // ACTUALIZAR TODOS LOS ELEMENTOS (SIN DUPLICADOS)
     const updates = [
+        
+        { id: 'contador-personal-productivo', value: personalProductivo },
         // Panel 6 - Financiación
         { id: 'total-socios-display', value: fmt(financiacion.aportacionesTotales) },
         { id: 'cantidad-financiar', value: fmt(financiacion.prestamoNecesario) },
@@ -512,7 +520,8 @@ window.addPerson = function() {
         id: uid('p'),
         role: 'Nuevo Empleado',
         gross: 30000,
-        employer_ss: 30
+        employer_ss: 30,
+        esProductivo: true  // ← NUEVO CAMPO
     });
     renderAllTables();
     updateAll();
@@ -634,17 +643,22 @@ function renderTable(items, containerId, type) {
             `;
         }
         if (type === 'person') {
-            const costeTotal = safeNum(item.gross) * (1 + safeNum(item.employer_ss) / 100);
-            return `
-                <tr>
-                    <td><input value="${item.role}" data-id="${item.id}" data-field="role"></td>
-                    <td class="text-right"><input type="number" value="${item.gross}" data-id="${item.id}" data-field="gross"></td>
-                    <td class="text-center"><input type="number" value="${item.employer_ss}" data-id="${item.id}" data-field="employer_ss"></td>
-                    <td class="text-right">${fmt(costeTotal)}</td>
-                    <td><button onclick="removePersonnel('${item.id}')" class="btn small">✕</button></td>
-                </tr>
-            `;
-        }
+    const costeTotal = safeNum(item.gross) * (1 + safeNum(item.employer_ss) / 100);
+    return `
+        <tr>
+            <td><input value="${item.role}" data-id="${item.id}" data-field="role"></td>
+            <td class="text-right"><input type="number" value="${item.gross}" data-id="${item.id}" data-field="gross"></td>
+            <td class="text-center"><input type="number" value="${item.employer_ss}" data-id="${item.id}" data-field="employer_ss"></td>
+            <td class="text-center">
+                <input type="checkbox" ${item.esProductivo ? 'checked' : ''} 
+                       data-id="${item.id}" data-field="esProductivo"
+                       onchange="this.value = this.checked; window.onFieldChange({target: this})">
+            </td>
+            <td class="text-right">${fmt(costeTotal)}</td>
+            <td><button onclick="removePersonnel('${item.id}')" class="btn small">✕</button></td>
+        </tr>
+    `;
+}
         if (type === 'socio') {
             return `
                 <tr>

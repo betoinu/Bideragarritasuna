@@ -329,7 +329,7 @@ function calculatePricing() {
     const employeeCount = Math.max(1, personalProductivo);
       
     const annualHours = safeNum(document.getElementById('annual-hours-per-employee')?.value) || 1600;
-    const totalHours = employeeCount * annualHours;
+    const totalHours = personalProductivo * annualHours;
 
     const costesTotales = costesOperativos + costesFinancieros;
     const margenBruto = costesTotales * (margin / 100);
@@ -368,6 +368,9 @@ function calculatePricing() {
         { id: 'margen-bruto-panel7', value: fmt(margenBruto) },
         { id: 'expected-net-profit', value: fmt(beneficioNeto) },
         { id: 'required-annual-revenue', value: fmt(facturacionNecesaria) },
+        { id: 'contador-personal-productivo', value: personalProductivo },
+        { id: 'annual-hours-sidebar', value: totalHours.toLocaleString() },
+        { id: 'employee-count-sidebar', value: personalProductivo },
       
         // Sidebar - VERSIÓN MEJORADA Y CORREGIDA
       { id: 'suggested-hourly-rate-sidebar', value: fmt(precioHora) },

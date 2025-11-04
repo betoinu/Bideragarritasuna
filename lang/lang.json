@@ -99,10 +99,12 @@
     "sidebar.gastuFinkoak": "Gastu Finkoak",
     "sidebar.pertsonala": "Pertsonala",
     "sidebar.finantzaketaGuztira": "Finantzaketa Guztira",
-    
+    "sidebar.contacto": "Harremanetarako"
+     
     "footer.note": "IDarte · Euskadiko Diseinu Eskola Publikoa — Escuela Pública de Diseño de Euskadi.",
     "loading": "Txostena prestatzen..."
   },
+  
   "es": {
     "header.title": "IDarte · Escuela Pública de Diseño de Euskadi",
     "header.subtitle": "GRADO EN DISEÑO DE INTERIORES - Mediciones y Presupuestos",
@@ -203,6 +205,7 @@
     "sidebar.gastuFinkoak": "Gastos Fijos",
     "sidebar.pertsonala": "Coste de Personal",
     "sidebar.finantzaketaGuztira": "Resumen de Financiación",
+    "sidebar.contacto": "Contacto"
     
     "footer.note": "IDarte · Escuela Pública de Diseño de Euskadi — Euskadiko Diseinu Eskola Publikoa.",
     "loading": "Preparando el informe..."
@@ -307,7 +310,7 @@
     "sidebar.gastuFinkoak": "Fixed Costs",
     "sidebar.pertsonala": "Personnel Costs",
     "sidebar.finantzaketaGuztira": "Financing Summary",
-    
+    "sidebar.contacto": "Contact"
     "footer.note": "IDarte · Public Design School of Euskadi — Euskadiko Diseinu Eskola Publikoa.",
     "loading": "Preparing report..."
   }

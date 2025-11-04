@@ -504,12 +504,15 @@ function calculatePricing() {
         { id: 'gastos-operativos', value: fmt(costesOperativos) },
         { id: 'costos-financieros', value: fmt(costesFinancieros) },
         { id: 'margen-bruto', value: fmt(margenBruto) },
-        { id: 'necesidad-total-sidebar', value: fmt(financiacion.necesidadesTotales) },
-        { id: 'total-inversion-sidebar', value: fmt(financiacion.inversiones) },
-        { id: 'tesoreria-calculada-sidebar', value: fmt(financiacion.tesoreria) },
-        { id: 'total-aportacion-socios-sidebar', value: fmt(financiacion.aportacionesTotales) },
-        { id: 'total-trabajadores-sidebar', value: fmt(financiacion.aportacionesTrabajadores) },
-        { id: 'total-capitalistas-sidebar', value: fmt(financiacion.aportacionesCapitalistas) },
+        { id: 'finantzaketa-total-calculada', value: fmt(financiacion.necesidadesTotales) },
+        { id: 'inversion-total-sidebar', value: fmt(financiacion.inversiones) },
+        { id: 'tesoreria-sidebar', value: fmt(financiacion.tesoreria) },
+        { id: 'necesidad-bruta-sidebar', value: fmt(financiacion.inversiones + financiacion.tesoreria) },
+        { id: 'aportacion-total-sidebar', value: fmt(financiacion.aportacionesTotales) },
+        { id: 'aportacion-trabajadores-sidebar', value: fmt(financiacion.aportacionesTrabajadores) },
+        { id: 'aportacion-capitalistas-sidebar', value: fmt(financiacion.aportacionesCapitalistas) },
+        { id: 'finantzaketa-neta-sidebar', value: fmt(financiacion.necesidadesTotales) },
+
         
         // Resumen financiero
         { id: 'total-inversion', value: fmt(financiacion.inversiones) },

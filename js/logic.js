@@ -511,7 +511,7 @@ function calculatePricing() {
         { id: 'aportacion-total-sidebar', value: fmt(financiacion.aportacionesTotales) },
         { id: 'aportacion-trabajadores-sidebar', value: fmt(financiacion.aportacionesTrabajadores) },
         { id: 'aportacion-capitalistas-sidebar', value: fmt(financiacion.aportacionesCapitalistas) },
-        { id: 'finantzaketa-neta-sidebar', value: fmt(financiacion.prestamoNecesario) }
+        { id: 'finantzaketa-neta-sidebar', value: fmt(financiacion.prestamoNecesario) },
         
               
               

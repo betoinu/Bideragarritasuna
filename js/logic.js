@@ -511,9 +511,10 @@ function calculatePricing() {
         { id: 'aportacion-total-sidebar', value: fmt(financiacion.aportacionesTotales) },
         { id: 'aportacion-trabajadores-sidebar', value: fmt(financiacion.aportacionesTrabajadores) },
         { id: 'aportacion-capitalistas-sidebar', value: fmt(financiacion.aportacionesCapitalistas) },
-        { id: 'finantzaketa-neta-sidebar', value: fmt(financiacion.necesidadesTotales) },
-
+        { id: 'finantzaketa-neta-sidebar', value: fmt(financiacion.prestamoNecesario) }
         
+              
+              
         // Resumen financiero
         { id: 'total-inversion', value: fmt(financiacion.inversiones) },
         { id: 'tesoreria-calculada', value: fmt(financiacion.tesoreria) },

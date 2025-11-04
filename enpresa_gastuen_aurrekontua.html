@@ -279,61 +279,41 @@
 <!-- PANEL 7 - PREZIOA -->
 <div id="prezioa-sheet" class="panel" style="display:none">
     <h2 data-i18n="panel.prezioa.title">7 · Lanorduaren Prezioa eta Mozkinak</h2>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+        <!-- COLUMNA IZQUIERDA -->
         <div>
-            <label for="corporate-tax" data-i18n="pricing.sozietateZerga">Sozietateen Zerga (%)</label>
-            <input id="corporate-tax" type="number" value="25" oninput="updateAll()" />
-            
-            <label for="target-profit-margin" data-i18n="pricing.mozkinMargina">Helburuko Mozkin Gordina (%)</label>
-            <input id="target-profit-margin" type="number" value="20" oninput="updateAll()" />
-            
-            <div style="margin-bottom: 10px;">
-                <strong data-i18n="pricing.langileKopurua">Langile kopurua</strong>: 
-                <span id="contador-personal-productivo">0</span>
-                <small style="color:#666">(kalkulatu automatikoki)</small>
+            <!-- CONFIGURACIÓN -->
+            <div class="card">
+                <h4 data-i18n="pricing.konfigurazioa">Konfigurazioa</h4>
+                <label for="corporate-tax" data-i18n="pricing.sozietateZerga">Sozietateen Zerga (%)</label>
+                <input id="corporate-tax" type="number" value="25" oninput="updateAll()" />
+                
+                <label for="target-profit-margin" data-i18n="pricing.mozkinMargina">Helburuko Mozkin Gordina (%)</label>
+                <input id="target-profit-margin" type="number" value="20" oninput="updateAll()" />
+                
+                <div style="margin:15px 0;padding:10px;background:#f8f9fa;border-radius:6px">
+                    <strong data-i18n="pricing.langileKopurua">Langile produktibo kopurua</strong>: 
+                    <span id="contador-personal-productivo">0</span>
+                    <small style="color:#666;display:block">(kalkulatu automatikoki produktibo markatutako langileak)</small>
+                </div>
+                
+                <div class="input-group">
+                    <label for="annual-hours-per-employee" data-i18n="pricing.urtekoOrduakLangile">Urteko orduak langileko</label>
+                    <input id="annual-hours-per-employee" type="number" value="1600" min="800" max="2200" step="50" oninput="updateAll()" />
+                    <small style="color:#666" data-i18n="pricing.urtekoOrduakHelp">(Normalean 1600-1800 ordu)</small>
+                </div>
             </div>
-            
-            <div class="input-group">
-            <label for="annual-hours-per-employee" data-i18n="pricing.urtekoOrduakLangile">Urteko orduak langileko</label>
-            <input id="annual-hours-per-employee" type="number" value="1600" min="800" max="2200" step="50" oninput="updateAll()" />
-            <small style="color:#666" data-i18n="pricing.urtekoOrduakHelp">(Normalean 1600-1800 ordu)</small>
-        </div>
-        </div>
-        <div>
-            <!-- DESGLOSE PEDAGÓGICO -->
-            <div class="card" style="background:#f8f9fa">
-                <h4 data-i18n="pricing.nolaKalkulatzen">Nola kalkulatzen da orduko prezioa?</h4>
-                <div class="desglose-pedagogico">
-    <div class="desglose-linea">
-        <span data-i18n="pricing.gastuOperatiboak">Gastu Operatiboak:</span>
-        <span id="desglose-gastos-operativos">€ 0.00</span>
-    </div>
-    <div class="desglose-linea">
-        <span data-i18n="pricing.finantzaketaKostuak">+ Finantzaketa Kostuak:</span>
-        <span id="desglose-costes-financieros">€ 0.00</span>
-    </div>
-    <div class="desglose-linea" style="border-top:1px solid #ddd;padding-top:8px">
-        <span><strong data-i18n="pricing.gastuTotalak">Gastu Totalak:</strong></span>
-        <span id="desglose-gastos-totales"><strong>€ 0.00</strong></span>
-    </div>
-    <div class="desglose-linea">
-        <span data-i18n="pricing.mozkinGordinaPorcentaje">+ Mozkin Gordina (<span id="desglose-porcentaje-margen">20</span>%):</span>
-        <span id="desglose-margen-bruto">€ 0.00</span>
-    </div>
-    <div class="desglose-linea" style="border-top:1px solid #ddd;padding-top:8px">
-        <span><strong data-i18n="pricing.fakturazioTotala">Fakturazio Totala:</strong></span>
-        <span id="desglose-facturacion-total"><strong>€ 0.00</strong></span>
-    </div>
-    <div class="desglose-linea">
-        <span data-i18n="pricing.urtekoOrduakDivision">÷ Urteko Orduak</span>
-        <span id="desglose-total-horas">0 h</span>
-    </div>
-    <div class="desglose-linea" style="border-top:2px solid #333;padding-top:8px">
-        <span><strong data-i18n="pricing.ordukoPrezioa">Orduko Prezioa:</strong></span>
-        <span id="desglose-precio-hora"><strong>€ 0.00</strong></span>
-    </div>
-</div>
-            </div>
+
+            <!-- URTEKO FAKTURAZIO BEHARRA -->
+            <table class="summary-table">
+                <tr>
+                    <td colspan="2" class="section-header">Urteko fakturazio beharra</td>
+                </tr>
+                <tr>
+                    <td><strong>Fakturazio totala (urtekoa)</strong></td>
+                    <td class="text-right" id="required-annual-revenue">€ 0.00</td>
+                </tr>
+            </table>
 
             <!-- MOZKINEN LABURPENA -->
             <table class="summary-table">
@@ -349,16 +329,56 @@
                     <td class="text-right" id="expected-net-profit">€ 0.00</td>
                 </tr>
             </table>
-            
-            <!-- RESUMEN ACTUAL -->
-            <div class="card">
+        </div>
+
+        <!-- COLUMNA DERECHA -->
+        <div>
+            <!-- DESGLOSE PEDAGÓGICO -->
+            <div class="card" style="background:#f8f9fa">
+                <h4 data-i18n="pricing.nolaKalkulatzen">Nola kalkulatzen da orduko prezioa?</h4>
+                <div class="desglose-pedagogico">
+                    <div class="desglose-linea">
+                        <span data-i18n="pricing.gastuOperatiboak">Gastu Operatiboak:</span>
+                        <span id="desglose-gastos-operativos">€ 0.00</span>
+                    </div>
+                    <div class="desglose-linea">
+                        <span data-i18n="pricing.finantzaketaKostuak">+ Finantzaketa Kostuak:</span>
+                        <span id="desglose-costes-financieros">€ 0.00</span>
+                    </div>
+                    <div class="desglose-linea" style="border-top:1px solid #ddd;padding-top:8px">
+                        <span><strong data-i18n="pricing.gastuTotalak">Gastu Totalak:</strong></span>
+                        <span id="desglose-gastos-totales"><strong>€ 0.00</strong></span>
+                    </div>
+                    <div class="desglose-linea">
+                        <span data-i18n="pricing.mozkinGordinaPorcentaje">+ Mozkin Gordina (<span id="desglose-porcentaje-margen">20</span>%):</span>
+                        <span id="desglose-margen-bruto">€ 0.00</span>
+                    </div>
+                    <div class="desglose-linea" style="border-top:1px solid #ddd;padding-top:8px">
+                        <span><strong data-i18n="pricing.fakturazioTotala">Fakturazio Totala:</strong></span>
+                        <span id="desglose-facturacion-total"><strong>€ 0.00</strong></span>
+                    </div>
+                    <div class="desglose-linea">
+                        <span data-i18n="pricing.urtekoOrduakDivision">÷ Urteko Orduak</span>
+                        <span id="desglose-total-horas">0 h</span>
+                    </div>
+                    <div class="desglose-linea" style="border-top:2px solid #333;padding-top:8px">
+                        <span><strong data-i18n="pricing.ordukoPrezioa">Orduko Prezioa:</strong></span>
+                        <span id="desglose-precio-hora"><strong>€ 0.00</strong></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GOMENDATUKO PREZIOA -->
+            <div class="card" style="background:#e8f5e8;border-left:4px solid #27ae60">
                 <h4 data-i18n="pricing.gomendatutakoPrezioa">Gomendatutako orduko prezioa</h4>
-                <p id="suggested-hourly-rate" class="value">€ 0.00</p>
+                <p id="suggested-hourly-rate" class="value" style="font-size:1.8em;font-weight:bold;color:#2c3e50">€ 0.00</p>
+                <small style="color:#666">Prezio hau langile produktiboen orduetan oinarrituta kalkulatuta</small>
             </div>
         </div>
     </div>
 </div>
-            </section>
+
+                
 <!-- COLUMNA DERECHA -->
 <aside class="sidebar">
   

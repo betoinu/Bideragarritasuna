@@ -390,13 +390,7 @@ function calculatePricing() {
         { id: 'total-aportacion-socios', value: fmt(financiacion.aportacionesTotales) },
         { id: 'total-trabajadores', value: fmt(financiacion.aportacionesTrabajadores) },
         { id: 'total-capitalistas', value: fmt(financiacion.aportacionesCapitalistas) },
-        { id: 'num-socios', value: state.finance.socios.length },
-        
-        // Desglose de costes (SOLO UNA VEZ)
-        { id: 'total-amortizaciones', value: fmt(calculateTotalAmortizations()) },
-        { id: 'total-gastos-fijos', value: fmt(calculateTotalRecurring()) },
-        { id: 'total-personal', value: fmt(calculateTotalPersonnel()) },
-        { id: 'total-intereses', value: fmt(costesFinancieros) }
+        { id: 'num-socios', value: state.finance.socios.length }
     ];
 
     let updatedCount = 0;

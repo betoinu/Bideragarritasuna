@@ -496,22 +496,25 @@ function calculatePricing() {
         { id: 'expected-net-profit', value: fmt(beneficioNeto) },
         { id: 'required-annual-revenue', value: fmt(facturacionNecesaria) },
       
-        // Sidebar
-        { id: 'suggested-hourly-rate-sidebar', value: fmt(precioHora) },
-        { id: 'employee-count-sidebar', value: employeeCount },
-        { id: 'annual-hours-sidebar', value: totalHours.toLocaleString() },
-        { id: 'total-facturacion', value: fmt(facturacionNecesaria) },
-        { id: 'gastos-operativos', value: fmt(costesOperativos) },
-        { id: 'costos-financieros', value: fmt(costesFinancieros) },
-        { id: 'margen-bruto', value: fmt(margenBruto) },
-        { id: 'finantzaketa-total-calculada', value: fmt(financiacion.necesidadesTotales) },
-        { id: 'inversion-total-sidebar', value: fmt(financiacion.inversiones) },
-        { id: 'tesoreria-sidebar', value: fmt(financiacion.tesoreria) },
-        { id: 'necesidad-bruta-sidebar', value: fmt(financiacion.inversiones + financiacion.tesoreria) },
-        { id: 'aportacion-total-sidebar', value: fmt(financiacion.aportacionesTotales) },
-        { id: 'aportacion-trabajadores-sidebar', value: fmt(financiacion.aportacionesTrabajadores) },
-        { id: 'aportacion-capitalistas-sidebar', value: fmt(financiacion.aportacionesCapitalistas) },
-        { id: 'finantzaketa-neta-sidebar', value: fmt(financiacion.prestamoNecesario) },
+        // Sidebar - VERSIÓN MEJORADA Y CORREGIDA
+      { id: 'suggested-hourly-rate-sidebar', value: fmt(precioHora) },
+      { id: 'employee-count-sidebar', value: employeeCount },
+      { id: 'annual-hours-sidebar', value: totalHours.toLocaleString() },
+      { id: 'total-facturacion', value: fmt(facturacionNecesaria) },
+      { id: 'finantzaketa-total-calculada', value: fmt(financiacion.prestamoNecesario) },
+      { id: 'inversion-total-sidebar', value: fmt(financiacion.inversiones) },
+      { id: 'tesoreria-sidebar', value: fmt(financiacion.tesoreria) },
+      { id: 'aportacion-total-sidebar', value: fmt(financiacion.aportacionesTotales) },
+      { id: 'aportacion-trabajadores-sidebar', value: fmt(financiacion.aportacionesTrabajadores) },
+      { id: 'aportacion-capitalistas-sidebar', value: fmt(financiacion.aportacionesCapitalistas) },
+      { id: 'finantzaketa-neta-sidebar', value: fmt(financiacion.prestamoNecesario) },
+      
+      // NUEVOS IDs PARA EL CARD DE FACTURACIÓN CON AMORTIZACIONES
+      { id: 'total-amortizaciones-sidebar', value: fmt(calculateTotalAmortizations()) },
+      { id: 'total-gastos-fijos-sidebar', value: fmt(calculateTotalRecurring()) },
+      { id: 'total-personal-sidebar', value: fmt(calculateTotalPersonnel()) },
+      { id: 'costos-financieros-sidebar', value: fmt(costesFinancieros) },
+      { id: 'margen-bruto-sidebar', value: fmt(margenBruto) },
         
               
               

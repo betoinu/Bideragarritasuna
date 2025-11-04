@@ -638,30 +638,30 @@ function renderTable(items, containerId, type) {
     }
 
     container.innerHTML = items.map(item => {
-        if (type === 'amort') {
-            const amortizacionAnual = safeNum(item.cost) / Math.max(1, safeNum(item.life));
-            return `
-                <tr>
-                    <td><input value="${item.name}" data-id="${item.id}" data-field="name"></td>
-                    <td class="text-right"><input type="number" value="${item.cost}" data-id="${item.id}" data-field="cost"></td>
-                    <td class="text-center"><input type="number" value="${item.life}" data-id="${item.id}" data-field="life"></td>
-                    <td class="text-right">${fmt(amortizacionAnual)}</td>
-                    <td><button onclick="removeAmortizable('${item.id}','${item.category}')" class="btn small">✕</button></td>
-                </tr>
-            `;
-        }
+if (type === 'amort') {
+    const amortizacionAnual = safeNum(item.cost) / Math.max(1, safeNum(item.life));
+    return `
+        <tr>
+            <td style="min-width: 300px;"><input value="${item.name}" data-id="${item.id}" data-field="name" style="width: 100%; border: none; background: transparent;"></td>
+            <td class="text-right"><input type="number" value="${item.cost}" data-id="${item.id}" data-field="cost"></td>
+            <td class="text-center"><input type="number" value="${item.life}" data-id="${item.id}" data-field="life"></td>
+            <td class="text-right">${fmt(amortizacionAnual)}</td>
+            <td><button onclick="removeAmortizable('${item.id}','${item.category}')" class="btn small">✕</button></td>
+        </tr>
+    `;
+}
         if (type === 'recur') {
-            const totalAnual = safeNum(item.payment_cost) * Math.max(1, safeNum(item.frequency));
-            return `
-                <tr>
-                    <td><input value="${item.name}" data-id="${item.id}" data-field="name"></td>
-                    <td class="text-right"><input type="number" value="${item.payment_cost}" data-id="${item.id}" data-field="payment_cost"></td>
-                    <td class="text-center"><input type="number" value="${item.frequency}" data-id="${item.id}" data-field="frequency"></td>
-                    <td class="text-right">${fmt(totalAnual)}</td>
-                    <td><button onclick="removeRecurring('${item.id}','${item.category}')" class="btn small">✕</button></td>
-                </tr>
-            `;
-        }
+    const totalAnual = safeNum(item.payment_cost) * Math.max(1, safeNum(item.frequency));
+    return `
+        <tr>
+            <td style="min-width: 300px;"><input value="${item.name}" data-id="${item.id}" data-field="name" style="width: 100%; border: none; background: transparent;"></td>
+            <td class="text-right"><input type="number" value="${item.payment_cost}" data-id="${item.id}" data-field="payment_cost"></td>
+            <td class="text-center"><input type="number" value="${item.frequency}" data-id="${item.id}" data-field="frequency"></td>
+            <td class="text-right">${fmt(totalAnual)}</td>
+            <td><button onclick="removeRecurring('${item.id}','${item.category}')" class="btn small">✕</button></td>
+        </tr>
+    `;
+}
         if (type === 'person') {
     const costeTotal = safeNum(item.gross) * (1 + safeNum(item.employer_ss) / 100);
     return `

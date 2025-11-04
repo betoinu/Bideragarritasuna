@@ -44,6 +44,7 @@
     "table.bazkidea": "Bazkidea",
     "table.mota": "Mota",
     "table.kapitala": "Kapitala (€)",
+    "table.productivo": "Produktiboa",
     
     "finance.inversiones": "Inbertsio eta Finantzaketa Beharrak",
     "finance.inversionTotal": "Inbertsio Totala",
@@ -73,6 +74,9 @@
     "pricing.mozkinMargina": "Helburuko Mozkin Gordina (%)",
     "pricing.langileKopurua": "Langile kopurua",
     "pricing.urtekoOrduak": "Urteko orduak/lang",
+    "pricing.urtekoOrduakLangile": "Urteko orduak langileko",
+    "pricing.urtekoOrduakHelp": "(Normalean 1600-1800 ordu)",
+    "pricing.kalkulatuAutomatikoki": "(kalkulatu automatikoki)",
     "pricing.nolaKalkulatzen": "Nola kalkulatzen da orduko prezioa?",
     "pricing.gastuOperatiboak": "Gastu Operatiboak:",
     "pricing.finantzaketaKostuak": "+ Finantzaketa Kostuak:",
@@ -99,12 +103,15 @@
     "sidebar.gastuFinkoak": "Gastu Finkoak",
     "sidebar.pertsonala": "Pertsonala",
     "sidebar.finantzaketaGuztira": "Finantzaketa Guztira",
-    "sidebar.contacto": "Harremanetarako",
-     
+    "sidebar.contacto": "Kontaktua",
+    
+    "language.euskera": "Euskera",
+    "language.espanol": "Español",
+    "language.english": "English",
+    
     "footer.note": "IDarte · Euskadiko Diseinu Eskola Publikoa — Escuela Pública de Diseño de Euskadi.",
     "loading": "Txostena prestatzen..."
   },
-  
   "es": {
     "header.title": "IDarte · Escuela Pública de Diseño de Euskadi",
     "header.subtitle": "GRADO EN DISEÑO DE INTERIORES - Mediciones y Presupuestos",
@@ -150,6 +157,7 @@
     "table.bazkidea": "Socio",
     "table.mota": "Tipo",
     "table.kapitala": "Capital (€)",
+    "table.productivo": "Productivo",
     
     "finance.inversiones": "Inversiones y Necesidades de Financiación",
     "finance.inversionTotal": "Inversión Total",
@@ -179,6 +187,9 @@
     "pricing.mozkinMargina": "Margen de Beneficio Bruto Objetivo (%)",
     "pricing.langileKopurua": "Número de empleados",
     "pricing.urtekoOrduak": "Horas anuales/empl",
+    "pricing.urtekoOrduakLangile": "Horas anuales por trabajador",
+    "pricing.urtekoOrduakHelp": "(Normalmente 1600-1800 horas)",
+    "pricing.kalkulatuAutomatikoki": "(calculado automáticamente)",
     "pricing.nolaKalkulatzen": "¿Cómo se calcula el precio por hora?",
     "pricing.gastuOperatiboak": "Gastos Operativos:",
     "pricing.finantzaketaKostuak": "+ Costes Financieros:",
@@ -206,6 +217,10 @@
     "sidebar.pertsonala": "Coste de Personal",
     "sidebar.finantzaketaGuztira": "Resumen de Financiación",
     "sidebar.contacto": "Contacto",
+    
+    "language.euskera": "Euskera",
+    "language.espanol": "Español",
+    "language.english": "English",
     
     "footer.note": "IDarte · Escuela Pública de Diseño de Euskadi — Euskadiko Diseinu Eskola Publikoa.",
     "loading": "Preparando el informe..."
@@ -255,6 +270,7 @@
     "table.bazkidea": "Partner",
     "table.mota": "Type",
     "table.kapitala": "Capital (€)",
+    "table.productivo": "Productive",
     
     "finance.inversiones": "Investments and Financing Needs",
     "finance.inversionTotal": "Total Investment",
@@ -284,6 +300,9 @@
     "pricing.mozkinMargina": "Target Gross Profit Margin (%)",
     "pricing.langileKopurua": "Number of employees",
     "pricing.urtekoOrduak": "Annual hours/empl",
+    "pricing.urtekoOrduakLangile": "Annual hours per employee",
+    "pricing.urtekoOrduakHelp": "(Typically 1600-1800 hours)",
+    "pricing.kalkulatuAutomatikoki": "(automatically calculated)",
     "pricing.nolaKalkulatzen": "How is the hourly rate calculated?",
     "pricing.gastuOperatiboak": "Operating Expenses:",
     "pricing.finantzaketaKostuak": "+ Financing Costs:",
@@ -311,8 +330,12 @@
     "sidebar.pertsonala": "Personnel Costs",
     "sidebar.finantzaketaGuztira": "Financing Summary",
     "sidebar.contacto": "Contact",
+    
+    "language.euskera": "Basque",
+    "language.espanol": "Spanish",
+    "language.english": "English",
+    
     "footer.note": "IDarte · Public Design School of Euskadi — Euskadiko Diseinu Eskola Publikoa.",
     "loading": "Preparing report..."
   }
 }
-

@@ -533,3 +533,11 @@ img {
     padding: 0px !important;
     margin-bottom: 8px !important;
 }
+.highlight-green {
+    background-color: #d5f4e6 !important;
+    border-left: 4px solid #27ae60;
+}
+.highlight-blue {
+    background-color: #d6eaf8 !important;
+    border-left: 4px solid #3498db;
+}

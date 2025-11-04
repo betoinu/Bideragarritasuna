@@ -37,9 +37,16 @@ function safeNum(v) {
 
 function updateElement(id, value) {
   try {
-    const el = document.getElementById(id);
-    if (el) {
-      // Convertir valor a string para usar trim()
+    // Buscar TODOS los elementos con este ID (puede haber duplicados)
+    const elementos = document.querySelectorAll(`#${id}`);
+    
+    if (elementos.length === 0) {
+      console.warn(`⚠️ Elemento con ID "${id}" no encontrado en el DOM`);
+      return false;
+    }
+    
+    let actualizados = 0;
+    elementos.forEach(el => {
       const stringValue = String(value);
       const currentValue = el.textContent.trim();
       const newValue = stringValue.trim();
@@ -50,16 +57,18 @@ function updateElement(id, value) {
         } else {
           el.textContent = value;
         }
-        console.log(`✅ ${id} actualizado: "${currentValue}" → "${newValue}"`);
-        return true;
-      } else {
-        console.log(`⏭️ ${id} ya tiene el valor correcto: "${currentValue}"`);
-        return true;
+        actualizados++;
       }
+    });
+    
+    if (actualizados > 0) {
+      console.log(`✅ ${actualizados} elemento(s) ${id} actualizado(s) a: "${value}"`);
     } else {
-      console.warn(`⚠️ Elemento con ID "${id}" no encontrado en el DOM`);
-      return false;
+      console.log(`⏭️ ${id} ya tiene el valor correcto: "${value}"`);
     }
+    
+    return actualizados > 0;
+    
   } catch (error) {
     console.error(`💥 Error actualizando elemento ${id}:`, error);
     return false;

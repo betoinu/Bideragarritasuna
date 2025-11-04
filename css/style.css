@@ -541,3 +541,45 @@ img {
     background-color: #d6eaf8 !important;
     border-left: 4px solid #3498db;
 }
+/* MEJORAR INPUTS DE CONCEPTOS */
+.data input[type="text"] {
+    border: none !important;
+    background: transparent !important;
+    padding: 8px 4px !important;
+    width: 100% !important;
+    min-width: 200px !important;
+    resize: horizontal !important;
+    font-size: 14px !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.data input[type="text"]:focus {
+    background: #f8f9fa !important;
+    border-radius: 4px !important;
+}
+
+.data input[type="text"]:hover {
+    background: #f8f9fa !important;
+    border-radius: 4px !important;
+}
+
+/* Hacer la columna de concepto más flexible */
+.data td:first-child {
+    min-width: 250px !important;
+    max-width: 400px !important;
+    width: auto !important;
+}
+
+/* Quitar bordes negros de todas las celdas */
+.data td, .data th {
+    border: 1px solid #e2e8f0 !important;
+}
+
+.data input[type="number"] {
+    border: 1px solid #d1d5db !important;
+    border-radius: 4px !important;
+    padding: 6px 8px !important;
+    text-align: right !important;
+    background: white !important;
+}

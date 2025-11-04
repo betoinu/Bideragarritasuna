@@ -1,4 +1,4 @@
-/* =========================================
+l/* =========================================
 // IDarte · VERSIÓN COMPLETA Y REPARADA
 // ========================================= */
 
@@ -44,18 +44,22 @@ function updateElement(id, value) {
       const currentValue = el.textContent.trim();
       const newValue = stringValue.trim();
       
-      if (currentValue !== newValue) {
-        if (el.tagName === 'INPUT' || el.tagName === 'SELECT') {
-          el.value = value;
-        } else {
-          el.textContent = value;
-        }
-        console.log(`✅ ${id} actualizado: "${currentValue}" → "${newValue}"`);
-        return true;
+      // SIEMPRE actualizar, incluso si el valor es el mismo
+      // (para corregir casos como el sidebar que muestra "€ 0.00")
+      if (el.tagName === 'INPUT' || el.tagName === 'SELECT') {
+        el.value = value;
       } else {
-        console.log(`⏭️ ${id} ya tiene el valor correcto: "${currentValue}"`);
-        return true;
+        el.textContent = value;
       }
+      
+      // Solo log si el valor cambió realmente
+      if (currentValue !== newValue) {
+        console.log(`✅ ${id} actualizado: "${currentValue}" → "${newValue}"`);
+      } else {
+        console.log(`🔄 ${id} forzado a: "${newValue}"`);
+      }
+      
+      return true;
     } else {
       console.warn(`⚠️ Elemento con ID "${id}" no encontrado en el DOM`);
       return false;
@@ -64,116 +68,6 @@ function updateElement(id, value) {
     console.error(`💥 Error actualizando elemento ${id}:`, error);
     return false;
   }
-}
-// ===== SISTEMA DE INTERNACIONALIZACIÓN =====
-async function loadTranslations() {
-    try {
-        const response = await fetch('lang/lang.json');
-        translations = await response.json();
-        console.log("✅ Traducciones cargadas");
-        applyTranslations();
-    } catch (error) {
-        console.error("❌ Error cargando traducciones:", error);
-        translations = {
-            "eu": {
-                "header.title": "IDarte · Euskadiko Diseinu Eskola Publikoa",
-                "header.subtitle": "BARNE DISEINU GRADUA - Neurketak eta Aurrekontuak",
-                "button.download": "Deskargatu",
-                "tab.lokal": "1 · Lokal",
-                "tab.pertsonala": "2 · Pertsonala",
-                "tab.ekoizpena": "3 · Ekoizpena",
-                "tab.garraioa": "4 · Garraioa",
-                "tab.hazkuntza": "5 · Hazkuntza",
-                "tab.finantzaketa": "6 · Finantzaketa",
-                "tab.prezioa": "7 · Prezioa",
-                "footer.note": "IDarte · Euskadiko Diseinu Eskola Publikoa — Escuela Pública de Diseño de Euskadi.",
-                "loading": "Txostena prestatzen...",
-                "panel.lokal.title": "1 · Lokalaren Gastu Finkoak eta Inbertsioak",
-                "panel.lokal.amortizables": "A) Inbertsio amortizagarriak",
-                "panel.lokal.gastos": "B) Gastu finkoak",
-                "table.concepto": "Kontzeptua",
-                "table.coste": "Kostua (€)",
-                "table.amortizacion": "Amortizazio Urteak",
-                "table.amortizacionAnual": "Urteko Amortizazioa",
-                "table.ekintzak": "Ekintzak",
-                "button.addAmortizable": "+ Gehitu",
-                "button.addRecurring": "+ Gehitu",
-                "button.addPerson": "+ Gehitu Langilea",
-                "button.addSocio": "+ Gehitu Bazkidea",
-                "button.removeSocio": "- Kendu Bazkidea",
-                "button.remove": "✕",
-                
-                // SIDEBAR - SOLO CLAVES QUE EXISTEN EN TU JS REAL
-                "sidebar.facturacion": "Urteko Fakturazioa Beharrezkoa",
-                "sidebar.gastuOperatiboak": "Gastu Operatiboak",
-                "sidebar.finantzaketaKostuak": "Finantzaketa Kostuak (Kuota Anuala)",
-                "sidebar.mozkinGordina": "Mozkin Gordina",
-                "sidebar.workforce": "Langile eta Orduak",
-                "sidebar.langileKopurua": "Langile kopurua",
-                "sidebar.urtekoOrduak": "Urteko orduak",
-                "sidebar.precioHora": "Gomendatutako Orduko Prezioa",
-                "sidebar.resumenCostes": "Kostuen Laburpena",
-                "sidebar.amortizazioak": "Amortizazioak",
-                "sidebar.gastuFinkoak": "Gastu Finkoak",
-                "sidebar.pertsonala": "Pertsonala",
-                "sidebar.finantzaketaGuztira": "Finantzaketa Guztira",
-                
-                // FINANZAS (para el sidebar)
-                "finance.inversionTotal": "Inbertsio Totala",
-                "finance.bazkideEkarpenGuztira": "Bazkideek Emandako Guztira",
-                "finance.finantzaketaBehar": "Finantzaketa Behar Totala"
-            },
-            "es": {
-                "header.title": "IDarte · Escuela Pública de Diseño de Euskadi",
-                "header.subtitle": "GRADO EN DISEÑO DE INTERIORES - Mediciones y Presupuestos",
-                "button.download": "Descargar",
-                "tab.lokal": "1 · Local",
-                "tab.pertsonala": "2 · Personal",
-                "tab.ekoizpena": "3 · Producción",
-                "tab.garraioa": "4 · Transporte",
-                "tab.hazkuntza": "5 · Crecimiento",
-                "tab.finantzaketa": "6 · Financiación",
-                "tab.prezioa": "7 · Precio",
-                "footer.note": "IDarte · Escuela Pública de Diseño de Euskadi — Euskadiko Diseinu Eskola Publikoa.",
-                "loading": "Preparando el informe...",
-                "panel.lokal.title": "1 · Gastos Fijos e Inversiones del Local",
-                "panel.lokal.amortizables": "A) Inversiones amortizables",
-                "panel.lokal.gastos": "B) Gastos fijos",
-                "table.concepto": "Concepto",
-                "table.coste": "Coste (€)",
-                "table.amortizacion": "Años Amortización",
-                "table.amortizacionAnual": "Amortización Anual",
-                "table.ekintzak": "Acciones",
-                "button.addAmortizable": "+ Añadir",
-                "button.addRecurring": "+ Añadir",
-                "button.addPerson": "+ Añadir Empleado",
-                "button.addSocio": "+ Añadir Socio",
-                "button.removeSocio": "- Quitar Socio",
-                "button.remove": "✕",
-                
-                // SIDEBAR - CLAVES COMPATIBLES
-                "sidebar.facturacion": "Facturación Anual Necesaria",
-                "sidebar.gastuOperatiboak": "Gastos Operativos",
-                "sidebar.finantzaketaKostuak": "Costes Financieros (Cuota Anual)",
-                "sidebar.mozkinGordina": "Margen Bruto",
-                "sidebar.workforce": "Personal y Horas",
-                "sidebar.langileKopurua": "Nº de Empleados",
-                "sidebar.urtekoOrduak": "Horas Anuales",
-                "sidebar.precioHora": "Precio por Hora",
-                "sidebar.resumenCostes": "Desglose de Costes",
-                "sidebar.amortizazioak": "Amortizaciones",
-                "sidebar.gastuFinkoak": "Gastos Fijos",
-                "sidebar.pertsonala": "Coste de Personal",
-                "sidebar.finantzaketaGuztira": "Resumen de Financiación",
-                
-                // FINANZAS
-                "finance.inversionTotal": "Inversión Total",
-                "finance.bazkideEkarpenGuztira": "Aportaciones Socios",
-                "finance.finantzaketaBehar": "Préstamo Necesario"
-            }
-        };
-        applyTranslations();
-    }
 }
 
 function setLanguage(lang) {

@@ -522,3 +522,14 @@ img {
         position: static;
     }
 }
+/* IGUALAR ALTURA DE CELDAS */
+.cost-item {
+    padding: 0px !important; /* Quitar padding vertical */
+    margin-bottom: 8px !important; /* Igualar margin */
+}
+
+/* O específicamente para el card de Kostuen */
+.sidebar .cost-item {
+    padding: 0px !important;
+    margin-bottom: 8px !important;
+}

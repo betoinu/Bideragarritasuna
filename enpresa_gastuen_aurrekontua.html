@@ -281,55 +281,47 @@
     <h2 data-i18n="panel.prezioa.title">7 · Lanorduaren Prezioa eta Mozkinak</h2>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
         <!-- COLUMNA IZQUIERDA -->
-        <div>
-            <!-- CONFIGURACIÓN -->
-            <div class="card">
-                <h4 data-i18n="pricing.konfigurazioa">Konfigurazioa</h4>
-                <label for="corporate-tax" data-i18n="pricing.sozietateZerga">Sozietateen Zerga (%)</label>
-                <input id="corporate-tax" type="number" value="25" oninput="updateAll()" />
-                
-                <label for="target-profit-margin" data-i18n="pricing.mozkinMargina">Helburuko Mozkin Gordina (%)</label>
-                <input id="target-profit-margin" type="number" value="20" oninput="updateAll()" />
-                
-                <div style="margin:15px 0;padding:10px;background:#f8f9fa;border-radius:6px">
-                    <strong data-i18n="pricing.langileKopurua">Langile produktibo kopurua</strong>: 
-                    <span id="contador-personal-productivo">0</span>
-                    <small style="color:#666;display:block">(kalkulatu automatikoki produktibo markatutako langileak)</small>
-                </div>
-                
-                <div class="input-group">
-                    <label for="annual-hours-per-employee" data-i18n="pricing.urtekoOrduakLangile">Urteko orduak langileko</label>
-                    <input id="annual-hours-per-employee" type="number" value="1600" min="800" max="2200" step="50" oninput="updateAll()" />
-                    <small style="color:#666" data-i18n="pricing.urtekoOrduakHelp">(Normalean 1600-1800 ordu)</small>
-                </div>
-            </div>
-
-            <!-- URTEKO FAKTURAZIO BEHARRA -->
-            <table class="summary-table">
-                <tr>
-                    <td colspan="2" class="section-header">Urteko fakturazio beharra</td>
-                </tr>
-                <tr>
-                    <td><strong>Fakturazio totala (urtekoa)</strong></td>
-                    <td class="text-right" id="required-annual-revenue">€ 0.00</td>
-                </tr>
-            </table>
-
-            <!-- MOZKINEN LABURPENA -->
-            <table class="summary-table">
-                <tr>
-                    <td colspan="2" class="section-header">Mozkinen laburpena</td>
-                </tr>
-                <tr>
-                    <td><strong>Mozkin Gordina (Zergak aurre)</strong></td>
-                    <td class="text-right" id="margen-bruto-panel7">€ 0.00</td>
-                </tr>
-                <tr>
-                    <td><strong>Espero den mozkin garbia</strong></td>
-                    <td class="text-right" id="expected-net-profit">€ 0.00</td>
-                </tr>
-            </table>
+<div>
+    <!-- CONFIGURACIÓN -->
+    <div class="card">
+        <h4 data-i18n="pricing.konfigurazioa">Konfigurazioa</h4>
+        <label for="corporate-tax" data-i18n="pricing.sozietateZerga">Sozietateen Zerga (%)</label>
+        <input id="corporate-tax" type="number" value="25" oninput="updateAll()" />
+        
+        <label for="target-profit-margin" data-i18n="pricing.mozkinMargina">Helburuko Mozkin Gordina (%)</label>
+        <input id="target-profit-margin" type="number" value="20" oninput="updateAll()" />
+        
+        <div style="margin:15px 0;padding:10px;background:#f8f9fa;border-radius:6px">
+            <strong data-i18n="pricing.langileKopurua">Langile produktibo kopurua</strong>: 
+            <span id="contador-personal-productivo">0</span>
+            <small style="color:#666;display:block">(kalkulatu automatikoki produktibo markatutako langileak)</small>
         </div>
+        
+        <div class="input-group">
+            <label for="annual-hours-per-employee" data-i18n="pricing.urtekoOrduakLangile">Urteko orduak langileko</label>
+            <input id="annual-hours-per-employee" type="number" value="1600" min="800" max="2200" step="50" oninput="updateAll()" />
+            <small style="color:#666" data-i18n="pricing.urtekoOrduakHelp">(Normalean 1600-1800 ordu)</small>
+        </div>
+    </div>
+
+    <!-- RESUMEN DEL ANÁLISIS -->
+    <div class="card">
+        <h4>Gomendatutako orduko prezioa</h4>
+        <p id="suggested-hourly-rate" class="value">€ 0.00</p>
+    </div>
+    <div class="card">
+        <h4>Mozkin Gordina (Zergak aurre)</h4>
+        <p id="margen-bruto-panel7" class="value">€ 0.00</p>
+    </div>
+    <div class="card">
+        <h4>Espero den mozkin garbia</h4>
+        <p id="expected-net-profit" class="value">€ 0.00</p>
+    </div>
+    <div class="card">
+        <h4>Fakturazio beharrezkoa</h4>
+        <p id="required-annual-revenue" class="value">€ 0.00</p>
+    </div>
+</div>
         
         <!-- COLUMNA DERECHA -->
         <div>
@@ -369,10 +361,9 @@
             </div>
 
             <!-- GOMENDATUKO PREZIOA -->
-            <div class="card" style="background:#e8f5e8;border-left:4px solid #27ae60">
+            <div class="card">
                 <h4 data-i18n="pricing.gomendatutakoPrezioa">Gomendatutako orduko prezioa</h4>
-                <p id="suggested-hourly-rate" class="value" style="font-size:1.8em;font-weight:bold;color:#2c3e50">€ 0.00</p>
-                <small style="color:#666">Prezio hau langile produktiboen orduetan oinarrituta kalkulatuta</small>
+                <p id="suggested-hourly-rate" class="value">€ 0.00</p>
             </div>
         </div>
     </div>

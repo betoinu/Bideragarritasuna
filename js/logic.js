@@ -108,27 +108,49 @@ function getTranslation(key) {
 }
 
 function applyTranslations() {
-    console.log("🔤 Aplicando traducciones...");
+    console.log("🔤 Aplicando traducciones para:", currentLanguage);
     
+    let elementosTraducidos = 0;
+    
+    // Traducir elementos con data-i18n
     document.querySelectorAll('[data-i18n]').forEach(element => {
         const key = element.getAttribute('data-i18n');
         const translation = getTranslation(key);
         
         if (translation && element.textContent !== translation) {
             element.textContent = translation;
+            elementosTraducidos++;
         }
     });
     
-    // También traduce placeholders y valores de inputs/selects
+    // Traducir placeholders
     document.querySelectorAll('input[data-i18n-placeholder]').forEach(input => {
         const key = input.getAttribute('data-i18n-placeholder');
         input.placeholder = getTranslation(key);
     });
     
+    // Traducir opciones de select
     document.querySelectorAll('option[data-i18n]').forEach(option => {
         const key = option.getAttribute('data-i18n');
-        option.textContent = getTranslation(key);
+        const translation = getTranslation(key);
+        if (translation && option.textContent !== translation) {
+            option.textContent = translation;
+        }
     });
+    
+    console.log(`✅ ${elementosTraducidos} elementos traducidos`);
+    
+    // FORZAR retraducción del sidebar después de un delay
+    setTimeout(() => {
+        document.querySelectorAll('.sidebar [data-i18n]').forEach(element => {
+            const key = element.getAttribute('data-i18n');
+            const translation = getTranslation(key);
+            if (translation) {
+                element.textContent = translation;
+            }
+        });
+        console.log("🔄 Sidebar retraducido");
+    }, 100);
 }
 
 // ===== CONFIGURACIÓN DEL SELECTOR DE IDIOMA =====

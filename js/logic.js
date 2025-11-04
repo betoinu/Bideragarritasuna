@@ -780,12 +780,7 @@ async function initializeApp() {
         preloadSampleData();
         renderAllTables();
         setupGlobalEventListeners();
-
- // 🔧 NUEVO: Configurar protección de traducciones después de que todo esté renderizado
-        setTimeout(() => {
-            setupTranslationProtection();
-        }, 500);
-      
+     
         // Cálculos iniciales
         await new Promise(resolve => setTimeout(resolve, 300));
         updateAll();

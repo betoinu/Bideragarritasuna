@@ -21,11 +21,6 @@
                 <p class="muted"><span data-i18n="header.subtitle">BARNE DISEINU GRADUA - Neurketak eta Aurrekontuak</span></p>
             </div>
             <div class="controls">
-                <select id="language-select">
-                    <option value="eu">Euskera</option>
-                    <option value="es">Español</option>
-                    <option value="en">English</option>
-                </select>
                 <button class="btn primary" id="download-report-btn" data-i18n="button.download" onclick="generatePDFReport()">Deskargatu</button>
             </div>
         </header>
@@ -362,9 +357,19 @@
 </div>
 </section>
                 
-<!-- COLUMNA DERECHA -->
+<!-- SIDEBAR o COLUMNA DERECHA -->
 <aside class="sidebar">
   
+<!-- CARTA 0: Selección de Idioma -->
+<div class="card">
+    <h4 data-i18n="sidebar.idioma">Hizkuntza / Idioma</h4>
+    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+        <button class="btn small ${currentLanguage === 'eu' ? 'primary' : 'secondary'}" onclick="setLanguage('eu')" style="flex: 1;">EUS</button>
+        <button class="btn small ${currentLanguage === 'es' ? 'primary' : 'secondary'}" onclick="setLanguage('es')" style="flex: 1;">ESP</button>
+
+<button class="btn small ${currentLanguage === 'en' ? 'primary' : 'secondary'}" onclick="setLanguage('en')" style="flex: 1;">ENG</button>
+    </div>
+</div>
     
 <!-- CARTA 1: Financiación total -->
 <div class="card">

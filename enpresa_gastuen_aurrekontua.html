@@ -387,47 +387,32 @@
 <!-- Card 1: Facturación Necesaria -->
 <div class="card">
     <h4>Urteko Fakturazioa Beharrezkoa</h4>
-    <p id="total-facturacion" class="value">€ 0.00</p>
-    <div class="facturacion-desglose">
-        <div class="desglose-item">
-            <span class="desglose-label">Gastu Operatiboak:</span>
-            <span id="gastos-operativos" class="desglose-value">€ 0.00</span>
+        <p class="value">192.113,26 €</p>
+        <div class="facturacion-desglose">
+            <div class="desglose-item">
+                <span class="desglose-label">Amortizazioak:</span>
+                <span class="desglose-value">${amortizaciones}</span>
+            </div>
+            <div class="desglose-item">
+                <span class="desglose-label">Gastu Finkoak:</span>
+                <span class="desglose-value">${gastosFijos}</span>
+            </div>
+            <div class="desglose-item">
+                <span class="desglose-label">Pertsonala:</span>
+                <span class="desglose-value">${personal}</span>
+            </div>
+            <div class="desglose-item">
+                <span class="desglose-label">Finantzaketa Kostuak (Kuota Anuala):</span>
+                <span class="desglose-value">${finantzaketaKostuak}</span>
+            </div>
+            <div class="desglose-item">
+                <span class="desglose-label">Mozkin Gordina:</span>
+                <span class="desglose-value">${mozkinGordina}</span>
+            </div>
         </div>
-        <div class="desglose-item">
-            <span class="desglose-label">Finantzaketa Kostuak (Kuota Anuala):</span>
-            <span id="costos-financieros" class="desglose-value">€ 0.00</span>
-        </div>
-        <div class="desglose-item">
-            <span class="desglose-label">Mozkin Gordina:</span>
-            <span id="margen-bruto" class="desglose-value">€ 0.00</span>
-        </div>
-    </div>
 </div>
 
-       <!-- Card 3: Resumen de Costes -->
-    <div class="card">
-        <h4>Kostuen Laburpena</h4>
-        <p id="desglose-gastos-totales" class="value">€ 0.00</p>
-        <div class="cost-breakdown">
-        <div class="cost-item">
-            <span>Amortizazioak:</span>
-            <span id="total-amortizaciones">€ 0.00</span>
-        </div>
-        <div class="cost-item">
-            <span>Gastu Finkoak:</span>
-            <span id="total-gastos-fijos">€ 0.00</span>
-        </div>
-        <div class="cost-item">
-            <span>Pertsonala:</span>
-            <span id="total-personal">€ 0.00</span>
-        </div>
-        <div class="cost-item">
-            <span>Finantzaketa Guztira:</span>
-            <span id="total-intereses">€ 0.00</span>
-        </div>
-    </div>
-</div>
-
+      
 <!-- Card 2: Precio/Hora -->
     <div class="card">
         <h4>Gomendatutako Orduko Prezioa</h4>

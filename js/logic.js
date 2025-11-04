@@ -472,22 +472,22 @@ function calculatePricing() {
         { id: 'gastos-totales-panel6', value: fmt(costesTotales) },
         
         // Panel 7 - Pricing
-    { id: 'desglose-gastos-operativos', value: fmt(costesOperativos) },
-    { id: 'desglose-costes-financieros', value: fmt(costesFinancieros) },
-    { id: 'desglose-gastos-totales', value: fmt(costesTotales) },
-      // En panel7Updates DEBE estar esta línea:
-    { id: 'desglose-total-horas', value: totalHours.toLocaleString() },
+        { id: 'desglose-gastos-operativos', value: fmt(costesOperativos) },
+        { id: 'desglose-costes-financieros', value: fmt(costesFinancieros) },
+        { id: 'desglose-gastos-totales', value: fmt(costesTotales) },
+        // En panel7Updates DEBE estar esta línea:
+        { id: 'desglose-total-horas', value: totalHours.toLocaleString() },
     
-    // ELEMENTOS QUE SÍ ESTABAN
-    { id: 'desglose-porcentaje-margen', value: margin },
-    { id: 'desglose-margen-bruto', value: fmt(margenBruto) },
-    { id: 'desglose-facturacion-total', value: fmt(facturacionNecesaria) },
-    { id: 'desglose-total-horas', value: totalHours.toLocaleString() },
-    { id: 'desglose-precio-hora', value: fmt(precioHora) },
-    { id: 'suggested-hourly-rate', value: fmt(precioHora) },
-    { id: 'margen-bruto-panel7', value: fmt(margenBruto) },
-    { id: 'expected-net-profit', value: fmt(beneficioNeto) },
-    { id: 'required-annual-revenue', value: fmt(facturacionNecesaria) },
+        // ELEMENTOS QUE SÍ ESTABAN
+        { id: 'desglose-porcentaje-margen', value: margin },
+        { id: 'desglose-margen-bruto', value: fmt(margenBruto) },
+        { id: 'desglose-facturacion-total', value: fmt(facturacionNecesaria) },
+        { id: 'desglose-total-horas', value: totalHours.toLocaleString() },
+        { id: 'desglose-precio-hora', value: fmt(precioHora) },
+        { id: 'suggested-hourly-rate', value: fmt(precioHora) },
+        { id: 'margen-bruto-panel7', value: fmt(margenBruto) },
+        { id: 'expected-net-profit', value: fmt(beneficioNeto) },
+        { id: 'required-annual-revenue', value: fmt(facturacionNecesaria) },
       
         
         // Sidebar
@@ -498,17 +498,18 @@ function calculatePricing() {
         { id: 'gastos-operativos', value: fmt(costesOperativos) },
         { id: 'costos-financieros', value: fmt(costesFinancieros) },
         { id: 'margen-bruto', value: fmt(margenBruto) },
-      { id: 'total-inversion-sidebar', value: fmt(financiacion.inversiones) },
-      { id: 'total-aportacion-socios-sidebar', value: fmt(financiacion.aportacionesTotales) },
-      { id: 'cantidad-financiar-sidebar', value: fmt(financiacion.prestamoNecesario) },
+        { id: 'total-inversion-sidebar', value: fmt(financiacion.inversiones) },
+        { id: 'total-aportacion-socios-sidebar', value: fmt(financiacion.aportacionesTotales) },
+        { id: 'cantidad-financiar-sidebar', value: fmt(financiacion.prestamoNecesario) },
         { id: 'gastos-operativos-sidebar', value: fmt(costesOperativos) },
-      { id: 'costos-financieros-sidebar', value: fmt(costesFinancieros) },
-      { id: 'margen-bruto-sidebar', value: fmt(margenBruto) },
+        { id: 'costos-financieros-sidebar', value: fmt(costesFinancieros) },
+        { id: 'margen-bruto-sidebar', value: fmt(margenBruto) },
           // RESUMEN DE COSTES (que SÍ existen en tu HTML)
-    { id: 'total-amortizaciones', value: fmt(calculateTotalAmortizations()) },
-    { id: 'total-gastos-fijos', value: fmt(calculateTotalRecurring()) },
-    { id: 'total-personal', value: fmt(calculateTotalPersonnel()) },
-    { id: 'total-intereses', value: fmt(financiacion.interesAnual) },
+        { id: 'total-amortizaciones', value: fmt(calculateTotalAmortizations()) },
+        { id: 'total-gastos-fijos', value: fmt(calculateTotalRecurring()) },
+        { id: 'total-personal', value: fmt(calculateTotalPersonnel()) },
+        { id: 'total-intereses', value: fmt(financiacion.interesAnual) },
+        { id: 'desglose-gastos-totales', value: fmt(costesTotales) },
 
         
         // Resumen financiero

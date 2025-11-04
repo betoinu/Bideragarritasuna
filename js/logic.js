@@ -525,7 +525,9 @@ function calculatePricing() {
     updates.forEach(({ id, value }) => {
         if (updateElement(id, value)) updatedCount++;
     });
-
+// ✅ AÑADIR ESTA LÍNEA EXACTA
+    document.querySelector('.sidebar #desglose-gastos-totales').textContent = fmt(costesTotales);
+  
     console.log(`✅ calculatePricing() completado - ${updatedCount}/${updates.length} elementos`);
     
     return { facturacionNecesaria, precioHora, margenBruto, beneficioNeto };

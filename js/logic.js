@@ -666,7 +666,7 @@ if (type === 'amort') {
     const costeTotal = safeNum(item.gross) * (1 + safeNum(item.employer_ss) / 100);
     return `
         <tr>
-            <td><input value="${item.role}" data-id="${item.id}" data-field="role"></td>
+            <td style="min-width: 300px;"><input value="${item.role}" data-id="${item.id}" data-field="role" style="width: 100%; border: none; background: transparent;"></td>
             <td class="text-right"><input type="number" value="${item.gross}" data-id="${item.id}" data-field="gross"></td>
             <td class="text-center"><input type="number" value="${item.employer_ss}" data-id="${item.id}" data-field="employer_ss"></td>
             <td class="text-center">

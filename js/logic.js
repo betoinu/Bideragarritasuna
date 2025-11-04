@@ -322,14 +322,16 @@ function calculatePricing() {
     const margin = safeNum(document.getElementById('target-profit-margin')?.value) || 20;
     const corporateTax = safeNum(document.getElementById('corporate-tax')?.value) || 25;
 
-    const personalProductivo = state.personnel.filter(persona => 
-        persona.esProductivo !== false // Asume true por defecto
-    ).length;
+    // ✅ CORRECCIÓN: Filtrar SOLO personal marcado como productivo
+    const personalProductivo = state.personnel.filter(persona => {
+        // Asegurar que esProductivo es booleano (true por defecto si no está definido)
+        return persona.esProductivo !== false;
+    });
     
-    const employeeCount = Math.max(1, personalProductivo);
+    const employeeCount = Math.max(1, personalProductivo.length);
       
     const annualHours = safeNum(document.getElementById('annual-hours-per-employee')?.value) || 1600;
-    const totalHours = personalProductivo * annualHours;
+    const totalHours = employeeCount * annualHours;
 
     const costesTotales = costesOperativos + costesFinancieros;
     const margenBruto = costesTotales * (margin / 100);
@@ -340,20 +342,24 @@ function calculatePricing() {
     const beneficioNeto = margenBruto - impuestos;
 
     console.log("📈 Datos calculados:", {
-        costesOperativos, costesFinancieros, facturacionNecesaria, precioHora
+        personalTotal: state.personnel.length,
+        personalProductivo: employeeCount,
+        costesOperativos, 
+        costesFinancieros, 
+        facturacionNecesaria, 
+        precioHora
     });
 
-    // ACTUALIZAR TODOS LOS ELEMENTOS (SIN DUPLICADOS)
+    // ACTUALIZAR TODOS LOS ELEMENTOS
     const updates = [
-        
-        { id: 'contador-personal-productivo', value: personalProductivo },
+        { id: 'contador-personal-productivo', value: employeeCount },
         // Panel 6 - Financiación
         { id: 'total-socios-display', value: fmt(financiacion.aportacionesTotales) },
         { id: 'cantidad-financiar', value: fmt(financiacion.prestamoNecesario) },
         { id: 'cuota-anual-display', value: fmt(financiacion.cuotaAnual) },
         { id: 'gastos-operativos-panel6', value: fmt(costesOperativos) },
         { id: 'costes-financieros-panel6', value: fmt(costesFinancieros) },
-        { id: 'gastos-totales-panel6', value: fmt(costesTotales) }, // ✅ ESTA ES LA IMPORTANTE
+        { id: 'gastos-totales-panel6', value: fmt(costesTotales) },
         
         // Panel 7 - Pricing
         { id: 'desglose-gastos-operativos', value: fmt(costesOperativos) },
@@ -368,31 +374,29 @@ function calculatePricing() {
         { id: 'margen-bruto-panel7', value: fmt(margenBruto) },
         { id: 'expected-net-profit', value: fmt(beneficioNeto) },
         { id: 'required-annual-revenue', value: fmt(facturacionNecesaria) },
-        { id: 'contador-personal-productivo', value: personalProductivo },
+        { id: 'contador-personal-productivo', value: employeeCount },
         { id: 'annual-hours-sidebar', value: totalHours.toLocaleString() },
-        { id: 'employee-count-sidebar', value: personalProductivo },
+        { id: 'employee-count-sidebar', value: employeeCount },
       
-        // Sidebar - VERSIÓN MEJORADA Y CORREGIDA
-      { id: 'suggested-hourly-rate-sidebar', value: fmt(precioHora) },
-      { id: 'employee-count-sidebar', value: employeeCount },
-      { id: 'annual-hours-sidebar', value: totalHours.toLocaleString() },
-      { id: 'total-facturacion', value: fmt(facturacionNecesaria) },
-      { id: 'finantzaketa-total-calculada', value: fmt(financiacion.prestamoNecesario) },
-      { id: 'inversion-total-sidebar', value: fmt(financiacion.inversiones) },
-      { id: 'tesoreria-sidebar', value: fmt(financiacion.tesoreria) },
-      { id: 'aportacion-total-sidebar', value: fmt(financiacion.aportacionesTotales) },
-      { id: 'aportacion-trabajadores-sidebar', value: fmt(financiacion.aportacionesTrabajadores) },
-      { id: 'aportacion-capitalistas-sidebar', value: fmt(financiacion.aportacionesCapitalistas) },
-      { id: 'finantzaketa-neta-sidebar', value: fmt(financiacion.prestamoNecesario) },
+        // Sidebar
+        { id: 'suggested-hourly-rate-sidebar', value: fmt(precioHora) },
+        { id: 'employee-count-sidebar', value: employeeCount },
+        { id: 'annual-hours-sidebar', value: totalHours.toLocaleString() },
+        { id: 'total-facturacion', value: fmt(facturacionNecesaria) },
+        { id: 'finantzaketa-total-calculada', value: fmt(financiacion.prestamoNecesario) },
+        { id: 'inversion-total-sidebar', value: fmt(financiacion.inversiones) },
+        { id: 'tesoreria-sidebar', value: fmt(financiacion.tesoreria) },
+        { id: 'aportacion-total-sidebar', value: fmt(financiacion.aportacionesTotales) },
+        { id: 'aportacion-trabajadores-sidebar', value: fmt(financiacion.aportacionesTrabajadores) },
+        { id: 'aportacion-capitalistas-sidebar', value: fmt(financiacion.aportacionesCapitalistas) },
+        { id: 'finantzaketa-neta-sidebar', value: fmt(financiacion.prestamoNecesario) },
       
-      // NUEVOS IDs PARA EL CARD DE FACTURACIÓN CON AMORTIZACIONES
-      { id: 'total-amortizaciones-sidebar', value: fmt(calculateTotalAmortizations()) },
-      { id: 'total-gastos-fijos-sidebar', value: fmt(calculateTotalRecurring()) },
-      { id: 'total-personal-sidebar', value: fmt(calculateTotalPersonnel()) },
-      { id: 'costos-financieros-sidebar', value: fmt(costesFinancieros) },
-      { id: 'margen-bruto-sidebar', value: fmt(margenBruto) },
-        
-              
+        // Nuevos IDs para el card de facturación con amortizaciones
+        { id: 'total-amortizaciones-sidebar', value: fmt(calculateTotalAmortizations()) },
+        { id: 'total-gastos-fijos-sidebar', value: fmt(calculateTotalRecurring()) },
+        { id: 'total-personal-sidebar', value: fmt(calculateTotalPersonnel()) },
+        { id: 'costos-financieros-sidebar', value: fmt(costesFinancieros) },
+        { id: 'margen-bruto-sidebar', value: fmt(margenBruto) },
               
         // Resumen financiero
         { id: 'total-inversion', value: fmt(financiacion.inversiones) },
@@ -409,7 +413,7 @@ function calculatePricing() {
         if (updateElement(id, value)) updatedCount++;
     });
   
-    console.log(`✅ calculatePricing() completado - ${updatedCount}/${updates.length} elementos`);
+    console.log(`✅ calculatePricing() completado - Personal: ${state.personnel.length} total, ${employeeCount} productivos`);
     
     return { facturacionNecesaria, precioHora, margenBruto, beneficioNeto };
 }
@@ -566,7 +570,16 @@ window.onFieldChange = function(e) {
     const el = e.target;
     const id = el.dataset.id;
     const field = el.dataset.field;
-    const value = el.type === 'number' ? safeNum(el.value) : el.value;
+    
+    // ✅ CORRECCIÓN: Manejar correctamente los checkboxes
+    let value;
+    if (el.type === 'checkbox') {
+        value = el.checked;
+    } else if (el.type === 'number') {
+        value = safeNum(el.value);
+    } else {
+        value = el.value;
+    }
 
     let found = false;
 
@@ -587,7 +600,11 @@ window.onFieldChange = function(e) {
     // Buscar en personal
     if (!found) {
         const person = state.personnel.find(x => x.id === id);
-        if (person) { person[field] = value; found = true; }
+        if (person) { 
+            person[field] = value; 
+            found = true; 
+            console.log(`👤 Personal actualizado: ${person.role} - esProductivo: ${value}`);
+        }
     }
 
     // Buscar en socios

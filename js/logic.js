@@ -131,6 +131,23 @@ function applyTranslations() {
     });
 }
 
+// ===== CONFIGURACIÓN DEL SELECTOR DE IDIOMA =====
+function setupLanguageSelector() {
+    const languageSelect = document.getElementById('language-select');
+    if (languageSelect) {
+        // Establecer el idioma actual basado en la selección
+        languageSelect.value = currentLanguage;
+        
+        languageSelect.addEventListener('change', function() {
+            setLanguage(this.value);
+        });
+        
+        console.log("✅ Selector de idioma configurado");
+    } else {
+        console.warn("⚠️ Selector de idioma no encontrado");
+    }
+}
+
 // ===== CÁLCULOS FINANCIEROS (DEFINIDOS ANTES DE USO) =====
 function calculateTotalAmortizations() {
     let total = 0;

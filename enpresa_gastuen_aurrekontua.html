@@ -387,29 +387,29 @@
 <!-- Card 1: Facturación Necesaria -->
 <div class="card">
     <h4>Urteko Fakturazioa Beharrezkoa</h4>
-        <p class="value">192.113,26 €</p>
-        <div class="facturacion-desglose">
-            <div class="desglose-item">
-                <span class="desglose-label">Amortizazioak:</span>
-                <span class="desglose-value">${amortizaciones}</span>
-            </div>
-            <div class="desglose-item">
-                <span class="desglose-label">Gastu Finkoak:</span>
-                <span class="desglose-value">${gastosFijos}</span>
-            </div>
-            <div class="desglose-item">
-                <span class="desglose-label">Pertsonala:</span>
-                <span class="desglose-value">${personal}</span>
-            </div>
-            <div class="desglose-item">
-                <span class="desglose-label">Finantzaketa Kostuak (Kuota Anuala):</span>
-                <span class="desglose-value">${finantzaketaKostuak}</span>
-            </div>
-            <div class="desglose-item">
-                <span class="desglose-label">Mozkin Gordina:</span>
-                <span class="desglose-value">${mozkinGordina}</span>
-            </div>
+    <p class="value" id="total-facturacion"></p>
+    <div class="facturacion-desglose">
+        <div class="desglose-item">
+            <span class="desglose-label">Amortizazioak:</span>
+            <span class="desglose-value" id="total-amortizaciones-sidebar"></span>
         </div>
+        <div class="desglose-item">
+            <span class="desglose-label">Gastu Finkoak:</span>
+            <span class="desglose-value" id="total-gastos-fijos-sidebar"></span>
+        </div>
+        <div class="desglose-item">
+            <span class="desglose-label">Pertsonala:</span>
+            <span class="desglose-value" id="total-personal-sidebar"></span>
+        </div>
+        <div class="desglose-item">
+            <span class="desglose-label">Finantzaketa Kostuak (Kuota Anuala):</span>
+            <span class="desglose-value" id="costos-financieros-sidebar"></span>
+        </div>
+        <div class="desglose-item">
+            <span class="desglose-label">Mozkin Gordina:</span>
+            <span class="desglose-value" id="margen-bruto-sidebar"></span>
+        </div>
+    </div>
 </div>
 
       

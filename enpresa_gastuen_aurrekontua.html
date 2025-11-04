@@ -88,6 +88,7 @@
                                 <th data-i18n="table.lanpostua">Lanpostua</th>
                                 <th data-i18n="table.soldata">Urteko Soldata Gordina</th>
                                 <th data-i18n="table.gizarteSegurantza">Gizarte Segurantza (%)</th>
+                                <th data-i18n="table.productivo">Produktiboa</th>
                                 <th data-i18n="table.guztira">Guztira</th>
                                 <th data-i18n="table.ekintzak">Ekintzak</th>
                             </tr>
@@ -286,11 +287,17 @@
             <label for="target-profit-margin" data-i18n="pricing.mozkinMargina">Helburuko Mozkin Gordina (%)</label>
             <input id="target-profit-margin" type="number" value="20" oninput="updateAll()" />
             
-            <label for="employee-count" data-i18n="pricing.langileKopurua">Langile kopurua</label>
-            <input id="employee-count" type="number" value="2" oninput="updateAll()" />
+            <div style="margin-bottom: 10px;">
+                <strong data-i18n="pricing.langileKopurua">Langile kopurua</strong>: 
+                <span id="contador-personal-productivo">0</span>
+                <small style="color:#666">(kalkulatu automatikoki)</small>
+            </div>
             
-            <label for="annual-hours-per-employee" data-i18n="pricing.urtekoOrduak">Urteko orduak/lang</label>
-            <input id="annual-hours-per-employee" type="number" value="1600" oninput="updateAll()" />
+            <div class="input-group">
+            <label for="annual-hours-per-employee" data-i18n="pricing.urtekoOrduakLangile">Urteko orduak langileko</label>
+            <input id="annual-hours-per-employee" type="number" value="1600" min="800" max="2200" step="50" oninput="updateAll()" />
+            <small style="color:#666" data-i18n="pricing.urtekoOrduakHelp">(Normalean 1600-1800 ordu)</small>
+        </div>
         </div>
         <div>
             <!-- DESGLOSE PEDAGÓGICO -->

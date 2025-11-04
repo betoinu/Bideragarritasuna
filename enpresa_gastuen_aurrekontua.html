@@ -384,57 +384,81 @@
     </div>
 </div>
     
-<!-- Card 1: Facturación Necesaria -->
+<!-- CARTA 1: Financiación total -->
 <div class="card">
-    <h4>Urteko Fakturazioa Beharrezkoa</h4>
+    <h4 data-i18n="sidebar.finantzaketaGuztira">Finantzaketa Behar Totala</h4>
+    <p class="value" id="finantzaketa-total-calculada"></p>
+    <div class="cost-breakdown">
+        <div class="cost-item">
+            <span data-i18n="finance.inversionTotal">Inbertsio Totala:</span>
+            <span id="inversion-total-sidebar"></span>
+        </div>
+        <div class="cost-item">
+            <span data-i18n="finance.kutxaErrefortzua">Tesorería Kalkulatua:</span>
+            <span id="tesoreria-sidebar"></span>
+        </div>
+        <div class="cost-item" style="border-top: 1px solid rgba(15,23,42,0.1); padding-top: 8px; margin-top: 8px;">
+            <span data-i18n="finance.bazkideEkarpenGuztira"><strong>Aportación Total Socios:</strong></span>
+            <span id="aportacion-total-sidebar"><strong></strong></span>
+        </div>
+        <div class="cost-item">
+            <span style="padding-left: 10px;" data-i18n="socio.trabajador">- Socios Trabajadores:</span>
+            <span id="aportacion-trabajadores-sidebar"></span>
+        </div>
+        <div class="cost-item">
+            <span style="padding-left: 10px;" data-i18n="socio.capitalista">- Socios Capitalistas:</span>
+            <span id="aportacion-capitalistas-sidebar"></span>
+        </div>
+        <div class="cost-item highlight" style="background-color: rgba(83, 12, 237, 0.05); padding: 8px; border-radius: 6px; border-left: 3px solid var(--id-primary); margin-top: 8px;">
+            <span data-i18n="finance.finantzaketaBehar"><strong>Finantzaketa Behar Neta:</strong></span>
+            <span id="finantzaketa-neta-sidebar"><strong></strong></span>
+        </div>
+    </div>
+</div>
+
+<!-- CARTA 2: Facturación -->
+<div class="card">
+    <h4 data-i18n="sidebar.facturacion">Urteko Fakturazioa Beharrezkoa</h4>
     <p class="value" id="total-facturacion"></p>
     <div class="facturacion-desglose">
         <div class="desglose-item">
-            <span class="desglose-label">Amortizazioak:</span>
+            <span class="desglose-label" data-i18n="sidebar.amortizazioak">Amortizazioak:</span>
             <span class="desglose-value" id="total-amortizaciones-sidebar"></span>
         </div>
         <div class="desglose-item">
-            <span class="desglose-label">Gastu Finkoak:</span>
+            <span class="desglose-label" data-i18n="sidebar.gastuFinkoak">Gastu Finkoak:</span>
             <span class="desglose-value" id="total-gastos-fijos-sidebar"></span>
         </div>
         <div class="desglose-item">
-            <span class="desglose-label">Pertsonala:</span>
+            <span class="desglose-label" data-i18n="sidebar.pertsonala">Pertsonala:</span>
             <span class="desglose-value" id="total-personal-sidebar"></span>
         </div>
         <div class="desglose-item">
-            <span class="desglose-label">Finantzaketa Kostuak (Kuota Anuala):</span>
+            <span class="desglose-label" data-i18n="sidebar.finantzaketaKostuak">Finantzaketa Kostuak (Kuota Anuala):</span>
             <span class="desglose-value" id="costos-financieros-sidebar"></span>
         </div>
         <div class="desglose-item">
-            <span class="desglose-label">Mozkin Gordina:</span>
+            <span class="desglose-label" data-i18n="sidebar.mozkinGordina">Mozkin Gordina:</span>
             <span class="desglose-value" id="margen-bruto-sidebar"></span>
         </div>
     </div>
 </div>
 
-      
-<!-- Card 2: Precio/Hora -->
-    <div class="card">
-        <h4>Gomendatutako Orduko Prezioa</h4>
-        <p id="suggested-hourly-rate-sidebar" class="value">€ 0.00</p>
-        <p class="muted">Langile kopurua: <span id="employee-count-sidebar">0</span></p>
-        <p class="muted">Urteko orduak: <span id="annual-hours-sidebar">0</span></p>
-    </div>
-    
-    <!-- Card 4: Gráfico IDarte -->
-    <div class="card">
-        <div class="idarte-graphic">
-            <img src="img/fondo.png" alt="Detalle gráfico IDarte" loading="lazy">
-        </div>
-    </div>
+<!-- CARTA 3: Precio/Hora -->
+<div class="card">
+    <h4 data-i18n="sidebar.precioHora">Gomendatutako Orduko Prezioa</h4>
+    <p id="suggested-hourly-rate-sidebar" class="value">€ 0.00</p>
+    <p class="muted"><span data-i18n="sidebar.langileKopurua">Langile kopurua</span>: <span id="employee-count-sidebar">0</span></p>
+    <p class="muted"><span data-i18n="sidebar.urtekoOrduak">Urteko orduak</span>: <span id="annual-hours-sidebar">0</span></p>
+</div>
 
-    <!-- Card 5: Contacto -->
-    <div class="card contact-card">
-        <h4>Kontaktua</h4>
-        <p class="muted">Josu Ayerbe Guarás, Barne Diseinuko Graduko irakaslea</p>
-        <p class="muted">josuayerbe@idarte.eus</p>
-        <p class="muted">Portal de Betoño, 23 · Vitoria-Gasteiz</p>
-    </div>
+<!-- CARTA 5: Contacto -->
+<div class="card contact-card">
+    <h4 data-i18n="sidebar.contacto">Kontaktua</h4>
+    <p class="muted">Josu Ayerbe Guarás, Barne Diseinuko Graduko irakaslea</p>
+    <p class="muted">josuayerbe@idarte.eus</p>
+    <p class="muted">Portal de Betoño, 23 · Vitoria-Gasteiz</p>
+</div>
 </aside>    
 
         </main>

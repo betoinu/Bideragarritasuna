@@ -355,6 +355,126 @@
         </div>
     </div>
 </div>
+<!-- PANEL 8 - ZERBITZU KARTA ETA BIDERAGARRITASUN ANALISIA -->
+<div id="bideragarritasuna-sheet" class="panel" style="display:none">
+    <h2>8 · Zerbitzu Karta eta Bideragarritasun Analisia</h2>
+    
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+        
+        <!-- COLUMNA IZQUIERDA: ZERBITZU KARTA -->
+        <div>
+            <!-- ZERBITZU KARTA -->
+            <div class="card">
+                <h4>🏷️ Zerbitzu Karta</h4>
+                <table class="data" id="zerbitzuak-table">
+                    <thead>
+                        <tr>
+                            <th>Zerbitzua</th>
+                            <th>Orduko Prezioa</th>
+                            <th>Aurreikusitako Orduak</th>
+                            <th>Prezio Totala</th>
+                            <th>Ekintzak</th>
+                        </tr>
+                    </thead>
+                    <tbody id="zerbitzuak-body">
+                        <!-- Zerbitzuak hemen kargatuko dira -->
+                    </tbody>
+                </table>
+                <button class="btn small" onclick="addZerbitzua()">+ Gehitu Zerbitzua</button>
+            </div>
+
+            <!-- PREZIO EGIAZTAPENA -->
+            <div class="card">
+                <h4>🔍 Prezioaren Egiaztapena</h4>
+                <div class="input-group">
+                    <label for="egiaztapen-orduak">Egiaztatu nahi den ordu kopurua (urteko):</label>
+                    <input type="number" id="egiaztapen-orduak" value="1600" min="800" max="3000" oninput="egiaztatuPrezioa()">
+                </div>
+                <div id="egiaztapen-emaitza" style="margin-top:15px;padding:10px;background:#e8f5e8;border-radius:6px;display:none">
+                    <p><strong>Emaitza:</strong> <span id="egiaztapen-text"></span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- COLUMNA DERECHA: ANALISIA -->
+        <div>
+            <!-- FAKTURAZIO ESZENATOKIAK -->
+            <div class="card">
+                <h4>📈 Fakturazio Eskenatokiak</h4>
+                <div class="input-group">
+                    <label for="eskenatokia-aukera">Aukeratu eskenatokia:</label>
+                    <select id="eskenatokia-aukera" onchange="aldatuEskenatokia()">
+                        <option value="kontserbadorea">Kontserbadorea (%60 fakturazioa)</option>
+                        <option value="erreala">Erreala (%100 fakturazioa)</option>
+                        <option value="hazkuntza">Hazkuntza (%130 fakturazioa)</option>
+                        <option value="agresiboa">Agresiboa (%160 fakturazioa)</option>
+                    </select>
+                </div>
+
+                <div id="eskenatokia-emaitzak" style="margin-top:15px">
+                    <table class="summary-table">
+                        <tr>
+                            <td><strong>Fakturazio Helmuga:</strong></td>
+                            <td class="text-right" id="helmuga-fakturazioa">€ 0.00</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Beharrezkoa vs Helmuga:</strong></td>
+                            <td class="text-right" id="fakturazio-aldea">€ 0.00</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Mozkin Garbia Aurreikusia:</strong></td>
+                            <td class="text-right" id="aurreikusitako-mozkina">€ 0.00</td>
+                        </tr>
+                        <tr style="border-top:2px solid #333">
+                            <td><strong>BIDERAGARRITASUNA:</strong></td>
+                            <td class="text-right" id="bideragarritasun-emaitza">-</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- BENCHMARKING -->
+            <div class="card">
+                <h4>📊 Benchmarking - Merkatu Konparaketa</h4>
+                <table class="data" style="margin-bottom:15px">
+                    <thead>
+                        <tr>
+                            <th>Enpresa</th>
+                            <th>Orduko Prezioa</th>
+                            <th>Kalitatea</th>
+                            <th>Gure Abantaila</th>
+                        </tr>
+                    </thead>
+                    <tbody id="benchmarking-body">
+                        <!-- Lehiakideak hemen kargatuko dira -->
+                    </tbody>
+                </table>
+                <button class="btn small" onclick="addLehiakidea()">+ Gehitu Lehiakidea</button>
+
+                <div style="margin-top:15px; padding:10px; background:#f8f9fa; border-radius:6px">
+                    <p><strong>Gure Prezioa:</strong> <span id="gure-prezia-benchmark">€ 0.00</span></p>
+                    <p><strong>Merkatu Batezbestekoa:</strong> <span id="merkatu-prezia-benchmark">€ 0.00</span></p>
+                    <p><strong>Posizionamendua:</strong> <span id="benchmark-posizionamendua">-</span></p>
+                </div>
+            </div>
+
+            <!-- AZTERKETA METRIKAK -->
+            <div class="card">
+                <h4>🎯 Bideragarritasun Metrikak</h4>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
+                    <div style="text-align:center;padding:10px;background:#fff3cd;border-radius:6px">
+                        <small><strong>Gutxieneko Fakturazioa</strong></small>
+                        <p id="gutxieneko-fakturazioa" style="margin:5px 0;font-weight:bold">€ 0.00</p>
+                    </div>
+                    <div style="text-align:center;padding:10px;background:#d1ecf1;border-radius:6px">
+                        <small><strong>Equilibrio Puntua</strong></small>
+                        <p id="equilibrio-puntua" style="margin:5px 0;font-weight:bold">0 ordu</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>                
 </section>
                 
 <!-- SIDEBAR o COLUMNA DERECHA -->

@@ -367,7 +367,7 @@
         <div>
             <!-- CARTERA DE SERVICIOS -->
             <div class="card">
-                <h4>🏷️ Tu Cartera de Servicios de Supervivencia</h4>
+                <h4>🏷️ Tu Cartera de Servicios</h4>
                 <table class="data">
                     <thead>
                         <tr>
@@ -384,28 +384,28 @@
                             <td class="text-center">8h</td>
                             <td class="text-right">€ 400</td>
                             <td class="text-center"><input type="number" value="0" min="0" style="width:60px;text-align:center" onchange="actualizarCartera()"></td>
-                            <td class="text-right">€ 0</td>
+                            <td class="text-right" id="ingresos-rapido">€ 0</td>
                         </tr>
                         <tr>
                             <td>Consultoría express</td>
                             <td class="text-center">4h</td>
                             <td class="text-right">€ 200</td>
                             <td class="text-center"><input type="number" value="0" min="0" style="width:60px;text-align:center" onchange="actualizarCartera()"></td>
-                            <td class="text-right">€ 0</td>
+                            <td class="text-right" id="ingresos-consultoria">€ 0</td>
                         </tr>
                         <tr>
                             <td>Proyecto medio</td>
                             <td class="text-center">40h</td>
                             <td class="text-right">€ 2,000</td>
                             <td class="text-center"><input type="number" value="0" min="0" style="width:60px;text-align:center" onchange="actualizarCartera()"></td>
-                            <td class="text-right">€ 0</td>
+                            <td class="text-right" id="ingresos-medio">€ 0</td>
                         </tr>
                         <tr>
                             <td>Proyecto grande</td>
                             <td class="text-center">80h</td>
                             <td class="text-right">€ 4,000</td>
                             <td class="text-center"><input type="number" value="0" min="0" style="width:60px;text-align:center" onchange="actualizarCartera()"></td>
-                            <td class="text-right">€ 0</td>
+                            <td class="text-right" id="ingresos-grande">€ 0</td>
                         </tr>
                     </tbody>
                     <tfoot>
@@ -510,8 +510,7 @@
             </div>
         </div>
     </div>
-</div>                            
-</section>
+</div>
                 
 <!-- SIDEBAR o COLUMNA DERECHA -->
 <aside class="sidebar">

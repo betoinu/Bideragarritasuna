@@ -356,126 +356,161 @@
         </div>
     </div>
 </div>
-<!-- PANEL 8 - ZERBITZU KARTA ETA BIDERAGARRITASUN ANALISIA -->
-<div id="bideragarritasuna-sheet" class="panel" style="display:none">
-    <h2>8 · Zerbitzu Karta eta Bideragarritasun Analisia</h2>
+
+<!-- PANEL 8 - ESTRATEGIA DE MERCADO Y SUPERVIVENCIA -->
+<div id="estrategia-sheet" class="panel" style="display:none">
+    <h2>8 · Estrategia de Mercado y Supervivencia</h2>
     
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
         
-        <!-- COLUMNA IZQUIERDA: ZERBITZU KARTA -->
+        <!-- COLUMNA IZQUIERDA: CARTERA DE SERVICIOS -->
         <div>
-            <!-- ZERBITZU KARTA -->
+            <!-- CARTERA DE SERVICIOS -->
             <div class="card">
-                <h4>🏷️ Zerbitzu Karta</h4>
-                <table class="data" id="zerbitzuak-table">
+                <h4>🏷️ Tu Cartera de Servicios de Supervivencia</h4>
+                <table class="data">
                     <thead>
                         <tr>
-                            <th>Zerbitzua</th>
-                            <th>Orduko Prezioa</th>
-                            <th>Aurreikusitako Orduak</th>
-                            <th>Prezio Totala</th>
-                            <th>Ekintzak</th>
+                            <th>Servicio</th>
+                            <th>Horas</th>
+                            <th>Precio</th>
+                            <th>Cantidad/año</th>
+                            <th>Ingresos</th>
                         </tr>
                     </thead>
-                    <tbody id="zerbitzuak-body">
-                        <!-- Zerbitzuak hemen kargatuko dira -->
+                    <tbody id="cartera-servicios-body">
+                        <tr>
+                            <td>Diseño rápido</td>
+                            <td class="text-center">8h</td>
+                            <td class="text-right">€ 400</td>
+                            <td class="text-center"><input type="number" value="0" min="0" style="width:60px;text-align:center" onchange="actualizarCartera()"></td>
+                            <td class="text-right">€ 0</td>
+                        </tr>
+                        <tr>
+                            <td>Consultoría express</td>
+                            <td class="text-center">4h</td>
+                            <td class="text-right">€ 200</td>
+                            <td class="text-center"><input type="number" value="0" min="0" style="width:60px;text-align:center" onchange="actualizarCartera()"></td>
+                            <td class="text-right">€ 0</td>
+                        </tr>
+                        <tr>
+                            <td>Proyecto medio</td>
+                            <td class="text-center">40h</td>
+                            <td class="text-right">€ 2,000</td>
+                            <td class="text-center"><input type="number" value="0" min="0" style="width:60px;text-align:center" onchange="actualizarCartera()"></td>
+                            <td class="text-right">€ 0</td>
+                        </tr>
+                        <tr>
+                            <td>Proyecto grande</td>
+                            <td class="text-center">80h</td>
+                            <td class="text-right">€ 4,000</td>
+                            <td class="text-center"><input type="number" value="0" min="0" style="width:60px;text-align:center" onchange="actualizarCartera()"></td>
+                            <td class="text-right">€ 0</td>
+                        </tr>
                     </tbody>
+                    <tfoot>
+                        <tr style="border-top:2px solid #333;font-weight:bold">
+                            <td colspan="4">TOTAL INGRESOS PROYECTADOS</td>
+                            <td class="text-right" id="total-ingresos-cartera">€ 0</td>
+                        </tr>
+                    </tfoot>
                 </table>
-                <button class="btn small" onclick="addZerbitzua()">+ Gehitu Zerbitzua</button>
             </div>
 
-            <!-- PREZIO EGIAZTAPENA -->
+            <!-- ANÁLISIS DE SUPERVIVENCIA -->
             <div class="card">
-                <h4>🔍 Prezioaren Egiaztapena</h4>
-                <div class="input-group">
-                    <label for="egiaztapen-orduak">Egiaztatu nahi den ordu kopurua (urteko):</label>
-                    <input type="number" id="egiaztapen-orduak" value="1600" min="800" max="3000" oninput="egiaztatuPrezioa()">
-                </div>
-                <div id="egiaztapen-emaitza" style="margin-top:15px;padding:10px;background:#e8f5e8;border-radius:6px;display:none">
-                    <p><strong>Emaitza:</strong> <span id="egiaztapen-text"></span></p>
+                <h4>📊 Análisis de Supervivencia</h4>
+                <table class="summary-table">
+                    <tr>
+                        <td>Meta de supervivencia:</td>
+                        <td class="text-right" id="meta-supervivencia">€ 0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Ingresos proyectados:</td>
+                        <td class="text-right" id="ingresos-proyectados">€ 0.00</td>
+                    </tr>
+                    <tr style="border-top:1px solid #ddd">
+                        <td><strong>Brecha de supervivencia:</strong></td>
+                        <td class="text-right" id="brecha-supervivencia">€ 0.00</td>
+                    </tr>
+                </table>
+                
+                <div style="margin-top:15px;padding:12px;background:#fff3cd;border-radius:6px">
+                    <strong>🔍 Diagnóstico actual:</strong>
+                    <span id="diagnostico-supervivencia">-</span>
                 </div>
             </div>
         </div>
 
-        <!-- COLUMNA DERECHA: ANALISIA -->
+        <!-- COLUMNA DERECHA: ESTRATEGIAS Y MÉTRICAS -->
         <div>
-            <!-- FAKTURAZIO ESZENATOKIAK -->
+            <!-- ESTRATEGIAS DE PRECIO -->
             <div class="card">
-                <h4>📈 Fakturazio Eskenatokiak</h4>
-                <div class="input-group">
-                    <label for="eskenatokia-aukera">Aukeratu eskenatokia:</label>
-                    <select id="eskenatokia-aukera" onchange="aldatuEskenatokia()">
-                        <option value="kontserbadorea">Kontserbadorea (%60 fakturazioa)</option>
-                        <option value="erreala">Erreala (%100 fakturazioa)</option>
-                        <option value="hazkuntza">Hazkuntza (%130 fakturazioa)</option>
-                        <option value="agresiboa">Agresiboa (%160 fakturazioa)</option>
-                    </select>
+                <h4>🎯 Estrategias de Posicionamiento</h4>
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:10px">
+                    <div style="text-align:center;padding:12px;background:#e8f5e8;border-radius:6px;cursor:pointer" onclick="aplicarEstrategia('premium')">
+                        <div style="font-size:1.2em">🚀</div>
+                        <small><strong>Premium</strong></small>
+                        <p style="margin:5px 0;font-size:0.9em">+20% precio<br>-30% clientes</p>
+                    </div>
+                    <div style="text-align:center;padding:12px;background:#e3f2fd;border-radius:6px;cursor:pointer" onclick="aplicarEstrategia('equilibrado')">
+                        <div style="font-size:1.2em">⚖️</div>
+                        <small><strong>Equilibrado</strong></small>
+                        <p style="margin:5px 0;font-size:0.9em">+5% precio<br>+10% clientes</p>
+                    </div>
+                    <div style="text-align:center;padding:12px;background:#ffecb3;border-radius:6px;cursor:pointer" onclick="aplicarEstrategia('volumen')">
+                        <div style="font-size:1.2em">📈</div>
+                        <small><strong>Volumen</strong></small>
+                        <p style="margin:5px 0;font-size:0.9em">-10% precio<br>+50% clientes</p>
+                    </div>
                 </div>
-
-                <div id="eskenatokia-emaitzak" style="margin-top:15px">
-                    <table class="summary-table">
-                        <tr>
-                            <td><strong>Fakturazio Helmuga:</strong></td>
-                            <td class="text-right" id="helmuga-fakturazioa">€ 0.00</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Beharrezkoa vs Helmuga:</strong></td>
-                            <td class="text-right" id="fakturazio-aldea">€ 0.00</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Mozkin Garbia Aurreikusia:</strong></td>
-                            <td class="text-right" id="aurreikusitako-mozkina">€ 0.00</td>
-                        </tr>
-                        <tr style="border-top:2px solid #333">
-                            <td><strong>BIDERAGARRITASUNA:</strong></td>
-                            <td class="text-right" id="bideragarritasun-emaitza">-</td>
-                        </tr>
-                    </table>
+                
+                <div style="margin-top:15px;padding:10px;background:#f8f9fa;border-radius:6px">
+                    <small><strong>Estrategia activa:</strong> <span id="estrategia-activa">Ninguna</span></small>
                 </div>
             </div>
 
-            <!-- BENCHMARKING -->
+            <!-- MÉTRICAS CRÍTICAS -->
             <div class="card">
-                <h4>📊 Benchmarking - Merkatu Konparaketa</h4>
-                <table class="data" style="margin-bottom:15px">
-                    <thead>
-                        <tr>
-                            <th>Enpresa</th>
-                            <th>Orduko Prezioa</th>
-                            <th>Kalitatea</th>
-                            <th>Gure Abantaila</th>
-                        </tr>
-                    </thead>
-                    <tbody id="benchmarking-body">
-                        <!-- Lehiakideak hemen kargatuko dira -->
-                    </tbody>
+                <h4>📈 Métricas de Supervivencia</h4>
+                <table class="summary-table">
+                    <tr>
+                        <td>Horas necesarias/mes:</td>
+                        <td class="text-right" id="metricas-horas-mes">0h</td>
+                    </tr>
+                    <tr>
+                        <td>Precio/hora efectivo:</td>
+                        <td class="text-right" id="metricas-precio-hora">€ 0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Clientes necesarios/mes:</td>
+                        <td class="text-right" id="metricas-clientes-mes">0</td>
+                    </tr>
+                    <tr style="border-top:1px solid #ddd">
+                        <td><strong>Capacidad utilizada:</strong></td>
+                        <td class="text-right" id="metricas-capacidad">0%</td>
+                    </tr>
                 </table>
-                <button class="btn small" onclick="addLehiakidea()">+ Gehitu Lehiakidea</button>
-
-                <div style="margin-top:15px; padding:10px; background:#f8f9fa; border-radius:6px">
-                    <p><strong>Gure Prezioa:</strong> <span id="gure-prezia-benchmark">€ 0.00</span></p>
-                    <p><strong>Merkatu Batezbestekoa:</strong> <span id="merkatu-prezia-benchmark">€ 0.00</span></p>
-                    <p><strong>Posizionamendua:</strong> <span id="benchmark-posizionamendua">-</span></p>
-                </div>
             </div>
 
-            <!-- AZTERKETA METRIKAK -->
+            <!-- RECOMENDACIONES ESTRATÉGICAS -->
             <div class="card">
-                <h4>🎯 Bideragarritasun Metrikak</h4>
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
-                    <div style="text-align:center;padding:10px;background:#fff3cd;border-radius:6px">
-                        <small><strong>Gutxieneko Fakturazioa</strong></small>
-                        <p id="gutxieneko-fakturazioa" style="margin:5px 0;font-weight:bold">€ 0.00</p>
-                    </div>
-                    <div style="text-align:center;padding:10px;background:#d1ecf1;border-radius:6px">
-                        <small><strong>Equilibrio Puntua</strong></small>
-                        <p id="equilibrio-puntua" style="margin:5px 0;font-weight:bold">0 ordu</p>
-                    </div>
+                <h4>💡 Recomendaciones Estratégicas</h4>
+                <div id="recomendaciones-estrategicas" style="max-height:200px;overflow-y:auto">
+                    <p style="margin:8px 0;padding:8px;background:#e8f5e8;border-radius:4px">
+                        <strong>1. Define tu cartera:</strong> Establece cuántos proyectos de cada tipo puedes realizar.
+                    </p>
+                    <p style="margin:8px 0;padding:8px;background:#e3f2fd;border-radius:4px">
+                        <strong>2. Prueba estrategias:</strong> Experimenta con diferentes enfoques de precio/volumen.
+                    </p>
+                    <p style="margin:8px 0;padding:8px;background:#fff3cd;border-radius:4px">
+                        <strong>3. Analiza viabilidad:</strong> Busca combinación realista entre capacidad y mercado.
+                    </p>
                 </div>
             </div>
         </div>
     </div>
-</div>                
+</div>                            
 </section>
                 
 <!-- SIDEBAR o COLUMNA DERECHA -->

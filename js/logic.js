@@ -945,7 +945,6 @@ window.aldatuLehiakidea = function(id, eremua, balioa) {
 window.updateBideragarritasuna = function() {
     const fakturazioBeharrezkoa = safeNum(document.getElementById('desglose-facturacion-total')?.textContent.replace(/[^\d,.-]/g, '') || 0);
     
-    // Eskenatokiak kalkulatu
     const eskenatokiak = {
         'kontserbadorea': fakturazioBeharrezkoa * 0.6,
         'erreala': fakturazioBeharrezkoa,
@@ -957,12 +956,15 @@ window.updateBideragarritasuna = function() {
     const helmugaFakturazioa = eskenatokiak[aukeratutakoEskenatokia];
     
     if (helmugaFakturazioa) {
+        // 🆕 CORREGIR: Usar fmt() para formatear los valores
         updateElement('helmuga-fakturazioa', fmt(helmugaFakturazioa));
         updateElement('fakturazio-aldea', fmt(helmugaFakturazioa - fakturazioBeharrezkoa));
         
         // Bideragarritasun analisia
         const bideragarra = helmugaFakturazioa >= fakturazioBeharrezkoa;
         updateElement('bideragarritasun-emaitza', bideragarra ? '✅ BIDERAGARRA' : '⚠️ ZAILDUNA');
+        
+        console.log("✅ Panel 8 actualizado correctamente");
     }
     
     updateBenchmarking();

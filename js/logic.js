@@ -826,197 +826,102 @@ function updateAll() {
     }, 100);
 }
 
-// ===== PANEL 8 - BIDERAGARRITASUN ANALISIA =====
-window.zerbitzuak = [];
-window.lehiakideak = [];
+// ===== PANEL 8 - ESTRATEGIA Y SUPERVIVENCIA =====
+window.estrategiaActiva = null;
 
-// Zerbitzuak kudeatzeko
-window.addZerbitzua = function() {
-    const gurePrezioa = safeNum(document.getElementById('suggested-hourly-rate')?.textContent.replace(/[^\d,.-]/g, '') || 100);
-    window.zerbitzuak.push({
-        id: uid('z'),
-        izena: 'Zerbitzu Berria',
-        ordukoPrezioa: gurePrezioa,
-        aurreikusitakoOrduak: 10
+window.actualizarCartera = function() {
+    // Calcular ingresos de cada servicio
+    const servicios = [
+        { id: 'rapido', precio: 400, horas: 8 },
+        { id: 'consultoria', precio: 200, horas: 4 },
+        { id: 'medio', precio: 2000, horas: 40 },
+        { id: 'grande', precio: 4000, horas: 80 }
+    ];
+    
+    let totalIngresos = 0;
+    let totalHoras = 0;
+    let totalClientes = 0;
+    
+    servicios.forEach((servicio, index) => {
+        const cantidad = parseInt(document.querySelectorAll('#cartera-servicios-body input[type="number"]')[index]?.value) || 0;
+        const ingresos = cantidad * servicio.precio;
+        totalIngresos += ingresos;
+        totalHoras += cantidad * servicio.horas;
+        totalClientes += cantidad;
+        
+        // Actualizar columna de ingresos
+        updateElement(`ingresos-${servicio.id}`, `€ ${ingresos.toLocaleString()}`);
     });
-    renderZerbitzuak();
-    updateBideragarritasuna();
-};
-
-window.renderZerbitzuak = function() {
-    const container = document.getElementById('zerbitzuak-body');
-    if (!container) return;
     
-    container.innerHTML = window.zerbitzuak.map(zerbitzua => `
-        <tr>
-            <td style="min-width:250px">
-                <input value="${zerbitzua.izena}" 
-                       onchange="aldatuZerbitzua('${zerbitzua.id}', 'izena', this.value)"
-                       style="width:100%; border:none; background:transparent">
-            </td>
-            <td class="text-right">
-                <input type="number" value="${zerbitzua.ordukoPrezioa}" 
-                       onchange="aldatuZerbitzua('${zerbitzua.id}', 'ordukoPrezioa', this.value)"
-                       style="text-align:right; width:100px">
-            </td>
-            <td class="text-center">
-                <input type="number" value="${zerbitzua.aurreikusitakoOrduak}" 
-                       onchange="aldatuZerbitzua('${zerbitzua.id}', 'aurreikusitakoOrduak', this.value)"
-                       style="text-align:center; width:80px">
-            </td>
-            <td class="text-right">${fmt(zerbitzua.ordukoPrezioa * zerbitzua.aurreikusitakoOrduak)}</td>
-            <td><button onclick="removeZerbitzua('${zerbitzua.id}')" class="btn small">✕</button></td>
-        </tr>
-    `).join('');
-};
-
-window.aldatuZerbitzua = function(id, eremua, balioa) {
-    const zerbitzua = window.zerbitzuak.find(z => z.id === id);
-    if (zerbitzua) {
-        zerbitzua[eremua] = eremua === 'izena' ? balioa : safeNum(balioa);
-        renderZerbitzuak();
-        updateBideragarritasuna();
+    // Actualizar totales
+    updateElement('total-ingresos-cartera', `€ ${totalIngresos.toLocaleString()}`);
+    updateElement('ingresos-proyectados', fmt(totalIngresos));
+    
+    // Calcular métricas de supervivencia
+    const metaSupervivencia = safeNum(document.getElementById('desglose-facturacion-total')?.textContent.replace(/[^\d,.-]/g, '') || 0);
+    const brecha = metaSupervivencia - totalIngresos;
+    
+    updateElement('meta-supervivencia', fmt(metaSupervivencia));
+    updateElement('brecha-supervivencia', fmt(brecha));
+    
+    // Actualizar diagnóstico
+    const diagnostico = document.getElementById('diagnostico-supervivencia');
+    if (diagnostico) {
+        if (brecha <= 0) {
+            diagnostico.textContent = '✅ VIABLE - Cubres gastos';
+            diagnostico.parentElement.style.background = '#e8f5e8';
+        } else if (brecha < metaSupervivencia * 0.2) {
+            diagnostico.textContent = '⚠️ CASI - Cerca del objetivo';
+            diagnostico.parentElement.style.background = '#fff3cd';
+        } else {
+            diagnostico.textContent = '🔴 CRÍTICO - Lejos del objetivo';
+            diagnostico.parentElement.style.background = '#ffeaa7';
+        }
     }
-};
-
-window.removeZerbitzua = function(id) {
-    window.zerbitzuak = window.zerbitzuak.filter(z => z.id !== id);
-    renderZerbitzuak();
-    updateBideragarritasuna();
-};
-
-// Benchmarking kudeatzeko
-window.addLehiakidea = function() {
-    window.lehiakideak.push({
-        id: uid('l'),
-        izena: 'Lehiakide Berria',
-        ordukoPrezioa: 100,
-        kalitatea: 'ertaina',
-        abantaila: 'neutral'
-    });
-    renderBenchmarking();
-    updateBenchmarking();
-};
-
-window.renderBenchmarking = function() {
-    const container = document.getElementById('benchmarking-body');
-    if (!container) return;
     
-    container.innerHTML = window.lehiakideak.map(lehiakidea => `
-        <tr>
-            <td style="min-width:150px">
-                <input value="${lehiakidea.izena}" 
-                       onchange="aldatuLehiakidea('${lehiakidea.id}', 'izena', this.value)"
-                       style="width:100%; border:none; background:transparent">
-            </td>
-            <td class="text-right">
-                <input type="number" value="${lehiakidea.ordukoPrezioa}" 
-                       onchange="aldatuLehiakidea('${lehiakidea.id}', 'ordukoPrezioa', this.value)"
-                       style="text-align:right; width:80px">
-            </td>
-            <td>
-                <select onchange="aldatuLehiakidea('${lehiakidea.id}', 'kalitatea', this.value)" style="width:100%">
-                    <option value="altua" ${lehiakidea.kalitatea === 'altua' ? 'selected' : ''}>🟢 Altua</option>
-                    <option value="ertaina" ${lehiakidea.kalitatea === 'ertaina' ? 'selected' : ''}>🟡 Ertaina</option>
-                    <option value="baxua" ${lehiakidea.kalitatea === 'baxua' ? 'selected' : ''}>🔴 Baxua</option>
-                </select>
-            </td>
-            <td>
-                <select onchange="aldatuLehiakidea('${lehiakidea.id}', 'abantaila', this.value)" style="width:100%">
-                    <option value="prezioa" ${lehiakidea.abantaila === 'prezioa' ? 'selected' : ''}>✅ Prezioa</option>
-                    <option value="kalitatea" ${lehiakidea.abantaila === 'kalitatea' ? 'selected' : ''}>✅ Kalitatea</option>
-                    <option value="arreta" ${lehiakidea.abantaila === 'arreta' ? 'selected' : ''}>✅ Arreta</option>
-                    <option value="neutral" ${lehiakidea.abantaila === 'neutral' ? 'selected' : ''}>⚠️ Neutral</option>
-                </select>
-            </td>
-        </tr>
-    `).join('');
-};
-
-window.aldatuLehiakidea = function(id, eremua, balioa) {
-    const lehiakidea = window.lehiakideak.find(l => l.id === id);
-    if (lehiakidea) {
-        lehiakidea[eremua] = eremua === 'ordukoPrezioa' ? safeNum(balioa) : balioa;
-        updateBenchmarking();
-    }
-};
-
-// Bideragarritasun kalkuluak
-window.updateBideragarritasuna = function() {
-    const fakturazioBeharrezkoa = safeNum(document.getElementById('desglose-facturacion-total')?.textContent.replace(/[^\d,.-]/g, '') || 0);
+    // Actualizar métricas críticas
+    const horasMensuales = totalHoras / 12;
+    const precioHoraEfectivo = totalHoras > 0 ? totalIngresos / totalHoras : 0;
+    const clientesMensuales = totalClientes / 12;
+    const capacidadTotal = safeNum(document.getElementById('annual-hours-per-employee')?.value) * 
+                          safeNum(document.getElementById('employee-count-sidebar')?.textContent);
+    const capacidadUtilizada = capacidadTotal > 0 ? (totalHoras / capacidadTotal) * 100 : 0;
     
-    const eskenatokiak = {
-        'kontserbadorea': fakturazioBeharrezkoa * 0.6,
-        'erreala': fakturazioBeharrezkoa,
-        'hazkuntza': fakturazioBeharrezkoa * 1.3,
-        'agresiboa': fakturazioBeharrezkoa * 1.6
+    updateElement('metricas-horas-mes', `${Math.ceil(horasMensuales)}h`);
+    updateElement('metricas-precio-hora', fmt(precioHoraEfectivo));
+    updateElement('metricas-clientes-mes', Math.ceil(clientesMensuales));
+    updateElement('metricas-capacidad', `${Math.round(capacidadUtilizada)}%`);
+};
+
+window.aplicarEstrategia = function(tipo) {
+    window.estrategiaActiva = tipo;
+    updateElement('estrategia-activa', tipo.charAt(0).toUpperCase() + tipo.slice(1));
+    
+    // Aplicar factores según estrategia
+    const factores = {
+        premium: { precio: 1.2, clientes: 0.7 },
+        equilibrado: { precio: 1.05, clientes: 1.1 },
+        volumen: { precio: 0.9, clientes: 1.5 }
     };
     
-    const aukeratutakoEskenatokia = document.getElementById('eskenatokia-aukera')?.value || 'erreala';
-    const helmugaFakturazioa = eskenatokiak[aukeratutakoEskenatokia];
+    const factor = factores[tipo];
     
-    if (helmugaFakturazioa) {
-        // 🆕 CORREGIR: Usar fmt() para formatear los valores
-        updateElement('helmuga-fakturazioa', fmt(helmugaFakturazioa));
-        updateElement('fakturazio-aldea', fmt(helmugaFakturazioa - fakturazioBeharrezkoa));
-        
-        // Bideragarritasun analisia
-        const bideragarra = helmugaFakturazioa >= fakturazioBeharrezkoa;
-        updateElement('bideragarritasun-emaitza', bideragarra ? '✅ BIDERAGARRA' : '⚠️ ZAILDUNA');
-        
-        console.log("✅ Panel 8 actualizado correctamente");
-    }
+    // Aplicar a todos los inputs de cantidad
+    const inputs = document.querySelectorAll('#cartera-servicios-body input[type="number"]');
+    inputs.forEach(input => {
+        const valorActual = parseInt(input.value) || 0;
+        const nuevoValor = Math.round(valorActual * factor.clientes);
+        input.value = nuevoValor;
+    });
     
-    updateBenchmarking();
+    // Recalcular
+    actualizarCartera();
 };
 
-window.updateBenchmarking = function() {
-    const gurePrezioa = safeNum(document.getElementById('suggested-hourly-rate')?.textContent.replace(/[^\d,.-]/g, '') || 0);
-    
-    if (window.lehiakideak.length > 0) {
-        const batezbestekoMerkatua = window.lehiakideak.reduce((total, l) => total + l.ordukoPrezioa, 0) / window.lehiakideak.length;
-        
-        updateElement('gure-prezia-benchmark', fmt(gurePrezioa));
-        updateElement('merkatu-prezia-benchmark', fmt(batezbestekoMerkatua));
-        
-        let posizionamendua = '';
-        if (gurePrezioa < batezbestekoMerkatua * 0.9) {
-            posizionamendua = '🔴 PREZIO BAXUEGIA';
-        } else if (gurePrezioa > batezbestekoMerkatua * 1.1) {
-            posizionamendua = '🟡 PREZIO ALTUEgia';
-        } else {
-            posizionamendua = '✅ PREZIO OPTIMOA';
-        }
-        
-        updateElement('benchmark-posizionamendua', posizionamendua);
-    }
-};
-
-window.aldatuEskenatokia = function() {
-    updateBideragarritasuna();
-};
-
-window.egiaztatuPrezioa = function() {
-    const orduak = safeNum(document.getElementById('egiaztapen-orduak')?.value || 1600);
-    const gurePrezioa = safeNum(document.getElementById('suggested-hourly-rate')?.textContent.replace(/[^\d,.-]/g, '') || 0);
-    const fakturazioa = orduak * gurePrezioa;
-    const beharrezkoa = safeNum(document.getElementById('required-annual-revenue')?.textContent.replace(/[^\d,.-]/g, '') || 0);
-    
-    const emaitzaDiv = document.getElementById('egiaztapen-emaitza');
-    const emaitzaText = document.getElementById('egiaztapen-text');
-    
-    if (emaitzaDiv && emaitzaText) {
-        emaitzaDiv.style.display = 'block';
-        
-        if (fakturazioa >= beharrezkoa) {
-            emaitzaDiv.style.background = '#e8f5e8';
-            emaitzaText.textContent = `✅ Nahikoa: ${fmt(fakturazioa)} fakturazioarekin (${fmt(beharrezkoa)} beharrezkoa)`;
-        } else {
-            emaitzaDiv.style.background = '#ffeaa7';
-            emaitzaText.textContent = `⚠️ Gutxiegia: ${fmt(fakturazioa)} fakturazioarekin (${fmt(beharrezkoa - fakturazioa)} falta da)`;
-        }
-    }
-};
+// Inicialización del Panel 8
+setTimeout(() => {
+    if (typeof actualizarCartera === 'function') actualizarCartera();
+}, 1000);
 
 // Inicializazioa automática
 setTimeout(() => {

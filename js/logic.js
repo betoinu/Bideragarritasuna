@@ -816,6 +816,16 @@ function updateAll() {
     }, 100);
 }
 
+// ===== ACTUALIZACIÓN GLOBAL =====
+function updateAll() {
+    if (window.updateTimeout) clearTimeout(window.updateTimeout);
+    window.updateTimeout = setTimeout(() => {
+        calculatePricing();
+        // 🆕 ACTUALIZAR PANEL 8
+        if (typeof updateBideragarritasuna === 'function') updateBideragarritasuna();
+    }, 100);
+}
+
 // ===== PANEL 8 - BIDERAGARRITASUN ANALISIA =====
 window.zerbitzuak = [];
 window.lehiakideak = [];
@@ -1006,7 +1016,7 @@ window.egiaztatuPrezioa = function() {
     }
 };
 
-// Inicializazioa
+// Inicializazioa automática
 setTimeout(() => {
     if (typeof renderZerbitzuak === 'function') renderZerbitzuak();
     if (typeof renderBenchmarking === 'function') renderBenchmarking();

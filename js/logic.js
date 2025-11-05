@@ -377,6 +377,11 @@ function calculatePricing() {
         { id: 'contador-personal-productivo', value: employeeCount },
         { id: 'annual-hours-sidebar', value: totalHours.toLocaleString() },
         { id: 'employee-count-sidebar', value: employeeCount },
+
+        // 🆕 PANEL 8 - BIDERAGARRITASUN UPDATES
+        { id: 'gutxieneko-fakturazioa', value: fmt(facturacionNecesaria) },
+        { id: 'equilibrio-puntua', value: Math.ceil(costesTotales / precioHora) + ' ordu' },
+        { id: 'aurreikusitako-mozkina', value: fmt(beneficioNeto) },
       
         // Sidebar
         { id: 'suggested-hourly-rate-sidebar', value: fmt(precioHora) },
@@ -806,8 +811,208 @@ function updateAll() {
     if (window.updateTimeout) clearTimeout(window.updateTimeout);
     window.updateTimeout = setTimeout(() => {
         calculatePricing();
+        // 🆕 ACTUALIZAR PANEL 8
+        if (typeof updateBideragarritasuna === 'function') updateBideragarritasuna();
     }, 100);
 }
+
+// ===== PANEL 8 - BIDERAGARRITASUN ANALISIA =====
+window.zerbitzuak = [];
+window.lehiakideak = [];
+
+// Zerbitzuak kudeatzeko
+window.addZerbitzua = function() {
+    const gurePrezioa = safeNum(document.getElementById('suggested-hourly-rate')?.textContent.replace(/[^\d,.-]/g, '') || 100);
+    window.zerbitzuak.push({
+        id: uid('z'),
+        izena: 'Zerbitzu Berria',
+        ordukoPrezioa: gurePrezioa,
+        aurreikusitakoOrduak: 10
+    });
+    renderZerbitzuak();
+    updateBideragarritasuna();
+};
+
+window.renderZerbitzuak = function() {
+    const container = document.getElementById('zerbitzuak-body');
+    if (!container) return;
+    
+    container.innerHTML = window.zerbitzuak.map(zerbitzua => `
+        <tr>
+            <td style="min-width:250px">
+                <input value="${zerbitzua.izena}" 
+                       onchange="aldatuZerbitzua('${zerbitzua.id}', 'izena', this.value)"
+                       style="width:100%; border:none; background:transparent">
+            </td>
+            <td class="text-right">
+                <input type="number" value="${zerbitzua.ordukoPrezioa}" 
+                       onchange="aldatuZerbitzua('${zerbitzua.id}', 'ordukoPrezioa', this.value)"
+                       style="text-align:right; width:100px">
+            </td>
+            <td class="text-center">
+                <input type="number" value="${zerbitzua.aurreikusitakoOrduak}" 
+                       onchange="aldatuZerbitzua('${zerbitzua.id}', 'aurreikusitakoOrduak', this.value)"
+                       style="text-align:center; width:80px">
+            </td>
+            <td class="text-right">${fmt(zerbitzua.ordukoPrezioa * zerbitzua.aurreikusitakoOrduak)}</td>
+            <td><button onclick="removeZerbitzua('${zerbitzua.id}')" class="btn small">✕</button></td>
+        </tr>
+    `).join('');
+};
+
+window.aldatuZerbitzua = function(id, eremua, balioa) {
+    const zerbitzua = window.zerbitzuak.find(z => z.id === id);
+    if (zerbitzua) {
+        zerbitzua[eremua] = eremua === 'izena' ? balioa : safeNum(balioa);
+        renderZerbitzuak();
+        updateBideragarritasuna();
+    }
+};
+
+window.removeZerbitzua = function(id) {
+    window.zerbitzuak = window.zerbitzuak.filter(z => z.id !== id);
+    renderZerbitzuak();
+    updateBideragarritasuna();
+};
+
+// Benchmarking kudeatzeko
+window.addLehiakidea = function() {
+    window.lehiakideak.push({
+        id: uid('l'),
+        izena: 'Lehiakide Berria',
+        ordukoPrezioa: 100,
+        kalitatea: 'ertaina',
+        abantaila: 'neutral'
+    });
+    renderBenchmarking();
+    updateBenchmarking();
+};
+
+window.renderBenchmarking = function() {
+    const container = document.getElementById('benchmarking-body');
+    if (!container) return;
+    
+    container.innerHTML = window.lehiakideak.map(lehiakidea => `
+        <tr>
+            <td style="min-width:150px">
+                <input value="${lehiakidea.izena}" 
+                       onchange="aldatuLehiakidea('${lehiakidea.id}', 'izena', this.value)"
+                       style="width:100%; border:none; background:transparent">
+            </td>
+            <td class="text-right">
+                <input type="number" value="${lehiakidea.ordukoPrezioa}" 
+                       onchange="aldatuLehiakidea('${lehiakidea.id}', 'ordukoPrezioa', this.value)"
+                       style="text-align:right; width:80px">
+            </td>
+            <td>
+                <select onchange="aldatuLehiakidea('${lehiakidea.id}', 'kalitatea', this.value)" style="width:100%">
+                    <option value="altua" ${lehiakidea.kalitatea === 'altua' ? 'selected' : ''}>🟢 Altua</option>
+                    <option value="ertaina" ${lehiakidea.kalitatea === 'ertaina' ? 'selected' : ''}>🟡 Ertaina</option>
+                    <option value="baxua" ${lehiakidea.kalitatea === 'baxua' ? 'selected' : ''}>🔴 Baxua</option>
+                </select>
+            </td>
+            <td>
+                <select onchange="aldatuLehiakidea('${lehiakidea.id}', 'abantaila', this.value)" style="width:100%">
+                    <option value="prezioa" ${lehiakidea.abantaila === 'prezioa' ? 'selected' : ''}>✅ Prezioa</option>
+                    <option value="kalitatea" ${lehiakidea.abantaila === 'kalitatea' ? 'selected' : ''}>✅ Kalitatea</option>
+                    <option value="arreta" ${lehiakidea.abantaila === 'arreta' ? 'selected' : ''}>✅ Arreta</option>
+                    <option value="neutral" ${lehiakidea.abantaila === 'neutral' ? 'selected' : ''}>⚠️ Neutral</option>
+                </select>
+            </td>
+        </tr>
+    `).join('');
+};
+
+window.aldatuLehiakidea = function(id, eremua, balioa) {
+    const lehiakidea = window.lehiakideak.find(l => l.id === id);
+    if (lehiakidea) {
+        lehiakidea[eremua] = eremua === 'ordukoPrezioa' ? safeNum(balioa) : balioa;
+        updateBenchmarking();
+    }
+};
+
+// Bideragarritasun kalkuluak
+window.updateBideragarritasuna = function() {
+    const fakturazioBeharrezkoa = safeNum(document.getElementById('required-annual-revenue')?.textContent.replace(/[^\d,.-]/g, '') || 0);
+    
+    // Eskenatokiak kalkulatu
+    const eskenatokiak = {
+        'kontserbadorea': fakturazioBeharrezkoa * 0.6,
+        'erreala': fakturazioBeharrezkoa,
+        'hazkuntza': fakturazioBeharrezkoa * 1.3,
+        'agresiboa': fakturazioBeharrezkoa * 1.6
+    };
+    
+    const aukeratutakoEskenatokia = document.getElementById('eskenatokia-aukera')?.value || 'erreala';
+    const helmugaFakturazioa = eskenatokiak[aukeratutakoEskenatokia];
+    
+    if (helmugaFakturazioa) {
+        updateElement('helmuga-fakturazioa', fmt(helmugaFakturazioa));
+        updateElement('fakturazio-aldea', fmt(helmugaFakturazioa - fakturazioBeharrezkoa));
+        
+        // Bideragarritasun analisia
+        const bideragarra = helmugaFakturazioa >= fakturazioBeharrezkoa;
+        updateElement('bideragarritasun-emaitza', bideragarra ? '✅ BIDERAGARRA' : '⚠️ ZAILDUNA');
+    }
+    
+    updateBenchmarking();
+};
+
+window.updateBenchmarking = function() {
+    const gurePrezioa = safeNum(document.getElementById('suggested-hourly-rate')?.textContent.replace(/[^\d,.-]/g, '') || 0);
+    
+    if (window.lehiakideak.length > 0) {
+        const batezbestekoMerkatua = window.lehiakideak.reduce((total, l) => total + l.ordukoPrezioa, 0) / window.lehiakideak.length;
+        
+        updateElement('gure-prezia-benchmark', fmt(gurePrezioa));
+        updateElement('merkatu-prezia-benchmark', fmt(batezbestekoMerkatua));
+        
+        let posizionamendua = '';
+        if (gurePrezioa < batezbestekoMerkatua * 0.9) {
+            posizionamendua = '🔴 PREZIO BAXUEGIA';
+        } else if (gurePrezioa > batezbestekoMerkatua * 1.1) {
+            posizionamendua = '🟡 PREZIO ALTUEgia';
+        } else {
+            posizionamendua = '✅ PREZIO OPTIMOA';
+        }
+        
+        updateElement('benchmark-posizionamendua', posizionamendua);
+    }
+};
+
+window.aldatuEskenatokia = function() {
+    updateBideragarritasuna();
+};
+
+window.egiaztatuPrezioa = function() {
+    const orduak = safeNum(document.getElementById('egiaztapen-orduak')?.value || 1600);
+    const gurePrezioa = safeNum(document.getElementById('suggested-hourly-rate')?.textContent.replace(/[^\d,.-]/g, '') || 0);
+    const fakturazioa = orduak * gurePrezioa;
+    const beharrezkoa = safeNum(document.getElementById('required-annual-revenue')?.textContent.replace(/[^\d,.-]/g, '') || 0);
+    
+    const emaitzaDiv = document.getElementById('egiaztapen-emaitza');
+    const emaitzaText = document.getElementById('egiaztapen-text');
+    
+    if (emaitzaDiv && emaitzaText) {
+        emaitzaDiv.style.display = 'block';
+        
+        if (fakturazioa >= beharrezkoa) {
+            emaitzaDiv.style.background = '#e8f5e8';
+            emaitzaText.textContent = `✅ Nahikoa: ${fmt(fakturazioa)} fakturazioarekin (${fmt(beharrezkoa)} beharrezkoa)`;
+        } else {
+            emaitzaDiv.style.background = '#ffeaa7';
+            emaitzaText.textContent = `⚠️ Gutxiegia: ${fmt(fakturazioa)} fakturazioarekin (${fmt(beharrezkoa - fakturazioa)} falta da)`;
+        }
+    }
+};
+
+// Inicializazioa
+setTimeout(() => {
+    if (typeof renderZerbitzuak === 'function') renderZerbitzuak();
+    if (typeof renderBenchmarking === 'function') renderBenchmarking();
+    if (typeof updateBideragarritasuna === 'function') updateBideragarritasuna();
+}, 1000);
+
 
 // ===== INICIALIZACIÓN PRINCIPAL =====
 async function initializeApp() {
@@ -828,6 +1033,13 @@ async function initializeApp() {
         preloadSampleData();
         renderAllTables();
         setupGlobalEventListeners();
+
+          // 🆕 INICIALIZAR PANEL 8
+    setTimeout(() => {
+        if (typeof renderZerbitzuak === 'function') renderZerbitzuak();
+        if (typeof renderBenchmarking === 'function') renderBenchmarking();
+        if (typeof updateBideragarritasuna === 'function') updateBideragarritasuna();
+    }, 500);
      
         // Cálculos iniciales
         await new Promise(resolve => setTimeout(resolve, 300));

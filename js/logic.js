@@ -943,7 +943,7 @@ window.aldatuLehiakidea = function(id, eremua, balioa) {
 
 // Bideragarritasun kalkuluak
 window.updateBideragarritasuna = function() {
-    const fakturazioBeharrezkoa = safeNum(document.getElementById('required-annual-revenue')?.textContent.replace(/[^\d,.-]/g, '') || 0);
+    const fakturazioBeharrezkoa = safeNum(document.getElementById('desglose-facturacion-total')?.textContent.replace(/[^\d,.-]/g, '') || 0);
     
     // Eskenatokiak kalkulatu
     const eskenatokiak = {

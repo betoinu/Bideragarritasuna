@@ -1059,7 +1059,7 @@ window.updatePortfolio = function() {
     // Calcular métricas de supervivencia
     const textoGastos = document.getElementById('gastos-totales-panel6')?.textContent || '0';
     const metaSupervivencia = safeNum(textoGastos.replace(/\./g, '').replace(',', '.')) || 0;
-    const brecha = metaSupervivencia - totalIngresos;
+    const brecha = totalIngresos - metaSupervivencia;
     
     updateElement('meta-supervivencia', fmt(metaSupervivencia));
     updateElement('brecha-supervivencia', fmt(brecha));

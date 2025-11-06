@@ -570,7 +570,9 @@ function calculatePricing() {
         facturacionNecesaria, 
         precioHora,
         totalHorasAnuales,
-        totalHorasSemanales
+        totalHorasSemanales,
+        horasSemanalesPorEmpleado: horasSemanalesPorEmpleadoCalculada,
+        capacidadUtilizada: capacidadUtilizadaCalculada
     });
 
     // ACTUALIZACIONES DE LA INTERFAZ

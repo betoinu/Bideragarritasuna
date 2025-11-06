@@ -500,9 +500,12 @@ function calculatePricing() {
     const margin = safeNum(document.getElementById('target-profit-margin')?.value) || 20;
     const corporateTax = safeNum(document.getElementById('corporate-tax')?.value) || 25;
 
+    // Calcular carga promedio
+    const cargaPromedio = horasSemanalesPorEmpleado;
+
     // ✅ CORRECCIÓN: Filtrar SOLO personal marcado como productivo (UNA VEZ)
     const personalProductivo = state.personnel.filter(persona => persona.esProductivo !== false);
-    
+      
     // ✅ NUEVO: CÁLCULO FLEXIBLE DE HORAS
     let totalHorasAnuales = 0;
     let totalHorasSemanales = 0;
@@ -607,6 +610,7 @@ function calculatePricing() {
         { id: 'metricas-clientes-mes', value: calculateMonthlyClients(costesTotales, precioHora) },
         { id: 'total-ingresos-cartera', value: '€ ' + calculatePortfolioRevenue().toLocaleString() },
         { id: 'estrategia-activa', value: 'Ninguna' },
+        { id: 'metricas-carga-promedio', value: `${Math.round(cargaPromedio)}h/asteko` },
 
         // SIDEBAR CONTINUACIÓN
         { id: 'suggested-hourly-rate-sidebar', value: fmt(precioHora) },
@@ -905,7 +909,7 @@ if (type === 'amort') {
         </tr>
     `;
 }
-        if (type === 'person') {
+       if (type === 'person') {
     const costeTotal = safeNum(item.gross) * (1 + safeNum(item.employer_ss) / 100);
     
     return `
@@ -921,18 +925,14 @@ if (type === 'amort') {
                 <input type="number" value="${item.employer_ss}" data-id="${item.id}" data-field="employer_ss">
             </td>
             
-            <!-- NUEVAS COLUMNAS - SIN CÁLCULO AUTOMÁTICO POR AHORA -->
+            <!-- ✅ SOLO DATOS EDITABLES -->
             <td class="text-center">
                 <input type="number" value="${item.horasAnuales || 1600}" data-id="${item.id}" data-field="horasAnuales"
-                       placeholder="1600" style="width: 80px;">
+                       placeholder="1600" data-i18n-placeholder="placeholder.horasAnuales" style="width: 80px;">
             </td>
             <td class="text-center">
                 <input type="number" value="${item.jornadaSemanal || 40}" data-id="${item.id}" data-field="jornadaSemanal" 
-                       placeholder="40" style="width: 80px;">
-            </td>
-            <td class="text-center" style="background: #f8f9fa;">
-                <!-- CALCULAREMOS ESTO DESPUÉS EN calculatePricing() -->
-                <span id="carga-${item.id}">0h</span>
+                       placeholder="40" data-i18n-placeholder="placeholder.jornadaSemanal" style="width: 80px;">
             </td>
             
             <td class="text-center">

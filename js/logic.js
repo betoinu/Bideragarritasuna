@@ -1120,7 +1120,7 @@ setTimeout(() => {
 
 // Inicializazioa automática
 setTimeout(() => {
-    if (typeof renderZerbitzuak === 'function') renderZerbitzuak();
+    if (typeof renderZerbitzuak === 'function') renderServices();
     if (typeof renderBenchmarking === 'function') renderBenchmarking();
     if (typeof updateBideragarritasuna === 'function') updateBideragarritasuna();
 }, 1000);
@@ -1148,7 +1148,7 @@ async function initializeApp() {
 
           // 🆕 INICIALIZAR PANEL 8
     setTimeout(() => {
-        if (typeof renderZerbitzuak === 'function') renderZerbitzuak();
+        if (typeof renderZerbitzuak === 'function') renderServices();
         if (typeof renderBenchmarking === 'function') renderBenchmarking();
         if (typeof updateBideragarritasuna === 'function') updateBideragarritasuna();
     }, 500);

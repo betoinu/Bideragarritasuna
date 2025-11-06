@@ -285,6 +285,11 @@ function calculateFinancing() {
         }
     }
 
+    // 🆕 AÑADIR CÁLCULOS PARA EL SIDEBAR
+    const totalAmortizaciones = calculateTotalAmortizations();
+    const totalGastosFijos = calculateTotalRecurring(); // ← nota el nombre diferente
+    const totalPersonal = calculateTotalPersonnel();
+
     return {
         ...necesidades,
         aportacionesTrabajadores,
@@ -292,7 +297,15 @@ function calculateFinancing() {
         aportacionesTotales,
         prestamoNecesario,
         cuotaAnual,
-        interesAnual
+        interesAnual,
+        // 🆕 DATOS PARA EL SIDEBAR
+        totalAmortizaciones: totalAmortizaciones,
+        totalGastosFijos: totalGastosFijos,
+        totalPersonal: totalPersonal,
+        // 🆕 ALIAS PARA COMPATIBILIDAD (por si los necesitas con otros nombres)
+        totalAportadoSocios: aportacionesTotales,
+        totalTrabajadores: aportacionesTrabajadores,
+        totalCapitalistas: aportacionesCapitalistas
     };
 }
 

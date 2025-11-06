@@ -454,14 +454,17 @@ function actualizarUImetricas(meta, horas, precio, clientes, capacidad, ingresos
 
 function calcularIngresosCartera() {
     let total = 0;
-    const inputs = document.querySelectorAll('#cartera-servicios-body input[type="number"]');
-    const precios = [400, 200, 2000, 4000]; // Precios fijos de los servicios
-    
-    inputs.forEach((input, index) => {
-        const cantidad = parseInt(input.value) || 0;
-        total += cantidad * precios[index];
-    });
-    
+    try {
+        const inputs = document.querySelectorAll('#cartera-servicios-body input[type="number"]');
+        const precios = [400, 200, 2000, 4000];
+        
+        inputs.forEach((input, index) => {
+            const cantidad = parseInt(input.value) || 0;
+            total += cantidad * precios[index];
+        });
+    } catch (error) {
+        console.warn('⚠️ Error calculando ingresos cartera:', error);
+    }
     return total;
 }
 
@@ -574,26 +577,36 @@ function calculatePricing() {
         { id: 'suggested-hourly-rate', value: fmt(precioHora) },
         { id: 'margen-bruto-panel7', value: fmt(margenBruto) },
         { id: 'expected-net-profit', value: fmt(beneficioNeto) },
-        { id: 'required-annual-revenue', value: fmt(facturacionNecesaria) },
         { id: 'contador-personal-productivo', value: employeeCount },
         { id: 'annual-hours-sidebar', value: totalHours.toLocaleString() },
         { id: 'employee-count-sidebar', value: employeeCount },
-
-        // 🆕 PANEL 8 - BIDERAGARRITASUN UPDATES
-        { id: 'gutxieneko-fakturazioa', value: fmt(facturacionNecesaria) },
-        { id: 'equilibrio-puntua', value: Math.ceil(costesTotales / precioHora) + ' ordu' },
-        { id: 'aurreikusitako-mozkina', value: fmt(beneficioNeto) },
 
       // 🆕 PANEL 8 - BIDERAGARRITASUN UPDATES
         { id: 'meta-supervivencia', value: fmt(facturacionNecesaria / 12) },
         { id: 'ingresos-proyectados', value: fmt(calcularIngresosCartera()) },
         { id: 'brecha-supervivencia', value: fmt(calcularIngresosCartera() - (facturacionNecesaria / 12)) },
-        { id: 'metricas-horas-mes', value: Math.ceil((costesTotales / precioHora) / 12 / personalProductivo / 21) + ' h/eguneko' }, // 21 días laborables/mes
+        {{ id: 'metricas-horas-mes', value: (() => {
+              const horasMensuales = (costesTotales / precioHora) / 12;
+              const horasDiarias = horasMensuales / personalProductivo / 21;
+              return isNaN(horasDiarias) ? '0 h/eguneko' : Math.ceil(horasDiarias) + ' h/eguneko';
+          })() },
         { id: 'metricas-precio-hora', value: fmt(precioHora) },
-        { id: 'metricas-clientes-mes', value: Math.ceil(((costesTotales / precioHora) / 12) / 40) },
-        { id: 'metricas-capacidad', value: Math.min(((costesTotales / precioHora / 12) / ((personalProductivo * 1600) / 12)) * 100, 100).toFixed(0) + '%' },
+        
+        { id: 'metricas-clientes-mes', value: (() => {
+            const horasMensuales = (costesTotales / precioHora) / 12;
+            const clientes = horasMensuales / 40;
+            return isNaN(clientes) ? '0' : Math.ceil(clientes);
+        })() },
+        
+        { id: 'metricas-capacidad', value: (() => {
+            const horasMensuales = (costesTotales / precioHora) / 12;
+            const capacidadMaxima = (personalProductivo * 1600) / 12;
+            const capacidad = (horasMensuales / capacidadMaxima) * 100;
+            return isNaN(capacidad) ? '0%' : Math.min(capacidad, 100).toFixed(0) + '%';
+        })() },
+        
         { id: 'total-ingresos-cartera', value: '€ ' + calcularIngresosCartera().toLocaleString() },
-        { id: 'estrategia-activa', value: 'Ninguna' },
+        { id: 'estrategia-activa', value: 'Ninguna' }
 
       // 🆕 PANEL 8 - BIDERAGARRITASUN UPDATES - IDs ACTUALIZADOS
         { id: 'meta-supervivencia', value: fmt(facturacionNecesaria / 12) },

@@ -519,13 +519,12 @@
             <aside class="sidebar">
                 <div class="card">
                     <h4 data-i18n="sidebar.idioma">Hizkuntza / Idioma</h4>
-                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                        <button class="btn small" onclick="setLanguage('eu')" style="flex: 1;">EUS</button>
-                        <button class="btn small" onclick="setLanguage('es')" style="flex: 1;">ESP</button>
-                        <button class="btn small" onclick="setLanguage('en')" style="flex: 1;">ENG</button>
-                    </div>
+                    <select id="language-select">
+                        <option value="eu" data-i18n="language.euskera">Euskera</option>
+                        <option value="es" data-i18n="language.espanol">Español</option>
+                        <option value="en" data-i18n="language.english">English</option>
+                    </select>
                 </div>
-                
                 <div class="card">
                     <h4 data-i18n="sidebar.finantzaketaGuztira">Finantzaketa Behar Totala</h4>
                     <p class="value" id="finantzaketa-total-calculada"></p>

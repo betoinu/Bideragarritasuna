@@ -539,7 +539,7 @@ function calculatePricing() {
         // PANEL 7 - PREZIOA
         { id: 'contador-personal-productivo', value: employeeCount.toString() },
         { id: 'total-socios-display', value: fmt(financiacion.totalAportadoSocios) },
-        { id: 'cantidad-financiar', value: fmt(financiacion.necesidadTotal) },
+        { id: 'cantidad-financiar', value: fmt(financiacion.necesidadesTotales) },
         { id: 'cuota-anual-display', value: fmt(costesFinancieros) },
         { id: 'gastos-operativos-panel6', value: fmt(costesOperativos) },
         { id: 'costes-financieros-panel6', value: fmt(costesFinancieros) },
@@ -583,13 +583,13 @@ function calculatePricing() {
         { id: 'total-facturacion', value: fmt(facturacionNecesaria) },
 
         // FINANZAS SIDEBAR
-        { id: 'finantzaketa-total-calculada', value: fmt(financiacion.necesidadTotal) },
+        { id: 'finantzaketa-total-calculada', value: fmt(financiacion.necesidadesTotales) },
         { id: 'inversion-total-sidebar', value: fmt(financiacion.inversionTotal) },
         { id: 'tesoreria-sidebar', value: fmt(financiacion.tesoreria) },
         { id: 'aportacion-total-sidebar', value: fmt(financiacion.totalAportadoSocios) },
         { id: 'aportacion-trabajadores-sidebar', value: fmt(financiacion.totalTrabajadores) },
         { id: 'aportacion-capitalistas-sidebar', value: fmt(financiacion.totalCapitalistas) },
-        { id: 'finantzaketa-neta-sidebar', value: fmt(financiacion.necesidadTotal - financiacion.totalAportadoSocios) },
+        { id: 'finantzaketa-neta-sidebar', value: fmt(financiacion.necesidadesTotales - financiacion.totalAportadoSocios) },
 
         // DESGLOSE COSTES SIDEBAR
         { id: 'total-amortizaciones-sidebar', value: fmt(financiacion.totalAmortizaciones) },

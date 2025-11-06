@@ -502,7 +502,13 @@ function calcularIngresosCartera() {
 
 function calculatePricing() {
     console.log("🔍 INICIANDO calculatePricing()...");  
-    
+
+      // Verificar que precioHora no sea cero
+    if (precioHora === 0) {
+        console.warn('⚠️ Precio/hora es cero, revisar cálculos');
+        precioHora = 1; // Valor mínimo para evitar divisiones por cero
+    }
+  
     // Control de reintentos
     if (!window.pricingRetryCount) window.pricingRetryCount = 0;
     

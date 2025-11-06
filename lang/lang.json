@@ -339,7 +339,7 @@
     "sidebar.idioma": "Idioma / Language"
     "pricing.konfigurazioa": "Configuration",
       "estrategia.horasNecesariasMes": "Hours/day per (productive) employee:",
-    "estrategia.horasNecesariasMesHelp": "(considering 21 working days/month)"
+    "estrategia.horasNecesariasMesHelp": "(considering 21 working days/month)",
 
      "panel.estrategia.title": "8 · Market Strategy and Survival",
     "estrategia.carteraTitle": "🏷️ Your Service Portfolio",
@@ -489,6 +489,7 @@
     "loading": "Preparing report..."
   }
 }
+
 
 
 

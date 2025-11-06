@@ -296,6 +296,126 @@ function calculateFinancing() {
     };
 }
 
+function actualizarMetricasSupervivencia() {
+    // 1. OBTENER DATOS DE OTROS PANELES
+    const gastosTotalesAnuales = calcularGastosTotalesAnuales();
+    const precioHoraEfectivo = parseFloat(document.getElementById('suggested-hourly-rate').innerText.replace('€', '').replace('.', '').replace(',', '.'));
+    const personalProductivo = parseInt(document.getElementById('contador-personal-productivo').innerText) || 1;
+    const horasAnualesPorEmpleado = parseInt(document.getElementById('annual-hours-per-employee').value) || 1600;
+    
+    // 2. CALCULAR META DE SUPERVIVENCIA (gastos mensuales)
+    const metaSupervivenciaMensual = gastosTotalesAnuales / 12;
+    
+    // 3. CALCULAR CAPACIDAD DISPONIBLE
+    const horasTotalesDisponiblesMensual = (personalProductivo * horasAnualesPorEmpleado) / 12;
+    const horasMaximasSostenibles = horasTotalesDisponiblesMensual * 0.8; // 80% capacidad máxima sana
+    
+    // 4. HORAS NECESARIAS PARA SOBREVIVIR
+    const horasNecesariasMes = metaSupervivenciaMensual / precioHoraEfectivo;
+    
+    // 5. CALCULAR INGRESOS PROYECTADOS DESDE CARTERA
+    const ingresosProyectados = calcularIngresosCartera();
+    const ingresosProyectadosMensual = ingresosProyectados / 12;
+    
+    // 6. CALCULAR BRECHA
+    const brechaSupervivencia = ingresosProyectadosMensual - metaSupervivenciaMensual;
+    
+    // 7. CALCULAR MÉTRICAS ADICIONALES
+    const clientesNecesariosMes = Math.ceil(horasNecesariasMes / 40); // Asumiendo 40h por cliente promedio
+    const capacidadUtilizada = (horasNecesariasMes / horasMaximasSostenibles) * 100;
+    
+    // 8. DIAGNÓSTICO AUTOMÁTICO (basado en idioma actual)
+    const diagnostico = generarDiagnostico(brechaSupervivencia, capacidadUtilizada, horasNecesariasMes, horasMaximasSostenibles);
+    
+    // 9. ACTUALIZAR INTERFAZ
+    actualizarUImetricas(metaSupervivenciaMensual, horasNecesariasMes, precioHoraEfectivo, clientesNecesariosMes, capacidadUtilizada, ingresosProyectadosMensual, brechaSupervivencia, diagnostico);
+}
+
+function generarDiagnostico(brecha, capacidad, horasNecesarias, horasMaximas) {
+    const currentLanguage = localStorage.getItem('selectedLanguage') || 'eu';
+    
+    const diagnosticos = {
+        'eu': {
+            critico: "❌ KRITIKOA: Gastu basikoak estaltzen ez dituzu. Igo prezioak edo bolumena.",
+            sobrecarga: "⚠️ GAINEZKA: Langile gehiago behar dituzu edo azpikontratatu.",
+            optimo: "✅ ONDO: Eskaria eta gaitasunaren arteko oreka ona.",
+            aceptable: "📊 ONARGARRIA: Hazteko tartea duzu.",
+            oportunidad: "📈 AIRABIDEA: Gaitasun asko dago. Bezero gehiago bilatu."
+        },
+        'es': {
+            critico: "❌ CRÍTICO: No cubres gastos básicos. Aumenta precios o volumen.",
+            sobrecarga: "⚠️ SOBRECARGA: Necesitas más personal o subcontratar.",
+            optimo: "✅ ÓPTIMO: Buen equilibrio entre capacidad y demanda.",
+            aceptable: "📊 ACEPTABLE: Tienes margen para crecer.",
+            oportunidad: "📈 OPORTUNIDAD: Mucha capacidad disponible. Busca más clientes."
+        },
+        'en': {
+            critico: "❌ CRITICAL: You don't cover basic expenses. Increase prices or volume.",
+            sobrecarga: "⚠️ OVERLOAD: You need more staff or subcontract.",
+            optimo: "✅ OPTIMAL: Good balance between capacity and demand.",
+            aceptable: "📊 ACCEPTABLE: You have room to grow.",
+            oportunidad: "📈 OPPORTUNITY: Lots of available capacity. Find more clients."
+        }
+    };
+    
+    const textos = diagnosticos[currentLanguage];
+    
+    if (brecha < 0) {
+        return textos.critico;
+    } else if (capacidad > 100) {
+        return textos.sobrecarga;
+    } else if (capacidad > 80) {
+        return textos.optimo;
+    } else if (capacidad > 50) {
+        return textos.aceptable;
+    } else {
+        return textos.oportunidad;
+    }
+}
+
+function actualizarUImetricas(meta, horas, precio, clientes, capacidad, ingresos, brecha, diagnostico) {
+    const currentLanguage = localStorage.getItem('selectedLanguage') || 'eu';
+    
+    // Formatear números según idioma
+    const formatoEuro = (valor) => {
+        return `€ ${valor.toLocaleString(currentLanguage === 'en' ? 'en-US' : 'es-ES', {
+            minimumFractionDigits: 2, 
+            maximumFractionDigits: 2
+        })}`;
+    };
+    
+    const formatoPorcentaje = (valor) => `${Math.min(valor, 100).toFixed(0)}%`;
+    
+    // Actualizar métricas principales
+    document.getElementById('meta-supervivencia').textContent = formatoEuro(meta);
+    document.getElementById('ingresos-proyectados').textContent = formatoEuro(ingresos);
+    document.getElementById('brecha-supervivencia').textContent = formatoEuro(brecha);
+    document.getElementById('diagnostico-supervivencia').textContent = diagnostico;
+    
+    // Actualizar métricas detalladas
+    document.getElementById('metricas-horas-mes').textContent = `${Math.ceil(horas)}h`;
+    document.getElementById('metricas-precio-hora').textContent = formatoEuro(precio);
+    document.getElementById('metricas-clientes-mes').textContent = clientes;
+    document.getElementById('metricas-capacidad').textContent = formatoPorcentaje(capacidad);
+    
+    // Color de la brecha
+    const brechaElement = document.getElementById('brecha-supervivencia');
+    brechaElement.style.color = brecha >= 0 ? '#059669' : '#dc2626';
+    
+    // Color de la capacidad
+    const capacidadElement = document.getElementById('metricas-capacidad');
+    if (capacidad > 100) {
+        capacidadElement.style.color = '#dc2626';
+    } else if (capacidad > 80) {
+        capacidadElement.style.color = '#059669';
+    } else if (capacidad > 50) {
+        capacidadElement.style.color = '#d97706';
+    } else {
+        capacidadElement.style.color = '#6b7280';
+    }
+}
+
+
 function calculatePricing() {
     console.log("🔍 INICIANDO calculatePricing()...");  
     

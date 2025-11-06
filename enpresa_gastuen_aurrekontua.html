@@ -345,153 +345,170 @@
                     </div>
                 </div>
 
-                <!-- PANEL 8 - ESTRATEGIA -->
-                <div id="estrategia-sheet" class="panel" style="display:none">
-                    <h2>8 · Estrategia de Mercado y Supervivencia</h2>
-                    
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
-                        <div>
-                            <div class="card">
-                                <h4>🏷️ Tu Cartera de Servicios</h4>
-                                <table class="data">
-                                    <thead>
-                                        <tr>
-                                            <th>Servicio</th>
-                                            <th>Horas</th>
-                                            <th>Precio</th>
-                                            <th>Cantidad/año</th>
-                                            <th>Ingresos</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="cartera-servicios-body">
-                                        <tr>
-                                            <td>Diseño rápido</td>
-                                            <td class="text-center">8h</td>
-                                            <td class="text-right">€ 400</td>
-                                            <td class="text-center"><input type="number" value="0" min="0" style="width:60px;text-align:center" onchange="actualizarCartera()"></td>
-                                            <td class="text-right" id="ingresos-rapido">€ 0</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Consultoría express</td>
-                                            <td class="text-center">4h</td>
-                                            <td class="text-right">€ 200</td>
-                                            <td class="text-center"><input type="number" value="0" min="0" style="width:60px;text-align:center" onchange="actualizarCartera()"></td>
-                                            <td class="text-right" id="ingresos-consultoria">€ 0</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Proyecto medio</td>
-                                            <td class="text-center">40h</td>
-                                            <td class="text-right">€ 2,000</td>
-                                            <td class="text-center"><input type="number" value="0" min="0" style="width:60px;text-align:center" onchange="actualizarCartera()"></td>
-                                            <td class="text-right" id="ingresos-medio">€ 0</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Proyecto grande</td>
-                                            <td class="text-center">80h</td>
-                                            <td class="text-right">€ 4,000</td>
-                                            <td class="text-center"><input type="number" value="0" min="0" style="width:60px;text-align:center" onchange="actualizarCartera()"></td>
-                                            <td class="text-right" id="ingresos-grande">€ 0</td>
-                                        </tr>
-                                    </tbody>
-                                    <tfoot>
-                                        <tr style="border-top:2px solid #333;font-weight:bold">
-                                            <td colspan="4">TOTAL INGRESOS PROYECTADOS</td>
-                                            <td class="text-right" id="total-ingresos-cartera">€ 0</td>
-                                        </tr>
-                                    </tfoot>
-                                </table>
-                            </div>
-
-                            <div class="card">
-                                <h4>📊 Análisis de Supervivencia</h4>
-                                <table class="summary-table">
-                                    <tr>
-                                        <td>Meta de supervivencia:</td>
-                                        <td class="text-right" id="meta-supervivencia">€ 0.00</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Ingresos proyectados:</td>
-                                        <td class="text-right" id="ingresos-proyectados">€ 0.00</td>
-                                    </tr>
-                                    <tr style="border-top:1px solid #ddd">
-                                        <td><strong>Brecha de supervivencia:</strong></td>
-                                        <td class="text-right" id="brecha-supervivencia">€ 0.00</td>
-                                    </tr>
-                                </table>
-                                
-                                <div style="margin-top:15px;padding:12px;background:#fff3cd;border-radius:6px">
-                                    <strong>🔍 Diagnóstico actual:</strong>
-                                    <span id="diagnostico-supervivencia">-</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="card">
-                                <h4>🎯 Estrategias de Posicionamiento</h4>
-                                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:10px">
-                                    <div style="text-align:center;padding:12px;background:#e8f5e8;border-radius:6px;cursor:pointer" onclick="aplicarEstrategia('premium')">
-                                        <div style="font-size:1.2em">🚀</div>
-                                        <small><strong>Premium</strong></small>
-                                        <p style="margin:5px 0;font-size:0.9em">+20% precio<br>-30% clientes</p>
-                                    </div>
-                                    <div style="text-align:center;padding:12px;background:#e3f2fd;border-radius:6px;cursor:pointer" onclick="aplicarEstrategia('equilibrado')">
-                                        <div style="font-size:1.2em">⚖️</div>
-                                        <small><strong>Equilibrado</strong></small>
-                                        <p style="margin:5px 0;font-size:0.9em">+5% precio<br>+10% clientes</p>
-                                    </div>
-                                    <div style="text-align:center;padding:12px;background:#ffecb3;border-radius:6px;cursor:pointer" onclick="aplicarEstrategia('volumen')">
-                                        <div style="font-size:1.2em">📈</div>
-                                        <small><strong>Volumen</strong></small>
-                                        <p style="margin:5px 0;font-size:0.9em">-10% precio<br>+50% clientes</p>
-                                    </div>
-                                </div>
-                                
-                                <div style="margin-top:15px;padding:10px;background:#f8f9fa;border-radius:6px">
-                                    <small><strong>Estrategia activa:</strong> <span id="estrategia-activa">Ninguna</span></small>
-                                </div>
-                            </div>
-
-                            <div class="card">
-                                <h4>📈 Métricas de Supervivencia</h4>
-                                <table class="summary-table">
-                                    <tr>
-                                        <td>Horas necesarias/mes:</td>
-                                        <td class="text-right" id="metricas-horas-mes">0h</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Precio/hora efectivo:</td>
-                                        <td class="text-right" id="metricas-precio-hora">€ 0.00</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Clientes necesarios/mes:</td>
-                                        <td class="text-right" id="metricas-clientes-mes">0</td>
-                                    </tr>
-                                    <tr style="border-top:1px solid #ddd">
-                                        <td><strong>Capacidad utilizada:</strong></td>
-                                        <td class="text-right" id="metricas-capacidad">0%</td>
-                                    </tr>
-                                </table>
-                            </div>
-
-                            <div class="card">
-                                <h4>💡 Recomendaciones Estratégicas</h4>
-                                <div id="recomendaciones-estrategicas" style="max-height:200px;overflow-y:auto">
-                                    <p style="margin:8px 0;padding:8px;background:#e8f5e8;border-radius:4px">
-                                        <strong>1. Define tu cartera:</strong> Establece cuántos proyectos de cada tipo puedes realizar.
-                                    </p>
-                                    <p style="margin:8px 0;padding:8px;background:#e3f2fd;border-radius:4px">
-                                        <strong>2. Prueba estrategias:</strong> Experimenta con diferentes enfoques de precio/volumen.
-                                    </p>
-                                    <p style="margin:8px 0;padding:8px;background:#fff3cd;border-radius:4px">
-                                        <strong>3. Analiza viabilidad:</strong> Busca combinación realista entre capacidad y mercado.
-                                    </p>
-                                </div>
-                            </div>
+        <!-- PANEL 8 - ESTRATEGIA -->
+        <div id="estrategia-sheet" class="panel" style="display:none">
+            <h2 data-i18n="panel.estrategia.title">8 · Merkatu Estrategia eta Biziraupena</h2>
+            
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+                <div>
+                    <!-- CARTERA DE SERVICIOS -->
+                    <div class="card">
+                        <h4 data-i18n="estrategia.carteraTitle">🏷️ Zure Zerbitzu Kartera</h4>
+                        <table class="data">
+                            <thead>
+                                <tr>
+                                    <th data-i18n="estrategia.servicio">Zerbitzua</th>
+                                    <th data-i18n="estrategia.horas">Orduak</th>
+                                    <th data-i18n="estrategia.precio">Prezioa</th>
+                                    <th data-i18n="estrategia.cantidadAnual">Kopurua/urte</th>
+                                    <th data-i18n="estrategia.ingresos">Diru-sarrerak</th>
+                                </tr>
+                            </thead>
+                            <tbody id="cartera-servicios-body">
+                                <tr>
+                                    <td data-i18n="servicio.disenoRapido">Diseinu azkarra</td>
+                                    <td class="text-center">8h</td>
+                                    <td class="text-right">€ 400</td>
+                                    <td class="text-center">
+                                        <input type="number" value="0" min="0" style="width:60px;text-align:center" 
+                                               onchange="actualizarCartera(); actualizarMetricasSupervivencia()">
+                                    </td>
+                                    <td class="text-right" id="ingresos-rapido">€ 0</td>
+                                </tr>
+                                <tr>
+                                    <td data-i18n="servicio.consultoriaExpress">Aholkularitza express</td>
+                                    <td class="text-center">4h</td>
+                                    <td class="text-right">€ 200</td>
+                                    <td class="text-center">
+                                        <input type="number" value="0" min="0" style="width:60px;text-align:center" 
+                                               onchange="actualizarCartera(); actualizarMetricasSupervivencia()">
+                                    </td>
+                                    <td class="text-right" id="ingresos-consultoria">€ 0</td>
+                                </tr>
+                                <tr>
+                                    <td data-i18n="servicio.proyectoMedio">Proiektu ertaina</td>
+                                    <td class="text-center">40h</td>
+                                    <td class="text-right">€ 2,000</td>
+                                    <td class="text-center">
+                                        <input type="number" value="0" min="0" style="width:60px;text-align:center" 
+                                               onchange="actualizarCartera(); actualizarMetricasSupervivencia()">
+                                    </td>
+                                    <td class="text-right" id="ingresos-medio">€ 0</td>
+                                </tr>
+                                <tr>
+                                    <td data-i18n="servicio.proyectoGrande">Proiektu handia</td>
+                                    <td class="text-center">80h</td>
+                                    <td class="text-right">€ 4,000</td>
+                                    <td class="text-center">
+                                        <input type="number" value="0" min="0" style="width:60px;text-align:center" 
+                                               onchange="actualizarCartera(); actualizarMetricasSupervivencia()">
+                                    </td>
+                                    <td class="text-right" id="ingresos-grande">€ 0</td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr style="border-top:2px solid #333;font-weight:bold">
+                                    <td colspan="4" data-i18n="estrategia.totalIngresos">PROIEKTAZIO DIRU-SARRERA GUZTIRAK</td>
+                                    <td class="text-right" id="total-ingresos-cartera">€ 0</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+        
+                    <!-- ANÁLISIS DE SUPERVIVENCIA -->
+                    <div class="card">
+                        <h4 data-i18n="estrategia.analisisSupervivencia">📊 Biziraupen Azterketa</h4>
+                        <table class="summary-table">
+                            <tr>
+                                <td data-i18n="estrategia.metaSupervivencia">Biziraupen helburua:</td>
+                                <td class="text-right" id="meta-supervivencia">€ 0.00</td>
+                            </tr>
+                            <tr>
+                                <td data-i18n="estrategia.ingresosProyectados">Proiektatutako diru-sarrerak:</td>
+                                <td class="text-right" id="ingresos-proyectados">€ 0.00</td>
+                            </tr>
+                            <tr style="border-top:1px solid #ddd">
+                                <td><strong data-i18n="estrategia.brechaSupervivencia">Biziraupen aldea:</strong></td>
+                                <td class="text-right" id="brecha-supervivencia">€ 0.00</td>
+                            </tr>
+                        </table>
+                        
+                        <div style="margin-top:15px;padding:12px;background:#fff3cd;border-radius:6px">
+                            <strong data-i18n="estrategia.diagnostico">🔍 Oraingo diagnostikoa:</strong>
+                            <span id="diagnostico-supervivencia">-</span>
                         </div>
                     </div>
                 </div>
-            </section>
+        
+                <div>
+                    <!-- ESTRATEGIAS DE PRECIO -->
+                    <div class="card">
+                        <h4 data-i18n="estrategia.estrategiasPosicionamiento">🎯 Kokapenerako Estrategiak</h4>
+                        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:10px">
+                            <div style="text-align:center;padding:12px;background:#e8f5e8;border-radius:6px;cursor:pointer" onclick="aplicarEstrategia('premium')">
+                                <div style="font-size:1.2em">🚀</div>
+                                <small><strong data-i18n="estrategia.premium">Premium</strong></small>
+                                <p style="margin:5px 0;font-size:0.9em" data-i18n="estrategia.premiumDesc">+20% prezioa<br>-30% bezero</p>
+                            </div>
+                            <div style="text-align:center;padding:12px;background:#e3f2fd;border-radius:6px;cursor:pointer" onclick="aplicarEstrategia('equilibrado')">
+                                <div style="font-size:1.2em">⚖️</div>
+                                <small><strong data-i18n="estrategia.equilibrado">Orekatua</strong></small>
+                                <p style="margin:5px 0;font-size:0.9em" data-i18n="estrategia.equilibradoDesc">+5% prezioa<br>+10% bezero</p>
+                            </div>
+                            <div style="text-align:center;padding:12px;background:#ffecb3;border-radius:6px;cursor:pointer" onclick="aplicarEstrategia('volumen')">
+                                <div style="font-size:1.2em">📈</div>
+                                <small><strong data-i18n="estrategia.volumen">Bolumena</strong></small>
+                                <p style="margin:5px 0;font-size:0.9em" data-i18n="estrategia.volumenDesc">-10% prezioa<br>+50% bezero</p>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top:15px;padding:10px;background:#f8f9fa;border-radius:6px">
+                            <small><strong data-i18n="estrategia.estrategiaActiva">Estrategia aktiboa:</strong> <span id="estrategia-activa" data-i18n="estrategia.ninguna">Bat ere ez</span></small>
+                        </div>
+                    </div>
+        
+                    <!-- MÉTRICAS CRÍTICAS -->
+                    <div class="card">
+                        <h4 data-i18n="estrategia.metricasSupervivencia">📈 Biziraupen Metrikak</h4>
+                        <table class="summary-table">
+                            <tr>
+                                <td data-i18n="estrategia.horasNecesariasMes">Beharrezko orduak/hilabete:</td>
+                                <td class="text-right" id="metricas-horas-mes">0h</td>
+                            </tr>
+                            <tr>
+                                <td data-i18n="estrategia.precioHoraEfectivo">Orduko prezioa:</td>
+                                <td class="text-right" id="metricas-precio-hora">€ 0.00</td>
+                            </tr>
+                            <tr>
+                                <td data-i18n="estrategia.clientesNecesariosMes">Beharrezko bezeroak/hilabete:</td>
+                                <td class="text-right" id="metricas-clientes-mes">0</td>
+                            </tr>
+                            <tr style="border-top:1px solid #ddd">
+                                <td><strong data-i18n="estrategia.capacidadUtilizada">Erabilitako gaitasuna:</strong></td>
+                                <td class="text-right" id="metricas-capacidad">0%</td>
+                            </tr>
+                        </table>
+                    </div>
+        
+                    <!-- RECOMENDACIONES ESTRATÉGICAS -->
+                    <div class="card">
+                        <h4 data-i18n="estrategia.recomendaciones">💡 Gomendio Estrategikoak</h4>
+                        <div id="recomendaciones-estrategicas" style="max-height:200px;overflow-y:auto">
+                            <p style="margin:8px 0;padding:8px;background:#e8f5e8;border-radius:4px">
+                                <strong data-i18n="recomendacion.1">1. Definitu zure kartera:</strong> <span data-i18n="recomendacion.1.desc">Ezarri mota bakoitzeko zenbat proiektu egin ditzakezun.</span>
+                            </p>
+                            <p style="margin:8px 0;padding:8px;background:#e3f2fd;border-radius:4px">
+                                <strong data-i18n="recomendacion.2">2. Probatu estrategiak:</strong> <span data-i18n="recomendacion.2.desc">Esperimentatu prezio/bolumen ikuspegi desberdinekin.</span>
+                            </p>
+                            <p style="margin:8px 0;padding:8px;background:#fff3cd;border-radius:4px">
+                                <strong data-i18n="recomendacion.3">3. Aztertu bideragarritasuna:</strong> <span data-i18n="recomendacion.3.desc">Bilatu konbinazio errealista gaitasuna eta merkatua artean.</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</section>
 
             <!-- SIDEBAR -->
             <aside class="sidebar">

@@ -1057,7 +1057,7 @@ window.updatePortfolio = function() {
     updateElement('ingresos-proyectados', fmt(totalIngresos));
     
     // Calcular métricas de supervivencia
-    const metaSupervivencia = safeNum(document.getElementById('desglose-facturacion-total')?.textContent.replace(/[^\d,.-]/g, '') || 0);
+    const metaSupervivencia = safeNum(document.getElementById('gastos-totales-panel6')?.textContent.replace(/[^\d,.-]/g, '').replace(',', '.')) || 0;
     const brecha = metaSupervivencia - totalIngresos;
     
     updateElement('meta-supervivencia', fmt(metaSupervivencia));

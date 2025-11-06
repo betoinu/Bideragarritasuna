@@ -672,8 +672,8 @@ function calculatePricing() {
         { id: 'necesidad-total', value: fmt(financiacion.necesidadTotal) },
         { id: 'total-aportacion-socios', value: fmt(financiacion.totalAportadoSocios || 0) },
         { id: 'total-trabajadores', value: fmt(financiacion.totalTrabajadores || 0) },
-        { id: 'total-capitalistas', value: fmt(financiacion.totalCapitalistas || 0) },
-        { id: 'num-socios', value: (state.finance.socios?.length || 0).toString() }
+        { id: 'total-capitalistas', value: fmt(financiacion.totalCapitalistas || 0) }
+        
     ];
 
     // APLICAR TODAS LAS ACTUALIZACIONES

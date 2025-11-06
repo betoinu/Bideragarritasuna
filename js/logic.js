@@ -227,11 +227,11 @@ function calculateOperationalCosts() {
 
 function calculateInvestmentNeeds() {
     // 1. Inversiones totales (amortizables)
-    const inversionTotal = calcularTotalInversiones();
+    const inversionTotal = calculateTotalInvestments();
     
     // 2. Tesorería (3-6 meses de gastos fijos)
     const mesesTesoreria = safeNum(document.getElementById('meses-tesoreria')?.value) || 3;
-    const gastosFijosMensuales = (calcularTotalGastosFijos() + calcularTotalPersonal()) / 12;
+    const gastosFijosMensuales = (calculateTotalRecurring() + alculateTotalPersonnel()) / 12;
     const tesoreria = gastosFijosMensuales * mesesTesoreria;
     
     // 3. Necesidad total
@@ -241,11 +241,11 @@ function calculateInvestmentNeeds() {
         inversionTotal: inversionTotal,
         tesoreria: tesoreria,
         necesidadesTotales: necesidadesTotales,
-        gastosOperativosAnuales: calcularTotalGastosFijos() + calcularTotalPersonal()
+        gastosOperativosAnuales: calculateTotalRecurring() + alculateTotalPersonnel()
     };
 }
 
-function calcularTotalInversiones() {
+function calculateTotalInvestments() {
     let total = 0;
     Object.values(state.amortizables).forEach(categoria => {
         categoria.forEach(item => {
@@ -313,78 +313,6 @@ function calculateFinancing() {
         totalTrabajadores: aportacionesTrabajadores,
         totalCapitalistas: aportacionesCapitalistas
     };
-}
-
-function actualizarMetricasSupervivencia() {
-    // 1. OBTENER DATOS DE OTROS PANELES
-    const gastosTotalesAnuales = calcularGastosTotalesAnuales();
-    const precioHoraEfectivo = parseFloat(document.getElementById('suggested-hourly-rate').innerText.replace('€', '').replace('.', '').replace(',', '.'));
-    const personalProductivo = parseInt(document.getElementById('contador-personal-productivo').innerText) || 1;
-    const horasAnualesPorEmpleado = parseInt(document.getElementById('annual-hours-per-employee').value) || 1600;
-    
-    // 2. CALCULAR META DE SUPERVIVENCIA (gastos mensuales)
-    const metaSupervivenciaMensual = gastosTotalesAnuales / 12;
-    
-    // 3. CALCULAR CAPACIDAD DISPONIBLE
-    const horasTotalesDisponiblesMensual = (personalProductivo * horasAnualesPorEmpleado) / 12;
-    const horasMaximasSostenibles = horasTotalesDisponiblesMensual * 0.8; // 80% capacidad máxima sana
-    
-    // 4. HORAS NECESARIAS PARA SOBREVIVIR
-    const horasNecesariasMes = metaSupervivenciaMensual / precioHoraEfectivo;
-    
-    // 5. CALCULAR INGRESOS PROYECTADOS DESDE CARTERA
-    const ingresosProyectados = calcularIngresosCartera();
-    const ingresosProyectadosMensual = ingresosProyectados / 12;
-    
-    // 6. CALCULAR BRECHA
-    const brechaSupervivencia = ingresosProyectadosMensual - metaSupervivenciaMensual;
-    
-    // 7. CALCULAR MÉTRICAS ADICIONALES
-    const clientesNecesariosMes = Math.ceil(horasNecesariasMes / 40); // Asumiendo 40h por cliente promedio
-    const capacidadUtilizada = (horasNecesariasMes / horasMaximasSostenibles) * 100;
-    
-    // 8. DIAGNÓSTICO AUTOMÁTICO (basado en idioma actual)
-    const diagnostico = generarDiagnostico(brechaSupervivencia, capacidadUtilizada, horasNecesariasMes, horasMaximasSostenibles);
-    
-    // 9. ACTUALIZAR INTERFAZ
-    actualizarUImetricas(metaSupervivenciaMensual, horasNecesariasMes, precioHoraEfectivo, clientesNecesariosMes, capacidadUtilizada, ingresosProyectadosMensual, brechaSupervivencia, diagnostico);
-}function actualizarMetricasSupervivencia() {
-    try {
-        console.log('🔄 Actualizando métricas de supervivencia...');
-        
-        const gastosTotalesAnuales = calcularGastosTotalesAnuales();
-        const precioHoraEfectivo = parseFloat(document.getElementById('suggested-hourly-rate')?.innerText.replace(/[€\.]/g, '').replace(',', '.') || '0');
-        const personalProductivo = parseInt(document.getElementById('contador-personal-productivo')?.innerText || '1');
-        const horasAnualesPorEmpleado = parseInt(document.getElementById('annual-hours-per-employee')?.value || '1600');
-        
-        // Cálculos corregidos
-        const metaSupervivenciaMensual = gastosTotalesAnuales / 12;
-        const ingresosProyectados = calcularIngresosCartera();
-        const brechaSupervivencia = ingresosProyectados - metaSupervivenciaMensual;
-        
-        // NUEVO CÁLCULO: Horas por día y empleado productivo
-        const horasMensualesNecesarias = (gastosTotalesAnuales / precioHoraEfectivo) / 12;
-        const horasDiariasPorEmpleado = Math.ceil(horasMensualesNecesarias / personalProductivo / 21); // 21 días laborables/mes
-        
-        // Actualizar UI
-        if (document.getElementById('meta-supervivencia')) {
-            document.getElementById('meta-supervivencia').textContent = fmt(metaSupervivenciaMensual);
-        }
-        if (document.getElementById('ingresos-proyectados')) {
-            document.getElementById('ingresos-proyectados').textContent = fmt(ingresosProyectados);
-        }
-        if (document.getElementById('brecha-supervivencia')) {
-            document.getElementById('brecha-supervivencia').textContent = fmt(brechaSupervivencia);
-            document.getElementById('brecha-supervivencia').style.color = brechaSupervivencia >= 0 ? '#059669' : '#dc2626';
-        }
-        if (document.getElementById('metricas-horas-mes')) {
-            document.getElementById('metricas-horas-mes').textContent = horasDiariasPorEmpleado + ' h/eguneko';
-        }
-        
-        console.log('✅ Métricas de supervivencia actualizadas');
-    } catch (error) {
-        console.error('❌ Error en actualizarMetricasSupervivencia:', error);
-    }
 }
 
 function generarDiagnostico(brecha, capacidad, horasNecesarias, horasMaximas) {
@@ -471,7 +399,7 @@ function actualizarUImetricas(meta, horas, precio, clientes, capacidad, ingresos
     }
 }
 
-function calcularIngresosCartera() {
+function calculatePortfolioRevenue {
     let total = 0;
     try {
         const inputs = document.querySelectorAll('#cartera-servicios-body input[type="number"]');
@@ -488,7 +416,7 @@ function calcularIngresosCartera() {
 }
 
 // FUNCIONES AUXILIARES PARA PANEL 8
-function calcularGastosTotalesAnuales() {
+function calculateTotalAnnualExpenses() {
     try {
         const gastosOperativosText = document.getElementById('gastos-operativos-panel6')?.innerText || '0';
         const costesFinancierosText = document.getElementById('costes-financieros-panel6')?.innerText || '0';
@@ -503,38 +431,23 @@ function calcularGastosTotalesAnuales() {
     }
 }
 
-function calcularIngresosCartera() {
-    let total = 0;
-    try {
-        const inputs = document.querySelectorAll('#cartera-servicios-body input[type="number"]');
-        const precios = [400, 200, 2000, 4000];
-        
-        inputs.forEach((input, index) => {
-            const cantidad = parseInt(input.value) || 0;
-            total += cantidad * precios[index];
-        });
-    } catch (error) {
-        console.warn('⚠️ Error calculando ingresos cartera:', error);
-    }
-    return total;
-}
 
 // FUNCIONES AUXILIARES PARA CÁLCULOS DEL PANEL 8
-function calcularHorasDiarias(costesTotales, precioHora, personalProductivo) {
+function calculateDailyHours(costesTotales, precioHora, personalProductivo) {
     if (!precioHora || precioHora === 0 || !personalProductivo || personalProductivo === 0) return '0 h/eguneko';
     const horasMensuales = (costesTotales / precioHora) / 12;
     const horasDiarias = horasMensuales / personalProductivo / 21;
     return Math.ceil(horasDiarias) + ' h/eguneko';
 }
 
-function calcularClientesMensuales(costesTotales, precioHora) {
+function calculateMonthlyClients(costesTotales, precioHora) {
     if (!precioHora || precioHora === 0) return '0';
     const horasMensuales = (costesTotales / precioHora) / 12;
     const clientes = horasMensuales / 40;
     return Math.ceil(clientes);
 }
 
-function calcularCapacidadUtilizada(costesTotales, precioHora, personalProductivo, horasPorEmpleado) {
+function calculateCapacityUtilization(costesTotales, precioHora, personalProductivo, horasPorEmpleado) {
     if (!precioHora || precioHora === 0 || !personalProductivo || personalProductivo === 0) return '0%';
     const horasMensuales = (costesTotales / precioHora) / 12;
     const capacidadMaxima = (personalProductivo * horasPorEmpleado) / 12;
@@ -542,7 +455,7 @@ function calcularCapacidadUtilizada(costesTotales, precioHora, personalProductiv
     return Math.min(capacidad, 100).toFixed(0) + '%';
 }
 
-function calcularIngresosCartera() {
+function calculatePortfolioRevenue {
     let total = 0;
     try {
         const inputs = document.querySelectorAll('#cartera-servicios-body input[type="number"]');
@@ -654,13 +567,13 @@ function calculatePricing() {
 
         // 🆕 PANEL 8 - BIDERAGARRITASUN UPDATES
         { id: 'meta-supervivencia', value: fmt(costesTotales / 12) },
-        { id: 'ingresos-proyectados', value: fmt(calcularIngresosCartera()) },
-        { id: 'brecha-supervivencia', value: fmt(calcularIngresosCartera() - (costesTotales / 12)) },
-        { id: 'metricas-horas-mes', value: calcularHorasDiarias(costesTotales, precioHora, employeeCount) },
+        { id: 'ingresos-proyectados', value: fmt(calculatePortfolioRevenue) },
+        { id: 'brecha-supervivencia', value: fmt(calculatePortfolioRevenue - (costesTotales / 12)) },
+        { id: 'metricas-horas-mes', value: calculateDailyHours(costesTotales, precioHora, employeeCount) },
         { id: 'metricas-precio-hora', value: fmt(precioHora) },
-        { id: 'metricas-clientes-mes', value: calcularClientesMensuales(costesTotales, precioHora) },
-        { id: 'metricas-capacidad', value: calcularCapacidadUtilizada(costesTotales, precioHora, employeeCount, annualHours) },
-        { id: 'total-ingresos-cartera', value: '€ ' + calcularIngresosCartera().toLocaleString() },
+        { id: 'metricas-clientes-mes', value: calculateMonthlyClients(costesTotales, precioHora) },
+        { id: 'metricas-capacidad', value: calculateCapacityUtilization(costesTotales, precioHora, employeeCount, annualHours) },
+        { id: 'total-ingresos-cartera', value: '€ ' + calculatePortfolioRevenue.toLocaleString() },
         { id: 'estrategia-activa', value: 'Ninguna' },
 
         // SIDEBAR CONTINUACIÓN
@@ -1108,20 +1021,10 @@ function updateAll() {
     }, 100);
 }
 
-// ===== ACTUALIZACIÓN GLOBAL =====
-function updateAll() {
-    if (window.updateTimeout) clearTimeout(window.updateTimeout);
-    window.updateTimeout = setTimeout(() => {
-        calculatePricing();
-        // 🆕 ACTUALIZAR PANEL 8
-        if (typeof updateBideragarritasuna === 'function') updateBideragarritasuna();
-    }, 100);
-}
-
 // ===== PANEL 8 - ESTRATEGIA Y SUPERVIVENCIA =====
 window.estrategiaActiva = null;
 
-window.actualizarCartera = function() {
+window.updatePortfolio = function() {
     // Calcular ingresos de cada servicio
     const servicios = [
         { id: 'rapido', precio: 400, horas: 8 },
@@ -1207,12 +1110,12 @@ window.aplicarEstrategia = function(tipo) {
     });
     
     // Recalcular
-    actualizarCartera();
+    updatePortfolio();
 };
 
 // Inicialización del Panel 8
 setTimeout(() => {
-    if (typeof actualizarCartera === 'function') actualizarCartera();
+    if (typeof updatePortfolio === 'function') updatePortfolio();
 }, 1000);
 
 // Inicializazioa automática

@@ -579,7 +579,7 @@ function calculatePricing() {
         const updates = [
         // PANEL 2 - PERTSONALA
         { id: 'metricas-horas-mes', value: `${Math.round(horasSemanalesPorEmpleadoCalculada)}h/asteko` },
-        { id: 'metricas-capacidad', value: `${Math.min(capacidadUtilizada, 100).toFixed(0)}%` },
+        { id: 'metricas-capacidad', value: `${Math.min(capacidadUtilizadaCalculada, 100).toFixed(0)}%` },
         
         // PANEL 7 - PREZIOA
         { id: 'contador-personal-productivo', value: employeeCount.toString() },

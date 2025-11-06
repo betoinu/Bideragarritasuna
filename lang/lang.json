@@ -10,7 +10,10 @@
     "button.removeSocio": "- Kendu Bazkidea",
     "button.remove": "✕",
 
-        "panel.estrategia.title": "8 · Merkatu Estrategia eta Biziraupena",
+    "pricing.konfigurazioa": "Konfigurazioa",
+    "sidebar.idioma": "Hizkuntza / Idioma",
+
+    "panel.estrategia.title": "8 · Merkatu Estrategia eta Biziraupena",
     "estrategia.carteraTitle": "🏷️ Zure Zerbitzu Kartera",
     "estrategia.servicio": "Zerbitzua",
     "estrategia.horas": "Orduak",
@@ -168,7 +171,10 @@
     "button.removeSocio": "- Quitar Socio",
     "button.remove": "✕",
 
-     "panel.estrategia.title": "8 · Estrategia de Mercado y Supervivencia",
+    "pricing.konfigurazioa": "Configuración", 
+    "sidebar.idioma": "Language / Idioma",
+
+    "panel.estrategia.title": "8 · Estrategia de Mercado y Supervivencia",
     "estrategia.carteraTitle": "🏷️ Tu Cartera de Servicios",
     "estrategia.servicio": "Servicio",
     "estrategia.horas": "Horas",
@@ -326,6 +332,9 @@
     "button.removeSocio": "- Remove Partner",
     "button.remove": "✕",
 
+    "sidebar.idioma": "Idioma / Language"
+    "pricing.konfigurazioa": "Configuration",
+
      "panel.estrategia.title": "8 · Market Strategy and Survival",
     "estrategia.carteraTitle": "🏷️ Your Service Portfolio",
     "estrategia.servicio": "Service",
@@ -474,5 +483,6 @@
     "loading": "Preparing report..."
   }
 }
+
 
 

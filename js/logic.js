@@ -329,6 +329,43 @@ function actualizarMetricasSupervivencia() {
     
     // 9. ACTUALIZAR INTERFAZ
     actualizarUImetricas(metaSupervivenciaMensual, horasNecesariasMes, precioHoraEfectivo, clientesNecesariosMes, capacidadUtilizada, ingresosProyectadosMensual, brechaSupervivencia, diagnostico);
+}function actualizarMetricasSupervivencia() {
+    try {
+        console.log('🔄 Actualizando métricas de supervivencia...');
+        
+        const gastosTotalesAnuales = calcularGastosTotalesAnuales();
+        const precioHoraEfectivo = parseFloat(document.getElementById('suggested-hourly-rate')?.innerText.replace(/[€\.]/g, '').replace(',', '.') || '0');
+        const personalProductivo = parseInt(document.getElementById('contador-personal-productivo')?.innerText || '1');
+        const horasAnualesPorEmpleado = parseInt(document.getElementById('annual-hours-per-employee')?.value || '1600');
+        
+        // Cálculos corregidos
+        const metaSupervivenciaMensual = gastosTotalesAnuales / 12;
+        const ingresosProyectados = calcularIngresosCartera();
+        const brechaSupervivencia = ingresosProyectados - metaSupervivenciaMensual;
+        
+        // NUEVO CÁLCULO: Horas por día y empleado productivo
+        const horasMensualesNecesarias = (gastosTotalesAnuales / precioHoraEfectivo) / 12;
+        const horasDiariasPorEmpleado = Math.ceil(horasMensualesNecesarias / personalProductivo / 21); // 21 días laborables/mes
+        
+        // Actualizar UI
+        if (document.getElementById('meta-supervivencia')) {
+            document.getElementById('meta-supervivencia').textContent = fmt(metaSupervivenciaMensual);
+        }
+        if (document.getElementById('ingresos-proyectados')) {
+            document.getElementById('ingresos-proyectados').textContent = fmt(ingresosProyectados);
+        }
+        if (document.getElementById('brecha-supervivencia')) {
+            document.getElementById('brecha-supervivencia').textContent = fmt(brechaSupervivencia);
+            document.getElementById('brecha-supervivencia').style.color = brechaSupervivencia >= 0 ? '#059669' : '#dc2626';
+        }
+        if (document.getElementById('metricas-horas-mes')) {
+            document.getElementById('metricas-horas-mes').textContent = horasDiariasPorEmpleado + ' h/eguneko';
+        }
+        
+        console.log('✅ Métricas de supervivencia actualizadas');
+    } catch (error) {
+        console.error('❌ Error en actualizarMetricasSupervivencia:', error);
+    }
 }
 
 function generarDiagnostico(brecha, capacidad, horasNecesarias, horasMaximas) {
@@ -548,15 +585,15 @@ function calculatePricing() {
         { id: 'aurreikusitako-mozkina', value: fmt(beneficioNeto) },
 
       // 🆕 PANEL 8 - BIDERAGARRITASUN UPDATES
-        { id: 'meta-supervivencia', value: fmt(facturacionNecesaria / 12) }, // Meta mensual de supervivencia
-        { id: 'ingresos-proyectados', value: fmt(calcularIngresosCartera() / 12) }, // Ingresos proyectados mensuales
-        { id: 'brecha-supervivencia', value: fmt((calcularIngresosCartera() - facturacionNecesaria) / 12) }, // Brecha mensual
-        { id: 'metricas-horas-mes', value: Math.ceil(costesTotales / precioHora / 12) + 'h' }, // Horas necesarias por mes
-        { id: 'metricas-precio-hora', value: fmt(precioHora) }, // Precio/hora efectivo
-        { id: 'metricas-clientes-mes', value: Math.ceil((costesTotales / precioHora / 12) / 40) }, // Clientes necesarios por mes (asumiendo 40h por cliente)
-        { id: 'metricas-capacidad', value: Math.min(((costesTotales / precioHora / 12) / (personalProductivo * 133)) * 100, 100).toFixed(0) + '%' }, // Capacidad utilizada (133h/mes por empleado)
-        { id: 'total-ingresos-cartera', value: fmt(calcularIngresosCartera()) }, // Total ingresos cartera
-        { id: 'estrategia-activa', value: 'Ninguna' }, // Estrategia activa
+        { id: 'meta-supervivencia', value: fmt(facturacionNecesaria / 12) },
+        { id: 'ingresos-proyectados', value: fmt(calcularIngresosCartera()) },
+        { id: 'brecha-supervivencia', value: fmt(calcularIngresosCartera() - (facturacionNecesaria / 12)) },
+        { id: 'metricas-horas-mes', value: Math.ceil((costesTotales / precioHora) / 12 / personalProductivo / 21) + ' h/eguneko' }, // 21 días laborables/mes
+        { id: 'metricas-precio-hora', value: fmt(precioHora) },
+        { id: 'metricas-clientes-mes', value: Math.ceil(((costesTotales / precioHora) / 12) / 40) },
+        { id: 'metricas-capacidad', value: Math.min(((costesTotales / precioHora / 12) / ((personalProductivo * 1600) / 12)) * 100, 100).toFixed(0) + '%' },
+        { id: 'total-ingresos-cartera', value: '€ ' + calcularIngresosCartera().toLocaleString() },
+        { id: 'estrategia-activa', value: 'Ninguna' },
 
       // 🆕 PANEL 8 - BIDERAGARRITASUN UPDATES - IDs ACTUALIZADOS
         { id: 'meta-supervivencia', value: fmt(facturacionNecesaria / 12) },

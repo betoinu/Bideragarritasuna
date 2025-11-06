@@ -226,27 +226,33 @@ function calculateOperationalCosts() {
 }
 
 function calculateInvestmentNeeds() {
-    let inversiones = 0;
+    // 1. Inversiones totales (amortizables)
+    const inversionTotal = calcularTotalInversiones();
     
-    state.amortizables.lokala.forEach(item => {
-        inversiones += safeNum(item.cost);
-    });
-    state.amortizables.garraioa.forEach(item => {
-        inversiones += safeNum(item.cost);
-    });
-
-    const gastosOperativosAnuales = calculateOperationalCosts();
+    // 2. Tesorería (3-6 meses de gastos fijos)
     const mesesTesoreria = safeNum(document.getElementById('meses-tesoreria')?.value) || 3;
-    const gastosMensuales = gastosOperativosAnuales / 12;
-    const tesoreria = gastosMensuales * mesesTesoreria;
-    const necesidadesTotales = inversiones + tesoreria;
-
-    return { 
-        inversiones, 
-        gastosOperativosAnuales, 
-        tesoreria, 
-        necesidadesTotales 
+    const gastosFijosMensuales = (calcularTotalGastosFijos() + calcularTotalPersonal()) / 12;
+    const tesoreria = gastosFijosMensuales * mesesTesoreria;
+    
+    // 3. Necesidad total
+    const necesidadesTotales = inversionTotal + tesoreria;
+    
+    return {
+        inversionTotal: inversionTotal,
+        tesoreria: tesoreria,
+        necesidadesTotales: necesidadesTotales,
+        gastosOperativosAnuales: calcularTotalGastosFijos() + calcularTotalPersonal()
     };
+}
+
+function calcularTotalInversiones() {
+    let total = 0;
+    Object.values(state.amortizables).forEach(categoria => {
+        categoria.forEach(item => {
+            total += safeNum(item.coste) || 0;
+        });
+    });
+    return total;
 }
 
 function calculateFinancing() {

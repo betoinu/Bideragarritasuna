@@ -477,7 +477,12 @@ function calculatePortfolioRevenue() {
 function calculatePricing() {
     console.log("🔍 INICIANDO calculatePricing()...");  
   
-    // Control de reintentos
+      // INICIALIZAR VARIABLES ANTES DE USARLAS
+    const horasSemanalesPorEmpleado = parseFloat(document.getElementById('horas-semanales-empleado')?.value) || 35;
+    const diasLaborablesPorSemana = 5;
+    const semanasPorMes = 4.33;  
+  
+  // Control de reintentos
     if (!window.pricingRetryCount) window.pricingRetryCount = 0;
     
     const criticalElements = ['suggested-hourly-rate-sidebar', 'total-facturacion'];

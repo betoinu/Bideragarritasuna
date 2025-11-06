@@ -500,6 +500,22 @@ function calculatePricing() {
     const margin = safeNum(document.getElementById('target-profit-margin')?.value) || 20;
     const corporateTax = safeNum(document.getElementById('corporate-tax')?.value) || 25;
 
+    const personalProductivo = state.personnel.filter(persona => persona.esProductivo !== false);
+    
+    let totalHorasAnuales = 0;
+    let totalHorasSemanales = 0;
+    
+    personalProductivo.forEach(persona => {
+        const horasAnuales = safeNum(persona.horasAnuales) || 1600;
+        const jornadaSemanal = safeNum(persona.jornadaSemanal) || 40;
+        
+        totalHorasAnuales += horasAnuales;
+        totalHorasSemanales += jornadaSemanal;
+    });
+    
+    const employeeCount = Math.max(1, personalProductivo.length);
+    const totalHours = totalHorasAnuales;
+  
     // ✅ CORRECCIÓN: Filtrar SOLO personal marcado como productivo
     const personalProductivo = state.personnel.filter(persona => {
         // Asegurar que esProductivo es booleano (true por defecto si no está definido)
@@ -515,6 +531,9 @@ function calculatePricing() {
     const margenBruto = costesTotales * (margin / 100);
     const facturacionNecesaria = costesTotales + margenBruto;
     const precioHora = totalHours > 0 ? facturacionNecesaria / totalHours : 0;
+    const horasSemanalesNecesarias = (costesTotales / precioHora) / 52;
+    const horasSemanalesPorEmpleado = horasSemanalesNecesarias / employeeCount;
+    const capacidadUtilizada = (horasSemanalesNecesarias / totalHorasSemanales) * 100;
 
         // Verificar que precioHora no sea cero
     if (precioHora === 0) {
@@ -536,7 +555,11 @@ function calculatePricing() {
 
     // ACTUALIZACIONES DE LA INTERFAZ
     const updates = [
-        // PANEL 7 - PREZIOA
+        
+      // PANEL 2 - PERTSONALA
+        { id: 'metricas-horas-mes', value: `${Math.round(horasSemanalesPorEmpleado)}h/asteko` },
+        { id: 'metricas-capacidad', value: `${Math.min(capacidadUtilizada, 100).toFixed(0)}%` },
+      // PANEL 7 - PREZIOA
         { id: 'contador-personal-productivo', value: employeeCount.toString() },
         { id: 'total-socios-display', value: fmt(financiacion.totalAportadoSocios) },
         { id: 'cantidad-financiar', value: fmt(financiacion.necesidadesTotales) },
@@ -742,7 +765,9 @@ window.addPerson = function() {
         role: 'Nuevo Empleado',
         gross: 30000,
         employer_ss: 30,
-        esProductivo: true  // ← NUEVO CAMPO
+        horasAnuales: 1600,     // ← NUEVO: Convenio
+        jornadaSemanal: 40,     // ← NUEVO: Jornada real
+        esProductivo: true
     });
     renderAllTables();
     updateAll();
@@ -878,15 +903,25 @@ if (type === 'amort') {
 }
         if (type === 'person') {
     const costeTotal = safeNum(item.gross) * (1 + safeNum(item.employer_ss) / 100);
+    
+    // Calcular carga automática
+    const horasSemanalesCargadas = item.horasAnuales > 0 ? 
+        (item.horasNecesarias / item.horasAnuales) * item.jornadaSemanal : 0;
+    
     return `
         <tr>
-            <td style="min-width: 300px;"><input value="${item.role}" data-id="${item.id}" data-field="role" style="width: 100%; border: none; background: transparent;"></td>
+            <td style="min-width: 200px;"><input value="${item.role}" data-id="${item.id}" data-field="role"></td>
             <td class="text-right"><input type="number" value="${item.gross}" data-id="${item.id}" data-field="gross"></td>
             <td class="text-center"><input type="number" value="${item.employer_ss}" data-id="${item.id}" data-field="employer_ss"></td>
+            
+            <!-- NUEVAS COLUMNAS -->
+            <td class="text-center"><input type="number" value="${item.horasAnuales || 1600}" data-id="${item.id}" data-field="horasAnuales" placeholder="1600"></td>
+            <td class="text-center"><input type="number" value="${item.jornadaSemanal || 40}" data-id="${item.id}" data-field="jornadaSemanal" placeholder="40"></td>
+            <td class="text-center">${Math.round(horasSemanalesCargadas)}h</td>
+            
             <td class="text-center">
                 <input type="checkbox" ${item.esProductivo ? 'checked' : ''} 
-                       data-id="${item.id}" data-field="esProductivo"
-                       onchange="this.value = this.checked; window.onFieldChange({target: this})">
+                       data-id="${item.id}" data-field="esProductivo">
             </td>
             <td class="text-right">${fmt(costeTotal)}</td>
             <td><button onclick="removePersonnel('${item.id}')" class="btn small">✕</button></td>

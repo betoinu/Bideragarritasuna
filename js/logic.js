@@ -576,9 +576,9 @@ function calculatePricing() {
     });
 
     // ACTUALIZACIONES DE LA INTERFAZ
-    const updates = [
+        const updates = [
         // PANEL 2 - PERTSONALA
-        {{ id: 'metricas-horas-mes', value: `${Math.round(horasSemanalesPorEmpleadoCalculada)}h/asteko` },
+        { id: 'metricas-horas-mes', value: `${Math.round(horasSemanalesPorEmpleadoCalculada)}h/asteko` },
         { id: 'metricas-capacidad', value: `${Math.min(capacidadUtilizada, 100).toFixed(0)}%` },
         
         // PANEL 7 - PREZIOA

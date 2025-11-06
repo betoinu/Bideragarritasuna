@@ -10,19 +10,16 @@
     "button.removeSocio": "- Kendu Bazkidea",
     "button.remove": "✕",
 
-    // 🔥 NUEVAS TRADUCCIONES PARA LAS COLUMNAS DE PERSONAL
     "table.horasAnuales": "Orduak (Urteko)",
     "table.jornadaSemanal": "Jardunaldia (Asteroko)", 
     "table.cargaSemanal": "Karga (Asteroko)",
     "placeholder.horasAnuales": "1600",
     "placeholder.jornadaSemanal": "40",
     
-    // 🔥 CORRECCIÓN UNIDADES MÉTRICAS
     "estrategia.horasNecesariasMes": "Orduak/asteko eta langileko (produktiboa):",
     "estrategia.horasNecesariasMesHelp": "(asteko 5 lanegun kontuan hartuta)",
     "estrategia.clientesNecesariosMes": "Beharrezko proiektuak/hilabete:",
     
-    // 🔥 NUEVAS TRADUCCIONES PARA DIAGNÓSTICOS
     "diagnostico.optimo": "✅ ONDO - Superabita: ",
     "diagnostico.aceptable": "⚠️ ONARGARRIA - Superabita: ",
     "diagnostico.casi": "🔶 HURTIK - Defizita: ",
@@ -190,19 +187,16 @@
     "button.removeSocio": "- Quitar Socio",
     "button.remove": "✕",
 
-    // 🔥 NUEVAS TRADUCCIONES PARA LAS COLUMNAS DE PERSONAL
     "table.horasAnuales": "Horas (Anuales)",
     "table.jornadaSemanal": "Jornada (Semanal)",
     "table.cargaSemanal": "Carga (Semanal)",
     "placeholder.horasAnuales": "1600",
     "placeholder.jornadaSemanal": "40",
     
-    // 🔥 CORRECCIÓN UNIDADES MÉTRICAS
     "estrategia.horasNecesariasMes": "Horas/semana por empleado (productivo):",
     "estrategia.horasNecesariasMesHelp": "(considerando 5 días laborables/semana)",
     "estrategia.clientesNecesariosMes": "Proyectos necesarios/mes:",
     
-    // 🔥 NUEVAS TRADUCCIONES PARA DIAGNÓSTICOS
     "diagnostico.optimo": "✅ ÓPTIMO - Superávit: ",
     "diagnostico.aceptable": "⚠️ ACEPTABLE - Superávit: ",
     "diagnostico.casi": "🔶 CASI - Déficit: ",
@@ -370,19 +364,16 @@
     "button.removeSocio": "- Remove Partner",
     "button.remove": "✕",
 
-    // 🔥 NUEVAS TRADUCCIONES PARA LAS COLUMNAS DE PERSONAL
     "table.horasAnuales": "Hours (Annual)",
     "table.jornadaSemanal": "Workweek (Weekly)",
     "table.cargaSemanal": "Load (Weekly)",
     "placeholder.horasAnuales": "1600",
     "placeholder.jornadaSemanal": "40",
     
-    // 🔥 CORRECCIÓN UNIDADES MÉTRICAS
     "estrategia.horasNecesariasMes": "Hours/week per (productive) employee:",
     "estrategia.horasNecesariasMesHelp": "(considering 5 working days/week)",
     "estrategia.clientesNecesariosMes": "Projects needed/month:",
     
-    // 🔥 NUEVAS TRADUCCIONES PARA DIAGNÓSTICOS
     "diagnostico.optimo": "✅ OPTIMAL - Surplus: ",
     "diagnostico.aceptable": "⚠️ ACCEPTABLE - Surplus: ",
     "diagnostico.casi": "🔶 CLOSE - Deficit: ",
@@ -540,4 +531,5 @@
     "loading": "Preparing report..."
   }
 }
+
 

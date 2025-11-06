@@ -477,12 +477,12 @@ function calculatePortfolioRevenue() {
 function calculatePricing() {
     console.log("🔍 INICIANDO calculatePricing()...");  
   
-      // INICIALIZAR VARIABLES ANTES DE USARLAS
-    const horasSemanalesPorEmpleado = parseFloat(document.getElementById('horas-semanales-empleado')?.value) || 35;
+    // INICIALIZAR VARIABLES ANTES DE USARLAS - NOMBRE CAMBIADO
+    const horasSemanalesInput = parseFloat(document.getElementById('horas-semanales-empleado')?.value) || 35;
     const diasLaborablesPorSemana = 5;
     const semanasPorMes = 4.33;  
   
-  // Control de reintentos
+    // Control de reintentos
     if (!window.pricingRetryCount) window.pricingRetryCount = 0;
     
     const criticalElements = ['suggested-hourly-rate-sidebar', 'total-facturacion'];
@@ -506,7 +506,7 @@ function calculatePricing() {
     const corporateTax = safeNum(document.getElementById('corporate-tax')?.value) || 25;
 
     // Calcular carga promedio
-    const cargaPromedio = horasSemanalesPorEmpleado;
+    const cargaPromedio = horasSemanalesInput; // ← USAR LA VARIABLE RENOMBRADA
 
     // ✅ CORRECCIÓN: Filtrar SOLO personal marcado como productivo (UNA VEZ)
     const personalProductivo = state.personnel.filter(persona => persona.esProductivo !== false);
@@ -557,10 +557,10 @@ function calculatePricing() {
         updateElement(`carga-${persona.id}`, `${Math.round(cargaSemanal)}h`);
     });
 
-    // ✅ NUEVAS MÉTRICAS MEJORADAS
+    // ✅ NUEVAS MÉTRICAS MEJORADAS - NOMBRES CAMBIADOS
     const horasSemanalesNecesarias = horasNecesariasTotales / 52;
-    const horasSemanalesPorEmpleado = horasSemanalesNecesarias / employeeCount;
-    const capacidadUtilizada = (horasSemanalesNecesarias / totalHorasSemanales) * 100;
+    const horasSemanalesPorEmpleadoCalculada = horasSemanalesNecesarias / employeeCount;
+    const capacidadUtilizadaCalculada = (horasSemanalesNecesarias / totalHorasSemanales) * 100;
 
     console.log("📈 Datos calculados:", {
         personalTotal: state.personnel.length,
@@ -1152,7 +1152,7 @@ const diagnostico = document.getElementById('diagnostico-supervivencia');
     const clientesMensuales = totalClientes / 12;
     const capacidadTotal = safeNum(document.getElementById('annual-hours-per-employee')?.value) * 
                           safeNum(document.getElementById('employee-count-sidebar')?.textContent);
-    const capacidadUtilizada = capacidadTotal > 0 ? (totalHoras / capacidadTotal) * 100 : 0;
+    const capacidadUtilizadaFinal = capacidadTotal > 0 ? (totalHoras / capacidadTotal) * 100 : 0;
     
     updateElement('metricas-horas-mes', `${Math.ceil(horasMensuales)}h`);
     updateElement('metricas-precio-hora', fmt(precioHoraEfectivo));

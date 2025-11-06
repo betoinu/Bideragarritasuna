@@ -12,6 +12,8 @@
 
     "pricing.konfigurazioa": "Konfigurazioa",
     "sidebar.idioma": "Hizkuntza / Idioma",
+    "estrategia.horasNecesariasMes": "Orduak/eguneko eta langile (produktiboko):",
+    "estrategia.horasNecesariasMesHelp": "(21 lanegun/hilabete kontuan hartuta)",
 
     "panel.estrategia.title": "8 · Merkatu Estrategia eta Biziraupena",
     "estrategia.carteraTitle": "🏷️ Zure Zerbitzu Kartera",
@@ -173,6 +175,8 @@
 
     "pricing.konfigurazioa": "Configuración", 
     "sidebar.idioma": "Language / Idioma",
+    "estrategia.horasNecesariasMes": "Horas/día y por empleado (productivo):", 
+    "estrategia.horasNecesariasMesHelp": "(considerando 21 días laborables/mes)",
 
     "panel.estrategia.title": "8 · Estrategia de Mercado y Supervivencia",
     "estrategia.carteraTitle": "🏷️ Tu Cartera de Servicios",
@@ -334,6 +338,8 @@
 
     "sidebar.idioma": "Idioma / Language"
     "pricing.konfigurazioa": "Configuration",
+      "estrategia.horasNecesariasMes": "Hours/day per (productive) employee:",
+    "estrategia.horasNecesariasMesHelp": "(considering 21 working days/month)"
 
      "panel.estrategia.title": "8 · Market Strategy and Survival",
     "estrategia.carteraTitle": "🏷️ Your Service Portfolio",
@@ -483,6 +489,7 @@
     "loading": "Preparing report..."
   }
 }
+
 
 
 

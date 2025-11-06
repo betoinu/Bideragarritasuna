@@ -42,7 +42,6 @@
     "estrategia.estrategiaActiva": "Estrategia aktiboa:",
     "estrategia.ninguna": "Bat ere ez",
     "estrategia.metricasSupervivencia": "📈 Biziraupen Metrikak",
-    "estrategia.horasNecesariasMes": "Beharrezko orduak/hilabete:",
     "estrategia.precioHoraEfectivo": "Orduko prezioa:",
     "estrategia.clientesNecesariosMes": "Beharrezko bezeroak/hilabete:",
     "estrategia.capacidadUtilizada": "Erabilitako gaitasuna:",
@@ -174,8 +173,8 @@
     "button.remove": "✕",
 
     "pricing.konfigurazioa": "Configuración", 
-    "sidebar.idioma": "Language / Idioma",
-    "estrategia.horasNecesariasMes": "Horas/día y por empleado (productivo):", 
+    "sidebar.idioma": "Idioma / Language",
+    "estrategia.horasNecesariasMes": "Horas/día por empleado (productivo):", 
     "estrategia.horasNecesariasMesHelp": "(considerando 21 días laborables/mes)",
 
     "panel.estrategia.title": "8 · Estrategia de Mercado y Supervivencia",
@@ -205,7 +204,6 @@
     "estrategia.estrategiaActiva": "Estrategia activa:",
     "estrategia.ninguna": "Ninguna",
     "estrategia.metricasSupervivencia": "📈 Métricas de Supervivencia",
-    "estrategia.horasNecesariasMes": "Horas necesarias/mes:",
     "estrategia.precioHoraEfectivo": "Precio/hora efectivo:",
     "estrategia.clientesNecesariosMes": "Clientes necesarios/mes:",
     "estrategia.capacidadUtilizada": "Capacidad utilizada:",
@@ -336,12 +334,12 @@
     "button.removeSocio": "- Remove Partner",
     "button.remove": "✕",
 
-    "sidebar.idioma": "Idioma / Language"
     "pricing.konfigurazioa": "Configuration",
-      "estrategia.horasNecesariasMes": "Hours/day per (productive) employee:",
+    "sidebar.idioma": "Language / Idioma",
+    "estrategia.horasNecesariasMes": "Hours/day per (productive) employee:",
     "estrategia.horasNecesariasMesHelp": "(considering 21 working days/month)",
 
-     "panel.estrategia.title": "8 · Market Strategy and Survival",
+    "panel.estrategia.title": "8 · Market Strategy and Survival",
     "estrategia.carteraTitle": "🏷️ Your Service Portfolio",
     "estrategia.servicio": "Service",
     "estrategia.horas": "Hours",
@@ -368,7 +366,6 @@
     "estrategia.estrategiaActiva": "Active strategy:",
     "estrategia.ninguna": "None",
     "estrategia.metricasSupervivencia": "📈 Survival Metrics",
-    "estrategia.horasNecesariasMes": "Hours needed/month:",
     "estrategia.precioHoraEfectivo": "Effective hourly rate:",
     "estrategia.clientesNecesariosMes": "Clients needed/month:",
     "estrategia.capacidadUtilizada": "Capacity used:",
@@ -489,8 +486,3 @@
     "loading": "Preparing report..."
   }
 }
-
-
-
-
-

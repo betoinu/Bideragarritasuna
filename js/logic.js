@@ -591,7 +591,7 @@ function calculatePricing() {
         { id: 'meta-supervivencia', value: fmt(facturacionNecesaria / 12) },
         { id: 'ingresos-proyectados', value: fmt(calcularIngresosCartera()) },
         { id: 'brecha-supervivencia', value: fmt(calcularIngresosCartera() - (facturacionNecesaria / 12)) },
-        {{ id: 'metricas-horas-mes', value: (() => {
+        { id: 'metricas-horas-mes', value: (() => {
               const horasMensuales = (costesTotales / precioHora) / 12;
               const horasDiarias = horasMensuales / personalProductivo / 21;
               return isNaN(horasDiarias) ? '0 h/eguneko' : Math.ceil(horasDiarias) + ' h/eguneko';

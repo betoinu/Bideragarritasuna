@@ -1068,14 +1068,14 @@ window.updatePortfolio = function() {
     const diagnostico = document.getElementById('diagnostico-supervivencia');
     if (diagnostico) {
         if (brecha <= 0) {
-            diagnostico.textContent = '✅ VIABLE - Cubres gastos';
-            diagnostico.parentElement.style.background = '#e8f5e8';
+            diagnostico.textContent = '🔴 CRÍTICO - Lejos del objetivo';
+            diagnostico.parentElement.style.background = '#ffeaa7';
         } else if (brecha < metaSupervivencia * 0.2) {
             diagnostico.textContent = '⚠️ CASI - Cerca del objetivo';
             diagnostico.parentElement.style.background = '#fff3cd';
         } else {
-            diagnostico.textContent = '🔴 CRÍTICO - Lejos del objetivo';
-            diagnostico.parentElement.style.background = '#ffeaa7';
+            diagnostico.textContent = '✅ VIABLE - Cubres gastos';
+            diagnostico.parentElement.style.background = '#e8f5e8';
         }
     }
     

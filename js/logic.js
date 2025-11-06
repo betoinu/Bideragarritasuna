@@ -670,10 +670,10 @@ function calculatePricing() {
         { id: 'total-inversion', value: fmt(financiacion.inversionTotal) },
         { id: 'tesoreria-calculada', value: fmt(financiacion.tesoreria) },
         { id: 'necesidad-total', value: fmt(financiacion.necesidadTotal) },
-        { id: 'total-aportacion-socios', value: fmt(financiacion.totalAportadoSocios) },
-        { id: 'total-trabajadores', value: fmt(financiacion.totalTrabajadores) },
-        { id: 'total-capitalistas', value: fmt(financiacion.totalCapitalistas) },
-        { id: 'num-socios', value: state.socios.length.toString() }
+        { id: 'total-aportacion-socios', value: fmt(financiacion.totalAportadoSocios || 0) },
+        { id: 'total-trabajadores', value: fmt(financiacion.totalTrabajadores || 0) },
+        { id: 'total-capitalistas', value: fmt(financiacion.totalCapitalistas || 0) },
+        { id: 'num-socios', value: (state.finance.socios?.length || 0).toString() }
     ];
 
     // APLICAR TODAS LAS ACTUALIZACIONES

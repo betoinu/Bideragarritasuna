@@ -500,8 +500,10 @@ function calculatePricing() {
     const margin = safeNum(document.getElementById('target-profit-margin')?.value) || 20;
     const corporateTax = safeNum(document.getElementById('corporate-tax')?.value) || 25;
 
+    // ✅ CORRECCIÓN: Filtrar SOLO personal marcado como productivo (UNA VEZ)
     const personalProductivo = state.personnel.filter(persona => persona.esProductivo !== false);
     
+    // ✅ NUEVO: CÁLCULO FLEXIBLE DE HORAS
     let totalHorasAnuales = 0;
     let totalHorasSemanales = 0;
     
@@ -515,51 +517,61 @@ function calculatePricing() {
     
     const employeeCount = Math.max(1, personalProductivo.length);
     const totalHours = totalHorasAnuales;
-  
-    // ✅ CORRECCIÓN: Filtrar SOLO personal marcado como productivo
-    const personalProductivo = state.personnel.filter(persona => {
-        // Asegurar que esProductivo es booleano (true por defecto si no está definido)
-        return persona.esProductivo !== false;
-    });
-    
-    const employeeCount = Math.max(1, personalProductivo.length);
-      
-    const annualHours = safeNum(document.getElementById('annual-hours-per-employee')?.value) || 1600;
-    const totalHours = employeeCount * annualHours;
 
     const costesTotales = costesOperativos + costesFinancieros;
     const margenBruto = costesTotales * (margin / 100);
     const facturacionNecesaria = costesTotales + margenBruto;
     const precioHora = totalHours > 0 ? facturacionNecesaria / totalHours : 0;
-    const horasSemanalesNecesarias = (costesTotales / precioHora) / 52;
-    const horasSemanalesPorEmpleado = horasSemanalesNecesarias / employeeCount;
-    const capacidadUtilizada = (horasSemanalesNecesarias / totalHorasSemanales) * 100;
 
-        // Verificar que precioHora no sea cero
+    // Verificar que precioHora no sea cero
     if (precioHora === 0) {
         console.warn('⚠️ Precio/hora es cero, revisar cálculos');
-        precioHora = 1; // Valor mínimo para evitar divisiones por cero
+        precioHora = 1;
     }
 
     const impuestos = margenBruto * (corporateTax / 100);
     const beneficioNeto = margenBruto - impuestos;
 
-        console.log("📈 Datos calculados:", {
+    // ✅ 🔥 CALCULAR CARGA POR EMPLEADO (AÑADIR AQUÍ)
+    const horasNecesariasTotales = (costesTotales / precioHora);
+    
+    personalProductivo.forEach(persona => {
+        const horasAnuales = safeNum(persona.horasAnuales) || 1600;
+        const jornadaSemanal = safeNum(persona.jornadaSemanal) || 40;
+        
+        // Calcular carga proporcional
+        const horasNecesariasPorPersona = horasNecesariasTotales / employeeCount;
+        const cargaSemanal = (horasNecesariasPorPersona / horasAnuales) * jornadaSemanal;
+        
+        console.log(`👤 ${persona.role}: ${Math.round(cargaSemanal)}h/asteko`);
+        
+        // Actualizar en la tabla
+        updateElement(`carga-${persona.id}`, `${Math.round(cargaSemanal)}h`);
+    });
+
+    // ✅ NUEVAS MÉTRICAS MEJORADAS
+    const horasSemanalesNecesarias = horasNecesariasTotales / 52;
+    const horasSemanalesPorEmpleado = horasSemanalesNecesarias / employeeCount;
+    const capacidadUtilizada = (horasSemanalesNecesarias / totalHorasSemanales) * 100;
+
+    console.log("📈 Datos calculados:", {
         personalTotal: state.personnel.length,
         personalProductivo: employeeCount,
         costesOperativos, 
         costesFinancieros, 
         facturacionNecesaria, 
-        precioHora
+        precioHora,
+        totalHorasAnuales,
+        totalHorasSemanales
     });
 
     // ACTUALIZACIONES DE LA INTERFAZ
     const updates = [
-        
-      // PANEL 2 - PERTSONALA
+        // PANEL 2 - PERTSONALA
         { id: 'metricas-horas-mes', value: `${Math.round(horasSemanalesPorEmpleado)}h/asteko` },
         { id: 'metricas-capacidad', value: `${Math.min(capacidadUtilizada, 100).toFixed(0)}%` },
-      // PANEL 7 - PREZIOA
+        
+        // PANEL 7 - PREZIOA
         { id: 'contador-personal-productivo', value: employeeCount.toString() },
         { id: 'total-socios-display', value: fmt(financiacion.totalAportadoSocios) },
         { id: 'cantidad-financiar', value: fmt(financiacion.necesidadesTotales) },
@@ -573,7 +585,6 @@ function calculatePricing() {
         { id: 'desglose-costes-financieros', value: fmt(costesFinancieros) },
         { id: 'desglose-gastos-totales', value: fmt(costesTotales) },
         { id: 'desglose-total-horas', value: totalHours.toString() },
-        { id: 'desglose-porcentaje-margen', value: margin.toString() },
         { id: 'desglose-margen-bruto', value: fmt(margenBruto) },
         { id: 'desglose-facturacion-total', value: fmt(facturacionNecesaria) },
         { id: 'desglose-precio-hora', value: fmt(precioHora) },
@@ -591,11 +602,9 @@ function calculatePricing() {
         // 🆕 PANEL 8 - BIDERAGARRITASUN UPDATES
         { id: 'meta-supervivencia', value: fmt(costesTotales) },
         { id: 'ingresos-proyectados', value: fmt(calculatePortfolioRevenue()) },
-        { id: 'brecha-supervivencia', value: fmt(calculatePortfolioRevenue - costesTotales) },
-        { id: 'metricas-horas-mes', value: calculateDailyHours(costesTotales, precioHora, employeeCount) },
+        { id: 'brecha-supervivencia', value: fmt(calculatePortfolioRevenue() - costesTotales) },
         { id: 'metricas-precio-hora', value: fmt(precioHora) },
         { id: 'metricas-clientes-mes', value: calculateMonthlyClients(costesTotales, precioHora) },
-        { id: 'metricas-capacidad', value: calculateCapacityUtilization(costesTotales, precioHora, employeeCount, annualHours) },
         { id: 'total-ingresos-cartera', value: '€ ' + calculatePortfolioRevenue().toLocaleString() },
         { id: 'estrategia-activa', value: 'Ninguna' },
 
@@ -625,14 +634,9 @@ function calculatePricing() {
         { id: 'total-inversion', value: fmt(financiacion.inversionTotal) },
         { id: 'tesoreria-calculada', value: fmt(financiacion.tesoreria) },
         { id: 'necesidad-total', value: fmt(financiacion.necesidadesTotales) },
-        { id: 'finantzaketa-total-calculada', value: fmt(financiacion.necesidadesTotales) },
-        { id: 'finantzaketa-behar-totala', value: fmt(financiacion.necesidadesTotales) },
-        { id: 'finantzaketa-total', value: fmt(financiacion.necesidadesTotales) },
-        { id: 'behar-totala', value: fmt(financiacion.necesidadesTotales) },
         { id: 'total-aportacion-socios', value: fmt(financiacion.totalAportadoSocios || 0) },
         { id: 'total-trabajadores', value: fmt(financiacion.totalTrabajadores || 0) },
         { id: 'total-capitalistas', value: fmt(financiacion.totalCapitalistas || 0) }
-        
     ];
 
     // APLICAR TODAS LAS ACTUALIZACIONES
@@ -904,20 +908,32 @@ if (type === 'amort') {
         if (type === 'person') {
     const costeTotal = safeNum(item.gross) * (1 + safeNum(item.employer_ss) / 100);
     
-    // Calcular carga automática
-    const horasSemanalesCargadas = item.horasAnuales > 0 ? 
-        (item.horasNecesarias / item.horasAnuales) * item.jornadaSemanal : 0;
-    
     return `
         <tr>
-            <td style="min-width: 200px;"><input value="${item.role}" data-id="${item.id}" data-field="role"></td>
-            <td class="text-right"><input type="number" value="${item.gross}" data-id="${item.id}" data-field="gross"></td>
-            <td class="text-center"><input type="number" value="${item.employer_ss}" data-id="${item.id}" data-field="employer_ss"></td>
+            <td style="min-width: 200px;">
+                <input value="${item.role}" data-id="${item.id}" data-field="role" 
+                       style="width: 100%; border: none; background: transparent;">
+            </td>
+            <td class="text-right">
+                <input type="number" value="${item.gross}" data-id="${item.id}" data-field="gross">
+            </td>
+            <td class="text-center">
+                <input type="number" value="${item.employer_ss}" data-id="${item.id}" data-field="employer_ss">
+            </td>
             
-            <!-- NUEVAS COLUMNAS -->
-            <td class="text-center"><input type="number" value="${item.horasAnuales || 1600}" data-id="${item.id}" data-field="horasAnuales" placeholder="1600"></td>
-            <td class="text-center"><input type="number" value="${item.jornadaSemanal || 40}" data-id="${item.id}" data-field="jornadaSemanal" placeholder="40"></td>
-            <td class="text-center">${Math.round(horasSemanalesCargadas)}h</td>
+            <!-- NUEVAS COLUMNAS - SIN CÁLCULO AUTOMÁTICO POR AHORA -->
+            <td class="text-center">
+                <input type="number" value="${item.horasAnuales || 1600}" data-id="${item.id}" data-field="horasAnuales"
+                       placeholder="1600" style="width: 80px;">
+            </td>
+            <td class="text-center">
+                <input type="number" value="${item.jornadaSemanal || 40}" data-id="${item.id}" data-field="jornadaSemanal" 
+                       placeholder="40" style="width: 80px;">
+            </td>
+            <td class="text-center" style="background: #f8f9fa;">
+                <!-- CALCULAREMOS ESTO DESPUÉS EN calculatePricing() -->
+                <span id="carga-${item.id}">0h</span>
+            </td>
             
             <td class="text-center">
                 <input type="checkbox" ${item.esProductivo ? 'checked' : ''} 
@@ -928,6 +944,7 @@ if (type === 'amort') {
         </tr>
     `;
 }
+          
         if (type === 'socio') {
             return `
                 <tr>

@@ -612,7 +612,7 @@ function calculatePricing() {
         })() },
         
         { id: 'total-ingresos-cartera', value: '€ ' + calcularIngresosCartera().toLocaleString() },
-        { id: 'estrategia-activa', value: 'Ninguna' }
+        { id: 'estrategia-activa', value: 'Ninguna' },
 
       // 🆕 PANEL 8 - BIDERAGARRITASUN UPDATES - IDs ACTUALIZADOS
         { id: 'meta-supervivencia', value: fmt(facturacionNecesaria / 12) },

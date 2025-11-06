@@ -686,7 +686,7 @@ function preloadSampleData() {
 
     // Personal
     state.personnel = [
-        { id: uid('p'), role: 'Zuzendaria / Bazkidea', gross: 35000, employer_ss: 30 }
+        { id: uid('p'), role: 'Zuzendaria / Bazkidea', gross: 35000, employer_ss: 30, esProductivo: true }
     ];
 
     // Socios

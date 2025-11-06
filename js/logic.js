@@ -1065,17 +1065,25 @@ window.updatePortfolio = function() {
     updateElement('brecha-supervivencia', fmt(brecha));
     
     // Actualizar diagnóstico
-    const diagnostico = document.getElementById('diagnostico-supervivencia');
+const diagnostico = document.getElementById('diagnostico-supervivencia');
     if (diagnostico) {
-        if (brecha <= 0) {
-            diagnostico.textContent = '🔴 CRÍTICO - Lejos del objetivo';
-            diagnostico.parentElement.style.background = '#ffeaa7';
-        } else if (brecha < metaSupervivencia * 0.2) {
-            diagnostico.textContent = '⚠️ CASI - Cerca del objetivo';
-            diagnostico.parentElement.style.background = '#fff3cd';
-        } else {
-            diagnostico.textContent = '✅ VIABLE - Cubres gastos';
+        // ✅ NUEVA LÓGICA (brecha POSITIVA = SUPERÁVIT)
+        if (brecha >= metaSupervivencia * 0.2) {
+            // Superávit > 20% = ÓPTIMO
+            diagnostico.textContent = '✅ ÓPTIMO - Superávit: ' + fmt(brecha);
             diagnostico.parentElement.style.background = '#e8f5e8';
+        } else if (brecha > 0) {
+            // Superávit pero < 20% = ACEPTABLE  
+            diagnostico.textContent = '⚠️ ACEPTABLE - Superávit: ' + fmt(brecha);
+            diagnostico.parentElement.style.background = '#fff3cd';
+        } else if (brecha >= metaSupervivencia * -0.2) {
+            // Déficit < 20% = CASI
+            diagnostico.textContent = '🔶 CASI - Déficit: ' + fmt(Math.abs(brecha));
+            diagnostico.parentElement.style.background = '#ffeaa7';
+        } else {
+            // Déficit > 20% = CRÍTICO
+            diagnostico.textContent = '🔴 CRÍTICO - Déficit: ' + fmt(Math.abs(brecha));
+            diagnostico.parentElement.style.background = '#ffeaa7';
         }
     }
     

@@ -231,7 +231,7 @@ function calculateInvestmentNeeds() {
     
     // 2. Tesorería (3-6 meses de gastos fijos)
     const mesesTesoreria = safeNum(document.getElementById('meses-tesoreria')?.value) || 3;
-    const gastosFijosMensuales = (calculateTotalRecurring() + alculateTotalPersonnel()) / 12;
+    const gastosFijosMensuales = (calculateTotalRecurring() + calculateTotalPersonnel()) / 12; // ✅ CORREGIDO
     const tesoreria = gastosFijosMensuales * mesesTesoreria;
     
     // 3. Necesidad total
@@ -241,7 +241,7 @@ function calculateInvestmentNeeds() {
         inversionTotal: inversionTotal,
         tesoreria: tesoreria,
         necesidadesTotales: necesidadesTotales,
-        gastosOperativosAnuales: calculateTotalRecurring() + alculateTotalPersonnel()
+        gastosOperativosAnuales: calculateTotalRecurring() + calculateTotalPersonnel() // ✅ CORREGIDO
     };
 }
 
@@ -249,7 +249,7 @@ function calculateTotalInvestments() {
     let total = 0;
     Object.values(state.amortizables).forEach(categoria => {
         categoria.forEach(item => {
-            total += safeNum(item.coste) || 0;
+            total += safeNum(item.cost) || 0; // ✅ CORREGIDO - "cost" no "coste"
         });
     });
     return total;
@@ -399,7 +399,7 @@ function actualizarUImetricas(meta, horas, precio, clientes, capacidad, ingresos
     }
 }
 
-function calculatePortfolioRevenue {
+function calculatePortfolioRevenue {)
     let total = 0;
     try {
         const inputs = document.querySelectorAll('#cartera-servicios-body input[type="number"]');
@@ -455,20 +455,20 @@ function calculateCapacityUtilization(costesTotales, precioHora, personalProduct
     return Math.min(capacidad, 100).toFixed(0) + '%';
 }
 
-function calculatePortfolioRevenue {
+function calculatePortfolioRevenue() {
     let total = 0;
     try {
         const inputs = document.querySelectorAll('#cartera-servicios-body input[type="number"]');
-        const precios = [400, 200, 2000, 4000];
+        const prices = [400, 200, 2000, 4000];  // ✅ inglés
         
         if (inputs.length === 0) return 0;
         
         inputs.forEach((input, index) => {
-            const cantidad = parseInt(input.value) || 0;
-            total += cantidad * precios[index];
+            const quantity = parseInt(input.value) || 0;  // ✅ inglés
+            total += quantity * prices[index];
         });
     } catch (error) {
-        console.warn('⚠️ Error calculando ingresos cartera:', error);
+        console.warn('⚠️ Error calculating portfolio revenue:', error);  // ✅ inglés
         return 0;
     }
     return total;
@@ -567,13 +567,13 @@ function calculatePricing() {
 
         // 🆕 PANEL 8 - BIDERAGARRITASUN UPDATES
         { id: 'meta-supervivencia', value: fmt(costesTotales / 12) },
-        { id: 'ingresos-proyectados', value: fmt(calculatePortfolioRevenue) },
+        { id: 'ingresos-proyectados', value: fmt(calculatePortfolioRevenue()) },
         { id: 'brecha-supervivencia', value: fmt(calculatePortfolioRevenue - (costesTotales / 12)) },
         { id: 'metricas-horas-mes', value: calculateDailyHours(costesTotales, precioHora, employeeCount) },
         { id: 'metricas-precio-hora', value: fmt(precioHora) },
         { id: 'metricas-clientes-mes', value: calculateMonthlyClients(costesTotales, precioHora) },
         { id: 'metricas-capacidad', value: calculateCapacityUtilization(costesTotales, precioHora, employeeCount, annualHours) },
-        { id: 'total-ingresos-cartera', value: '€ ' + calculatePortfolioRevenue.toLocaleString() },
+        { id: 'total-ingresos-cartera', value: '€ ' + calculatePortfolioRevenue().toLocaleString() },
         { id: 'estrategia-activa', value: 'Ninguna' },
 
         // SIDEBAR CONTINUACIÓN

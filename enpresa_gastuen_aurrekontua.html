@@ -37,7 +37,7 @@
                     <button class="tab"><span data-i18n="tab.hazkuntza">5 · Hazkuntza</span></button>
                     <button class="tab"><span data-i18n="tab.finantzaketa">6 · Finantzaketa</span></button>
                     <button class="tab"><span data-i18n="tab.prezioa">7 · Prezioa</span></button>
-                    <button class="tab"><span data-i18="tab.bideragarritasuna">8 · Bideragarritasuna</span></button>
+                    <button class="tab"><span data-i18n="tab.bideragarritasuna">8 · Bideragarritasuna</span></button>
                 </div>
 
                 <!-- PANEL 1 - LOKALA -->
@@ -165,11 +165,10 @@
                     <button class="btn small" onclick="addRecurring('hazkuntza')" data-i18n="button.addRecurring">+ Gehitu Gastua</button>
                 </div>
 
-                <!-- PANEL 6 - FINANTZAKETA (COMPLETO) -->
+                <!-- PANEL 6 - FINANTZAKETA -->
                 <div id="finantzaketa-sheet" class="panel" style="display:none">
                     <h2 data-i18n="panel.finantzaketa.title">6 · Finantzaketa Estrategia</h2>
                     
-                    <!-- Sección de Inversiones -->
                     <div class="section">
                         <h3 data-i18n="finance.inversiones">Inbertsio eta Finantzaketa Beharrak</h3>
                         <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px">
@@ -186,7 +185,6 @@
                         </div>
                     </div>
 
-                    <!-- Sección de Socios -->
                     <div class="section">
                         <h3 data-i18n="finance.bazkideEkarpenak">Bazkideen Ekarpenak</h3>
                         <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px">
@@ -218,7 +216,6 @@
                         </div>
                     </div>
 
-                    <!-- Sección de Financiación Externa -->
                     <div class="section">
                         <h3 data-i18n="finance.kanpokoFinantzaketa">Kanpoko Finantzaketa</h3>
                         <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
@@ -250,360 +247,336 @@
                         </div>
                     </div>
 
-                    <!-- Resumen de Financiación -->
-                    <!-- 🔹 Resumen de Financiación (Panel 6) -->
-<div class="section" style="background:#f8f9fa;padding:20px;border-radius:8px;margin-top:20px">
-  <h3 data-i18n="finance.finantzaketaLaburpena">Finantzaketaren Laburpena</h3>
-
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px">
-    <div>
-      <h4 data-i18n="finance.finantzaketaIturriak">Finantzaketa Iturriak</h4>
-      <p>Bazkideek Emandako Guztira: <strong><span id="total-socios-display">€ 0.00</span></strong></p>
-      <p>Finantzaketa Behar Totala: <strong><span id="cantidad-financiar">€ 0.00</span></strong></p>
-      <p>Urteko Kuota Guztira: <strong><span id="cuota-anual-display">€ 0.00</span></strong></p>
-    </div>
-    <div>
-      <h4 data-i18n="finance.eragiketaEkonomikoa">Eragiketa Ekonomikoa</h4>
-      <p>Urteko Gastu Operatiboak: <strong><span id="gastos-operativos-panel6">€ 0.00</span></strong></p>
-      <p>Urteko Finantzaketa Kostuak: <strong><span id="costes-financieros-panel6">€ 0.00</span></strong></p>
-      <p>Gastu Totalak: <strong><span id="gastos-totales-panel6">€ 0.00</span></strong></p>
-    </div>
-  </div>
-</div>
-</div>
-
-<!-- PANEL 7 - PREZIOA -->
-<div id="prezioa-sheet" class="panel" style="display:none">
-    <h2 data-i18n="panel.prezioa.title">7 · Lanorduaren Prezioa eta Mozkinak</h2>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
-        <!-- COLUMNA IZQUIERDA -->
-<div>
-    <!-- CONFIGURACIÓN -->
-    <div class="card">
-        <h4 data-i18n="pricing.konfigurazioa">Konfigurazioa</h4>
-        <label for="corporate-tax" data-i18n="pricing.sozietateZerga">Sozietateen Zerga (%)</label>
-        <input id="corporate-tax" type="number" value="25" oninput="updateAll()" />
-        
-        <label for="target-profit-margin" data-i18n="pricing.mozkinMargina">Helburuko Mozkin Gordina (%)</label>
-        <input id="target-profit-margin" type="number" value="20" oninput="updateAll()" />
-        
-        <div style="margin:15px 0;padding:10px;background:#f8f9fa;border-radius:6px">
-            <strong data-i18n="pricing.langileKopurua">Langile produktibo kopurua</strong>: 
-            <span id="contador-personal-productivo">0</span>
-            <small style="color:#666;display:block">(kalkulatu automatikoki produktibo markatutako langileak)</small>
-        </div>
-        
-        <div class="input-group">
-            <label for="annual-hours-per-employee" data-i18n="pricing.urtekoOrduakLangile">Urteko orduak langileko</label>
-            <input id="annual-hours-per-employee" type="number" value="1600" min="800" max="2200" step="50" oninput="updateAll()" />
-            <small style="color:#666" data-i18n="pricing.urtekoOrduakHelp">(Normalean 1600-1800 ordu)</small>
-        </div>
-    </div>
-
-    <!-- RESUMEN DEL ANÁLISIS -->
-    <div class="card">
-        <h4>Mozkin Gordina (Zergak aurre)</h4>
-        <p id="margen-bruto-panel7" class="value">€ 0.00</p>
-    </div>
-    <div class="card">
-        <h4>Espero den mozkin garbia</h4>
-        <p id="expected-net-profit" class="value">€ 0.00</p>
-    </div>
-</div>
-        
-        <!-- COLUMNA DERECHA -->
-        <div>
-            <!-- DESGLOSE PEDAGÓGICO -->
-            <div class="card" style="background:#f8f9fa">
-                <h4 data-i18n="pricing.nolaKalkulatzen">Nola kalkulatzen da orduko prezioa?</h4>
-                <div class="desglose-pedagogico">
-                    <div class="desglose-linea">
-                        <span data-i18n="pricing.gastuOperatiboak">Gastu Operatiboak:</span>
-                        <span id="desglose-gastos-operativos">€ 0.00</span>
-                    </div>
-                    <div class="desglose-linea">
-                        <span data-i18n="pricing.finantzaketaKostuak">+ Finantzaketa Kostuak:</span>
-                        <span id="desglose-costes-financieros">€ 0.00</span>
-                    </div>
-                    <div class="desglose-linea" style="border-top:1px solid #ddd;padding-top:8px">
-                        <span><strong data-i18n="pricing.gastuTotalak">Gastu Totalak:</strong></span>
-                        <span id="desglose-gastos-totales"><strong>€ 0.00</strong></span>
-                    </div>
-                    <div class="desglose-linea">
-                        <span data-i18n="pricing.mozkinGordinaPorcentaje">+ Mozkin Gordina (<span id="desglose-porcentaje-margen">20</span>%):</span>
-                        <span id="desglose-margen-bruto">€ 0.00</span>
-                    </div>
-                    <div class="desglose-linea" style="border-top:1px solid #ddd;padding-top:8px">
-                        <span><strong data-i18n="pricing.fakturazioTotala">Fakturazio Totala:</strong></span>
-                        <span id="desglose-facturacion-total"><strong>€ 0.00</strong></span>
-                    </div>
-                    <div class="desglose-linea">
-                        <span data-i18n="pricing.urtekoOrduakDivision">÷ Urteko Orduak</span>
-                        <span id="desglose-total-horas">0 h</span>
-                    </div>
-                    <div class="desglose-linea" style="border-top:2px solid #333;padding-top:8px">
-                        <span><strong data-i18n="pricing.ordukoPrezioa">Orduko Prezioa:</strong></span>
-                        <span id="desglose-precio-hora"><strong>€ 0.00</strong></span>
+                    <div class="section" style="background:#f8f9fa;padding:20px;border-radius:8px;margin-top:20px">
+                        <h3 data-i18n="finance.finantzaketaLaburpena">Finantzaketaren Laburpena</h3>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px">
+                            <div>
+                                <h4 data-i18n="finance.finantzaketaIturriak">Finantzaketa Iturriak</h4>
+                                <p>Bazkideek Emandako Guztira: <strong><span id="total-socios-display">€ 0.00</span></strong></p>
+                                <p>Finantzaketa Behar Totala: <strong><span id="cantidad-financiar">€ 0.00</span></strong></p>
+                                <p>Urteko Kuota Guztira: <strong><span id="cuota-anual-display">€ 0.00</span></strong></p>
+                            </div>
+                            <div>
+                                <h4 data-i18n="finance.eragiketaEkonomikoa">Eragiketa Ekonomikoa</h4>
+                                <p>Urteko Gastu Operatiboak: <strong><span id="gastos-operativos-panel6">€ 0.00</span></strong></p>
+                                <p>Urteko Finantzaketa Kostuak: <strong><span id="costes-financieros-panel6">€ 0.00</span></strong></p>
+                                <p>Gastu Totalak: <strong><span id="gastos-totales-panel6">€ 0.00</span></strong></p>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- GOMENDATUKO PREZIOA -->
-            <div class="card">
-                <h4 data-i18n="pricing.gomendatutakoPrezioa">Gomendatutako orduko prezioa</h4>
-                <p id="suggested-hourly-rate" class="value">€ 0.00</p>
-            </div>
-        </div>
-    </div>
-</div>
+                <!-- PANEL 7 - PREZIOA -->
+                <div id="prezioa-sheet" class="panel" style="display:none">
+                    <h2 data-i18n="panel.prezioa.title">7 · Lanorduaren Prezioa eta Mozkinak</h2>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+                        <div>
+                            <div class="card">
+                                <h4 data-i18n="pricing.konfigurazioa">Konfigurazioa</h4>
+                                <label for="corporate-tax" data-i18n="pricing.sozietateZerga">Sozietateen Zerga (%)</label>
+                                <input id="corporate-tax" type="number" value="25" oninput="updateAll()" />
+                                
+                                <label for="target-profit-margin" data-i18n="pricing.mozkinMargina">Helburuko Mozkin Gordina (%)</label>
+                                <input id="target-profit-margin" type="number" value="20" oninput="updateAll()" />
+                                
+                                <div style="margin:15px 0;padding:10px;background:#f8f9fa;border-radius:6px">
+                                    <strong data-i18n="pricing.langileKopurua">Langile produktibo kopurua</strong>: 
+                                    <span id="contador-personal-productivo">0</span>
+                                    <small style="color:#666;display:block">(kalkulatu automatikoki produktibo markatutako langileak)</small>
+                                </div>
+                                
+                                <div class="input-group">
+                                    <label for="annual-hours-per-employee" data-i18n="pricing.urtekoOrduakLangile">Urteko orduak langileko</label>
+                                    <input id="annual-hours-per-employee" type="number" value="1600" min="800" max="2200" step="50" oninput="updateAll()" />
+                                    <small style="color:#666" data-i18n="pricing.urtekoOrduakHelp">(Normalean 1600-1800 ordu)</small>
+                                </div>
+                            </div>
 
-<!-- PANEL 8 - ESTRATEGIA DE MERCADO Y SUPERVIVENCIA -->
-<div id="estrategia-sheet" class="panel" style="display:none">
-    <h2>8 · Estrategia de Mercado y Supervivencia</h2>
-    
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
-        
-        <!-- COLUMNA IZQUIERDA: CARTERA DE SERVICIOS -->
-        <div>
-            <!-- CARTERA DE SERVICIOS -->
-            <div class="card">
-                <h4>🏷️ Tu Cartera de Servicios</h4>
-                <table class="data">
-                    <thead>
-                        <tr>
-                            <th>Servicio</th>
-                            <th>Horas</th>
-                            <th>Precio</th>
-                            <th>Cantidad/año</th>
-                            <th>Ingresos</th>
-                        </tr>
-                    </thead>
-                    <tbody id="cartera-servicios-body">
-                        <tr>
-                            <td>Diseño rápido</td>
-                            <td class="text-center">8h</td>
-                            <td class="text-right">€ 400</td>
-                            <td class="text-center"><input type="number" value="0" min="0" style="width:60px;text-align:center" onchange="actualizarCartera()"></td>
-                            <td class="text-right" id="ingresos-rapido">€ 0</td>
-                        </tr>
-                        <tr>
-                            <td>Consultoría express</td>
-                            <td class="text-center">4h</td>
-                            <td class="text-right">€ 200</td>
-                            <td class="text-center"><input type="number" value="0" min="0" style="width:60px;text-align:center" onchange="actualizarCartera()"></td>
-                            <td class="text-right" id="ingresos-consultoria">€ 0</td>
-                        </tr>
-                        <tr>
-                            <td>Proyecto medio</td>
-                            <td class="text-center">40h</td>
-                            <td class="text-right">€ 2,000</td>
-                            <td class="text-center"><input type="number" value="0" min="0" style="width:60px;text-align:center" onchange="actualizarCartera()"></td>
-                            <td class="text-right" id="ingresos-medio">€ 0</td>
-                        </tr>
-                        <tr>
-                            <td>Proyecto grande</td>
-                            <td class="text-center">80h</td>
-                            <td class="text-right">€ 4,000</td>
-                            <td class="text-center"><input type="number" value="0" min="0" style="width:60px;text-align:center" onchange="actualizarCartera()"></td>
-                            <td class="text-right" id="ingresos-grande">€ 0</td>
-                        </tr>
-                    </tbody>
-                    <tfoot>
-                        <tr style="border-top:2px solid #333;font-weight:bold">
-                            <td colspan="4">TOTAL INGRESOS PROYECTADOS</td>
-                            <td class="text-right" id="total-ingresos-cartera">€ 0</td>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
+                            <div class="card">
+                                <h4>Mozkin Gordina (Zergak aurre)</h4>
+                                <p id="margen-bruto-panel7" class="value">€ 0.00</p>
+                            </div>
+                            <div class="card">
+                                <h4>Espero den mozkin garbia</h4>
+                                <p id="expected-net-profit" class="value">€ 0.00</p>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="card" style="background:#f8f9fa">
+                                <h4 data-i18n="pricing.nolaKalkulatzen">Nola kalkulatzen da orduko prezioa?</h4>
+                                <div class="desglose-pedagogico">
+                                    <div class="desglose-linea">
+                                        <span data-i18n="pricing.gastuOperatiboak">Gastu Operatiboak:</span>
+                                        <span id="desglose-gastos-operativos">€ 0.00</span>
+                                    </div>
+                                    <div class="desglose-linea">
+                                        <span data-i18n="pricing.finantzaketaKostuak">+ Finantzaketa Kostuak:</span>
+                                        <span id="desglose-costes-financieros">€ 0.00</span>
+                                    </div>
+                                    <div class="desglose-linea" style="border-top:1px solid #ddd;padding-top:8px">
+                                        <span><strong data-i18n="pricing.gastuTotalak">Gastu Totalak:</strong></span>
+                                        <span id="desglose-gastos-totales"><strong>€ 0.00</strong></span>
+                                    </div>
+                                    <div class="desglose-linea">
+                                        <span data-i18n="pricing.mozkinGordinaPorcentaje">+ Mozkin Gordina (<span id="desglose-porcentaje-margen">20</span>%):</span>
+                                        <span id="desglose-margen-bruto">€ 0.00</span>
+                                    </div>
+                                    <div class="desglose-linea" style="border-top:1px solid #ddd;padding-top:8px">
+                                        <span><strong data-i18n="pricing.fakturazioTotala">Fakturazio Totala:</strong></span>
+                                        <span id="desglose-facturacion-total"><strong>€ 0.00</strong></span>
+                                    </div>
+                                    <div class="desglose-linea">
+                                        <span data-i18n="pricing.urtekoOrduakDivision">÷ Urteko Orduak</span>
+                                        <span id="desglose-total-horas">0 h</span>
+                                    </div>
+                                    <div class="desglose-linea" style="border-top:2px solid #333;padding-top:8px">
+                                        <span><strong data-i18n="pricing.ordukoPrezioa">Orduko Prezioa:</strong></span>
+                                        <span id="desglose-precio-hora"><strong>€ 0.00</strong></span>
+                                    </div>
+                                </div>
+                            </div>
 
-            <!-- ANÁLISIS DE SUPERVIVENCIA -->
-            <div class="card">
-                <h4>📊 Análisis de Supervivencia</h4>
-                <table class="summary-table">
-                    <tr>
-                        <td>Meta de supervivencia:</td>
-                        <td class="text-right" id="meta-supervivencia">€ 0.00</td>
-                    </tr>
-                    <tr>
-                        <td>Ingresos proyectados:</td>
-                        <td class="text-right" id="ingresos-proyectados">€ 0.00</td>
-                    </tr>
-                    <tr style="border-top:1px solid #ddd">
-                        <td><strong>Brecha de supervivencia:</strong></td>
-                        <td class="text-right" id="brecha-supervivencia">€ 0.00</td>
-                    </tr>
-                </table>
+                            <div class="card">
+                                <h4 data-i18n="pricing.gomendatutakoPrezioa">Gomendatutako orduko prezioa</h4>
+                                <p id="suggested-hourly-rate" class="value">€ 0.00</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PANEL 8 - ESTRATEGIA -->
+                <div id="estrategia-sheet" class="panel" style="display:none">
+                    <h2>8 · Estrategia de Mercado y Supervivencia</h2>
+                    
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+                        <div>
+                            <div class="card">
+                                <h4>🏷️ Tu Cartera de Servicios</h4>
+                                <table class="data">
+                                    <thead>
+                                        <tr>
+                                            <th>Servicio</th>
+                                            <th>Horas</th>
+                                            <th>Precio</th>
+                                            <th>Cantidad/año</th>
+                                            <th>Ingresos</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="cartera-servicios-body">
+                                        <tr>
+                                            <td>Diseño rápido</td>
+                                            <td class="text-center">8h</td>
+                                            <td class="text-right">€ 400</td>
+                                            <td class="text-center"><input type="number" value="0" min="0" style="width:60px;text-align:center" onchange="actualizarCartera()"></td>
+                                            <td class="text-right" id="ingresos-rapido">€ 0</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Consultoría express</td>
+                                            <td class="text-center">4h</td>
+                                            <td class="text-right">€ 200</td>
+                                            <td class="text-center"><input type="number" value="0" min="0" style="width:60px;text-align:center" onchange="actualizarCartera()"></td>
+                                            <td class="text-right" id="ingresos-consultoria">€ 0</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Proyecto medio</td>
+                                            <td class="text-center">40h</td>
+                                            <td class="text-right">€ 2,000</td>
+                                            <td class="text-center"><input type="number" value="0" min="0" style="width:60px;text-align:center" onchange="actualizarCartera()"></td>
+                                            <td class="text-right" id="ingresos-medio">€ 0</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Proyecto grande</td>
+                                            <td class="text-center">80h</td>
+                                            <td class="text-right">€ 4,000</td>
+                                            <td class="text-center"><input type="number" value="0" min="0" style="width:60px;text-align:center" onchange="actualizarCartera()"></td>
+                                            <td class="text-right" id="ingresos-grande">€ 0</td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr style="border-top:2px solid #333;font-weight:bold">
+                                            <td colspan="4">TOTAL INGRESOS PROYECTADOS</td>
+                                            <td class="text-right" id="total-ingresos-cartera">€ 0</td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+
+                            <div class="card">
+                                <h4>📊 Análisis de Supervivencia</h4>
+                                <table class="summary-table">
+                                    <tr>
+                                        <td>Meta de supervivencia:</td>
+                                        <td class="text-right" id="meta-supervivencia">€ 0.00</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Ingresos proyectados:</td>
+                                        <td class="text-right" id="ingresos-proyectados">€ 0.00</td>
+                                    </tr>
+                                    <tr style="border-top:1px solid #ddd">
+                                        <td><strong>Brecha de supervivencia:</strong></td>
+                                        <td class="text-right" id="brecha-supervivencia">€ 0.00</td>
+                                    </tr>
+                                </table>
+                                
+                                <div style="margin-top:15px;padding:12px;background:#fff3cd;border-radius:6px">
+                                    <strong>🔍 Diagnóstico actual:</strong>
+                                    <span id="diagnostico-supervivencia">-</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="card">
+                                <h4>🎯 Estrategias de Posicionamiento</h4>
+                                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:10px">
+                                    <div style="text-align:center;padding:12px;background:#e8f5e8;border-radius:6px;cursor:pointer" onclick="aplicarEstrategia('premium')">
+                                        <div style="font-size:1.2em">🚀</div>
+                                        <small><strong>Premium</strong></small>
+                                        <p style="margin:5px 0;font-size:0.9em">+20% precio<br>-30% clientes</p>
+                                    </div>
+                                    <div style="text-align:center;padding:12px;background:#e3f2fd;border-radius:6px;cursor:pointer" onclick="aplicarEstrategia('equilibrado')">
+                                        <div style="font-size:1.2em">⚖️</div>
+                                        <small><strong>Equilibrado</strong></small>
+                                        <p style="margin:5px 0;font-size:0.9em">+5% precio<br>+10% clientes</p>
+                                    </div>
+                                    <div style="text-align:center;padding:12px;background:#ffecb3;border-radius:6px;cursor:pointer" onclick="aplicarEstrategia('volumen')">
+                                        <div style="font-size:1.2em">📈</div>
+                                        <small><strong>Volumen</strong></small>
+                                        <p style="margin:5px 0;font-size:0.9em">-10% precio<br>+50% clientes</p>
+                                    </div>
+                                </div>
+                                
+                                <div style="margin-top:15px;padding:10px;background:#f8f9fa;border-radius:6px">
+                                    <small><strong>Estrategia activa:</strong> <span id="estrategia-activa">Ninguna</span></small>
+                                </div>
+                            </div>
+
+                            <div class="card">
+                                <h4>📈 Métricas de Supervivencia</h4>
+                                <table class="summary-table">
+                                    <tr>
+                                        <td>Horas necesarias/mes:</td>
+                                        <td class="text-right" id="metricas-horas-mes">0h</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Precio/hora efectivo:</td>
+                                        <td class="text-right" id="metricas-precio-hora">€ 0.00</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Clientes necesarios/mes:</td>
+                                        <td class="text-right" id="metricas-clientes-mes">0</td>
+                                    </tr>
+                                    <tr style="border-top:1px solid #ddd">
+                                        <td><strong>Capacidad utilizada:</strong></td>
+                                        <td class="text-right" id="metricas-capacidad">0%</td>
+                                    </tr>
+                                </table>
+                            </div>
+
+                            <div class="card">
+                                <h4>💡 Recomendaciones Estratégicas</h4>
+                                <div id="recomendaciones-estrategicas" style="max-height:200px;overflow-y:auto">
+                                    <p style="margin:8px 0;padding:8px;background:#e8f5e8;border-radius:4px">
+                                        <strong>1. Define tu cartera:</strong> Establece cuántos proyectos de cada tipo puedes realizar.
+                                    </p>
+                                    <p style="margin:8px 0;padding:8px;background:#e3f2fd;border-radius:4px">
+                                        <strong>2. Prueba estrategias:</strong> Experimenta con diferentes enfoques de precio/volumen.
+                                    </p>
+                                    <p style="margin:8px 0;padding:8px;background:#fff3cd;border-radius:4px">
+                                        <strong>3. Analiza viabilidad:</strong> Busca combinación realista entre capacidad y mercado.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SIDEBAR -->
+            <aside class="sidebar">
+                <div class="card">
+                    <h4 data-i18n="sidebar.idioma">Hizkuntza / Idioma</h4>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                        <button class="btn small" onclick="setLanguage('eu')" style="flex: 1;">EUS</button>
+                        <button class="btn small" onclick="setLanguage('es')" style="flex: 1;">ESP</button>
+                        <button class="btn small" onclick="setLanguage('en')" style="flex: 1;">ENG</button>
+                    </div>
+                </div>
                 
-                <div style="margin-top:15px;padding:12px;background:#fff3cd;border-radius:6px">
-                    <strong>🔍 Diagnóstico actual:</strong>
-                    <span id="diagnostico-supervivencia">-</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- COLUMNA DERECHA: ESTRATEGIAS Y MÉTRICAS -->
-        <div>
-            <!-- ESTRATEGIAS DE PRECIO -->
-            <div class="card">
-                <h4>🎯 Estrategias de Posicionamiento</h4>
-                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:10px">
-                    <div style="text-align:center;padding:12px;background:#e8f5e8;border-radius:6px;cursor:pointer" onclick="aplicarEstrategia('premium')">
-                        <div style="font-size:1.2em">🚀</div>
-                        <small><strong>Premium</strong></small>
-                        <p style="margin:5px 0;font-size:0.9em">+20% precio<br>-30% clientes</p>
+                <div class="card">
+                    <h4 data-i18n="sidebar.finantzaketaGuztira">Finantzaketa Behar Totala</h4>
+                    <p class="value" id="finantzaketa-total-calculada"></p>
+                    <div class="cost-breakdown">
+                        <div class="cost-item">
+                            <span data-i18n="finance.inversionTotal">Inbertsio Totala:</span>
+                            <span id="inversion-total-sidebar"></span>
+                        </div>
+                        <div class="cost-item">
+                            <span data-i18n="finance.kutxaErrefortzua">Tesorería Kalkulatua:</span>
+                            <span id="tesoreria-sidebar"></span>
+                        </div>
+                        <div class="cost-item" style="border-top: 1px solid rgba(15,23,42,0.1); padding-top: 8px; margin-top: 8px;">
+                            <span data-i18n="finance.bazkideEkarpenGuztira"><strong>Aportación Total Socios:</strong></span>
+                            <span id="aportacion-total-sidebar"><strong></strong></span>
+                        </div>
+                        <div class="cost-item">
+                            <span style="padding-left: 10px;" data-i18n="socio.trabajador">- Socios Trabajadores:</span>
+                            <span id="aportacion-trabajadores-sidebar"></span>
+                        </div>
+                        <div class="cost-item">
+                            <span style="padding-left: 10px;" data-i18n="socio.capitalista">- Socios Capitalistas:</span>
+                            <span id="aportacion-capitalistas-sidebar"></span>
+                        </div>
+                        <div class="cost-item highlight" style="background-color: rgba(83, 12, 237, 0.05); padding: 8px; border-radius: 6px; border-left: 3px solid var(--id-primary); margin-top: 8px;">
+                            <span data-i18n="finance.finantzaketaBehar"><strong>Finantzaketa Behar Neta:</strong></span>
+                            <span id="finantzaketa-neta-sidebar"><strong></strong></span>
+                        </div>
                     </div>
-                    <div style="text-align:center;padding:12px;background:#e3f2fd;border-radius:6px;cursor:pointer" onclick="aplicarEstrategia('equilibrado')">
-                        <div style="font-size:1.2em">⚖️</div>
-                        <small><strong>Equilibrado</strong></small>
-                        <p style="margin:5px 0;font-size:0.9em">+5% precio<br>+10% clientes</p>
-                    </div>
-                    <div style="text-align:center;padding:12px;background:#ffecb3;border-radius:6px;cursor:pointer" onclick="aplicarEstrategia('volumen')">
-                        <div style="font-size:1.2em">📈</div>
-                        <small><strong>Volumen</strong></small>
-                        <p style="margin:5px 0;font-size:0.9em">-10% precio<br>+50% clientes</p>
-                    </div>
                 </div>
-                
-                <div style="margin-top:15px;padding:10px;background:#f8f9fa;border-radius:6px">
-                    <small><strong>Estrategia activa:</strong> <span id="estrategia-activa">Ninguna</span></small>
-                </div>
-            </div>
 
-            <!-- MÉTRICAS CRÍTICAS -->
-            <div class="card">
-                <h4>📈 Métricas de Supervivencia</h4>
-                <table class="summary-table">
-                    <tr>
-                        <td>Horas necesarias/mes:</td>
-                        <td class="text-right" id="metricas-horas-mes">0h</td>
-                    </tr>
-                    <tr>
-                        <td>Precio/hora efectivo:</td>
-                        <td class="text-right" id="metricas-precio-hora">€ 0.00</td>
-                    </tr>
-                    <tr>
-                        <td>Clientes necesarios/mes:</td>
-                        <td class="text-right" id="metricas-clientes-mes">0</td>
-                    </tr>
-                    <tr style="border-top:1px solid #ddd">
-                        <td><strong>Capacidad utilizada:</strong></td>
-                        <td class="text-right" id="metricas-capacidad">0%</td>
-                    </tr>
-                </table>
-            </div>
+                <div class="card">
+                    <h4 data-i18n="sidebar.facturacion">Urteko Fakturazioa Beharrezkoa</h4>
+                    <p class="value" id="total-facturacion"></p>
+                    <div class="facturacion-desglose">
+                        <div class="desglose-item">
+                            <span class="desglose-label" data-i18n="sidebar.amortizazioak">Amortizazioak:</span>
+                            <span class="desglose-value" id="total-amortizaciones-sidebar"></span>
+                        </div>
+                        <div class="desglose-item">
+                            <span class="desglose-label" data-i18n="sidebar.gastuFinkoak">Gastu Finkoak:</span>
+                            <span class="desglose-value" id="total-gastos-fijos-sidebar"></span>
+                        </div>
+                        <div class="desglose-item">
+                            <span class="desglose-label" data-i18n="sidebar.pertsonala">Pertsonala:</span>
+                            <span class="desglose-value" id="total-personal-sidebar"></span>
+                        </div>
+                        <div class="desglose-item">
+                            <span class="desglose-label" data-i18n="sidebar.finantzaketaKostuak">Finantzaketa Kostuak (Kuota Anuala):</span>
+                            <span class="desglose-value" id="costos-financieros-sidebar"></span>
+                        </div>
+                        <div class="desglose-item">
+                            <span class="desglose-label" data-i18n="sidebar.mozkinGordina">Mozkin Gordina:</span>
+                            <span class="desglose-value" id="margen-bruto-sidebar"></span>
+                        </div>
+                    </div>
+                </div>
 
-            <!-- RECOMENDACIONES ESTRATÉGICAS -->
-            <div class="card">
-                <h4>💡 Recomendaciones Estratégicas</h4>
-                <div id="recomendaciones-estrategicas" style="max-height:200px;overflow-y:auto">
-                    <p style="margin:8px 0;padding:8px;background:#e8f5e8;border-radius:4px">
-                        <strong>1. Define tu cartera:</strong> Establece cuántos proyectos de cada tipo puedes realizar.
-                    </p>
-                    <p style="margin:8px 0;padding:8px;background:#e3f2fd;border-radius:4px">
-                        <strong>2. Prueba estrategias:</strong> Experimenta con diferentes enfoques de precio/volumen.
-                    </p>
-                    <p style="margin:8px 0;padding:8px;background:#fff3cd;border-radius:4px">
-                        <strong>3. Analiza viabilidad:</strong> Busca combinación realista entre capacidad y mercado.
-                    </p>
+                <div class="card">
+                    <h4 data-i18n="sidebar.precioHora">Gomendatutako Orduko Prezioa</h4>
+                    <p id="suggested-hourly-rate-sidebar" class="value">€ 0.00</p>
+                    <p class="muted"><span data-i18n="sidebar.langileKopurua">Langile kopurua</span>: <span id="employee-count-sidebar">0</span></p>
+                    <p class="muted"><span data-i18n="sidebar.urtekoOrduak">Urteko orduak</span>: <span id="annual-hours-sidebar">0</span></p>
                 </div>
-            </div>
-        </div>
-    </div>
-</div>
-<section>
-    
-    <!-- SIDEBAR o COLUMNA DERECHA -->
-    <aside class="sidebar">
-          
-        <!-- CARTA 0: Selección de Idioma -->
-        <div class="card">
-            <h4 data-i18n="sidebar.idioma">Hizkuntza / Idioma</h4>
-            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                <button class="btn small ${currentLanguage === 'eu' ? 'primary' : 'secondary'}" onclick="setLanguage('eu')" style="flex: 1;">EUS</button>
-                <button class="btn small ${currentLanguage === 'es' ? 'primary' : 'secondary'}" onclick="setLanguage('es')" style="flex: 1;">ESP</button>
-        
-        <button class="btn small ${currentLanguage === 'en' ? 'primary' : 'secondary'}" onclick="setLanguage('en')" style="flex: 1;">ENG</button>
-            </div>
-        </div>
-            
-        <!-- CARTA 1: Financiación total -->
-        <div class="card">
-            <h4 data-i18n="sidebar.finantzaketaGuztira">Finantzaketa Behar Totala</h4>
-            <p class="value" id="finantzaketa-total-calculada"></p>
-            <div class="cost-breakdown">
-                <div class="cost-item">
-                    <span data-i18n="finance.inversionTotal">Inbertsio Totala:</span>
-                    <span id="inversion-total-sidebar"></span>
+
+                <div class="card contact-card">
+                    <h4 data-i18n="sidebar.contacto">Kontaktua</h4>
+                    <p class="muted">Josu Ayerbe Guarás, Barne Diseinuko Graduko irakaslea</p>
+                    <p class="muted">josuayerbe@idarte.eus</p>
+                    <p class="muted">Portal de Betoño, 23 · Vitoria-Gasteiz</p>
                 </div>
-                <div class="cost-item">
-                    <span data-i18n="finance.kutxaErrefortzua">Tesorería Kalkulatua:</span>
-                    <span id="tesoreria-sidebar"></span>
-                </div>
-                <div class="cost-item" style="border-top: 1px solid rgba(15,23,42,0.1); padding-top: 8px; margin-top: 8px;">
-                    <span data-i18n="finance.bazkideEkarpenGuztira"><strong>Aportación Total Socios:</strong></span>
-                    <span id="aportacion-total-sidebar"><strong></strong></span>
-                </div>
-                <div class="cost-item">
-                    <span style="padding-left: 10px;" data-i18n="socio.trabajador">- Socios Trabajadores:</span>
-                    <span id="aportacion-trabajadores-sidebar"></span>
-                </div>
-                <div class="cost-item">
-                    <span style="padding-left: 10px;" data-i18n="socio.capitalista">- Socios Capitalistas:</span>
-                    <span id="aportacion-capitalistas-sidebar"></span>
-                </div>
-                <div class="cost-item highlight" style="background-color: rgba(83, 12, 237, 0.05); padding: 8px; border-radius: 6px; border-left: 3px solid var(--id-primary); margin-top: 8px;">
-                    <span data-i18n="finance.finantzaketaBehar"><strong>Finantzaketa Behar Neta:</strong></span>
-                    <span id="finantzaketa-neta-sidebar"><strong></strong></span>
-                </div>
-            </div>
-        </div>
-        
-        <!-- CARTA 2: Facturación -->
-        <div class="card">
-            <h4 data-i18n="sidebar.facturacion">Urteko Fakturazioa Beharrezkoa</h4>
-            <p class="value" id="total-facturacion"></p>
-            <div class="facturacion-desglose">
-                <div class="desglose-item">
-                    <span class="desglose-label" data-i18n="sidebar.amortizazioak">Amortizazioak:</span>
-                    <span class="desglose-value" id="total-amortizaciones-sidebar"></span>
-                </div>
-                <div class="desglose-item">
-                    <span class="desglose-label" data-i18n="sidebar.gastuFinkoak">Gastu Finkoak:</span>
-                    <span class="desglose-value" id="total-gastos-fijos-sidebar"></span>
-                </div>
-                <div class="desglose-item">
-                    <span class="desglose-label" data-i18n="sidebar.pertsonala">Pertsonala:</span>
-                    <span class="desglose-value" id="total-personal-sidebar"></span>
-                </div>
-                <div class="desglose-item">
-                    <span class="desglose-label" data-i18n="sidebar.finantzaketaKostuak">Finantzaketa Kostuak (Kuota Anuala):</span>
-                    <span class="desglose-value" id="costos-financieros-sidebar"></span>
-                </div>
-                <div class="desglose-item">
-                    <span class="desglose-label" data-i18n="sidebar.mozkinGordina">Mozkin Gordina:</span>
-                    <span class="desglose-value" id="margen-bruto-sidebar"></span>
-                </div>
-            </div>
-        </div>
-        
-        <!-- CARTA 3: Precio/Hora -->
-        <div class="card">
-            <h4 data-i18n="sidebar.precioHora">Gomendatutako Orduko Prezioa</h4>
-            <p id="suggested-hourly-rate-sidebar" class="value">€ 0.00</p>
-            <p class="muted"><span data-i18n="sidebar.langileKopurua">Langile kopurua</span>: <span id="employee-count-sidebar">0</span></p>
-            <p class="muted"><span data-i18n="sidebar.urtekoOrduak">Urteko orduak</span>: <span id="annual-hours-sidebar">0</span></p>
-        </div>
-        
-        <!-- CARTA 5: Contacto -->
-        <div class="card contact-card">
-            <h4 data-i18n="sidebar.contacto">Kontaktua</h4>
-            <p class="muted">Josu Ayerbe Guarás, Barne Diseinuko Graduko irakaslea</p>
-            <p class="muted">josuayerbe@idarte.eus</p>
-            <p class="muted">Portal de Betoño, 23 · Vitoria-Gasteiz</p>
-        </div>
-    </aside>
-<main>
+            </aside>
+        </main>
 
         <footer class="siteinfo">
             <small data-i18n="footer.note">IDarte · Euskadiko Diseinu Eskola Publikoa — Escuela Pública de Diseño de Euskadi.</small>

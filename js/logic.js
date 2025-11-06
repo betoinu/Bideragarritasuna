@@ -428,6 +428,38 @@ function calcularIngresosCartera() {
     return total;
 }
 
+// FUNCIONES AUXILIARES PARA PANEL 8
+function calcularGastosTotalesAnuales() {
+    try {
+        const gastosOperativosText = document.getElementById('gastos-operativos-panel6')?.innerText || '0';
+        const costesFinancierosText = document.getElementById('costes-financieros-panel6')?.innerText || '0';
+        
+        const gastosOperativos = parseFloat(gastosOperativosText.replace(/[€\.]/g, '').replace(',', '.')) || 0;
+        const costesFinancieros = parseFloat(costesFinancierosText.replace(/[€\.]/g, '').replace(',', '.')) || 0;
+        
+        return gastosOperativos + costesFinancieros;
+    } catch (error) {
+        console.warn('⚠️ Error calculando gastos totales:', error);
+        return 0;
+    }
+}
+
+function calcularIngresosCartera() {
+    let total = 0;
+    try {
+        const inputs = document.querySelectorAll('#cartera-servicios-body input[type="number"]');
+        const precios = [400, 200, 2000, 4000];
+        
+        inputs.forEach((input, index) => {
+            const cantidad = parseInt(input.value) || 0;
+            total += cantidad * precios[index];
+        });
+    } catch (error) {
+        console.warn('⚠️ Error calculando ingresos cartera:', error);
+    }
+    return total;
+}
+
 function calculatePricing() {
     console.log("🔍 INICIANDO calculatePricing()...");  
     
@@ -525,6 +557,17 @@ function calculatePricing() {
         { id: 'metricas-capacidad', value: Math.min(((costesTotales / precioHora / 12) / (personalProductivo * 133)) * 100, 100).toFixed(0) + '%' }, // Capacidad utilizada (133h/mes por empleado)
         { id: 'total-ingresos-cartera', value: fmt(calcularIngresosCartera()) }, // Total ingresos cartera
         { id: 'estrategia-activa', value: 'Ninguna' }, // Estrategia activa
+
+      // 🆕 PANEL 8 - BIDERAGARRITASUN UPDATES - IDs ACTUALIZADOS
+        { id: 'meta-supervivencia', value: fmt(facturacionNecesaria / 12) },
+        { id: 'ingresos-proyectados', value: fmt(calcularIngresosCartera()) },
+        { id: 'brecha-supervivencia', value: fmt(calcularIngresosCartera() - (facturacionNecesaria / 12)) },
+        { id: 'metricas-horas-mes', value: Math.ceil((costesTotales / precioHora) / 12) + 'h' },
+        { id: 'metricas-precio-hora', value: fmt(precioHora) },
+        { id: 'metricas-clientes-mes', value: Math.ceil(((costesTotales / precioHora) / 12) / 40) },
+        { id: 'metricas-capacidad', value: Math.min(((costesTotales / precioHora / 12) / ((personalProductivo * 1600) / 12)) * 100, 100).toFixed(0) + '%' },
+        { id: 'total-ingresos-cartera', value: '€ ' + calcularIngresosCartera().toLocaleString() },
+        { id: 'estrategia-activa', value: 'Ninguna' },
       
         // Sidebar
         { id: 'suggested-hourly-rate-sidebar', value: fmt(precioHora) },

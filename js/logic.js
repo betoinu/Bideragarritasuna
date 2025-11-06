@@ -415,6 +415,18 @@ function actualizarUImetricas(meta, horas, precio, clientes, capacidad, ingresos
     }
 }
 
+function calcularIngresosCartera() {
+    let total = 0;
+    const inputs = document.querySelectorAll('#cartera-servicios-body input[type="number"]');
+    const precios = [400, 200, 2000, 4000]; // Precios fijos de los servicios
+    
+    inputs.forEach((input, index) => {
+        const cantidad = parseInt(input.value) || 0;
+        total += cantidad * precios[index];
+    });
+    
+    return total;
+}
 
 function calculatePricing() {
     console.log("🔍 INICIANDO calculatePricing()...");  
@@ -502,6 +514,17 @@ function calculatePricing() {
         { id: 'gutxieneko-fakturazioa', value: fmt(facturacionNecesaria) },
         { id: 'equilibrio-puntua', value: Math.ceil(costesTotales / precioHora) + ' ordu' },
         { id: 'aurreikusitako-mozkina', value: fmt(beneficioNeto) },
+
+      // 🆕 PANEL 8 - BIDERAGARRITASUN UPDATES
+        { id: 'meta-supervivencia', value: fmt(facturacionNecesaria / 12) }, // Meta mensual de supervivencia
+        { id: 'ingresos-proyectados', value: fmt(calcularIngresosCartera() / 12) }, // Ingresos proyectados mensuales
+        { id: 'brecha-supervivencia', value: fmt((calcularIngresosCartera() - facturacionNecesaria) / 12) }, // Brecha mensual
+        { id: 'metricas-horas-mes', value: Math.ceil(costesTotales / precioHora / 12) + 'h' }, // Horas necesarias por mes
+        { id: 'metricas-precio-hora', value: fmt(precioHora) }, // Precio/hora efectivo
+        { id: 'metricas-clientes-mes', value: Math.ceil((costesTotales / precioHora / 12) / 40) }, // Clientes necesarios por mes (asumiendo 40h por cliente)
+        { id: 'metricas-capacidad', value: Math.min(((costesTotales / precioHora / 12) / (personalProductivo * 133)) * 100, 100).toFixed(0) + '%' }, // Capacidad utilizada (133h/mes por empleado)
+        { id: 'total-ingresos-cartera', value: fmt(calcularIngresosCartera()) }, // Total ingresos cartera
+        { id: 'estrategia-activa', value: 'Ninguna' }, // Estrategia activa
       
         // Sidebar
         { id: 'suggested-hourly-rate-sidebar', value: fmt(precioHora) },

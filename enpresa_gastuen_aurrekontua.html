@@ -511,99 +511,99 @@
         </div>
     </div>
 </div>
-                
-<!-- SIDEBAR o COLUMNA DERECHA -->
-<aside class="sidebar">
-  
-<!-- CARTA 0: Selección de Idioma -->
-<div class="card">
-    <h4 data-i18n="sidebar.idioma">Hizkuntza / Idioma</h4>
-    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-        <button class="btn small ${currentLanguage === 'eu' ? 'primary' : 'secondary'}" onclick="setLanguage('eu')" style="flex: 1;">EUS</button>
-        <button class="btn small ${currentLanguage === 'es' ? 'primary' : 'secondary'}" onclick="setLanguage('es')" style="flex: 1;">ESP</button>
-
-<button class="btn small ${currentLanguage === 'en' ? 'primary' : 'secondary'}" onclick="setLanguage('en')" style="flex: 1;">ENG</button>
-    </div>
-</div>
+<section>
     
-<!-- CARTA 1: Financiación total -->
-<div class="card">
-    <h4 data-i18n="sidebar.finantzaketaGuztira">Finantzaketa Behar Totala</h4>
-    <p class="value" id="finantzaketa-total-calculada"></p>
-    <div class="cost-breakdown">
-        <div class="cost-item">
-            <span data-i18n="finance.inversionTotal">Inbertsio Totala:</span>
-            <span id="inversion-total-sidebar"></span>
+    <!-- SIDEBAR o COLUMNA DERECHA -->
+    <aside class="sidebar">
+          
+        <!-- CARTA 0: Selección de Idioma -->
+        <div class="card">
+            <h4 data-i18n="sidebar.idioma">Hizkuntza / Idioma</h4>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <button class="btn small ${currentLanguage === 'eu' ? 'primary' : 'secondary'}" onclick="setLanguage('eu')" style="flex: 1;">EUS</button>
+                <button class="btn small ${currentLanguage === 'es' ? 'primary' : 'secondary'}" onclick="setLanguage('es')" style="flex: 1;">ESP</button>
+        
+        <button class="btn small ${currentLanguage === 'en' ? 'primary' : 'secondary'}" onclick="setLanguage('en')" style="flex: 1;">ENG</button>
+            </div>
         </div>
-        <div class="cost-item">
-            <span data-i18n="finance.kutxaErrefortzua">Tesorería Kalkulatua:</span>
-            <span id="tesoreria-sidebar"></span>
+            
+        <!-- CARTA 1: Financiación total -->
+        <div class="card">
+            <h4 data-i18n="sidebar.finantzaketaGuztira">Finantzaketa Behar Totala</h4>
+            <p class="value" id="finantzaketa-total-calculada"></p>
+            <div class="cost-breakdown">
+                <div class="cost-item">
+                    <span data-i18n="finance.inversionTotal">Inbertsio Totala:</span>
+                    <span id="inversion-total-sidebar"></span>
+                </div>
+                <div class="cost-item">
+                    <span data-i18n="finance.kutxaErrefortzua">Tesorería Kalkulatua:</span>
+                    <span id="tesoreria-sidebar"></span>
+                </div>
+                <div class="cost-item" style="border-top: 1px solid rgba(15,23,42,0.1); padding-top: 8px; margin-top: 8px;">
+                    <span data-i18n="finance.bazkideEkarpenGuztira"><strong>Aportación Total Socios:</strong></span>
+                    <span id="aportacion-total-sidebar"><strong></strong></span>
+                </div>
+                <div class="cost-item">
+                    <span style="padding-left: 10px;" data-i18n="socio.trabajador">- Socios Trabajadores:</span>
+                    <span id="aportacion-trabajadores-sidebar"></span>
+                </div>
+                <div class="cost-item">
+                    <span style="padding-left: 10px;" data-i18n="socio.capitalista">- Socios Capitalistas:</span>
+                    <span id="aportacion-capitalistas-sidebar"></span>
+                </div>
+                <div class="cost-item highlight" style="background-color: rgba(83, 12, 237, 0.05); padding: 8px; border-radius: 6px; border-left: 3px solid var(--id-primary); margin-top: 8px;">
+                    <span data-i18n="finance.finantzaketaBehar"><strong>Finantzaketa Behar Neta:</strong></span>
+                    <span id="finantzaketa-neta-sidebar"><strong></strong></span>
+                </div>
+            </div>
         </div>
-        <div class="cost-item" style="border-top: 1px solid rgba(15,23,42,0.1); padding-top: 8px; margin-top: 8px;">
-            <span data-i18n="finance.bazkideEkarpenGuztira"><strong>Aportación Total Socios:</strong></span>
-            <span id="aportacion-total-sidebar"><strong></strong></span>
+        
+        <!-- CARTA 2: Facturación -->
+        <div class="card">
+            <h4 data-i18n="sidebar.facturacion">Urteko Fakturazioa Beharrezkoa</h4>
+            <p class="value" id="total-facturacion"></p>
+            <div class="facturacion-desglose">
+                <div class="desglose-item">
+                    <span class="desglose-label" data-i18n="sidebar.amortizazioak">Amortizazioak:</span>
+                    <span class="desglose-value" id="total-amortizaciones-sidebar"></span>
+                </div>
+                <div class="desglose-item">
+                    <span class="desglose-label" data-i18n="sidebar.gastuFinkoak">Gastu Finkoak:</span>
+                    <span class="desglose-value" id="total-gastos-fijos-sidebar"></span>
+                </div>
+                <div class="desglose-item">
+                    <span class="desglose-label" data-i18n="sidebar.pertsonala">Pertsonala:</span>
+                    <span class="desglose-value" id="total-personal-sidebar"></span>
+                </div>
+                <div class="desglose-item">
+                    <span class="desglose-label" data-i18n="sidebar.finantzaketaKostuak">Finantzaketa Kostuak (Kuota Anuala):</span>
+                    <span class="desglose-value" id="costos-financieros-sidebar"></span>
+                </div>
+                <div class="desglose-item">
+                    <span class="desglose-label" data-i18n="sidebar.mozkinGordina">Mozkin Gordina:</span>
+                    <span class="desglose-value" id="margen-bruto-sidebar"></span>
+                </div>
+            </div>
         </div>
-        <div class="cost-item">
-            <span style="padding-left: 10px;" data-i18n="socio.trabajador">- Socios Trabajadores:</span>
-            <span id="aportacion-trabajadores-sidebar"></span>
+        
+        <!-- CARTA 3: Precio/Hora -->
+        <div class="card">
+            <h4 data-i18n="sidebar.precioHora">Gomendatutako Orduko Prezioa</h4>
+            <p id="suggested-hourly-rate-sidebar" class="value">€ 0.00</p>
+            <p class="muted"><span data-i18n="sidebar.langileKopurua">Langile kopurua</span>: <span id="employee-count-sidebar">0</span></p>
+            <p class="muted"><span data-i18n="sidebar.urtekoOrduak">Urteko orduak</span>: <span id="annual-hours-sidebar">0</span></p>
         </div>
-        <div class="cost-item">
-            <span style="padding-left: 10px;" data-i18n="socio.capitalista">- Socios Capitalistas:</span>
-            <span id="aportacion-capitalistas-sidebar"></span>
+        
+        <!-- CARTA 5: Contacto -->
+        <div class="card contact-card">
+            <h4 data-i18n="sidebar.contacto">Kontaktua</h4>
+            <p class="muted">Josu Ayerbe Guarás, Barne Diseinuko Graduko irakaslea</p>
+            <p class="muted">josuayerbe@idarte.eus</p>
+            <p class="muted">Portal de Betoño, 23 · Vitoria-Gasteiz</p>
         </div>
-        <div class="cost-item highlight" style="background-color: rgba(83, 12, 237, 0.05); padding: 8px; border-radius: 6px; border-left: 3px solid var(--id-primary); margin-top: 8px;">
-            <span data-i18n="finance.finantzaketaBehar"><strong>Finantzaketa Behar Neta:</strong></span>
-            <span id="finantzaketa-neta-sidebar"><strong></strong></span>
-        </div>
-    </div>
-</div>
-
-<!-- CARTA 2: Facturación -->
-<div class="card">
-    <h4 data-i18n="sidebar.facturacion">Urteko Fakturazioa Beharrezkoa</h4>
-    <p class="value" id="total-facturacion"></p>
-    <div class="facturacion-desglose">
-        <div class="desglose-item">
-            <span class="desglose-label" data-i18n="sidebar.amortizazioak">Amortizazioak:</span>
-            <span class="desglose-value" id="total-amortizaciones-sidebar"></span>
-        </div>
-        <div class="desglose-item">
-            <span class="desglose-label" data-i18n="sidebar.gastuFinkoak">Gastu Finkoak:</span>
-            <span class="desglose-value" id="total-gastos-fijos-sidebar"></span>
-        </div>
-        <div class="desglose-item">
-            <span class="desglose-label" data-i18n="sidebar.pertsonala">Pertsonala:</span>
-            <span class="desglose-value" id="total-personal-sidebar"></span>
-        </div>
-        <div class="desglose-item">
-            <span class="desglose-label" data-i18n="sidebar.finantzaketaKostuak">Finantzaketa Kostuak (Kuota Anuala):</span>
-            <span class="desglose-value" id="costos-financieros-sidebar"></span>
-        </div>
-        <div class="desglose-item">
-            <span class="desglose-label" data-i18n="sidebar.mozkinGordina">Mozkin Gordina:</span>
-            <span class="desglose-value" id="margen-bruto-sidebar"></span>
-        </div>
-    </div>
-</div>
-
-<!-- CARTA 3: Precio/Hora -->
-<div class="card">
-    <h4 data-i18n="sidebar.precioHora">Gomendatutako Orduko Prezioa</h4>
-    <p id="suggested-hourly-rate-sidebar" class="value">€ 0.00</p>
-    <p class="muted"><span data-i18n="sidebar.langileKopurua">Langile kopurua</span>: <span id="employee-count-sidebar">0</span></p>
-    <p class="muted"><span data-i18n="sidebar.urtekoOrduak">Urteko orduak</span>: <span id="annual-hours-sidebar">0</span></p>
-</div>
-
-<!-- CARTA 5: Contacto -->
-<div class="card contact-card">
-    <h4 data-i18n="sidebar.contacto">Kontaktua</h4>
-    <p class="muted">Josu Ayerbe Guarás, Barne Diseinuko Graduko irakaslea</p>
-    <p class="muted">josuayerbe@idarte.eus</p>
-    <p class="muted">Portal de Betoño, 23 · Vitoria-Gasteiz</p>
-</div>
-
-</main>
-</aside>    
+    </aside>
+<main>
 
         <footer class="siteinfo">
             <small data-i18n="footer.note">IDarte · Euskadiko Diseinu Eskola Publikoa — Escuela Pública de Diseño de Euskadi.</small>

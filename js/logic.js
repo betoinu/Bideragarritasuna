@@ -500,14 +500,50 @@ function calcularIngresosCartera() {
     return total;
 }
 
+// FUNCIONES AUXILIARES PARA CÁLCULOS DEL PANEL 8
+function calcularHorasDiarias(costesTotales, precioHora, personalProductivo) {
+    if (!precioHora || precioHora === 0 || !personalProductivo || personalProductivo === 0) return '0 h/eguneko';
+    const horasMensuales = (costesTotales / precioHora) / 12;
+    const horasDiarias = horasMensuales / personalProductivo / 21;
+    return Math.ceil(horasDiarias) + ' h/eguneko';
+}
+
+function calcularClientesMensuales(costesTotales, precioHora) {
+    if (!precioHora || precioHora === 0) return '0';
+    const horasMensuales = (costesTotales / precioHora) / 12;
+    const clientes = horasMensuales / 40;
+    return Math.ceil(clientes);
+}
+
+function calcularCapacidadUtilizada(costesTotales, precioHora, personalProductivo, horasPorEmpleado) {
+    if (!precioHora || precioHora === 0 || !personalProductivo || personalProductivo === 0) return '0%';
+    const horasMensuales = (costesTotales / precioHora) / 12;
+    const capacidadMaxima = (personalProductivo * horasPorEmpleado) / 12;
+    const capacidad = (horasMensuales / capacidadMaxima) * 100;
+    return Math.min(capacidad, 100).toFixed(0) + '%';
+}
+
+function calcularIngresosCartera() {
+    let total = 0;
+    try {
+        const inputs = document.querySelectorAll('#cartera-servicios-body input[type="number"]');
+        const precios = [400, 200, 2000, 4000];
+        
+        if (inputs.length === 0) return 0;
+        
+        inputs.forEach((input, index) => {
+            const cantidad = parseInt(input.value) || 0;
+            total += cantidad * precios[index];
+        });
+    } catch (error) {
+        console.warn('⚠️ Error calculando ingresos cartera:', error);
+        return 0;
+    }
+    return total;
+}
+
 function calculatePricing() {
     console.log("🔍 INICIANDO calculatePricing()...");  
-
-      // Verificar que precioHora no sea cero
-    if (precioHora === 0) {
-        console.warn('⚠️ Precio/hora es cero, revisar cálculos');
-        precioHora = 1; // Valor mínimo para evitar divisiones por cero
-    }
   
     // Control de reintentos
     if (!window.pricingRetryCount) window.pricingRetryCount = 0;
@@ -548,10 +584,16 @@ function calculatePricing() {
     const facturacionNecesaria = costesTotales + margenBruto;
     const precioHora = totalHours > 0 ? facturacionNecesaria / totalHours : 0;
 
+        // Verificar que precioHora no sea cero
+    if (precioHora === 0) {
+        console.warn('⚠️ Precio/hora es cero, revisar cálculos');
+        precioHora = 1; // Valor mínimo para evitar divisiones por cero
+    }
+
     const impuestos = margenBruto * (corporateTax / 100);
     const beneficioNeto = margenBruto - impuestos;
 
-    console.log("📈 Datos calculados:", {
+        console.log("📈 Datos calculados:", {
         personalTotal: state.personnel.length,
         personalProductivo: employeeCount,
         costesOperativos, 
@@ -560,109 +602,98 @@ function calculatePricing() {
         precioHora
     });
 
-    // ACTUALIZAR TODOS LOS ELEMENTOS
+    // ACTUALIZACIONES DE LA INTERFAZ
     const updates = [
-        { id: 'contador-personal-productivo', value: employeeCount },
-        // Panel 6 - Financiación
-        { id: 'total-socios-display', value: fmt(financiacion.aportacionesTotales) },
-        { id: 'cantidad-financiar', value: fmt(financiacion.prestamoNecesario) },
-        { id: 'cuota-anual-display', value: fmt(financiacion.cuotaAnual) },
+        // PANEL 7 - PREZIOA
+        { id: 'contador-personal-productivo', value: employeeCount.toString() },
+        { id: 'total-socios-display', value: fmt(financiacion.totalAportadoSocios) },
+        { id: 'cantidad-financiar', value: fmt(financiacion.necesidadTotal) },
+        { id: 'cuota-anual-display', value: fmt(costesFinancieros) },
         { id: 'gastos-operativos-panel6', value: fmt(costesOperativos) },
         { id: 'costes-financieros-panel6', value: fmt(costesFinancieros) },
         { id: 'gastos-totales-panel6', value: fmt(costesTotales) },
-        
-        // Panel 7 - Pricing
+
+        // DESGLOSE PEDAGÓGICO
         { id: 'desglose-gastos-operativos', value: fmt(costesOperativos) },
         { id: 'desglose-costes-financieros', value: fmt(costesFinancieros) },
         { id: 'desglose-gastos-totales', value: fmt(costesTotales) },
-        { id: 'desglose-total-horas', value: totalHours.toLocaleString() },
-        { id: 'desglose-porcentaje-margen', value: margin },
+        { id: 'desglose-total-horas', value: totalHours.toString() },
+        { id: 'desglose-porcentaje-margen', value: margin.toString() },
         { id: 'desglose-margen-bruto', value: fmt(margenBruto) },
         { id: 'desglose-facturacion-total', value: fmt(facturacionNecesaria) },
         { id: 'desglose-precio-hora', value: fmt(precioHora) },
+
+        // RESULTADOS PRINCIPALES
         { id: 'suggested-hourly-rate', value: fmt(precioHora) },
         { id: 'margen-bruto-panel7', value: fmt(margenBruto) },
         { id: 'expected-net-profit', value: fmt(beneficioNeto) },
-        { id: 'contador-personal-productivo', value: employeeCount },
-        { id: 'annual-hours-sidebar', value: totalHours.toLocaleString() },
-        { id: 'employee-count-sidebar', value: employeeCount },
 
-      // 🆕 PANEL 8 - BIDERAGARRITASUN UPDATES
-        { id: 'meta-supervivencia', value: fmt(facturacionNecesaria / 12) },
+        // SIDEBAR
+        { id: 'contador-personal-productivo', value: employeeCount.toString() },
+        { id: 'annual-hours-sidebar', value: totalHours.toString() },
+        { id: 'employee-count-sidebar', value: employeeCount.toString() },
+
+        // 🆕 PANEL 8 - BIDERAGARRITASUN UPDATES
+        { id: 'meta-supervivencia', value: fmt(costesTotales / 12) },
         { id: 'ingresos-proyectados', value: fmt(calcularIngresosCartera()) },
-        { id: 'brecha-supervivencia', value: fmt(calcularIngresosCartera() - (facturacionNecesaria / 12)) },
-        { id: 'metricas-horas-mes', value: (() => {
-              const horasMensuales = (costesTotales / precioHora) / 12;
-              const horasDiarias = horasMensuales / personalProductivo / 21;
-              return isNaN(horasDiarias) ? '0 h/eguneko' : Math.ceil(horasDiarias) + ' h/eguneko';
-          })() },
+        { id: 'brecha-supervivencia', value: fmt(calcularIngresosCartera() - (costesTotales / 12)) },
+        { id: 'metricas-horas-mes', value: calcularHorasDiarias(costesTotales, precioHora, employeeCount) },
         { id: 'metricas-precio-hora', value: fmt(precioHora) },
-        
-        { id: 'metricas-clientes-mes', value: (() => {
-            const horasMensuales = (costesTotales / precioHora) / 12;
-            const clientes = horasMensuales / 40;
-            return isNaN(clientes) ? '0' : Math.ceil(clientes);
-        })() },
-        
-        { id: 'metricas-capacidad', value: (() => {
-            const horasMensuales = (costesTotales / precioHora) / 12;
-            const capacidadMaxima = (personalProductivo * 1600) / 12;
-            const capacidad = (horasMensuales / capacidadMaxima) * 100;
-            return isNaN(capacidad) ? '0%' : Math.min(capacidad, 100).toFixed(0) + '%';
-        })() },
-        
+        { id: 'metricas-clientes-mes', value: calcularClientesMensuales(costesTotales, precioHora) },
+        { id: 'metricas-capacidad', value: calcularCapacidadUtilizada(costesTotales, precioHora, employeeCount, annualHours) },
         { id: 'total-ingresos-cartera', value: '€ ' + calcularIngresosCartera().toLocaleString() },
         { id: 'estrategia-activa', value: 'Ninguna' },
 
-      // 🆕 PANEL 8 - BIDERAGARRITASUN UPDATES - IDs ACTUALIZADOS
-        { id: 'meta-supervivencia', value: fmt(facturacionNecesaria / 12) },
-        { id: 'ingresos-proyectados', value: fmt(calcularIngresosCartera()) },
-        { id: 'brecha-supervivencia', value: fmt(calcularIngresosCartera() - (facturacionNecesaria / 12)) },
-        { id: 'metricas-horas-mes', value: Math.ceil((costesTotales / precioHora) / 12) + 'h' },
-        { id: 'metricas-precio-hora', value: fmt(precioHora) },
-        { id: 'metricas-clientes-mes', value: Math.ceil(((costesTotales / precioHora) / 12) / 40) },
-        { id: 'metricas-capacidad', value: Math.min(((costesTotales / precioHora / 12) / ((personalProductivo * 1600) / 12)) * 100, 100).toFixed(0) + '%' },
-        { id: 'total-ingresos-cartera', value: '€ ' + calcularIngresosCartera().toLocaleString() },
-        { id: 'estrategia-activa', value: 'Ninguna' },
-      
-        // Sidebar
+        // SIDEBAR CONTINUACIÓN
         { id: 'suggested-hourly-rate-sidebar', value: fmt(precioHora) },
-        { id: 'employee-count-sidebar', value: employeeCount },
-        { id: 'annual-hours-sidebar', value: totalHours.toLocaleString() },
+        { id: 'employee-count-sidebar', value: employeeCount.toString() },
+        { id: 'annual-hours-sidebar', value: totalHours.toString() },
         { id: 'total-facturacion', value: fmt(facturacionNecesaria) },
-        { id: 'finantzaketa-total-calculada', value: fmt(financiacion.prestamoNecesario) },
-        { id: 'inversion-total-sidebar', value: fmt(financiacion.inversiones) },
+
+        // FINANZAS SIDEBAR
+        { id: 'finantzaketa-total-calculada', value: fmt(financiacion.necesidadTotal) },
+        { id: 'inversion-total-sidebar', value: fmt(financiacion.inversionTotal) },
         { id: 'tesoreria-sidebar', value: fmt(financiacion.tesoreria) },
-        { id: 'aportacion-total-sidebar', value: fmt(financiacion.aportacionesTotales) },
-        { id: 'aportacion-trabajadores-sidebar', value: fmt(financiacion.aportacionesTrabajadores) },
-        { id: 'aportacion-capitalistas-sidebar', value: fmt(financiacion.aportacionesCapitalistas) },
-        { id: 'finantzaketa-neta-sidebar', value: fmt(financiacion.prestamoNecesario) },
-      
-        // Nuevos IDs para el card de facturación con amortizaciones
-        { id: 'total-amortizaciones-sidebar', value: fmt(calculateTotalAmortizations()) },
-        { id: 'total-gastos-fijos-sidebar', value: fmt(calculateTotalRecurring()) },
-        { id: 'total-personal-sidebar', value: fmt(calculateTotalPersonnel()) },
+        { id: 'aportacion-total-sidebar', value: fmt(financiacion.totalAportadoSocios) },
+        { id: 'aportacion-trabajadores-sidebar', value: fmt(financiacion.totalTrabajadores) },
+        { id: 'aportacion-capitalistas-sidebar', value: fmt(financiacion.totalCapitalistas) },
+        { id: 'finantzaketa-neta-sidebar', value: fmt(financiacion.necesidadTotal - financiacion.totalAportadoSocios) },
+
+        // DESGLOSE COSTES SIDEBAR
+        { id: 'total-amortizaciones-sidebar', value: fmt(financiacion.totalAmortizaciones) },
+        { id: 'total-gastos-fijos-sidebar', value: fmt(financiacion.totalGastosFijos) },
+        { id: 'total-personal-sidebar', value: fmt(financiacion.totalPersonal) },
         { id: 'costos-financieros-sidebar', value: fmt(costesFinancieros) },
         { id: 'margen-bruto-sidebar', value: fmt(margenBruto) },
-              
-        // Resumen financiero
-        { id: 'total-inversion', value: fmt(financiacion.inversiones) },
+
+        // PANEL 6 - FINANTZAKETA
+        { id: 'total-inversion', value: fmt(financiacion.inversionTotal) },
         { id: 'tesoreria-calculada', value: fmt(financiacion.tesoreria) },
-        { id: 'necesidad-total', value: fmt(financiacion.necesidadesTotales) },
-        { id: 'total-aportacion-socios', value: fmt(financiacion.aportacionesTotales) },
-        { id: 'total-trabajadores', value: fmt(financiacion.aportacionesTrabajadores) },
-        { id: 'total-capitalistas', value: fmt(financiacion.aportacionesCapitalistas) },
-        { id: 'num-socios', value: state.finance.socios.length }
+        { id: 'necesidad-total', value: fmt(financiacion.necesidadTotal) },
+        { id: 'total-aportacion-socios', value: fmt(financiacion.totalAportadoSocios) },
+        { id: 'total-trabajadores', value: fmt(financiacion.totalTrabajadores) },
+        { id: 'total-capitalistas', value: fmt(financiacion.totalCapitalistas) },
+        { id: 'num-socios', value: state.socios.length.toString() }
     ];
 
-    let updatedCount = 0;
-    updates.forEach(({ id, value }) => {
-        if (updateElement(id, value)) updatedCount++;
+    // APLICAR TODAS LAS ACTUALIZACIONES
+    updates.forEach(update => {
+        if (update.id && update.value !== undefined && update.value !== null) {
+            updateElement(update.id, update.value);
+        }
     });
-  
-    console.log(`✅ calculatePricing() completado - Personal: ${state.personnel.length} total, ${employeeCount} productivos`);
-    
-    return { facturacionNecesaria, precioHora, margenBruto, beneficioNeto };
+
+    console.log("✅ calculatePricing() completado - Personal:", 
+        state.personnel.length, "total,", employeeCount, "productivos");
+
+    return {
+        facturacionNecesaria,
+        precioHora,
+        margenBruto,
+        beneficioNeto,
+        personalProductivo: employeeCount,
+        horasTotales: totalHours
+    };
 }
 
 function updateRightSummary() {

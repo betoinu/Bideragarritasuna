@@ -566,9 +566,9 @@ function calculatePricing() {
         { id: 'employee-count-sidebar', value: employeeCount.toString() },
 
         // 🆕 PANEL 8 - BIDERAGARRITASUN UPDATES
-        { id: 'meta-supervivencia', value: fmt(costesTotales / 12) },
+        { id: 'meta-supervivencia', value: fmt(costesTotales) },
         { id: 'ingresos-proyectados', value: fmt(calculatePortfolioRevenue()) },
-        { id: 'brecha-supervivencia', value: fmt(calculatePortfolioRevenue - (costesTotales / 12)) },
+        { id: 'brecha-supervivencia', value: fmt(calculatePortfolioRevenue - costesTotales) },
         { id: 'metricas-horas-mes', value: calculateDailyHours(costesTotales, precioHora, employeeCount) },
         { id: 'metricas-precio-hora', value: fmt(precioHora) },
         { id: 'metricas-clientes-mes', value: calculateMonthlyClients(costesTotales, precioHora) },

@@ -399,7 +399,7 @@ function actualizarUImetricas(meta, horas, precio, clientes, capacidad, ingresos
     }
 }
 
-function calculatePortfolioRevenue {)
+function calculatePortfolioRevenue() {
     let total = 0;
     try {
         const inputs = document.querySelectorAll('#cartera-servicios-body input[type="number"]');

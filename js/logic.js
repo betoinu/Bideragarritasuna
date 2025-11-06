@@ -578,7 +578,7 @@ function calculatePricing() {
     // ACTUALIZACIONES DE LA INTERFAZ
     const updates = [
         // PANEL 2 - PERTSONALA
-        { id: 'metricas-horas-mes', value: `${Math.round(horasSemanalesPorEmpleado)}h/asteko` },
+        {{ id: 'metricas-horas-mes', value: `${Math.round(horasSemanalesPorEmpleadoCalculada)}h/asteko` },
         { id: 'metricas-capacidad', value: `${Math.min(capacidadUtilizada, 100).toFixed(0)}%` },
         
         // PANEL 7 - PREZIOA
@@ -1157,7 +1157,7 @@ const diagnostico = document.getElementById('diagnostico-supervivencia');
     updateElement('metricas-horas-mes', `${Math.ceil(horasMensuales)}h`);
     updateElement('metricas-precio-hora', fmt(precioHoraEfectivo));
     updateElement('metricas-clientes-mes', Math.ceil(clientesMensuales));
-    updateElement('metricas-capacidad', `${Math.round(capacidadUtilizada)}%`);
+    updateElement('metricas-capacidad', `${Math.round(capacidadUtilizadaFinal)}%`);
 };
 
 window.aplicarEstrategia = function(tipo) {

@@ -601,7 +601,11 @@ function calculatePricing() {
         // PANEL 6 - FINANTZAKETA
         { id: 'total-inversion', value: fmt(financiacion.inversionTotal) },
         { id: 'tesoreria-calculada', value: fmt(financiacion.tesoreria) },
-        { id: 'necesidad-total', value: fmt(financiacion.necesidadTotal) },
+        { id: 'necesidad-total', value: fmt(financiacion.necesidadesTotales) },
+        { id: 'finantzaketa-total-calculada', value: fmt(financiacion.necesidadesTotales) },
+        { id: 'finantzaketa-behar-totala', value: fmt(financiacion.necesidadesTotales) },
+        { id: 'finantzaketa-total', value: fmt(financiacion.necesidadesTotales) },
+        { id: 'behar-totala', value: fmt(financiacion.necesidadesTotales) },
         { id: 'total-aportacion-socios', value: fmt(financiacion.totalAportadoSocios || 0) },
         { id: 'total-trabajadores', value: fmt(financiacion.totalTrabajadores || 0) },
         { id: 'total-capitalistas', value: fmt(financiacion.totalCapitalistas || 0) }

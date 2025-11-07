@@ -657,3 +657,90 @@ img {
   background: #f8f9fa;
   z-index: 10;
 }
+/* ===== MEJORAS PARA LA TABLA DE DOBLE COLUMNA ===== */
+.table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    font-size: 0.95rem;
+}
+
+.table th {
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    padding: 18px 16px;
+    font-weight: 600;
+    text-align: left;
+    border-bottom: 3px solid #2980b9;
+    color: white;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.table td {
+    padding: 16px 14px;
+    border-bottom: 1px solid #ecf0f1;
+    vertical-align: middle;
+    color: #2c3e50;
+    transition: all 0.3s ease;
+}
+
+.table tbody tr:hover {
+    background-color: #f8f9fa;
+    transform: translateX(5px);
+}
+
+/* Distribución de columnas optimizada */
+.col-nombre { min-width: 200px; width: 25%; }
+.col-precio { width: 15%; }
+.col-horas { width: 12%; }
+.col-cantidad { width: 15%; }
+.col-ingresos { width: 18%; }
+.col-acciones { width: 15%; }
+
+/* Mejoras para inputs */
+.input-servicio {
+    padding: 10px 12px;
+    border: 1px solid #bdc3c7;
+    border-radius: 6px;
+    width: 100%;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.input-servicio:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+    transform: scale(1.02);
+}
+
+/* Botones de acción */
+.btn-eliminar-servicio {
+    background: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-eliminar-servicio:hover {
+    background: #c0392b;
+    transform: scale(1.1);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .grid-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .col-nombre { min-width: 150px; }
+}

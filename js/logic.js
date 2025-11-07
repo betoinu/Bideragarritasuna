@@ -1310,9 +1310,13 @@ window.updatePortfolio = function() {
 function actualizarAnalisisMetricas() {
     // Obtener valores actuales
     const horasSemanales = parseInt(document.getElementById('metricas-horas-mes')?.textContent) || 0;
-    const precioHora = parseFloat(document.getElementById('metricas-precio-hora')?.textContent.replace('€', '').replace(',', '.')) || 0;
+    const precioHoraEfectivo = parseFloat(document.getElementById('metricas-precio-hora')?.textContent.replace('€', '').replace(',', '.')) || 0;
+    const precioHoraPromedio = parseFloat(document.getElementById('resumen-precio-hora')?.textContent.replace('€', '').replace(',', '.')) || 0;
     const clientesMensuales = parseInt(document.getElementById('metricas-clientes-mes')?.textContent) || 0;
     const capacidad = parseInt(document.getElementById('metricas-capacidad')?.textContent) || 0;
+    
+    // Actualizar métrica de precio promedio en la card
+    updateElement('metricas-precio-promedio', `€ ${precioHoraPromedio.toFixed(2)}`);
     
     // ANÁLISIS DE HORAS SEMANALES
     let analisisHoras = "";
@@ -1334,25 +1338,43 @@ function actualizarAnalisisMetricas() {
         colorHoras = "#ca8a04";
     }
     
-    // ANÁLISIS DE PRECIO/HORA
-    let analisisPrecio = "";
-    let colorPrecio = "#666";
+    // ANÁLISIS DE PRECIO/HORA EFECTIVO
+    let analisisPrecioEfectivo = "";
+    let colorPrecioEfectivo = "#666";
     const precioRecomendado = 75;
-    if (precioHora === 0) {
-        analisisPrecio = "❌ Precio cero";
-        colorPrecio = "#dc2626";
-    } else if (precioHora < precioRecomendado * 0.7) {
-        analisisPrecio = "⚠️ Muy bajo vs costes";
-        colorPrecio = "#ea580c";
-    } else if (precioHora >= precioRecomendado && precioHora <= precioRecomendado * 1.3) {
-        analisisPrecio = "✅ Competitivo";
-        colorPrecio = "#16a34a";
-    } else if (precioHora > precioRecomendado * 1.5) {
-        analisisPrecio = "💎 Posición premium";
-        colorPrecio = "#7c3aed";
+    
+    if (precioHoraEfectivo === 0) {
+        analisisPrecioEfectivo = "❌ Diru-sarrerik gabe";
+        colorPrecioEfectivo = "#dc2626";
+    } else if (precioHoraEfectivo < precioRecomendado * 0.7) {
+        analisisPrecioEfectivo = "⚠️ Kosteen azpitik";
+        colorPrecioEfectivo = "#ea580c";
+    } else if (precioHoraEfectivo >= precioRecomendado) {
+        analisisPrecioEfectivo = "✅ Lehiakorra";
+        colorPrecioEfectivo = "#16a34a";
     } else {
-        analisisPrecio = "📊 Aceptable";
-        colorPrecio = "#ca8a04";
+        analisisPrecioEfectivo = "📊 Onargarria";
+        colorPrecioEfectivo = "#ca8a04";
+    }
+    
+    // ANÁLISIS DE PRECIO/HORA PROMEDIO
+    let analisisPrecioPromedio = "";
+    let colorPrecioPromedio = "#666";
+    const diferencia = precioHoraEfectivo - precioHoraPromedio;
+    const diferenciaPorcentaje = precioHoraPromedio > 0 ? (diferencia / precioHoraPromedio) * 100 : 0;
+    
+    if (precioHoraPromedio === 0) {
+        analisisPrecioPromedio = "❌ Zerbitzurik gabe";
+        colorPrecioPromedio = "#dc2626";
+    } else if (diferenciaPorcentaje < -15) {
+        analisisPrecioPromedio = `📉 ${Math.abs(diferenciaPorcentaje).toFixed(0)}% baxuagoa`;
+        colorPrecioPromedio = "#ea580c";
+    } else if (diferenciaPorcentaje > 15) {
+        analisisPrecioPromedio = `📈 +${diferenciaPorcentaje.toFixed(0)}% altuagoa`;
+        colorPrecioPromedio = "#7c3aed";
+    } else {
+        analisisPrecioPromedio = "⚖️ Batezbestekoarekin bat";
+        colorPrecioPromedio = "#16a34a";
     }
     
     // ANÁLISIS DE CLIENTES
@@ -1399,11 +1421,11 @@ function actualizarAnalisisMetricas() {
     
     // Aplicar estilos y textos
     aplicarAnalisis('analisis-horas-mes', analisisHoras, colorHoras);
-    aplicarAnalisis('analisis-precio-hora', analisisPrecio, colorPrecio);
+    aplicarAnalisis('analisis-precio-hora', analisisPrecioEfectivo, colorPrecioEfectivo);
+    aplicarAnalisis('analisis-precio-promedio', analisisPrecioPromedio, colorPrecioPromedio);
     aplicarAnalisis('analisis-clientes-mes', analisisClientes, colorClientes);
     aplicarAnalisis('analisis-capacidad', analisisCapacidad, colorCapacidad);
 }
-
 function aplicarAnalisis(elementId, texto, color) {
     const elemento = document.getElementById(elementId);
     if (elemento) {

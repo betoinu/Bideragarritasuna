@@ -543,35 +543,41 @@ function actualizarUImetricas(meta, horas, precio, clientes, capacidad, ingresos
     }
 }
 
-// REEMPLAZO COMPLETO de calculatePortfolioRevenue
-function calculatePortfolioRevenue() {
-    console.log("🔧 calculatePortfolioRevenue MEJORADA ejecutándose...");
-    
+// SOLUCIÓN NUCLEAR - calculatePortfolioRevenue a prueba de balas
+window.calculatePortfolioRevenue = function() {
     try {
-        // Usar serviciosCartera como fuente de verdad
-        if (window.serviciosCartera && Array.isArray(window.serviciosCartera)) {
-            const total = window.serviciosCartera.reduce((sum, servicio, index) => {
-                const precio = Number(servicio.precio) || 0;
-                const cantidad = Number(servicio.cantidad) || 0;
-                const subtotal = precio * cantidad;
-                
-                console.log(`   Servicio ${index}: ${cantidad} × €${precio} = €${subtotal}`);
-                return sum + subtotal;
-            }, 0);
+        // Validación EXTREMA de entorno
+        if (typeof window === 'undefined') return 0;
+        if (!window.serviciosCartera) return 0;
+        if (!Array.isArray(window.serviciosCartera)) return 0;
+        
+        let total = 0;
+        
+        // Usar for loop clásico - más robusto que reduce
+        for (let i = 0; i < window.serviciosCartera.length; i++) {
+            const servicio = window.serviciosCartera[i];
             
-            console.log("✅ calculatePortfolioRevenue - Total:", total);
-            return total;
+            // Si el servicio no es válido, saltar
+            if (!servicio || typeof servicio !== 'object') continue;
+            
+            // VALORES POR DEFECTO - SIEMPRE 0
+            const precio = Number(servicio.precio) || 0;
+            const cantidad = Number(servicio.cantidad) || 0;
+            
+            // Si alguno es NaN después de la conversión, usar 0
+            const precioFinal = isNaN(precio) ? 0 : precio;
+            const cantidadFinal = isNaN(cantidad) ? 0 : cantidad;
+            
+            total += precioFinal * cantidadFinal;
         }
         
-        // Fallback por si serviciosCartera no existe
-        console.warn("⚠️ serviciosCartera no disponible, retornando 0");
-        return 0;
+        return total;
         
     } catch (error) {
-        console.error('❌ Error en calculatePortfolioRevenue:', error);
+        // EN CUALQUIER ERROR, devolver 0
         return 0;
     }
-}
+};
 
 // FUNCIONES AUXILIARES PARA PANEL 8
 function calculateTotalAnnualExpenses() {

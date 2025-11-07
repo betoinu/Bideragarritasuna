@@ -43,7 +43,7 @@
                 <!-- PANEL 1 - LOKALA -->
                 <div id="lokala-sheet" class="panel">
                     <h2 data-i18n="panel.lokal.title">1 · Lokalaren Gastu Finkoak eta Inbertsioak</h2>
-                    
+
                     <h3 data-i18n="panel.lokal.amortizables">A) Inbertsio amortizagarriak</h3>
                     <table class="data">
                         <thead>
@@ -117,7 +117,7 @@
                 <!-- PANEL 4 - GARRAIOA -->
                 <div id="garraioa-sheet" class="panel" style="display:none">
                     <h2 data-i18n="panel.garraioa.title">4 · Garraio eta Logistika Gastuak</h2>
-                    
+
                     <h3 data-i18n="panel.garraioa.amortizables">A) Inbertsio amortizagarriak</h3>
                     <table class="data">
                         <thead>
@@ -170,7 +170,7 @@
                 <!-- PANEL 6 - FINANTZAKETA -->
                 <div id="finantzaketa-sheet" class="panel" style="display:none">
                     <h2 data-i18n="panel.finantzaketa.title">6 · Finantzaketa Estrategia</h2>
-                    
+
                     <div class="section">
                         <h3 data-i18n="finance.inversiones">Inbertsio eta Finantzaketa Beharrak</h3>
                         <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px">
@@ -229,7 +229,7 @@
                                         <option value="hipotecario" data-i18n="form.maileguHipotekario">Hipoteka Mailegua</option>
                                     </select>
                                 </div>
-                                
+
                                 <div class="input-group">
                                     <label for="tae" data-i18n="form.tae">TAE (%)</label>
                                     <input type="number" id="tae" value="5" min="0" step="0.01" oninput="updateAll()">
@@ -240,7 +240,7 @@
                                     <label for="plazo" data-i18n="form.epea">Epea (urte)</label>
                                     <input type="number" id="plazo" value="5" min="1" oninput="updateAll()">
                                 </div>
-                                
+
                                 <div class="input-group">
                                     <label for="periodo-gracia" data-i18n="form.ordainketaAtzerapena">Ordainketa Atzerapena (hilabete)</label>
                                     <input type="number" id="periodo-gracia" value="0" min="0" oninput="updateAll()">
@@ -277,16 +277,16 @@
                                 <h4 data-i18n="pricing.konfigurazioa">Konfigurazioa</h4>
                                 <label for="corporate-tax" data-i18n="pricing.sozietateZerga">Sozietateen Zerga (%)</label>
                                 <input id="corporate-tax" type="number" value="25" oninput="updateAll()" />
-                                
+
                                 <label for="target-profit-margin" data-i18n="pricing.mozkinMargina">Helburuko Mozkin Gordina (%)</label>
                                 <input id="target-profit-margin" type="number" value="20" oninput="updateAll()" />
-                                
+
                                 <div style="margin:15px 0;padding:10px;background:#f8f9fa;border-radius:6px">
                                     <strong data-i18n="pricing.langileKopurua">Langile produktibo kopurua</strong>: 
                                     <span id="contador-personal-productivo">0</span>
                                     <small style="color:#666;display:block">(kalkulatu automatikoki produktibo markatutako langileak)</small>
                                 </div>
-                                
+
                                 <div class="input-group">
                                     <label for="annual-hours-per-employee" data-i18n="pricing.urtekoOrduakLangile">Urteko orduak langileko</label>
                                     <input id="annual-hours-per-employee" type="number" value="1600" min="800" max="2200" step="50" oninput="updateAll()" />
@@ -303,7 +303,7 @@
                                 <p id="expected-net-profit" class="value">€ 0.00</p>
                             </div>
                         </div>
-                        
+
                         <div>
                             <div class="card" style="background:#f8f9fa">
                                 <h4 data-i18n="pricing.nolaKalkulatzen">Nola kalkulatzen da orduko prezioa?</h4>
@@ -350,162 +350,196 @@
                 <!-- PANEL 8 - ESTRATEGIA -->
                 <div id="estrategia-sheet" class="panel" style="display:none">
                     <h2 data-i18n="panel.estrategia.title">8 · Merkatu Estrategia eta Biziraupena</h2>
-                    
-                    <!-- ESTRUCTURA DE 2 COLUMNAS BALANCEADA -->
-<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start;">
-    
-    <!-- TABLA DE SERVICIOS (OCUPA AMBAS COLUMNAS) -->
-    <div class="card" style="grid-column: 1 / -1;">
-        <!-- ... (tu tabla de servicios actual) ... -->
-    </div>
 
-    <!-- COLUMNA IZQUIERDA -->
-    <div style="display: flex; flex-direction: column; gap: 2rem;">
-        
-        <!-- ANÁLISIS DE SUPERVIVENCIA -->
-        <div class="card">
-            <div class="card-header">
-                <h5>📊 Biziraupen Analisia</h5>
-            </div>
-            <div class="card-body">
-                <!-- ... (tu análisis de supervivencia actual) ... -->
-            </div>
-        </div>
+                    <!-- ESTRUCTURA DE 2 COLUMNAS -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start;">
 
-        <!-- MÉTRICAS CLAVE CON ANÁLISIS CRÍTICO -->
-        <div class="card">
-            <div class="card-header">
-                <h5>📊 Metrika Nagusiak</h5>
-            </div>
-            <div class="card-body">
-                <div style="display: flex; flex-direction: column; gap: 1rem;">
-                    
-                    <!-- HORAS SEMANALES -->
-                    <div class="metric-item">
-                        <div style="display: flex; justify-content: between; align-items: center;">
-                            <span>Asteroko Orduak:</span>
-                            <strong id="metricas-horas-mes">0h</strong>
+                        <!-- TABLA DE SERVICIOS (OCUPA AMBAS COLUMNAS) -->
+                        <div class="card" style="grid-column: 1 / -1;">
+                            <h4 data-i18n="estrategia.carteraTitle">🏷️ Zure Zerbitzu Kartera</h4>
+
+                            <div style="margin-bottom: 15px; display: flex; gap: 10px;">
+                                <button class="btn small" onclick="añadirServicio()">+ Gehitu Zerbitzua</button>
+                                <button class="btn small" onclick="limpiarCartera()">🗑️ Garbitu Dena</button>
+                            </div>
+
+                            <table style="width: 100%;">
+                                <thead>
+                                    <tr>
+                                        <th data-i18n="estrategia.servicio">Zerbitzua</th>
+                                        <th class="text-right" data-i18n="estrategia.precio">Prezioa (€)</th>
+                                        <th class="text-center" data-i18n="estrategia.horas">Orduak</th>
+                                        <th class="text-center" data-i18n="estrategia.cantidadAnual">Kopurua/urte</th>
+                                        <th class="text-right" data-i18n="estrategia.ingresos">Diru-sarrerak</th>
+                                        <th style="width: 80px;">Ekintzak</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="cartera-servicios-body">
+                                    <!-- Los servicios se generarán dinámicamente -->
+                                </tbody>
+                                <tfoot>
+                                    <tr style="background: #f8f9fa;">
+                                        <td><strong>Guztira</strong></td>
+                                        <td class="text-right">-</td>
+                                        <td class="text-center">-</td>
+                                        <td class="text-center" id="total-cantidad-servicios">0</td>
+                                        <td class="text-right" id="total-ingresos-cartera"><strong>€ 0</strong></td>
+                                        <td></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
                         </div>
-                        <div id="analisis-horas-mes" class="analisis-critico">
-                            <!-- Análisis se insertará aquí -->
+
+                        <!-- COLUMNA IZQUIERDA -->
+                        <div style="display: flex; flex-direction: column; gap: 2rem;">
+
+                            <!-- ANÁLISIS DE SUPERVIVENCIA -->
+                            <div class="card">
+                                <h5>📊 Biziraupen Analisia</h5>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                    <div>
+                                        <p><strong>Biziraupen Helburua:</strong></p>
+                                        <p id="meta-supervivencia" class="value">€ 0.00</p>
+                                    </div>
+                                    <div>
+                                        <p><strong>Proiektatutako Diru-sarrerak:</strong></p>
+                                        <p id="ingresos-proyectados" class="value">€ 0.00</p>
+                                    </div>
+                                </div>
+                                <div style="margin-top: 1rem; padding: 1rem; background: #f8f9fa; border-radius: 6px;">
+                                    <p><strong>Biziraupen Aldea:</strong></p>
+                                    <p id="brecha-supervivencia" class="value">€ 0.00</p>
+                                    <p id="diagnostico-supervivencia" style="margin-top: 0.5rem; font-style: italic;"></p>
+                                </div>
+                            </div>
+                
+
+                            <!-- MÉTRICAS CLAVE CON ANÁLISIS CRÍTICO -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5>📊 Metrika Nagusiak</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                                        
+                                        <!-- HORAS SEMANALES -->
+                                        <div class="metric-item">
+                                            <div style="display: flex; justify-content: between; align-items: center;">
+                                                <span>Asteroko Orduak:</span>
+                                                <strong id="metricas-horas-mes">0h</strong>
+                                            </div>
+                                            <div id="analisis-horas-mes" class="analisis-critico" style="font-size: 0.8rem; margin-top: 4px; padding: 4px 8px; border-radius: 4px; background: #f8f9fa;">
+                                                <!-- Análisis se insertará aquí -->
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- PRECIO/HORA -->
+                                        <div class="metric-item">
+                                            <div style="display: flex; justify-content: between; align-items: center;">
+                                                <span>Orduko Prezioa:</span>
+                                                <strong id="metricas-precio-hora">€ 0</strong>
+                                            </div>
+                                            <div id="analisis-precio-hora" class="analisis-critico" style="font-size: 0.8rem; margin-top: 4px; padding: 4px 8px; border-radius: 4px; background: #f8f9fa;">
+                                                <!-- Análisis se insertará aquí -->
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- CLIENTES MENSUALES -->
+                                        <div class="metric-item">
+                                            <div style="display: flex; justify-content: between; align-items: center;">
+                                                <span>Hileko Bezeroak:</span>
+                                                <strong id="metricas-clientes-mes">0</strong>
+                                            </div>
+                                            <div id="analisis-clientes-mes" class="analisis-critico" style="font-size: 0.8rem; margin-top: 4px; padding: 4px 8px; border-radius: 4px; background: #f8f9fa;">
+                                                <!-- Análisis se insertará aquí -->
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- CAPACIDAD -->
+                                        <div class="metric-item">
+                                            <div style="display: flex; justify-content: between; align-items: center;">
+                                                <span>Erabilera Kapazitatea:</span>
+                                                <strong id="metricas-capacidad">0%</strong>
+                                            </div>
+                                            <div id="analisis-capacidad" class="analisis-critico" style="font-size: 0.8rem; margin-top: 4px; padding: 4px 8px; border-radius: 4px; background: #f8f9fa;">
+                                                <!-- Análisis se insertará aquí -->
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- MÉTRICAS CLAVE -->
+                            <div class="card">
+                                <h5>📊 Metrika Nagusiak</h5>
+                                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                                    <div style="display: flex; justify-content: between; align-items: center;">
+                                        <span>Asteroko Orduak:</span>
+                                        <strong id="metricas-horas-mes">0h</strong>
+                                    </div>
+                                    <div style="display: flex; justify-content: between; align-items: center;">
+                                        <span>Orduko Prezioa:</span>
+                                        <strong id="metricas-precio-hora">€ 0</strong>
+                                    </div>
+                                    <div style="display: flex; justify-content: between; align-items: center;">
+                                        <span>Hileko Bezeroak:</span>
+                                        <strong id="metricas-clientes-mes">0</strong>
+                                    </div>
+                                    <div style="display: flex; justify-content: between; align-items: center;">
+                                        <span>Erabilera Kapazitatea:</span>
+                                        <strong id="metricas-capacidad">0%</strong>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- COLUMNA DERECHA -->
+                        <div style="display: flex; flex-direction: column; gap: 2rem;">
+
+                            <!-- RESUMEN RÁPIDO -->
+                            <div class="card">
+                                <h5>📈 Laburpena</h5>
+                                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                                    <div style="display: flex; justify-content: between; align-items: center;">
+                                        <span>Diru-sarrerak:</span>
+                                        <strong id="resumen-ingresos-totales">€ 0</strong>
+                                    </div>
+                                    <div style="display: flex; justify-content: between; align-items: center;">
+                                        <span>Guztira Orduak:</span>
+                                        <strong id="resumen-horas-totales">0h</strong>
+                                    </div>
+                                    <div style="display: flex; justify-content: between; align-items: center;">
+                                        <span>Batezbesteko Prezioa/Ordua:</span>
+                                        <strong id="resumen-precio-hora">€ 0</strong>
+                                    </div>
+                                    <div style="display: flex; justify-content: between; align-items: center;">
+                                        <span>Biziraupen Helburua:</span>
+                                        <strong id="resumen-meta-supervivencia">€ 0</strong>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ESTRATEGIAS -->
+                            <div class="card">
+                                <h5>🎯 Estrategiak</h5>
+                                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                                    <button class="btn small" onclick="aplicarEstrategia('premium')" style="background: #8b5cf6; color: white;">
+                                        Premium (+20%)
+                                    </button>
+                                    <button class="btn small" onclick="aplicarEstrategia('equilibrado')" style="background: #3b82f6; color: white;">
+                                        Orekatua
+                                    </button>
+                                    <button class="btn small" onclick="aplicarEstrategia('volumen')" style="background: #10b981; color: white;">
+                                        Bolumena (+50%)
+                                    </button>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
-                    
-                    <!-- PRECIO/HORA EFECTIVO -->
-                    <div class="metric-item">
-                        <div style="display: flex; justify-content: between; align-items: center;">
-                            <span>Orduko Prezioa (Eraginkorra):</span>
-                            <strong id="metricas-precio-hora">€ 0</strong>
-                        </div>
-                        <div id="analisis-precio-hora" class="analisis-critico">
-                            <!-- Análisis se insertará aquí -->
-                        </div>
-                    </div>
-                    
-                    <!-- PRECIO/HORA PROMEDIO -->
-                    <div class="metric-item">
-                        <div style="display: flex; justify-content: between; align-items: center;">
-                            <span>Batezbesteko Prezioa/Ordua:</span>
-                            <strong id="metricas-precio-promedio">€ 0</strong>
-                        </div>
-                        <div id="analisis-precio-promedio" class="analisis-critico">
-                            <!-- Análisis se insertará aquí -->
-                        </div>
-                    </div>
-                    
                 </div>
-            </div>
-        </div>
-
-    </div> <!-- CIERRE COLUMNA IZQUIERDA -->
-
-    <!-- COLUMNA DERECHA -->
-    <div style="display: flex; flex-direction: column; gap: 2rem;">
-        
-        <!-- RESUMEN RÁPIDO -->
-        <div class="card">
-            <div class="card-header">
-                <h5>📈 Laburpena</h5>
-            </div>
-            <div class="card-body">
-                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                    <div style="display: flex; justify-content: between; align-items: center;">
-                        <span>Diru-sarrerak:</span>
-                        <strong id="resumen-ingresos-totales">€ 0</strong>
-                    </div>
-                    <div style="display: flex; justify-content: between; align-items: center;">
-                        <span>Guztira Orduak:</span>
-                        <strong id="resumen-horas-totales">0h</strong>
-                    </div>
-                    <div style="display: flex; justify-content: between; align-items: center;">
-                        <span>Batezbesteko Prezioa/Ordua:</span>
-                        <strong id="resumen-precio-hora">€ 0</strong>
-                    </div>
-                    <div style="display: flex; justify-content: between; align-items: center;">
-                        <span>Biziraupen Helburua:</span>
-                        <strong id="resumen-meta-supervivencia">€ 0</strong>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- MÉTRICAS COMPLEMENTARIAS -->
-        <div class="card">
-            <div class="card-header">
-                <h5>📈 Beste Metrikak</h5>
-            </div>
-            <div class="card-body">
-                <div style="display: flex; flex-direction: column; gap: 1rem;">
-                    
-                    <!-- CLIENTES MENSUALES -->
-                    <div class="metric-item">
-                        <div style="display: flex; justify-content: between; align-items: center;">
-                            <span>Hileko Bezeroak:</span>
-                            <strong id="metricas-clientes-mes">0</strong>
-                        </div>
-                        <div id="analisis-clientes-mes" class="analisis-critico">
-                            <!-- Análisis se insertará aquí -->
-                        </div>
-                    </div>
-                    
-                    <!-- CAPACIDAD -->
-                    <div class="metric-item">
-                        <div style="display: flex; justify-content: between; align-items: center;">
-                            <span>Erabilera Kapazitatea:</span>
-                            <strong id="metricas-capacidad">0%</strong>
-                        </div>
-                        <div id="analisis-capacidad" class="analisis-critico">
-                            <!-- Análisis se insertará aquí -->
-                        </div>
-                    </div>
-                    
-                </div>
-            </div>
-        </div>
-
-        <!-- ESTRATEGIAS -->
-        <div class="card">
-            <div class="card-header">
-                <h5>🎯 Estrategiak</h5>
-            </div>
-            <div class="card-body">
-                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                    <button class="btn btn-strategy btn-premium" onclick="aplicarEstrategia('premium')">
-                        Premium (+20%)
-                    </button>
-                    <button class="btn btn-strategy btn-balanced" onclick="aplicarEstrategia('equilibrado')">
-                        Orekatua
-                    </button>
-                    <button class="btn btn-strategy btn-volume" onclick="aplicarEstrategia('volumen')">
-                        Bolumena (+50%)
-                    </button>
-                </div>
-            </div>
-        </div>
-
-    </div> <!-- CIERRE COLUMNA DERECHA -->
-
-</div> <!-- CIERRE ESTRUCTURA 2 COLUMNAS -->
 </section>
 
             <!-- SIDEBAR -->
@@ -613,4 +647,4 @@
     </style>
     <script src="js/logic.js"></script>
 </body>
-</html>
+</html>            

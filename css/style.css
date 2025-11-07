@@ -603,3 +603,39 @@ img {
 .language-selector {
     margin-bottom: 20px;
 }
+/* Estilos para servicios editables */
+.servicio-fila {
+    transition: background-color 0.2s;
+}
+
+.servicio-fila:hover {
+    background-color: #f8f9fa;
+}
+
+.input-servicio {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.input-servicio:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.btn-eliminar-servicio {
+    background: #dc2626;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 4px 8px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.btn-eliminar-servicio:hover {
+    background: #b91c1c;
+}

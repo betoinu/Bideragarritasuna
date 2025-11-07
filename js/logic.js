@@ -1505,7 +1505,7 @@ function actualizarAnalisisMetricas() {
         
         // Aplicar estilos y textos
         aplicarAnalisis('analisis-horas-mes', analisisHoras, colorHoras);
-        aplicarAnalisis('analisis-precio-hora', analisisPrecioEfectivo, colorPrecioEfectivo);
+        aplicarAnalisis('analisis-precio-hora', analisisPrecioHora, colorPrecioHora); // ✅ NUEVO
         aplicarAnalisis('analisis-precio-promedio', analisisPrecioPromedio, colorPrecioPromedio);
         aplicarAnalisis('analisis-clientes-mes', analisisClientes, colorClientes);
         aplicarAnalisis('analisis-capacidad', analisisCapacidad, colorCapacidad);

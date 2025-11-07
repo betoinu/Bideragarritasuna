@@ -353,17 +353,22 @@
                             
                             <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
                                 <div>
-                        <!-- CARTERA DE SERVICIOS - TABLA MEJORADA -->
-                        <div class="card">
-                            <h4 data-i18n="estrategia.carteraTitle">🏷️ Tu Cartera de Servicios</h4>
-                            
-                            <div style="margin-bottom: 15px; display: flex; gap: 10px;">
-                                <button class="btn small" onclick="añadirServicio()">+ Añadir Servicio</button>
-                                <button class="btn small" onclick="limpiarCartera()">🗑️ Limpiar Todo</button>
-                            </div>
+
+                        <!-- CARTERA DE SERVICIOS - TABLA MEJORADA CON DOBLE COLUMNA -->
+                <div class="card">
+                    <h4 data-i18n="estrategia.carteraTitle">🏷️ Tu Cartera de Servicios</h4>
+                    
+                    <div style="margin-bottom: 15px; display: flex; gap: 10px;">
+                        <button class="btn small" onclick="añadirServicio()">+ Añadir Servicio</button>
+                        <button class="btn small" onclick="limpiarCartera()">🗑️ Limpiar Todo</button>
+                    </div>
+                
+                    <!-- CONTENEDOR DE DOBLE COLUMNA -->
+                    <div style="display: grid; grid-template-columns: 1fr 300px; gap: 2rem; align-items: start;">
                         
-                            <!-- === COMIENZO TABLA MEJORADA === -->
-                            <table class="table" style="width: 100%;">
+                        <!-- COLUMNA PRINCIPAL - TABLA MEJORADA -->
+                        <div style="overflow-x: auto;">
+                            <table class="table" style="width: 100%; min-width: 600px;">
                                 <thead>
                                     <tr>
                                         <th class="col-nombre" data-i18n="estrategia.servicio">Servicio</th>
@@ -375,7 +380,7 @@
                                     </tr>
                                 </thead>
                                 <tbody id="cartera-servicios-body">
-                                    <!-- Los servicios se generarán dinámicamente -->
+                                    <!-- Los servicios se generarán dinámicamente por renderizarServicios() -->
                                 </tbody>
                                 <tfoot>
                                     <tr style="background: #f8f9fa;">
@@ -388,8 +393,48 @@
                                     </tr>
                                 </tfoot>
                             </table>
-                           </div>
-        
+                        </div>
+                
+                        <!-- COLUMNA LATERAL - RESUMEN Y MÉTRICAS -->
+                        <div class="card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1.5rem;">
+                            <h4 style="margin-bottom: 1.5rem; text-align: center;">📈 Resumen Rápido</h4>
+                            
+                            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                                <div style="text-align: center; padding: 1rem; background: rgba(255,255,255,0.1); border-radius: 8px;">
+                                    <div style="font-size: 0.9rem; opacity: 0.9;">Ingresos Totales</div>
+                                    <div style="font-size: 1.5rem; font-weight: bold;" id="resumen-ingresos-totales">€ 0</div>
+                                </div>
+                                
+                                <div style="text-align: center; padding: 1rem; background: rgba(255,255,255,0.1); border-radius: 8px;">
+                                    <div style="font-size: 0.9rem; opacity: 0.9;">Horas Totales</div>
+                                    <div style="font-size: 1.5rem; font-weight: bold;" id="resumen-horas-totales">0h</div>
+                                </div>
+                                
+                                <div style="text-align: center; padding: 1rem; background: rgba(255,255,255,0.1); border-radius: 8px;">
+                                    <div style="font-size: 0.9rem; opacity: 0.9;">Precio/Hora Promedio</div>
+                                    <div style="font-size: 1.5rem; font-weight: bold;" id="resumen-precio-hora">€ 0</div>
+                                </div>
+                                
+                                <div style="text-align: center; padding: 1rem; background: rgba(255,255,255,0.1); border-radius: 8px;">
+                                    <div style="font-size: 0.9rem; opacity: 0.9;">Meta Supervivencia</div>
+                                    <div style="font-size: 1.2rem; font-weight: bold;" id="resumen-meta-supervivencia">€ 0</div>
+                                </div>
+                            </div>
+                
+                            <!-- ESTRATEGIAS RÁPIDAS -->
+                            <div style="margin-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 1rem;">
+                                <h5 style="text-align: center; margin-bottom: 1rem;">🎯 Estrategias</h5>
+                                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                                    <button class="btn small" onclick="aplicarEstrategia('premium')" style="background: #8b5cf6; color: white;">Premium (+20%)</button>
+                                    <button class="btn small" onclick="aplicarEstrategia('equilibrado')" style="background: #3b82f6; color: white;">Equilibrado</button>
+                                    <button class="btn small" onclick="aplicarEstrategia('volumen')" style="background: #10b981; color: white;">Volumen (+50%)</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+<!-- ANÁLISIS DE SUPERVIVENCIA -->
                     <!-- ANÁLISIS DE SUPERVIVENCIA -->
                     <div class="card">
                         <h4 data-i18n="estrategia.analisisSupervivencia">📊 Biziraupen Azterketa</h4>

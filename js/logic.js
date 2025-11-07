@@ -543,20 +543,34 @@ function actualizarUImetricas(meta, horas, precio, clientes, capacidad, ingresos
     }
 }
 
+// REEMPLAZO COMPLETO de calculatePortfolioRevenue
 function calculatePortfolioRevenue() {
-    let total = 0;
+    console.log("🔧 calculatePortfolioRevenue MEJORADA ejecutándose...");
+    
     try {
-        const inputs = document.querySelectorAll('#cartera-servicios-body input[type="number"]');
-        const precios = [400, 200, 2000, 4000];
+        // Usar serviciosCartera como fuente de verdad
+        if (window.serviciosCartera && Array.isArray(window.serviciosCartera)) {
+            const total = window.serviciosCartera.reduce((sum, servicio, index) => {
+                const precio = Number(servicio.precio) || 0;
+                const cantidad = Number(servicio.cantidad) || 0;
+                const subtotal = precio * cantidad;
+                
+                console.log(`   Servicio ${index}: ${cantidad} × €${precio} = €${subtotal}`);
+                return sum + subtotal;
+            }, 0);
+            
+            console.log("✅ calculatePortfolioRevenue - Total:", total);
+            return total;
+        }
         
-        inputs.forEach((input, index) => {
-            const cantidad = parseInt(input.value) || 0;
-            total += cantidad * precios[index];
-        });
+        // Fallback por si serviciosCartera no existe
+        console.warn("⚠️ serviciosCartera no disponible, retornando 0");
+        return 0;
+        
     } catch (error) {
-        console.warn('⚠️ Error calculando ingresos cartera:', error);
+        console.error('❌ Error en calculatePortfolioRevenue:', error);
+        return 0;
     }
-    return total;
 }
 
 // FUNCIONES AUXILIARES PARA PANEL 8

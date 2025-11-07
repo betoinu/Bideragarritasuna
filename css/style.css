@@ -744,3 +744,21 @@ img {
     
     .col-nombre { min-width: 150px; }
 }
+/* ESTILOS PARA ANÁLISIS CRÍTICO */
+.analisis-critico {
+    font-size: 0.8rem;
+    margin-top: 4px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.metric-item {
+    padding: 8px 0;
+    border-bottom: 1px solid #f1f1f1;
+}
+
+.metric-item:last-child {
+    border-bottom: none;
+}

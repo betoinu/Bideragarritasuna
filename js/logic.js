@@ -1293,28 +1293,40 @@ window.updatePortfolio = function() {
 };
 
 window.aplicarEstrategia = function(tipo) {
-    window.estrategiaActiva = tipo;
-    updateElement('estrategia-activa', tipo.charAt(0).toUpperCase() + tipo.slice(1));
+    console.log(`🎯 Aplicando estrategia: ${tipo}`);
     
-    // Aplicar factores según estrategia
+    // FACTORES MEJORADOS
     const factores = {
-        premium: { precio: 1.2, clientes: 0.7 },
-        equilibrado: { precio: 1.05, clientes: 1.1 },
-        volumen: { precio: 0.9, clientes: 1.5 }
+        premium: { precio: 1.8, clientes: 0.4 },      // +80% precio, -60% clientes
+        equilibrado: { precio: 1.3, clientes: 1.2 },  // +30% precio, +20% clientes  
+        volumen: { precio: 0.7, clientes: 1.8 }       // -30% precio, +80% clientes
     };
     
     const factor = factores[tipo];
+    if (!factor) {
+        alert("❌ Estrategia no encontrada: " + tipo);
+        return;
+    }
     
-    // Aplicar a todos los inputs de cantidad
-    const inputs = document.querySelectorAll('#cartera-servicios-body input[type="number"]');
-    inputs.forEach(input => {
-        const valorActual = parseInt(input.value) || 0;
-        const nuevoValor = Math.round(valorActual * factor.clientes);
-        input.value = nuevoValor;
+    console.log(`📊 Aplicando factores: Precio ×${factor.precio}, Clientes ×${factor.clientes}`);
+    
+    // ✅ CORRECTO: Modificar directamente el array de servicios
+    window.serviciosCartera.forEach((servicio) => {
+        const cantidadAnterior = servicio.cantidad;
+        const precioAnterior = servicio.precio;
+        
+        servicio.cantidad = Math.max(1, Math.round(servicio.cantidad * factor.clientes));
+        servicio.precio = Math.round(servicio.precio * factor.precio);
+        
+        console.log(`   ${servicio.nombre}: ${cantidadAnterior}u → ${servicio.cantidad}u, ${precioAnterior}€ → ${servicio.precio}€`);
     });
     
-    // Recalcular
-    updatePortfolio();
+    // ✅ CORRECTO: Actualizar interfaz completa
+    window.renderizarServicios();
+    window.updatePortfolio();
+    
+    // ✅ CORRECTO: Feedback al usuario
+    alert(`✅ Estrategia ${tipo} aplicada\n• Precios: ${(factor.precio-1)*100}%\n• Clientes: ${(factor.clientes-1)*100}%`);
 };
 
 // Inicialización del Panel 8

@@ -138,12 +138,28 @@ function actualizarCalculosCartera() {
     let totalIngresos = 0;
 
     window.serviciosCartera.forEach(servicio => {
-        totalCantidad += servicio.cantidad;
-        totalIngresos += servicio.precio * servicio.cantidad;
+        // ✅ CORRECCIÓN: Validación robusta
+        const precio = Number(servicio.precio) || 0;
+        const cantidad = Number(servicio.cantidad) || 0;
+        
+        // ✅ CORRECCIÓN: Verificar que sean números finitos
+        if (isFinite(precio) && isFinite(cantidad)) {
+            totalCantidad += cantidad;
+            totalIngresos += precio * cantidad;
+        }
     });
 
+    // ✅ CORRECCIÓN: Validación final
+    totalCantidad = isFinite(totalCantidad) ? totalCantidad : 0;
+    totalIngresos = isFinite(totalIngresos) ? totalIngresos : 0;
+
+    // ✅ CORRECCIÓN: Formateo seguro
+    const totalFormateado = isFinite(totalIngresos) ? `€ ${totalIngresos.toLocaleString()}` : '€ 0';
+    
     updateElement('total-cantidad-servicios', totalCantidad);
-    updateElement('total-ingresos-cartera', `€ ${totalIngresos.toLocaleString()}`);
+    updateElement('total-ingresos-cartera', totalFormateado);
+    
+    console.log(`💰 actualizarCalculosCartera: ${totalCantidad} servicios, ${totalFormateado}`);
 }
 
 // ===== FUNCIONES BASE (DEFINIDAS PRIMERO) =====

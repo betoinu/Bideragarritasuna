@@ -1283,7 +1283,7 @@ window.updatePortfolio = function() {
                           safeNum(document.getElementById('employee-count-sidebar')?.textContent);
     const capacidadUtilizadaFinal = capacidadTotal > 0 ? (totalHoras / capacidadTotal) * 100 : 0;
     
-    updateElement('metricas-horas-mes', `${Math.ceil(horasMensuales)}h`);
+    updateElement('metricas-horas-mes', `${Math.ceil(totalHoras / 52)}h/asteko`);
     updateElement('metricas-precio-hora', fmt(precioHoraEfectivo));
     updateElement('metricas-clientes-mes', Math.ceil(clientesMensuales));
     updateElement('metricas-capacidad', `${Math.round(capacidadUtilizadaFinal)}%`);

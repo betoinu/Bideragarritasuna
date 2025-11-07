@@ -639,3 +639,21 @@ img {
 .btn-eliminar-servicio:hover {
     background: #b91c1c;
 }
+/* ===== UBICACIÓN Y DISTRIBUCIÓN DE COLUMNAS ===== */
+.table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  table-layout: fixed; /* Para control exacto del ancho */
+}
+
+.table th {
+  padding: 16px 12px;
+  font-weight: 600;
+  text-align: left;
+  border-bottom: 2px solid #dee2e6;
+  position: sticky;
+  top: 0;
+  background: #f8f9fa;
+  z-index: 10;
+}

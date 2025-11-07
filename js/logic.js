@@ -602,6 +602,16 @@ function calculatePortfolioRevenue() {
     return total;
 }
 
+// 🆕 AÑADIR ESTA NUEVA FUNCIÓN
+function actualizarResumenCartera(totalIngresos, totalHoras, metaSupervivencia) {
+    const precioHoraPromedio = totalHoras > 0 ? (totalIngresos / totalHoras) : 0;
+    
+    updateElement('resumen-ingresos-totales', `€ ${Math.round(totalIngresos).toLocaleString()}`);
+    updateElement('resumen-horas-totales', `${Math.round(totalHoras)}h`);
+    updateElement('resumen-precio-hora', `€ ${precioHoraPromedio.toFixed(2)}`);
+    updateElement('resumen-meta-supervivencia', fmt(metaSupervivencia));
+}
+
 function calculatePricing() {
     console.log("🔍 INICIANDO calculatePricing()...");  
   
@@ -1277,6 +1287,9 @@ window.updatePortfolio = function() {
     updateElement('metricas-precio-hora', fmt(precioHoraEfectivo));
     updateElement('metricas-clientes-mes', Math.ceil(clientesMensuales));
     updateElement('metricas-capacidad', `${Math.round(capacidadUtilizadaFinal)}%`);
+      
+  // 🆕 ACTUALIZAR RESUMEN DE DOBLE COLUMNA
+    actualizarResumenCartera(totalIngresos, totalHoras, metaSupervivencia);
 };
 
 window.aplicarEstrategia = function(tipo) {

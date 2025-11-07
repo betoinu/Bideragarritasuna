@@ -821,6 +821,7 @@ function calculatePricing() {
         { id: 'total-ingresos-cartera', value: '€ ' + calculatePortfolioRevenue().toLocaleString() },
         { id: 'estrategia-activa', value: 'Ninguna' },
         { id: 'metricas-carga-promedio', value: `${Math.round(cargaPromedio)}h/asteko` },
+        { id: 'resumen-langile-kopurua', value: employeeCount.toString() },
 
         // SIDEBAR CONTINUACIÓN
         { id: 'suggested-hourly-rate-sidebar', value: fmt(precioHora) },
@@ -1358,131 +1359,139 @@ window.updatePortfolio = function() {
 
   // AÑADIR AL FINAL DE updatePortfolio() - ANTES DEL CIERRE }
 function actualizarAnalisisMetricas() {
-    // Obtener valores actuales
-    const horasSemanales = parseInt(document.getElementById('metricas-horas-mes')?.textContent) || 0;
-    const precioHoraEfectivo = parseFloat(document.getElementById('metricas-precio-hora')?.textContent.replace('€', '').replace(',', '.')) || 0;
-    const precioHoraPromedio = parseFloat(document.getElementById('resumen-precio-hora')?.textContent.replace('€', '').replace(',', '.')) || 0;
-    const clientesMensuales = parseInt(document.getElementById('metricas-clientes-mes')?.textContent) || 0;
-    const capacidad = parseInt(document.getElementById('metricas-capacidad')?.textContent) || 0;
-    
-    // Actualizar métrica de precio promedio en la card
-    updateElement('metricas-precio-promedio', `€ ${precioHoraPromedio.toFixed(2)}`);
-    
-    // ANÁLISIS DE HORAS SEMANALES
-    let analisisHoras = "";
-    let colorHoras = "#666";
-    if (horasSemanales === 0) {
-        analisisHoras = "❌ Cero horas facturables";
-        colorHoras = "#dc2626";
-    } else if (horasSemanales < 20) {
-        analisisHoras = "⚠️ Volumen muy bajo";
-        colorHoras = "#ea580c";
-    } else if (horasSemanales > 60) {
-        analisisHoras = "🚨 Riesgo de burnout";
-        colorHoras = "#dc2626";
-    } else if (horasSemanales >= 35 && horasSemanales <= 45) {
-        analisisHoras = "✅ Óptimo sostenible";
-        colorHoras = "#16a34a";
-    } else {
-        analisisHoras = "📊 En rango aceptable";
-        colorHoras = "#ca8a04";
+    // ✅ AÑADIR try-catch
+    try {
+        // Obtener valores actuales
+        const horasSemanales = parseInt(document.getElementById('metricas-horas-mes')?.textContent) || 0;
+        const precioHoraEfectivo = parseFloat(document.getElementById('metricas-precio-hora')?.textContent.replace('€', '').replace(',', '.')) || 0;
+        const precioHoraPromedio = parseFloat(document.getElementById('resumen-precio-hora')?.textContent.replace('€', '').replace(',', '.')) || 0;
+        const clientesMensuales = parseInt(document.getElementById('metricas-clientes-mes')?.textContent) || 0;
+        const capacidad = parseInt(document.getElementById('metricas-capacidad')?.textContent) || 0;
+        
+        // Actualizar métrica de precio promedio en la card
+        updateElement('metricas-precio-promedio', `€ ${precioHoraPromedio.toFixed(2)}`);
+        
+        // ANÁLISIS DE HORAS SEMANALES
+        let analisisHoras = "";
+        let colorHoras = "#666";
+        if (horasSemanales === 0) {
+            analisisHoras = "❌ Cero horas facturables";
+            colorHoras = "#dc2626";
+        } else if (horasSemanales < 20) {
+            analisisHoras = "⚠️ Volumen muy bajo";
+            colorHoras = "#ea580c";
+        } else if (horasSemanales > 60) {
+            analisisHoras = "🚨 Riesgo de burnout";
+            colorHoras = "#dc2626";
+        } else if (horasSemanales >= 35 && horasSemanales <= 45) {
+            analisisHoras = "✅ Óptimo sostenible";
+            colorHoras = "#16a34a";
+        } else {
+            analisisHoras = "📊 En rango aceptable";
+            colorHoras = "#ca8a04";
+        }
+        
+        // ANÁLISIS DE PRECIO/HORA EFECTIVO
+        let analisisPrecioEfectivo = "";
+        let colorPrecioEfectivo = "#666";
+        const precioRecomendado = 75;
+        
+        if (precioHoraEfectivo === 0) {
+            analisisPrecioEfectivo = "❌ Diru-sarrerik gabe";
+            colorPrecioEfectivo = "#dc2626";
+        } else if (precioHoraEfectivo < precioRecomendado * 0.7) {
+            analisisPrecioEfectivo = "⚠️ Kosteen azpitik";
+            colorPrecioEfectivo = "#ea580c";
+        } else if (precioHoraEfectivo >= precioRecomendado) {
+            analisisPrecioEfectivo = "✅ Lehiakorra";
+            colorPrecioEfectivo = "#16a34a";
+        } else {
+            analisisPrecioEfectivo = "📊 Onargarria";
+            colorPrecioEfectivo = "#ca8a04";
+        }
+        
+        // ANÁLISIS DE PRECIO/HORA PROMEDIO
+        let analisisPrecioPromedio = "";
+        let colorPrecioPromedio = "#666";
+        const diferencia = precioHoraEfectivo - precioHoraPromedio;
+        const diferenciaPorcentaje = precioHoraPromedio > 0 ? (diferencia / precioHoraPromedio) * 100 : 0;
+        
+        if (precioHoraPromedio === 0) {
+            analisisPrecioPromedio = "❌ Zerbitzurik gabe";
+            colorPrecioPromedio = "#dc2626";
+        } else if (diferenciaPorcentaje < -15) {
+            analisisPrecioPromedio = `📉 ${Math.abs(diferenciaPorcentaje).toFixed(0)}% baxuagoa`;
+            colorPrecioPromedio = "#ea580c";
+        } else if (diferenciaPorcentaje > 15) {
+            analisisPrecioPromedio = `📈 +${diferenciaPorcentaje.toFixed(0)}% altuagoa`;
+            colorPrecioPromedio = "#7c3aed";
+        } else {
+            analisisPrecioPromedio = "⚖️ Batezbestekoarekin bat";
+            colorPrecioPromedio = "#16a34a";
+        }
+        
+        // ANÁLISIS DE CLIENTES
+        let analisisClientes = "";
+        let colorClientes = "#666";
+        const clientesPorHora = horasSemanales > 0 ? (clientesMensuales * 4.33) / horasSemanales : 0;
+        
+        if (clientesMensuales === 0) {
+            analisisClientes = "❌ Sin clientes";
+            colorClientes = "#dc2626";
+        } else if (clientesPorHora > 0.3) {
+            analisisClientes = "⚠️ Muchos clientes/hora";
+            colorClientes = "#ea580c";
+        } else if (clientesPorHora < 0.1 && horasSemanales > 20) {
+            analisisClientes = "✅ Buena dedicación";
+            colorClientes = "#16a34a";
+        } else {
+            analisisClientes = "📊 Densidad normal";
+            colorClientes = "#ca8a04";
+        }
+        
+        // ANÁLISIS DE CAPACIDAD
+        let analisisCapacidad = "";
+        let colorCapacidad = "#666";
+        if (capacidad === 0) {
+            analisisCapacidad = "❌ Capacidad ociosa";
+            colorCapacidad = "#dc2626";
+        } else if (capacidad < 30) {
+            analisisCapacidad = "⚠️ Infrautilización";
+            colorCapacidad = "#ea580c";
+        } else if (capacidad > 100) {
+            analisisCapacidad = "🚨 Sobrecarga crítica";
+            colorCapacidad = "#dc2626";
+        } else if (capacidad >= 70 && capacidad <= 90) {
+            analisisCapacidad = "✅ Óptimo productivo";
+            colorCapacidad = "#16a34a";
+        } else if (capacidad >= 50 && capacidad < 70) {
+            analisisCapacidad = "📊 Margen de crecimiento";
+            colorCapacidad = "#ca8a04";
+        } else {
+            analisisCapacidad = "📊 En desarrollo";
+            colorCapacidad = "#2563eb";
+        }
+        
+        // Aplicar estilos y textos
+        aplicarAnalisis('analisis-horas-mes', analisisHoras, colorHoras);
+        aplicarAnalisis('analisis-precio-hora', analisisPrecioEfectivo, colorPrecioEfectivo);
+        aplicarAnalisis('analisis-precio-promedio', analisisPrecioPromedio, colorPrecioPromedio);
+        aplicarAnalisis('analisis-clientes-mes', analisisClientes, colorClientes);
+        aplicarAnalisis('analisis-capacidad', analisisCapacidad, colorCapacidad);
+        
+        // ✅ CORREGIDO - SIN } EXTRA
+        // AÑADIR estas líneas al final:
+        actualizarComparacionPrecios();
+        
+        // Actualizar Langile Kopurua en Laburpena
+        const personalProductivo = document.getElementById('contador-personal-productivo')?.textContent || '0';
+        updateElement('resumen-langile-kopurua', personalProductivo);
+        console.log('✅ Langile Kopurua resincronizado:', personalProductivo);
+            
+    } catch (error) {
+        console.error('❌ Error en actualizarAnalisisMetricas:', error);
     }
-    
-    // ANÁLISIS DE PRECIO/HORA EFECTIVO
-    let analisisPrecioEfectivo = "";
-    let colorPrecioEfectivo = "#666";
-    const precioRecomendado = 75;
-    
-    if (precioHoraEfectivo === 0) {
-        analisisPrecioEfectivo = "❌ Diru-sarrerik gabe";
-        colorPrecioEfectivo = "#dc2626";
-    } else if (precioHoraEfectivo < precioRecomendado * 0.7) {
-        analisisPrecioEfectivo = "⚠️ Kosteen azpitik";
-        colorPrecioEfectivo = "#ea580c";
-    } else if (precioHoraEfectivo >= precioRecomendado) {
-        analisisPrecioEfectivo = "✅ Lehiakorra";
-        colorPrecioEfectivo = "#16a34a";
-    } else {
-        analisisPrecioEfectivo = "📊 Onargarria";
-        colorPrecioEfectivo = "#ca8a04";
-    }
-    
-    // ANÁLISIS DE PRECIO/HORA PROMEDIO
-    let analisisPrecioPromedio = "";
-    let colorPrecioPromedio = "#666";
-    const diferencia = precioHoraEfectivo - precioHoraPromedio;
-    const diferenciaPorcentaje = precioHoraPromedio > 0 ? (diferencia / precioHoraPromedio) * 100 : 0;
-    
-    if (precioHoraPromedio === 0) {
-        analisisPrecioPromedio = "❌ Zerbitzurik gabe";
-        colorPrecioPromedio = "#dc2626";
-    } else if (diferenciaPorcentaje < -15) {
-        analisisPrecioPromedio = `📉 ${Math.abs(diferenciaPorcentaje).toFixed(0)}% baxuagoa`;
-        colorPrecioPromedio = "#ea580c";
-    } else if (diferenciaPorcentaje > 15) {
-        analisisPrecioPromedio = `📈 +${diferenciaPorcentaje.toFixed(0)}% altuagoa`;
-        colorPrecioPromedio = "#7c3aed";
-    } else {
-        analisisPrecioPromedio = "⚖️ Batezbestekoarekin bat";
-        colorPrecioPromedio = "#16a34a";
-    }
-    
-    // ANÁLISIS DE CLIENTES
-    let analisisClientes = "";
-    let colorClientes = "#666";
-    const clientesPorHora = horasSemanales > 0 ? (clientesMensuales * 4.33) / horasSemanales : 0;
-    
-    if (clientesMensuales === 0) {
-        analisisClientes = "❌ Sin clientes";
-        colorClientes = "#dc2626";
-    } else if (clientesPorHora > 0.3) {
-        analisisClientes = "⚠️ Muchos clientes/hora";
-        colorClientes = "#ea580c";
-    } else if (clientesPorHora < 0.1 && horasSemanales > 20) {
-        analisisClientes = "✅ Buena dedicación";
-        colorClientes = "#16a34a";
-    } else {
-        analisisClientes = "📊 Densidad normal";
-        colorClientes = "#ca8a04";
-    }
-    
-    // ANÁLISIS DE CAPACIDAD
-    let analisisCapacidad = "";
-    let colorCapacidad = "#666";
-    if (capacidad === 0) {
-        analisisCapacidad = "❌ Capacidad ociosa";
-        colorCapacidad = "#dc2626";
-    } else if (capacidad < 30) {
-        analisisCapacidad = "⚠️ Infrautilización";
-        colorCapacidad = "#ea580c";
-    } else if (capacidad > 100) {
-        analisisCapacidad = "🚨 Sobrecarga crítica";
-        colorCapacidad = "#dc2626";
-    } else if (capacidad >= 70 && capacidad <= 90) {
-        analisisCapacidad = "✅ Óptimo productivo";
-        colorCapacidad = "#16a34a";
-    } else if (capacidad >= 50 && capacidad < 70) {
-        analisisCapacidad = "📊 Margen de crecimiento";
-        colorCapacidad = "#ca8a04";
-    } else {
-        analisisCapacidad = "📊 En desarrollo";
-        colorCapacidad = "#2563eb";
-    }
-    
-    // Aplicar estilos y textos
-    aplicarAnalisis('analisis-horas-mes', analisisHoras, colorHoras);
-    aplicarAnalisis('analisis-precio-hora', analisisPrecioEfectivo, colorPrecioEfectivo);
-    aplicarAnalisis('analisis-precio-promedio', analisisPrecioPromedio, colorPrecioPromedio);
-    aplicarAnalisis('analisis-clientes-mes', analisisClientes, colorClientes);
-    aplicarAnalisis('analisis-capacidad', analisisCapacidad, colorCapacidad);
-    
-  // AÑADIR estas líneas al final:
-    actualizarComparacionPrecios();
-    
-    // Actualizar Langile Kopurua en Laburpena
-    const personalProductivo = document.getElementById('contador-personal-productivo')?.textContent || '0';
-    updateElement('resumen-langile-kopurua', personalProductivo);
-}
+} // ← ✅ ESTE } CIERRA LA FUNCIÓN
   
 function aplicarAnalisis(elementId, texto, color) {
     const elemento = document.getElementById(elementId);

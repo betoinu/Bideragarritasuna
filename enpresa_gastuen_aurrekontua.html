@@ -432,18 +432,7 @@
                                                 <!-- Análisis se insertará aquí -->
                                             </div>
                                         </div>
-                                        
-                                        <!-- PRECIO/HORA -->
-                                        <div class="metric-item">
-                                            <div style="display: flex; justify-content: between; align-items: center;">
-                                                <span>Orduko Prezioa:</span>
-                                                <strong id="metricas-precio-hora">€ 0</strong>
-                                            </div>
-                                            <div id="analisis-precio-hora" class="analisis-critico" style="font-size: 0.8rem; margin-top: 4px; padding: 4px 8px; border-radius: 4px; background: #f8f9fa;">
-                                                <!-- Análisis se insertará aquí -->
-                                            </div>
-                                        </div>
-                                        
+                                                                               
                                         <!-- CLIENTES MENSUALES -->
                                         <div class="metric-item">
                                             <div style="display: flex; justify-content: between; align-items: center;">
@@ -464,35 +453,44 @@
                                             <div id="analisis-capacidad" class="analisis-critico" style="font-size: 0.8rem; margin-top: 4px; padding: 4px 8px; border-radius: 4px; background: #f8f9fa;">
                                                 <!-- Análisis se insertará aquí -->
                                             </div>
-                                        </div>
-                                        
+                                        </div> 
                                     </div>
                                 </div>
                             </div>
                             
-                            <!-- MÉTRICAS CLAVE -->
+                           <!-- Añadir este card después de "Metrika Nagusiak" -->
                             <div class="card">
-                                <h5>📊 Metrika Nagusiak</h5>
-                                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                                    <div style="display: flex; justify-content: between; align-items: center;">
-                                        <span>Asteroko Orduak:</span>
-                                        <strong id="metricas-horas-mes">0h</strong>
-                                    </div>
-                                    <div style="display: flex; justify-content: between; align-items: center;">
-                                        <span>Orduko Prezioa:</span>
-                                        <strong id="metricas-precio-hora">€ 0</strong>
-                                    </div>
-                                    <div style="display: flex; justify-content: between; align-items: center;">
-                                        <span>Hileko Bezeroak:</span>
-                                        <strong id="metricas-clientes-mes">0</strong>
-                                    </div>
-                                    <div style="display: flex; justify-content: between; align-items: center;">
-                                        <span>Erabilera Kapazitatea:</span>
-                                        <strong id="metricas-capacidad">0%</strong>
+                                <div class="card-header">
+                                    <h3>Prezioen Konparaketa</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="metricas-precios-container">
+                                        <!-- Precio de Viabilidad -->
+                                        <div class="precio-item">
+                                            <div class="precio-label">Bideragarritasun Plangoa</div>
+                                            <div class="precio-valor" id="precio-viabilidad">€ 0.00</div>
+                                            <div class="precio-desc">Planifikatutako prezio minimoa</div>
+                                        </div>
+                                        
+                                        <!-- Separador -->
+                                        <div class="precio-separator">vs</div>
+                                        
+                                        <!-- Precio Promedio Real -->
+                                        <div class="precio-item">
+                                            <div class="precio-label">Batezbesteko Prezioa/Ordua</div>
+                                            <div class="precio-valor" id="precio-promedio-real">€ 0.00</div>
+                                            <div class="precio-desc">Kartera errealean kalkulatuta</div>
+                                        </div>
+                                        
+                                        <!-- Diferencia -->
+                                        <div class="precio-diferencia">
+                                            <div class="diferencia-label">Aldea</div>
+                                            <div class="diferencia-valor" id="diferencia-precios">€ 0.00</div>
+                                            <div class="diferencia-porcentaje" id="diferencia-porcentaje">0%</div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-
                         </div>
 
                         <!-- COLUMNA DERECHA -->
@@ -500,23 +498,36 @@
 
                             <!-- RESUMEN RÁPIDO -->
                             <div class="card">
-                                <h5>📈 Laburpena</h5>
-                                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                                    <div style="display: flex; justify-content: between; align-items: center;">
-                                        <span>Diru-sarrerak:</span>
-                                        <strong id="resumen-ingresos-totales">€ 0</strong>
+                                <div class="card-header">
+                                    <h3>Laburpena</h3>
+                                </div>
+                                <div class="card-body">
+                                    <!-- PRIMERA FILA - NUEVA ESTRUCTURA -->
+                                    <div class="resumen-row">
+                                        <div class="resumen-item">
+                                            <div class="resumen-label">Orduak</div>
+                                            <div class="resumen-valor" id="resumen-horas-totales">0h</div>
+                                        </div>
+                                        <div class="resumen-item">
+                                            <div class="resumen-label">Langile Kopurua</div>
+                                            <div class="resumen-valor" id="resumen-langile-kopurua">0</div>
+                                        </div>
+                                        <div class="resumen-item">
+                                            <div class="resumen-label">Biziraupen Helburua</div>
+                                            <div class="resumen-valor" id="resumen-meta-supervivencia">€ 0.00</div>
+                                        </div>
                                     </div>
-                                    <div style="display: flex; justify-content: between; align-items: center;">
-                                        <span>Guztira Orduak:</span>
-                                        <strong id="resumen-horas-totales">0h</strong>
-                                    </div>
-                                    <div style="display: flex; justify-content: between; align-items: center;">
-                                        <span>Batezbesteko Prezioa/Ordua:</span>
-                                        <strong id="resumen-precio-hora">€ 0</strong>
-                                    </div>
-                                    <div style="display: flex; justify-content: between; align-items: center;">
-                                        <span>Biziraupen Helburua:</span>
-                                        <strong id="resumen-meta-supervivencia">€ 0</strong>
+                                    
+                                    <!-- SEGUNDA FILA - ORIGINAL -->
+                                    <div class="resumen-row">
+                                        <div class="resumen-item">
+                                            <div class="resumen-label">Diru-sarrerak</div>
+                                            <div class="resumen-valor" id="resumen-ingresos-totales">€ 0</div>
+                                        </div>
+                                        <div class="resumen-item">
+                                            <div class="resumen-label">Prezioa/Ordua</div>
+                                            <div class="resumen-valor" id="resumen-precio-hora">€ 0.00</div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

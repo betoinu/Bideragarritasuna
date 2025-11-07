@@ -353,42 +353,42 @@
                             
                             <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
                                 <div>
-                                    <!-- CARTERA DE SERVICIOS -->
-                                    <!-- En el Panel 8, reemplaza la tabla actual -->
-                <div class="card">
-                    <h4 data-i18n="estrategia.carteraTitle">🏷️ Tu Cartera de Servicios</h4>
-                    
-                    <div style="margin-bottom: 15px; display: flex; gap: 10px;">
-                        <button class="btn small" onclick="añadirServicio()">+ Añadir Servicio</button>
-                        <button class="btn small" onclick="limpiarCartera()">🗑️ Limpiar Todo</button>
-                    </div>
-                
-                    <table style="width: 100%;">
-                        <thead>
-                            <tr>
-                                <th data-i18n="estrategia.servicio">Servicio</th>
-                                <th class="text-right" data-i18n="estrategia.precio">Precio (€)</th>
-                                <th class="text-center" data-i18n="estrategia.horas">Horas</th>
-                                <th class="text-center" data-i18n="estrategia.cantidadAnual">Cantidad/año</th>
-                                <th class="text-right" data-i18n="estrategia.ingresos">Ingresos</th>
-                                <th style="width: 80px;">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="cartera-servicios-body">
-                            <!-- Los servicios se generarán dinámicamente -->
-                        </tbody>
-                        <tfoot>
-                            <tr style="background: #f8f9fa;">
-                                <td><strong>Total</strong></td>
-                                <td class="text-right">-</td>
-                                <td class="text-center">-</td>
-                                <td class="text-center" id="total-cantidad-servicios">0</td>
-                                <td class="text-right" id="total-ingresos-cartera"><strong>€ 0</strong></td>
-                                <td></td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </div>
+                        <!-- CARTERA DE SERVICIOS - TABLA MEJORADA -->
+                        <div class="card">
+                            <h4 data-i18n="estrategia.carteraTitle">🏷️ Tu Cartera de Servicios</h4>
+                            
+                            <div style="margin-bottom: 15px; display: flex; gap: 10px;">
+                                <button class="btn small" onclick="añadirServicio()">+ Añadir Servicio</button>
+                                <button class="btn small" onclick="limpiarCartera()">🗑️ Limpiar Todo</button>
+                            </div>
+                        
+                            <!-- === COMIENZO TABLA MEJORADA === -->
+                            <table class="table" style="width: 100%;">
+                                <thead>
+                                    <tr>
+                                        <th class="col-nombre" data-i18n="estrategia.servicio">Servicio</th>
+                                        <th class="col-precio text-right" data-i18n="estrategia.precio">Precio (€)</th>
+                                        <th class="col-horas text-center" data-i18n="estrategia.horas">Horas</th>
+                                        <th class="col-cantidad text-center" data-i18n="estrategia.cantidadAnual">Cantidad/año</th>
+                                        <th class="col-ingresos text-right" data-i18n="estrategia.ingresos">Ingresos</th>
+                                        <th class="col-acciones" style="width: 120px;">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="cartera-servicios-body">
+                                    <!-- Los servicios se generarán dinámicamente -->
+                                </tbody>
+                                <tfoot>
+                                    <tr style="background: #f8f9fa;">
+                                        <td><strong>Total</strong></td>
+                                        <td class="text-right">-</td>
+                                        <td class="text-center">-</td>
+                                        <td class="text-center" id="total-cantidad-servicios">0</td>
+                                        <td class="text-right" id="total-ingresos-cartera"><strong>€ 0</strong></td>
+                                        <td></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                           </div>
         
                     <!-- ANÁLISIS DE SUPERVIVENCIA -->
                     <div class="card">

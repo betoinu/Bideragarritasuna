@@ -347,138 +347,169 @@
                     </div>
                 </div>
 
-                        <!-- PANEL 8 - ESTRATEGIA -->
-                        <div id="estrategia-sheet" class="panel" style="display:none">
-                            <h2 data-i18n="panel.estrategia.title">8 · Merkatu Estrategia eta Biziraupena</h2>
-                            
-                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
-                                <div>
-
-                        <!-- CARTERA DE SERVICIOS - TABLA MEJORADA CON DOBLE COLUMNA -->
-                <div class="card">
-                    <h4 data-i18n="estrategia.carteraTitle">🏷️ Tu Cartera de Servicios</h4>
+                                        <!-- PANEL 8 - ESTRATEGIA -->
+                <div id="estrategia-sheet" class="panel" style="display:none">
+                    <h2 data-i18n="panel.estrategia.title">8 · Merkatu Estrategia eta Biziraupena</h2>
                     
-                    <div style="margin-bottom: 15px; display: flex; gap: 10px;">
-                        <button class="btn small" onclick="añadirServicio()">+ Añadir Servicio</button>
-                        <button class="btn small" onclick="limpiarCartera()">🗑️ Limpiar Todo</button>
+                    <!-- ESTRUCTURA DE 2 COLUMNAS -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start;">
+                        
+                        <!-- COLUMNA IZQUIERDA -->
+                        <div style="display: flex; flex-direction: column; gap: 2rem;">
+                            
+                            <!-- TABLA DE SERVICIOS (OCUPA AMBAS COLUMNAS) -->
+                            <div class="card" style="grid-column: 1 / -1;">
+                                <div class="card-header">
+                                    <h4 data-i18n="estrategia.carteraTitle">🏷️ Zure Zerbitzu Kartera</h4>
+                                </div>
+                                
+                                <div class="card-body">
+                                    <div style="margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
+                                        <button class="btn btn-primary btn-sm" onclick="añadirServicio()">
+                                            + Gehitu Zerbitzua
+                                        </button>
+                                        <button class="btn btn-outline btn-sm" onclick="limpiarCartera()">
+                                            🗑️ Garbitu Dena
+                                        </button>
+                                    </div>
+                
+                                    <table class="table table-striped table-hover" style="width: 100%;">
+                                        <thead class="table-header">
+                                            <tr>
+                                                <th style="width: 30%;" data-i18n="estrategia.servicio">Zerbitzua</th>
+                                                <th style="width: 15%;" class="text-right" data-i18n="estrategia.precio">Prezioa (€)</th>
+                                                <th style="width: 12%;" class="text-center" data-i18n="estrategia.horas">Orduak</th>
+                                                <th style="width: 15%;" class="text-center" data-i18n="estrategia.cantidadAnual">Kopurua/urte</th>
+                                                <th style="width: 18%;" class="text-right" data-i18n="estrategia.ingresos">Diru-sarrerak</th>
+                                                <th style="width: 10%;" class="text-center">Ekintzak</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="cartera-servicios-body">
+                                            <!-- Los servicios se generarán dinámicamente -->
+                                        </tbody>
+                                        <tfoot class="table-footer">
+                                            <tr>
+                                                <td><strong>Guztira</strong></td>
+                                                <td class="text-right">-</td>
+                                                <td class="text-center">-</td>
+                                                <td class="text-center" id="total-cantidad-servicios">0</td>
+                                                <td class="text-right" id="total-ingresos-cartera"><strong>€ 0</strong></td>
+                                                <td></td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                
+                            <!-- ANÁLISIS DE SUPERVIVENCIA -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5>📊 Biziraupen Analisia</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                        <div>
+                                            <p><strong>Biziraupen Helburua:</strong></p>
+                                            <p id="meta-supervivencia" class="value">€ 0.00</p>
+                                        </div>
+                                        <div>
+                                            <p><strong>Proiektatutako Diru-sarrerak:</strong></p>
+                                            <p id="ingresos-proyectados" class="value">€ 0.00</p>
+                                        </div>
+                                    </div>
+                                    <div style="margin-top: 1rem; padding: 1rem; background: #f8f9fa; border-radius: 6px;">
+                                        <p><strong>Biziraupen Aldea:</strong></p>
+                                        <p id="brecha-supervivencia" class="value">€ 0.00</p>
+                                        <p id="diagnostico-supervivencia" style="margin-top: 0.5rem; font-style: italic;"></p>
+                                    </div>
+                                </div>
+                            </div>
+                
+                        </div>
+                
+                        <!-- COLUMNA DERECHA -->
+                        <div style="display: flex; flex-direction: column; gap: 2rem;">
+                            
+                            <!-- RESUMEN RÁPIDO -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5>📈 Laburpena</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="metric-grid">
+                                        <div class="metric-item">
+                                            <div class="metric-label">Diru-sarrerak</div>
+                                            <div class="metric-value" id="resumen-ingresos-totales">€ 0</div>
+                                        </div>
+                                        
+                                        <div class="metric-item">
+                                            <div class="metric-label">Guztira Orduak</div>
+                                            <div class="metric-value" id="resumen-horas-totales">0h</div>
+                                        </div>
+                                        
+                                        <div class="metric-item">
+                                            <div class="metric-label">Batezbesteko Prezioa/Ordua</div>
+                                            <div class="metric-value" id="resumen-precio-hora">€ 0</div>
+                                        </div>
+                                        
+                                        <div class="metric-item">
+                                            <div class="metric-label">Biziraupen Helburua</div>
+                                            <div class="metric-value-small" id="resumen-meta-supervivencia">€ 0</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                
+                            <!-- ESTRATEGIAS -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5>🎯 Estrategiak</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="strategy-buttons">
+                                        <button class="btn btn-strategy btn-premium" onclick="aplicarEstrategia('premium')">
+                                            Premium (+20%)
+                                        </button>
+                                        <button class="btn btn-strategy btn-balanced" onclick="aplicarEstrategia('equilibrado')">
+                                            Orekatua
+                                        </button>
+                                        <button class="btn btn-strategy btn-volume" onclick="aplicarEstrategia('volumen')">
+                                            Bolumena (+50%)
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                
+                            <!-- MÉTRICAS CLAVE -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5>📊 Metrika Nagusiak</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="metric-grid">
+                                        <div class="metric-item">
+                                            <div class="metric-label">Asteroko Orduak</div>
+                                            <div class="metric-value" id="metricas-horas-mes">0h</div>
+                                        </div>
+                                        <div class="metric-item">
+                                            <div class="metric-label">Orduko Prezioa</div>
+                                            <div class="metric-value" id="metricas-precio-hora">€ 0</div>
+                                        </div>
+                                        <div class="metric-item">
+                                            <div class="metric-label">Hileko Bezeroak</div>
+                                            <div class="metric-value" id="metricas-clientes-mes">0</div>
+                                        </div>
+                                        <div class="metric-item">
+                                            <div class="metric-label">Erabilera Kapazitatea</div>
+                                            <div class="metric-value" id="metricas-capacidad">0%</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                
+                        </div>
                     </div>
-                         <!-- CONTENEDOR PRINCIPAL DE 2 COLUMNAS -->
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start;">
-                        
-                            <!-- COLUMNA IZQUIERDA -->
-                            <div style="display: flex; flex-direction: column; gap: 2rem;">
-                                
-                                <!-- TABLA DE SERVICIOS QUE OCUPA AMBAS COLUMNAS -->
-                                <div class="card" style="grid-column: 1 / -1;">  <!-- Esto hace que ocupe ambas columnas -->
-                                    <div class="card-header">
-                                        <h4 data-i18n="estrategia.carteraTitle">🏷️ Zure Zerbitzu Kartera</h4>
-                                    </div>
-                                    
-                                    <div class="card-body">
-                                        <div style="margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
-                                            <button class="btn btn-primary btn-sm" onclick="añadirServicio()">
-                                                + Gehitu Zerbitzua
-                                            </button>
-                                            <button class="btn btn-outline btn-sm" onclick="limpiarCartera()">
-                                                🗑️ Garbitu Dena
-                                            </button>
-                                        </div>
-                        
-                                        <table class="table table-striped table-hover" style="width: 100%;">
-                                            <thead class="table-header">
-                                                <tr>
-                                                    <th style="width: 30%;" data-i18n="estrategia.servicio">Zerbitzua</th>
-                                                    <th style="width: 15%;" class="text-right" data-i18n="estrategia.precio">Prezioa (€)</th>
-                                                    <th style="width: 12%;" class="text-center" data-i18n="estrategia.horas">Orduak</th>
-                                                    <th style="width: 15%;" class="text-center" data-i18n="estrategia.cantidadAnual">Kopurua/urte</th>
-                                                    <th style="width: 18%;" class="text-right" data-i18n="estrategia.ingresos">Diru-sarrerak</th>
-                                                    <th style="width: 10%;" class="text-center">Ekintzak</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="cartera-servicios-body">
-                                                <!-- Los servicios se generarán dinámicamente -->
-                                            </tbody>
-                                            <tfoot class="table-footer">
-                                                <tr>
-                                                    <td><strong>Guztira</strong></td>
-                                                    <td class="text-right">-</td>
-                                                    <td class="text-center">-</td>
-                                                    <td class="text-center" id="total-cantidad-servicios">0</td>
-                                                    <td class="text-right" id="total-ingresos-cartera"><strong>€ 0</strong></td>
-                                                    <td></td>
-                                                </tr>
-                                            </tfoot>
-                                        </table>
-                                    </div>
-                                </div>
-                        
-                                <!-- RESTO DEL CONTENIDO DE LA COLUMNA IZQUIERDA -->
-                                <div class="card">
-                                    <div class="card-header">
-                                        <h5>📊 Beste Informazioa</h5>
-                                    </div>
-                                    <div class="card-body">
-                                        <!-- Contenido de la columna izquierda -->
-                                    </div>
-                                </div>
-                        
-                            </div>
-                        
-                            <!-- COLUMNA DERECHA -->
-                            <div style="display: flex; flex-direction: column; gap: 2rem;">
-                                
-                                <!-- RESUMEN RÁPIDO -->
-                                <div class="card">
-                                    <div class="card-header">
-                                        <h5>📈 Laburpena</h5>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="metric-grid">
-                                            <div class="metric-item">
-                                                <div class="metric-label">Diru-sarrerak</div>
-                                                <div class="metric-value" id="resumen-ingresos-totales">€ 0</div>
-                                            </div>
-                                            
-                                            <div class="metric-item">
-                                                <div class="metric-label">Guztira Orduak</div>
-                                                <div class="metric-value" id="resumen-horas-totales">0h</div>
-                                            </div>
-                                            
-                                            <div class="metric-item">
-                                                <div class="metric-label">Batezbesteko Prezioa/Ordua</div>
-                                                <div class="metric-value" id="resumen-precio-hora">€ 0</div>
-                                            </div>
-                                            
-                                            <div class="metric-item">
-                                                <div class="metric-label">Biziraupen Helburua</div>
-                                                <div class="metric-value-small" id="resumen-meta-supervivencia">€ 0</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                        
-                                <!-- ESTRATEGIAS -->
-                                <div class="card">
-                                    <div class="card-header">
-                                        <h5>🎯 Estrategiak</h5>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="strategy-buttons">
-                                            <button class="btn btn-strategy btn-premium" onclick="aplicarEstrategia('premium')">
-                                                Premium (+20%)
-                                            </button>
-                                            <button class="btn btn-strategy btn-balanced" onclick="aplicarEstrategia('equilibrado')">
-                                                Orekatua
-                                            </button>
-                                            <button class="btn btn-strategy btn-volume" onclick="aplicarEstrategia('volumen')">
-                                                Bolumena (+50%)
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>               
-
+                </div>
 </section>
 
             <!-- SIDEBAR -->

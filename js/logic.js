@@ -14,9 +14,137 @@ window.state = {
     prestamo: { tae: 5, plazo: 5, periodoGracia: 0 }
   }
 };
-
+// ===== SERVICIOS EDITABLES - AÑADIR AQUÍ =====
+window.serviciosCartera = [
+    { id: 'serv-1', nombre: 'Diseño rápido', precio: 400, horas: 8, cantidad: 0 },
+    { id: 'serv-2', nombre: 'Consultoría express', precio: 200, horas: 4, cantidad: 0 },
+    { id: 'serv-3', nombre: 'Proyecto medio', precio: 2000, horas: 40, cantidad: 0 },
+    { id: 'serv-4', nombre: 'Proyecto grande', precio: 4000, horas: 80, cantidad: 0 }
+];
 let currentLanguage = 'eu';
 let translations = {};
+
+// Renderizar servicios en la tabla
+function renderizarServicios() {
+    const tbody = document.getElementById('cartera-servicios-body');
+    if (!tbody) return;
+
+    tbody.innerHTML = window.serviciosCartera.map(servicio => `
+        <tr class="servicio-fila" data-servicio-id="${servicio.id}">
+            <td>
+                <input type="text" 
+                       class="input-servicio" 
+                       value="${servicio.nombre}" 
+                       onchange="actualizarServicio('${servicio.id}', 'nombre', this.value)"
+                       placeholder="Nombre del servicio">
+            </td>
+            <td class="text-right">
+                <input type="number" 
+                       class="input-servicio" 
+                       value="${servicio.precio}" 
+                       onchange="actualizarServicio('${servicio.id}', 'precio', parseFloat(this.value) || 0)"
+                       min="0" step="50">
+            </td>
+            <td class="text-center">
+                <input type="number" 
+                       class="input-servicio" 
+                       value="${servicio.horas}" 
+                       onchange="actualizarServicio('${servicio.id}', 'horas', parseFloat(this.value) || 0)"
+                       min="1" step="1">
+            </td>
+            <td class="text-center">
+                <input type="number" 
+                       class="input-servicio" 
+                       value="${servicio.cantidad}" 
+                       onchange="actualizarServicio('${servicio.id}', 'cantidad', parseInt(this.value) || 0)"
+                       min="0" 
+                       style="width: 80px;">
+            </td>
+            <td class="text-right">
+                <span class="ingresos-servicio" id="ingresos-${servicio.id}">
+                    € ${(servicio.precio * servicio.cantidad).toLocaleString()}
+                </span>
+            </td>
+            <td class="text-center">
+                <button class="btn-eliminar-servicio" 
+                        onclick="eliminarServicio('${servicio.id}')" 
+                        title="Eliminar servicio">
+                    ✕
+                </button>
+            </td>
+        </tr>
+    `).join('');
+
+    actualizarCalculosCartera();
+}
+
+// Actualizar un servicio específico
+window.actualizarServicio = function(id, campo, valor) {
+    const servicio = window.serviciosCartera.find(s => s.id === id);
+    if (servicio) {
+        servicio[campo] = valor;
+        
+        const elementoIngresos = document.getElementById(`ingresos-${id}`);
+        if (elementoIngresos) {
+            elementoIngresos.textContent = `€ ${(servicio.precio * servicio.cantidad).toLocaleString()}`;
+        }
+        
+        actualizarCalculosCartera();
+        updatePortfolio();
+    }
+};
+
+// Añadir nuevo servicio
+window.añadirServicio = function() {
+    const nuevoId = 'serv-' + Date.now();
+    const nuevoServicio = {
+        id: nuevoId,
+        nombre: 'Nuevo Servicio',
+        precio: 1000,
+        horas: 20,
+        cantidad: 0
+    };
+    
+    window.serviciosCartera.push(nuevoServicio);
+    renderizarServicios();
+};
+
+// Eliminar servicio
+window.eliminarServicio = function(id) {
+    if (window.serviciosCartera.length <= 1) {
+        alert("❌ Debe haber al menos un servicio en la cartera");
+        return;
+    }
+    
+    if (confirm("¿Estás seguro de que quieres eliminar este servicio?")) {
+        window.serviciosCartera = window.serviciosCartera.filter(s => s.id !== id);
+        renderizarServicios();
+    }
+};
+
+// Limpiar toda la cartera
+window.limpiarCartera = function() {
+    if (confirm("¿Estás seguro de que quieres limpiar toda la cartera? Se perderán todos los datos.")) {
+        window.serviciosCartera = [
+            { id: 'serv-1', nombre: 'Servicio Básico', precio: 1000, horas: 20, cantidad: 0 }
+        ];
+        renderizarServicios();
+    }
+};
+
+// Actualizar cálculos de la cartera
+function actualizarCalculosCartera() {
+    let totalCantidad = 0;
+    let totalIngresos = 0;
+
+    window.serviciosCartera.forEach(servicio => {
+        totalCantidad += servicio.cantidad;
+        totalIngresos += servicio.precio * servicio.cantidad;
+    });
+
+    updateElement('total-cantidad-servicios', totalCantidad);
+    updateElement('total-ingresos-cartera', `€ ${totalIngresos.toLocaleString()}`);
+}
 
 // ===== FUNCIONES BASE (DEFINIDAS PRIMERO) =====
 function uid(prefix = 'id') { 
@@ -1088,59 +1216,49 @@ function updateAll() {
 window.estrategiaActiva = null;
 
 window.updatePortfolio = function() {
-    // Calcular ingresos de cada servicio
-    const servicios = [
-        { id: 'rapido', precio: 400, horas: 8 },
-        { id: 'consultoria', precio: 200, horas: 4 },
-        { id: 'medio', precio: 2000, horas: 40 },
-        { id: 'grande', precio: 4000, horas: 80 }
-    ];
+    console.log("🔄 Actualizando cartera con servicios editables...");
     
     let totalIngresos = 0;
     let totalHoras = 0;
     let totalClientes = 0;
-    
-    servicios.forEach((servicio, index) => {
-        const cantidad = parseInt(document.querySelectorAll('#cartera-servicios-body input[type="number"]')[index]?.value) || 0;
-        const ingresos = cantidad * servicio.precio;
-        totalIngresos += ingresos;
-        totalHoras += cantidad * servicio.horas;
-        totalClientes += cantidad;
+
+    // Usar los servicios editables en lugar de los fijos
+    window.serviciosCartera.forEach(servicio => {
+        const ingresos = servicio.precio * servicio.cantidad;
+        const horas = servicio.horas * servicio.cantidad;
         
-        // Actualizar columna de ingresos
+        totalIngresos += ingresos;
+        totalHoras += horas;
+        totalClientes += servicio.cantidad;
+        
         updateElement(`ingresos-${servicio.id}`, `€ ${ingresos.toLocaleString()}`);
     });
-    
+
     // Actualizar totales
     updateElement('total-ingresos-cartera', `€ ${totalIngresos.toLocaleString()}`);
     updateElement('ingresos-proyectados', fmt(totalIngresos));
     
     // Calcular métricas de supervivencia
     const textoGastos = document.getElementById('gastos-totales-panel6')?.textContent || '0';
-    const metaSupervivencia = safeNum(textoGastos.replace(/\./g, '').replace(',', '.')) || 0;
+    const metaSupervivencia = safeNum(textoGastos.replace(/[^\d,.-]/g, '').replace(',', '.')) || 0;
     const brecha = totalIngresos - metaSupervivencia;
     
     updateElement('meta-supervivencia', fmt(metaSupervivencia));
     updateElement('brecha-supervivencia', fmt(brecha));
     
     // Actualizar diagnóstico
-const diagnostico = document.getElementById('diagnostico-supervivencia');
+    const diagnostico = document.getElementById('diagnostico-supervivencia');
     if (diagnostico) {
-        // ✅ NUEVA LÓGICA (brecha POSITIVA = SUPERÁVIT)
         if (brecha >= metaSupervivencia * 0.2) {
-            // Superávit > 20% = ÓPTIMO
             diagnostico.textContent = '✅ ÓPTIMO - Superávit: ' + fmt(brecha);
             diagnostico.parentElement.style.background = '#e8f5e8';
         } else if (brecha > 0) {
-            // Superávit pero < 20% = ACEPTABLE  
             diagnostico.textContent = '⚠️ ACEPTABLE - Superávit: ' + fmt(brecha);
             diagnostico.parentElement.style.background = '#fff3cd';
         } else if (brecha >= metaSupervivencia * -0.2) {
-            // Déficit < 20% = CASI
             diagnostico.textContent = '🔶 CASI - Déficit: ' + fmt(Math.abs(brecha));
             diagnostico.parentElement.style.background = '#ffeaa7';
         } else {
-            // Déficit > 20% = CRÍTICO
             diagnostico.textContent = '🔴 CRÍTICO - Déficit: ' + fmt(Math.abs(brecha));
             diagnostico.parentElement.style.background = '#ffeaa7';
         }
@@ -1216,6 +1334,7 @@ async function initializeApp() {
         // Cargar datos
         preloadSampleData();
         renderAllTables();
+        renderizarServicios();
         setupGlobalEventListeners();
 
           // 🆕 INICIALIZAR PANEL 8

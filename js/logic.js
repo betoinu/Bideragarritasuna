@@ -1290,6 +1290,117 @@ window.updatePortfolio = function() {
       
   // 🆕 ACTUALIZAR RESUMEN DE DOBLE COLUMNA
     actualizarResumenCartera(totalIngresos, totalHoras, metaSupervivencia);
+  // AÑADIR AL FINAL DE updatePortfolio() - ANTES DEL CIERRE }
+function actualizarAnalisisMetricas() {
+    // Obtener valores actuales
+    const horasSemanales = parseInt(document.getElementById('metricas-horas-mes')?.textContent) || 0;
+    const precioHora = parseFloat(document.getElementById('metricas-precio-hora')?.textContent.replace('€', '').replace(',', '.')) || 0;
+    const clientesMensuales = parseInt(document.getElementById('metricas-clientes-mes')?.textContent) || 0;
+    const capacidad = parseInt(document.getElementById('metricas-capacidad')?.textContent) || 0;
+    
+    // ANÁLISIS DE HORAS SEMANALES
+    let analisisHoras = "";
+    let colorHoras = "#666";
+    if (horasSemanales === 0) {
+        analisisHoras = "❌ Cero horas facturables";
+        colorHoras = "#dc2626";
+    } else if (horasSemanales < 20) {
+        analisisHoras = "⚠️ Volumen muy bajo";
+        colorHoras = "#ea580c";
+    } else if (horasSemanales > 60) {
+        analisisHoras = "🚨 Riesgo de burnout";
+        colorHoras = "#dc2626";
+    } else if (horasSemanales >= 35 && horasSemanales <= 45) {
+        analisisHoras = "✅ Óptimo sostenible";
+        colorHoras = "#16a34a";
+    } else {
+        analisisHoras = "📊 En rango aceptable";
+        colorHoras = "#ca8a04";
+    }
+    
+    // ANÁLISIS DE PRECIO/HORA
+    let analisisPrecio = "";
+    let colorPrecio = "#666";
+    const precioRecomendado = 75;
+    if (precioHora === 0) {
+        analisisPrecio = "❌ Precio cero";
+        colorPrecio = "#dc2626";
+    } else if (precioHora < precioRecomendado * 0.7) {
+        analisisPrecio = "⚠️ Muy bajo vs costes";
+        colorPrecio = "#ea580c";
+    } else if (precioHora >= precioRecomendado && precioHora <= precioRecomendado * 1.3) {
+        analisisPrecio = "✅ Competitivo";
+        colorPrecio = "#16a34a";
+    } else if (precioHora > precioRecomendado * 1.5) {
+        analisisPrecio = "💎 Posición premium";
+        colorPrecio = "#7c3aed";
+    } else {
+        analisisPrecio = "📊 Aceptable";
+        colorPrecio = "#ca8a04";
+    }
+    
+    // ANÁLISIS DE CLIENTES
+    let analisisClientes = "";
+    let colorClientes = "#666";
+    const clientesPorHora = horasSemanales > 0 ? (clientesMensuales * 4.33) / horasSemanales : 0;
+    
+    if (clientesMensuales === 0) {
+        analisisClientes = "❌ Sin clientes";
+        colorClientes = "#dc2626";
+    } else if (clientesPorHora > 0.3) {
+        analisisClientes = "⚠️ Muchos clientes/hora";
+        colorClientes = "#ea580c";
+    } else if (clientesPorHora < 0.1 && horasSemanales > 20) {
+        analisisClientes = "✅ Buena dedicación";
+        colorClientes = "#16a34a";
+    } else {
+        analisisClientes = "📊 Densidad normal";
+        colorClientes = "#ca8a04";
+    }
+    
+    // ANÁLISIS DE CAPACIDAD
+    let analisisCapacidad = "";
+    let colorCapacidad = "#666";
+    if (capacidad === 0) {
+        analisisCapacidad = "❌ Capacidad ociosa";
+        colorCapacidad = "#dc2626";
+    } else if (capacidad < 30) {
+        analisisCapacidad = "⚠️ Infrautilización";
+        colorCapacidad = "#ea580c";
+    } else if (capacidad > 100) {
+        analisisCapacidad = "🚨 Sobrecarga crítica";
+        colorCapacidad = "#dc2626";
+    } else if (capacidad >= 70 && capacidad <= 90) {
+        analisisCapacidad = "✅ Óptimo productivo";
+        colorCapacidad = "#16a34a";
+    } else if (capacidad >= 50 && capacidad < 70) {
+        analisisCapacidad = "📊 Margen de crecimiento";
+        colorCapacidad = "#ca8a04";
+    } else {
+        analisisCapacidad = "📊 En desarrollo";
+        colorCapacidad = "#2563eb";
+    }
+    
+    // Aplicar estilos y textos
+    aplicarAnalisis('analisis-horas-mes', analisisHoras, colorHoras);
+    aplicarAnalisis('analisis-precio-hora', analisisPrecio, colorPrecio);
+    aplicarAnalisis('analisis-clientes-mes', analisisClientes, colorClientes);
+    aplicarAnalisis('analisis-capacidad', analisisCapacidad, colorCapacidad);
+}
+
+function aplicarAnalisis(elementId, texto, color) {
+    const elemento = document.getElementById(elementId);
+    if (elemento) {
+        elemento.textContent = texto;
+        elemento.style.background = color + '20';
+        elemento.style.color = color;
+        elemento.style.border = `1px solid ${color}40`;
+        elemento.style.fontWeight = '500';
+    }
+}
+
+// LLAMAR LA FUNCIÓN EN updatePortfolio()
+actualizarAnalisisMetricas();
 };
 
 window.aplicarEstrategia = function(tipo) {

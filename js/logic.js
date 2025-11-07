@@ -1429,24 +1429,55 @@ function actualizarAnalisisMetricas() {
             analisisPrecioPromedio = "⚖️ Batezbestekoarekin bat";
             colorPrecioPromedio = "#16a34a";
         }
+
+        // ANÁLISIS DE PRECIO/HORA - NUEVO
+        let analisisPrecioHora = "";
+        let colorPrecioHora = "#666";
         
+        // Obtener precio de viabilidad para comparar
+        const precioViabilidadElement = document.getElementById('precio-viabilidad');
+        const precioViabilidad = precioViabilidadElement ? 
+            parseFloat(precioViabilidadElement.textContent.replace('€', '').replace(',', '.')) : 0;
+        
+        if (precioHoraEfectivo === 0) {
+            analisisPrecioHora = "❌ Diru-sarrerik gabe";
+            colorPrecioHora = "#dc2626";
+        } else if (precioHoraEfectivo < precioViabilidad * 0.8) {
+            analisisPrecioHora = "🚨 Kosteen azpitik";
+            colorPrecioHora = "#dc2626";
+        } else if (precioHoraEfectivo < precioViabilidad) {
+            analisisPrecioHora = "⚠️ Mugan";
+            colorPrecioHora = "#ea580c";
+        } else if (precioHoraEfectivo >= precioViabilidad && precioHoraEfectivo <= precioViabilidad * 1.2) {
+            analisisPrecioHora = "✅ Lehiakorra";
+            colorPrecioHora = "#16a34a";
+        } else if (precioHoraEfectivo > precioViabilidad * 1.2) {
+            analisisPrecioHora = "📈 Premium maila";
+            colorPrecioHora = "#7c3aed";
+        } else {
+            analisisPrecioHora = "📊 Onargarria";
+            colorPrecioHora = "#ca8a04";
+        }
+      
         // ANÁLISIS DE CLIENTES
         let analisisClientes = "";
-        let colorClientes = "#666";
-        const clientesPorHora = horasSemanales > 0 ? (clientesMensuales * 4.33) / horasSemanales : 0;
-        
-        if (clientesMensuales === 0) {
-            analisisClientes = "❌ Sin clientes";
-            colorClientes = "#dc2626";
-        } else if (clientesPorHora > 0.3) {
-            analisisClientes = "⚠️ Muchos clientes/hora";
-            colorClientes = "#ea580c";
-        } else if (clientesPorHora < 0.1 && horasSemanales > 20) {
-            analisisClientes = "✅ Buena dedicación";
-            colorClientes = "#16a34a";
-        } else {
-            analisisClientes = "📊 Densidad normal";
-            colorClientes = "#ca8a04";
+      let colorClientes = "#666";
+      
+      if (clientesMensuales === 0) {
+          analisisClientes = "❌ Bezero gabe";
+          colorClientes = "#dc2626";
+      } else if (clientesMensuales < 5) {
+          analisisClientes = "⚠️ Bezero gutxi";
+          colorClientes = "#ea580c";
+      } else if (clientesMensuales > 20) {
+          analisisClientes = "🚨 Karga handiegia";
+          colorClientes = "#dc2626";
+      } else if (clientesMensuales >= 10 && clientesMensuales <= 15) {
+          analisisClientes = "✅ Optimoa";
+          colorClientes = "#16a34a";
+      } else {
+          analisisClientes = "📊 Maila egokia";
+          colorClientes = "#ca8a04";
         }
         
         // ANÁLISIS DE CAPACIDAD

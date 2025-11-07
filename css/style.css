@@ -762,3 +762,78 @@ img {
 .metric-item:last-child {
     border-bottom: none;
 }
+/* Estilos para comparación de precios */
+.metricas-precios-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.precio-item {
+    flex: 1;
+    text-align: center;
+    padding: 15px;
+    border-radius: 8px;
+    background: #f8f9fa;
+}
+
+.precio-label {
+    font-size: 14px;
+    color: #6c757d;
+    margin-bottom: 5px;
+}
+
+.precio-valor {
+    font-size: 24px;
+    font-weight: bold;
+    color: #007bff;
+}
+
+.precio-desc {
+    font-size: 12px;
+    color: #6c757d;
+    margin-top: 5px;
+}
+
+.precio-separator {
+    font-size: 18px;
+    font-weight: bold;
+    color: #6c757d;
+}
+
+.precio-diferencia {
+    text-align: center;
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 6px;
+    background: #e9ecef;
+}
+
+.diferencia-label {
+    font-size: 12px;
+    color: #6c757d;
+}
+
+.diferencia-valor {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.diferencia-porcentaje {
+    font-size: 14px;
+    margin-top: 2px;
+}
+
+/* Estilos para Laburpena reorganizado */
+.resumen-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.resumen-item {
+    flex: 1;
+    text-align: center;
+    padding: 10px;
+}

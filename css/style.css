@@ -837,3 +837,24 @@ img {
     text-align: center;
     padding: 10px;
 }
+/* Estilos para Laburpena compacto en columna derecha */
+.resumen-item-compact {
+    text-align: center;
+    padding: 8px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    border: 1px solid #e9ecef;
+}
+
+.resumen-item-compact .resumen-label {
+    font-size: 11px;
+    color: #6c757d;
+    margin-bottom: 4px;
+    font-weight: 500;
+}
+
+.resumen-item-compact .resumen-valor {
+    font-size: 14px;
+    font-weight: bold;
+    color: #007bff;
+}

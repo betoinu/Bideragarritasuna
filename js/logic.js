@@ -648,6 +648,35 @@ function actualizarResumenCartera(totalIngresos, totalHoras, metaSupervivencia) 
     updateElement('resumen-meta-supervivencia', fmt(metaSupervivencia));
 }
 
+function actualizarComparacionPrecios() {
+    try {
+        // Precio de viabilidad (de calculatePricing)
+        const precioViabilidad = document.getElementById('suggested-hourly-rate')?.textContent || '€ 0.00';
+        
+        // Precio promedio real (de la cartera)
+        const horasTotales = parseInt(document.getElementById('resumen-horas-totales')?.textContent) || 1;
+        const ingresosTotalesText = document.getElementById('resumen-ingresos-totales')?.textContent || '€ 0';
+        const ingresosTotales = parseFloat(ingresosTotalesText.replace('€', '').replace(/\./g, '').replace(',', '.')) || 0;
+        
+        const precioPromedioReal = horasTotales > 0 ? ingresosTotales / horasTotales : 0;
+        
+        // Actualizar elementos
+        updateElement('precio-viabilidad', precioViabilidad);
+        updateElement('precio-promedio-real', `€ ${precioPromedioReal.toFixed(2)}`);
+        
+        // Calcular diferencia
+        const precioViabilidadNum = parseFloat(precioViabilidad.replace('€', '').replace(',', '.')) || 0;
+        const diferencia = precioPromedioReal - precioViabilidadNum;
+        const porcentaje = precioViabilidadNum > 0 ? (diferencia / precioViabilidadNum) * 100 : 0;
+        
+        updateElement('diferencia-precios', `€ ${diferencia.toFixed(2)}`);
+        updateElement('diferencia-porcentaje', `${porcentaje.toFixed(1)}%`);
+        
+    } catch (error) {
+        console.error('Error actualizando comparación de precios:', error);
+    }
+}
+
 function calculatePricing() {
     console.log("🔍 INICIANDO calculatePricing()...");  
   
@@ -1326,6 +1355,7 @@ window.updatePortfolio = function() {
       
   // 🆕 ACTUALIZAR RESUMEN DE DOBLE COLUMNA
     actualizarResumenCartera(totalIngresos, totalHoras, metaSupervivencia);
+
   // AÑADIR AL FINAL DE updatePortfolio() - ANTES DEL CIERRE }
 function actualizarAnalisisMetricas() {
     // Obtener valores actuales
@@ -1445,7 +1475,15 @@ function actualizarAnalisisMetricas() {
     aplicarAnalisis('analisis-precio-promedio', analisisPrecioPromedio, colorPrecioPromedio);
     aplicarAnalisis('analisis-clientes-mes', analisisClientes, colorClientes);
     aplicarAnalisis('analisis-capacidad', analisisCapacidad, colorCapacidad);
+    
+  // AÑADIR estas líneas al final:
+    actualizarComparacionPrecios();
+    
+    // Actualizar Langile Kopurua en Laburpena
+    const personalProductivo = document.getElementById('contador-personal-productivo')?.textContent || '0';
+    updateElement('resumen-langile-kopurua', personalProductivo);
 }
+  
 function aplicarAnalisis(elementId, texto, color) {
     const elemento = document.getElementById(elementId);
     if (elemento) {

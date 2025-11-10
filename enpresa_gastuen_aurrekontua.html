@@ -289,7 +289,10 @@
 
                                 <div class="input-group">
                                     <label for="annual-hours-per-employee" data-i18n="pricing.urtekoOrduakLangile">Urteko orduak langileko</label>
-                                    <input id="annual-hours-per-employee" type="number" value="1600" min="800" max="2200" step="50" oninput="updateAll()" />
+                                    <!-- REEMPLAZAR INPUT POR ELEMENTO DE SOLO LECTURA -->
+                                    <div id="annual-hours-per-employee-display" class="calculated-value">
+                                        <span id="annual-hours-per-employee-value">1600</span> h
+                                    </div>
                                     <small style="color:#666" data-i18n="pricing.urtekoOrduakHelp">(Normalean 1600-1800 ordu)</small>
                                 </div>
                             </div>

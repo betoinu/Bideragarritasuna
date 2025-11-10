@@ -728,6 +728,7 @@ function calculatePricing() {
     
     const employeeCount = Math.max(1, personalProductivo.length);
     const totalHours = totalHorasAnuales;
+    const horasAnualesPorEmpleado = totalHorasAnuales / employeeCount;
 
     const costesTotales = costesOperativos + costesFinancieros;
     const margenBruto = costesTotales * (margin / 100);

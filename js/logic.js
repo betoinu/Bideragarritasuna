@@ -792,6 +792,7 @@ function calculatePricing() {
         { id: 'gastos-operativos-panel6', value: fmt(costesOperativos) },
         { id: 'costes-financieros-panel6', value: fmt(costesFinancieros) },
         { id: 'gastos-totales-panel6', value: fmt(costesTotales) },
+        { id: 'annual-hours-per-employee-value', value: Math.round(horasAnualesPorEmpleado).toString() },
 
         // DESGLOSE PEDAGÓGICO
         { id: 'desglose-gastos-operativos', value: fmt(costesOperativos) },

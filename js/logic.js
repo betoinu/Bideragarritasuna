@@ -824,6 +824,8 @@ function calculatePricing() {
         { id: 'estrategia-activa', value: 'Ninguna' },
         { id: 'metricas-carga-promedio', value: `${Math.round(cargaPromedio)}h/asteko` },
         { id: 'resumen-langile-kopurua', value: employeeCount.toString() },
+        { id: 'resumen-horas-totales', value: totalHorasAnuales.toString() + 'h' },
+        
 
         // SIDEBAR CONTINUACIÓN
         { id: 'suggested-hourly-rate-sidebar', value: fmt(precioHora) },

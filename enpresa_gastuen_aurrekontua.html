@@ -21,8 +21,22 @@
                 <p class="muted"><span data-i18n="header.subtitle">BARNE DISEINU GRADUA - Neurketak eta Aurrekontuak</span></p>
             </div>
             <div class="controls">
-                <button class="btn primary" id="download-report-btn" data-i18n="button.download" onclick="generatePDFReport()">Deskargatu</button>
-            </div>
+                            <div class="pdf-controls-wrapper">
+                                <button class="btn primary" id="download-report-btn" onclick="generatePDFReport()">
+                                    📥 Deskargatu PDF
+                                </button>
+                                
+                                <div class="quality-dropdown">
+                                    <select onchange="generatePDFReport(this.value)" class="quality-select">
+                                        <option value="high">🎯 Kalitate Altua (Gomendatua)</option>
+                                        <option value="medium">📊 Kalitate Ertaina</option>
+                                        <option value="low">⚡ PDF Azkarra</option>
+                                        <option value="ultra">✨ Kalitate Maximo</option>
+                                    </select>
+                                    <span class="dropdown-arrow">▼</span>
+                                </div>
+                            </div>
+                        </div>
         </header>
 
         <!-- CUERPO PRINCIPAL -->

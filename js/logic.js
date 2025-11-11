@@ -1646,41 +1646,12 @@ async function initializeApp() {
 // ===== GENERACIÓN DE PDF MEJORADA - VERSIÓN FINAL =====
 // ===== PDF CON CABECERA COMPLETA =====
 // ===== GENERACIÓN DE PDF CON CABECERA DE LA WEB =====
+// ===== GENERACIÓN DE PDF SIMPLE Y EFICAZ =====
 window.generatePDFReport = function() {
     const loadingOverlay = document.getElementById('loading-overlay');
     if (loadingOverlay) loadingOverlay.style.display = 'flex';
     
-    // 1. Kopia egin webaren goiburuaz (botoirik gabe)
-    const originalHeader = document.querySelector('header');
-    const headerClone = originalHeader.cloneNode(true);
-    
-    // Kendu deskarga botoiak eta elementu interaktiboak
-    const elementsToRemove = headerClone.querySelectorAll('button, .download-btn, .controls, [onclick*="generatePDF"]');
-    elementsToRemove.forEach(element => element.remove());
-    
-    // 2. Sortu behin-behineko edukiontzia goiburuarentzat
-    const tempContainer = document.createElement('div');
-    tempContainer.style.position = 'fixed';
-    tempContainer.style.top = '0';
-    tempContainer.style.left = '0';
-    tempContainer.style.width = '100%';
-    tempContainer.style.zIndex = '9999';
-    tempContainer.style.backgroundColor = 'white';
-    tempContainer.style.boxShadow = '0 2px 10px rgba(0,0,0,0.1)';
-    tempContainer.appendChild(headerClone);
-    
-    // 3. Sortu edukiontzi osoa (goiburua + main-sheet)
-    const fullContent = document.createElement('div');
-    fullContent.appendChild(tempContainer);
-    
-    // Main-sheet kopia egin eta gehitu
-    const mainSheet = document.getElementById('main-sheet');
-    const mainSheetClone = mainSheet.cloneNode(true);
-    mainSheetClone.style.marginTop = tempContainer.offsetHeight + 'px'; // Goiburuaren altuera
-    fullContent.appendChild(mainSheetClone);
-    
-    // 4. Gehitu DOM-era mementu batez
-    document.body.appendChild(fullContent);
+    const element = document.getElementById('main-sheet');
     
     const options = {
         scale: 1.8,
@@ -1691,68 +1662,46 @@ window.generatePDFReport = function() {
     };
     
     setTimeout(() => {
-        html2canvas(fullContent, options).then(canvas => {
+        html2canvas(element, options).then(canvas => {
             const pdf = new jspdf.jsPDF({
                 orientation: 'portrait',
                 unit: 'mm',
                 format: 'a4'
             });
             
-            const today = new Date();
-            const dateString = today.toLocaleDateString('eu-ES');
-            
-            // ===== PDF SORTU =====
-            const imgWidth = 180;
+            // Kalkulatu tamainak
+            const imgWidth = 190;
             const imgHeight = (canvas.height * imgWidth) / canvas.width;
             
-            pdf.addImage(canvas, 'PNG', 15, 15, imgWidth, imgHeight);
+            // Gehitu irudia
+            pdf.addImage(canvas, 'PNG', 10, 10, imgWidth, imgHeight);
             
-            // ===== ORRI GEHIAGO BEHAR BADITU =====
-            let currentHeight = imgHeight + 15;
-            let pageNumber = 1;
+            // Orri gehiago behar baditu
+            let heightLeft = imgHeight;
+            let currentPosition = 10;
             
-            while (currentHeight > 280) {
+            while (heightLeft > 277) {
                 pdf.addPage();
-                pageNumber++;
-                
-                // Orri zenbakia
-                pdf.setFontSize(10);
-                pdf.setFont('helvetica', 'normal');
-                pdf.setTextColor(100, 100, 100);
-                pdf.text(`Orria ${pageNumber}`, 195, 10, { align: 'right' });
-                
-                // Jarraitu edukia
-                const position = 15 - (currentHeight - 280);
-                pdf.addImage(canvas, 'PNG', 15, position, imgWidth, imgHeight);
-                
-                currentHeight -= 265;
+                currentPosition = 10 - (heightLeft - 277);
+                pdf.addImage(canvas, 'PNG', 10, currentPosition, imgWidth, imgHeight);
+                heightLeft -= 267;
             }
             
-            // ===== OINARRA =====
-            const totalPages = pdf.internal.getNumberOfPages();
-            for (let i = 1; i <= totalPages; i++) {
-                pdf.setPage(i);
-                pdf.setFontSize(8);
-                pdf.setTextColor(150, 150, 150);
-                pdf.text(`IDarte - Orria ${i}/${totalPages}`, 105, 290, { align: 'center' });
-            }
-            
+            const today = new Date();
+            const dateString = today.toISOString().split('T')[0];
             const filename = `IDarte-Aurrekontua-${dateString}.pdf`;
+            
             pdf.save(filename);
             
-            // 5. Garbitu behin-behineko elementuak
-            document.body.removeChild(fullContent);
-            
             if (loadingOverlay) loadingOverlay.style.display = 'none';
-            console.log('✅ PDF-a sortuta web goiburuarekin: ' + filename);
+            console.log('✅ PDF-a ondo sortuta: ' + filename);
             
         }).catch(error => {
             console.error('❌ Errorea PDF-a sortzean:', error);
-            document.body.removeChild(fullContent);
             if (loadingOverlay) loadingOverlay.style.display = 'none';
             alert('Errorea PDF-a sortzean. Mesedez, saiatu berriro.');
         });
-    }, 1000);
+    }, 800);
 };
 
 // ===== INICIALIZACIÓN AUTOMÁTICA =====

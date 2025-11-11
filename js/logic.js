@@ -1642,35 +1642,74 @@ async function initializeApp() {
     }
 }
 
-// ===== GENERACIÓN DE PDF =====
-window.generatePDFReport = function() {
+// ===== VERSIÓN PREMIUM =====
+// ===== GENERACIÓN DE PDF MEJORADA - VERSIÓN FINAL =====
+window.generatePDFReport = function(quality = 'high') {
     const loadingOverlay = document.getElementById('loading-overlay');
     if (loadingOverlay) loadingOverlay.style.display = 'flex';
     
+    // Configuración según calidad deseada
+    const qualitySettings = {
+        low: { scale: 1, timeout: 500 },
+        medium: { scale: 1.5, timeout: 800 },
+        high: { scale: 2, timeout: 1000 },
+        ultra: { scale: 3, timeout: 1500 }
+    };
+    
+    const settings = qualitySettings[quality] || qualitySettings.high;
+    const element = document.getElementById('main-sheet');
+    
+    const options = {
+        scale: settings.scale,
+        useCORS: true,
+        allowTaint: true,
+        logging: false,
+        backgroundColor: '#ffffff',
+        width: element.scrollWidth,
+        height: element.scrollHeight,
+        removeContainer: true
+    };
+    
     setTimeout(() => {
-        html2canvas(document.getElementById('main-sheet')).then(canvas => {
-            const imgData = canvas.toDataURL('image/png');
-            const pdf = new jspdf.jsPDF('p', 'mm', 'a4');
+        html2canvas(element, options).then(canvas => {
+            const pdf = new jspdf.jsPDF({
+                orientation: 'portrait',
+                unit: 'mm',
+                format: 'a4',
+                compress: true
+            });
+            
             const imgWidth = 210;
-            const pageHeight = 295;
-            const imgHeight = canvas.height * imgWidth / canvas.width;
-            let heightLeft = imgHeight;
+            const pageHeight = 297;
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+            
             let position = 0;
+            pdf.addImage(canvas, 'PNG', 0, position, imgWidth, imgHeight, undefined, 'MEDIUM');
             
-            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-            heightLeft -= pageHeight;
-            
-            while (heightLeft >= 0) {
-                position = heightLeft - imgHeight;
+            // Solo añadir páginas si es realmente necesario
+            let currentHeight = imgHeight;
+            while (currentHeight > pageHeight) {
+                position -= pageHeight;
                 pdf.addPage();
-                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-                heightLeft -= pageHeight;
+                pdf.addImage(canvas, 'PNG', 0, position, imgWidth, imgHeight, undefined, 'MEDIUM');
+                currentHeight -= pageHeight;
             }
             
-            pdf.save('IDarte-Aurrekontua.pdf');
+            const today = new Date();
+            const dateString = today.toLocaleDateString('eu-ES');
+            const filename = `IDarte-Aurrekontua-${dateString}.pdf`;
+            
+            pdf.save(filename);
+            
             if (loadingOverlay) loadingOverlay.style.display = 'none';
+            console.log(`✅ PDF generado (calidad: ${quality}): ${filename}`);
+            
+        }).catch(error => {
+            console.error('❌ Error generando PDF:', error);
+            if (loadingOverlay) loadingOverlay.style.display = 'none';
+            alert('Errorea PDF-a sortzean. Mesedez, saiatu berriro.');
         });
-    }, 500);
+    }, settings.timeout);
 };
 
 // ===== INICIALIZACIÓN AUTOMÁTICA =====

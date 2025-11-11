@@ -1644,30 +1644,19 @@ async function initializeApp() {
 
 // ===== VERSIÓN PREMIUM =====
 // ===== GENERACIÓN DE PDF MEJORADA - VERSIÓN FINAL =====
-window.generatePDFReport = function(quality = 'high') {
+// ===== PDF CON CABECERA COMPLETA =====
+window.generatePDFReport = function() {
     const loadingOverlay = document.getElementById('loading-overlay');
     if (loadingOverlay) loadingOverlay.style.display = 'flex';
     
-    // Configuración según calidad deseada
-    const qualitySettings = {
-        low: { scale: 1, timeout: 500 },
-        medium: { scale: 1.5, timeout: 800 },
-        high: { scale: 2, timeout: 1000 },
-        ultra: { scale: 3, timeout: 1500 }
-    };
-    
-    const settings = qualitySettings[quality] || qualitySettings.high;
     const element = document.getElementById('main-sheet');
     
     const options = {
-        scale: settings.scale,
+        scale: 1.8,
         useCORS: true,
-        allowTaint: true,
+        allowTaint: false,
         logging: false,
-        backgroundColor: '#ffffff',
-        width: element.scrollWidth,
-        height: element.scrollHeight,
-        removeContainer: true
+        backgroundColor: '#ffffff'
     };
     
     setTimeout(() => {
@@ -1675,41 +1664,102 @@ window.generatePDFReport = function(quality = 'high') {
             const pdf = new jspdf.jsPDF({
                 orientation: 'portrait',
                 unit: 'mm',
-                format: 'a4',
-                compress: true
+                format: 'a4'
             });
-            
-            const imgWidth = 210;
-            const pageHeight = 297;
-            const imgHeight = (canvas.height * imgWidth) / canvas.width;
-            
-            let position = 0;
-            pdf.addImage(canvas, 'PNG', 0, position, imgWidth, imgHeight, undefined, 'MEDIUM');
-            
-            // Solo añadir páginas si es realmente necesario
-            let currentHeight = imgHeight;
-            while (currentHeight > pageHeight) {
-                position -= pageHeight;
-                pdf.addPage();
-                pdf.addImage(canvas, 'PNG', 0, position, imgWidth, imgHeight, undefined, 'MEDIUM');
-                currentHeight -= pageHeight;
-            }
             
             const today = new Date();
             const dateString = today.toLocaleDateString('eu-ES');
-            const filename = `IDarte-Aurrekontua-${dateString}.pdf`;
+            const timeString = today.toLocaleTimeString('eu-ES', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
             
+            // ===== GOIBURU OSOA =====
+            pdf.setFillColor(245, 245, 245);
+            pdf.rect(0, 0, 210, 25, 'F');
+            
+            // Titulua
+            pdf.setFontSize(18);
+            pdf.setFont('helvetica', 'bold');
+            pdf.setTextColor(0, 0, 0);
+            pdf.text('IDARTE - AURREKONTUA', 105, 12, { align: 'center' });
+            
+            // Data eta ordua
+            pdf.setFontSize(10);
+            pdf.setFont('helvetica', 'normal');
+            pdf.setTextColor(100, 100, 100);
+            pdf.text(`Sortua: ${dateString} - ${timeString}`, 105, 18, { align: 'center' });
+            
+            // Lerroa
+            pdf.setDrawColor(200, 200, 200);
+            pdf.line(15, 25, 195, 25);
+            
+            // ===== EDUKI NAGUSIA =====
+            const imgWidth = 180;
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+            const startY = 30; // Goiburuaren ondoren
+            
+            pdf.addImage(canvas, 'PNG', 15, startY, imgWidth, imgHeight);
+            
+            // ===== ORRI KUDEAKETA =====
+            let currentY = startY + imgHeight;
+            let pageNumber = 1;
+            
+            while (currentY > 280) { // 280mm A4 altueran
+                pdf.addPage();
+                pageNumber++;
+                
+                // Goiburua orri berrian
+                pdf.setFillColor(245, 245, 245);
+                pdf.rect(0, 0, 210, 25, 'F');
+                
+                pdf.setFontSize(18);
+                pdf.setFont('helvetica', 'bold');
+                pdf.setTextColor(0, 0, 0);
+                pdf.text('IDARTE - AURREKONTUA', 105, 12, { align: 'center' });
+                
+                pdf.setFontSize(10);
+                pdf.setTextColor(100, 100, 100);
+                pdf.text(`Orria ${pageNumber}`, 195, 12, { align: 'right' });
+                
+                pdf.setDrawColor(200, 200, 200);
+                pdf.line(15, 25, 195, 25);
+                
+                // Jarraitu edukia
+                currentY -= 250; // Ajuste altuera
+                const position = startY - (currentY - 30);
+                pdf.addImage(canvas, 'PNG', 15, position, imgWidth, imgHeight);
+            }
+            
+            // ===== OINARRA =====
+            const totalPages = pdf.internal.getNumberOfPages();
+            for (let i = 1; i <= totalPages; i++) {
+                pdf.setPage(i);
+                
+                pdf.setFontSize(9);
+                pdf.setFont('helvetica', 'normal');
+                pdf.setTextColor(150, 150, 150);
+                
+                // Orri zenbakia
+                pdf.text(`Orria ${i}/${totalPages}`, 105, 288, { align: 'center' });
+                
+                // Konfidentzialtasuna
+                pdf.setFontSize(8);
+                pdf.text('© IDarte - Informazio konfidentziala', 105, 292, { align: 'center' });
+            }
+            
+            const filename = `IDarte-Aurrekontua-${dateString}.pdf`;
             pdf.save(filename);
             
             if (loadingOverlay) loadingOverlay.style.display = 'none';
-            console.log(`✅ PDF generado (calidad: ${quality}): ${filename}`);
+            console.log('✅ PDF profesionala sortuta: ' + filename);
             
         }).catch(error => {
-            console.error('❌ Error generando PDF:', error);
+            console.error('❌ Errorea PDF-a sortzean:', error);
             if (loadingOverlay) loadingOverlay.style.display = 'none';
             alert('Errorea PDF-a sortzean. Mesedez, saiatu berriro.');
         });
-    }, settings.timeout);
+    }, 800);
 };
 
 // ===== INICIALIZACIÓN AUTOMÁTICA =====

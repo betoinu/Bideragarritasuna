@@ -932,7 +932,7 @@ function preloadSampleData() {
 
     // Personal
     state.personnel = [
-        { id: uid('p'), role: 'Zuzendaria / Bazkidea', gross: 35000, employer_ss: 30, esProductivo: true }
+        { id: uid('p'), role: 'Zuzendaria / Bazkidea', gross: 35000, employer_ss: 30.00, esProductivo: true }
     ];
 
     // Socios
@@ -1125,7 +1125,7 @@ if (type === 'amort') {
     `;
 }
        if (type === 'person') {
-    const costeTotal = safeNum(item.gross) * ((1 + safeNum(item.employer_ss)) / 100);
+          const costeTotal = safeNum(item.gross) + (safeNum(item.gross) * safeNum(item.employer_ss) / 100);
     
     return `
         <tr>
@@ -1151,8 +1151,15 @@ if (type === 'amort') {
             </td>
             
             <td class="text-center">
-                <input type="checkbox" ${item.esProductivo ? 'checked' : ''} 
-                       data-id="${item.id}" data-field="esProductivo">
+                value="${Number(item.employer_ss).toFixed(2)}" 
+                data-id="${item.id}" 
+                data-field="employer_ss" 
+                step="0.01" 
+                min="0" 
+                max="100"
+                onchange="recalculatePersonnelCost('${item.id}')"
+                style="width: 90px; text-align: center;"
+                title="Seguridad Social (%) - Usa las flechas para ajustar con decimales">
             </td>
             <td class="text-right">${fmt(costeTotal)}</td>
             <td><button onclick="removePersonnel('${item.id}')" class="btn small">✕</button></td>

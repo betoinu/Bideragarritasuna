@@ -1125,7 +1125,7 @@ if (type === 'amort') {
     `;
 }
        if (type === 'person') {
-    const costeTotal = safeNum(item.gross) * (1 + safeNum(item.employer_ss) / 100);
+    const costeTotal = safeNum(item.gross) * ((1 + safeNum(item.employer_ss)) / 100);
     
     return `
         <tr>

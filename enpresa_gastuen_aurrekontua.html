@@ -679,64 +679,74 @@
         }
     </style>
     <script src="js/logic.js"></script>
-    <!-- FALDÓN DE GESTIÓN DE HIPÓTESIS -->
-<div id="faldon-hipotesis" class="faldon-hipotesis">
-    <div class="faldon-contenido">
-        <!-- Cabecera del faldón -->
-        <div class="faldon-cabecera">
-            <h3>💾 Gestión de Hipótesis</h3>
-            <button id="toggle-faldon" class="btn-toggle-faldon">−</button>
+<!-- FALDÓN DE GESTIÓN DE HIPÓTESIS - INTEGRADO -->
+<div id="faldon-hipotesis" class="faldon-hipotesis-integrado">
+    <div class="faldon-contenedor">
+        <!-- Cabecera -->
+        <div class="faldon-header">
+            <h3 class="faldon-titulo">
+                <span class="faldon-icono">💾</span>
+                Gestión de Hipótesis
+            </h3>
+            <button id="toggle-faldon" class="faldon-toggle" onclick="toggleFaldon()">
+                <span class="faldon-toggle-text">Ocultar</span>
+                <span class="faldon-toggle-icon">−</span>
+            </button>
         </div>
         
-        <!-- Contenido del faldón -->
-        <div class="faldon-cuerpo">
+        <!-- Cuerpo -->
+        <div class="faldon-body" id="faldon-body">
             <div class="faldon-grid">
-                <!-- Columna 1: Guardar -->
-                <div class="faldon-col">
-                    <div class="faldon-grupo">
-                        <label for="nombre-hipotesis">Guardar hipótesis actual:</label>
-                        <div class="input-group">
-                            <input type="text" id="nombre-hipotesis" 
-                                   placeholder="Nombre de la hipótesis" 
-                                   class="input-hipotesis">
+                <!-- Columna Guardar -->
+                <div class="faldon-columna">
+                    <div class="faldon-grupo-form">
+                        <label class="faldon-label">Guardar hipótesis actual</label>
+                        <div class="faldon-input-group">
+                            <input type="text" 
+                                   id="nombre-hipotesis" 
+                                   placeholder="Ej: Hipótesis inicial" 
+                                   class="faldon-input">
                             <button onclick="guardarHipotesisActual()" 
-                                    class="btn-guardar">
-                                💾 Guardar
+                                    class="faldon-btn faldon-btn-primary">
+                                <span class="btn-icon">💾</span>
+                                Guardar
                             </button>
                         </div>
                     </div>
                 </div>
                 
-                <!-- Columna 2: Cargar/Eliminar -->
-                <div class="faldon-col">
-                    <div class="faldon-grupo">
-                        <label for="selector-hipotesis">Hipótesis guardadas:</label>
-                        <div class="input-group">
-                            <select id="selector-hipotesis" class="select-hipotesis">
-                                <option value="">-- Seleccionar --</option>
+                <!-- Columna Cargar -->
+                <div class="faldon-columna">
+                    <div class="faldon-grupo-form">
+                        <label class="faldon-label">Cargar hipótesis existente</label>
+                        <div class="faldon-input-group">
+                            <select id="selector-hipotesis" class="faldon-select">
+                                <option value="">-- Seleccionar hipótesis --</option>
                             </select>
                             <button onclick="cargarHipotesisSeleccionada()" 
-                                    class="btn-cargar">
-                                📂 Cargar
+                                    class="faldon-btn faldon-btn-secondary">
+                                <span class="btn-icon">📂</span>
+                                Cargar
                             </button>
                             <button onclick="eliminarHipotesisSeleccionada()" 
-                                    class="btn-eliminar">
-                                🗑️
+                                    class="faldon-btn faldon-btn-danger"
+                                    title="Eliminar hipótesis seleccionada">
+                                <span class="btn-icon">🗑️</span>
                             </button>
                         </div>
                     </div>
                 </div>
                 
-                <!-- Columna 3: Info -->
-                <div class="faldon-col">
-                    <div class="faldon-info">
-                        <div class="info-item">
-                            <span class="info-label">Total guardadas:</span>
-                            <span id="contador-hipotesis" class="info-valor">0</span>
+                <!-- Columna Info -->
+                <div class="faldon-columna">
+                    <div class="faldon-info-panel">
+                        <div class="faldon-info-item">
+                            <span class="faldon-info-label">Hipótesis guardadas:</span>
+                            <span id="contador-hipotesis" class="faldon-info-valor">0</span>
                         </div>
-                        <div class="info-item">
-                            <span class="info-label">Última:</span>
-                            <span id="ultima-hipotesis" class="info-valor">Ninguna</span>
+                        <div class="faldon-info-item">
+                            <span class="faldon-info-label">Última modificación:</span>
+                            <span id="ultima-hipotesis" class="faldon-info-valor">-</span>
                         </div>
                     </div>
                 </div>

@@ -1118,3 +1118,80 @@ img {
         display: none;
     }
 }
+/* FALDONA ORRIALDEKO ESPAZIO HUTSERAKO */
+.faldon-hipotesis-integrado {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e5e7eb;
+  margin: 30px auto 20px auto; /* Goiko eta beheko marjinak */
+  max-width: var(--max-width); /* Zure --max-width aldagai berbera */
+  overflow: hidden;
+  position: relative;
+}
+
+/* Orrialdearen itxura koherentea mantentzeko */
+.faldon-hipotesis-integrado {
+  font-family: 'HK Grotesk', system-ui, -apple-system, sans-serif;
+  color: #111827;
+}
+
+/* Header-aren estiloa zure brand-arekin bat etorriz */
+.faldon-header {
+  background: linear-gradient(135deg, var(--id-primary) 0%, #7b4bff 100%);
+  color: white;
+}
+
+/* Botoien estiloa zure .btn primary-rekin bat etorriz */
+.faldon-btn-primary {
+  background: linear-gradient(90deg, var(--id-primary), #7b4bff);
+  color: white;
+  border: none;
+  box-shadow: 0 6px 18px rgba(83,12,237,0.14);
+}
+
+.faldon-btn-secondary {
+  background: rgba(255,255,255,0.7);
+  border: 1px solid rgba(15,23,42,0.06);
+  color: #111827;
+}
+
+/* Input-ak zure estiloekin bat etorriz */
+.faldon-input, .faldon-select {
+  border: 1px solid #e6edf3;
+  border-radius: 8px;
+  font-family: 'HK Grotesk', system-ui, -apple-system, sans-serif;
+}
+
+.faldon-input:focus, .faldon-select:focus {
+  outline: none;
+  border-color: var(--id-primary);
+  box-shadow: 0 0 0 3px rgba(83, 12, 237, 0.1);
+}
+
+/* Responsive doikuntzak */
+@media (max-width: 1000px) {
+  .faldon-hipotesis-integrado {
+    margin: 20px 16px;
+    border-radius: 10px;
+  }
+  
+  .faldon-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .faldon-hipotesis-integrado {
+    margin: 16px 12px;
+  }
+  
+  .faldon-body {
+    padding: 16px;
+  }
+  
+  .faldon-header {
+    padding: 12px 16px;
+  }
+}

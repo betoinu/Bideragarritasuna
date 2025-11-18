@@ -1077,21 +1077,37 @@ window.onFieldChange = function(e) {
 
     let found = false;
 
-    // Buscar en amortizables
+    // ✅ ACTUALIZAR AMORTIZABLES (Panel 3 - EKOIZPENA)
     ['lokala', 'garraioa'].forEach(cat => {
         const item = state.amortizables[cat].find(x => x.id === id);
-        if (item) { item[field] = value; found = true; }
+        if (item) { 
+            item[field] = value; 
+            found = true;
+            // 🆕 CÁLCULO EN TIEMPO REAL - AMORTIZACIÓN ANUAL
+            const amortizacionAnual = safeNum(item.cost) / Math.max(1, safeNum(item.life));
+            const amortElement = document.getElementById(`amort-${id}`);
+            if (amortElement) amortElement.textContent = fmt(amortizacionAnual);
+            console.log(`🔄 Amortización actualizada: ${fmt(amortizacionAnual)}`);
+        }
     });
 
-    // Buscar en recurrentes
+    // ✅ ACTUALIZAR RECURRENTES (Panel 4 - GARRAIOA, Panel 5 - HAZKUNTA)
     if (!found) {
         ['lokala', 'ekoizpena', 'garraioa', 'hazkuntza'].forEach(cat => {
             const item = state.recurrings[cat].find(x => x.id === id);
-            if (item) { item[field] = value; found = true; }
+            if (item) { 
+                item[field] = value; 
+                found = true;
+                // 🆕 CÁLCULO EN TIEMPO REAL - TOTAL ANUAL
+                const totalAnual = safeNum(item.payment_cost) * Math.max(1, safeNum(item.frequency));
+                const recurElement = document.getElementById(`recur-${id}`);
+                if (recurElement) recurElement.textContent = fmt(totalAnual);
+                console.log(`🔄 Total anual actualizado: ${fmt(totalAnual)}`);
+            }
         });
     }
 
-        if (found) {
+    if (found) {
         // ✅ AÑADIR: Sincronizar inmediatamente si es campo de personal
         if ((field === 'gross' || field === 'employer_ss') && window.syncIndividualPersonnelCosts) {
             setTimeout(window.syncIndividualPersonnelCosts, 50);
@@ -1177,11 +1193,11 @@ if (type === 'amort') {
             </td>
             <td class="text-right">
                 <input type="number" value="${item.payment_cost}" data-id="${item.id}" data-field="payment_cost" 
-                       oninput="onFieldChange(event)">
+                       oninput="onFieldChange(event)" style="text-align: right; padding: 4px 8px; border: 1px solid #ddd; border-radius: 4px;">
             </td>
             <td class="text-center">
                 <input type="number" value="${item.frequency}" data-id="${item.id}" data-field="frequency" 
-                       oninput="onFieldChange(event)">
+                       oninput="onFieldChange(event)" style="text-align: center; padding: 4px 8px; border: 1px solid #ddd; border-radius: 4px;">
             </td>
             <td class="text-right" id="recur-${item.id}">${fmt(totalAnual)}</td>
             <td><button onclick="removeRecurring('${item.id}','${item.category}')" class="btn small">✕</button></td>

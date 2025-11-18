@@ -1406,9 +1406,22 @@ window.updatePortfolio = function() {
     updateElement('metricas-clientes-mes', Math.ceil(clientesMensuales));
     updateElement('metricas-capacidad', `${Math.round(capacidadUtilizadaFinal)}%`);
       
-  // 🆕 ACTUALIZAR RESUMEN DE DOBLE COLUMNA
+    // 🆕 ACTUALIZAR RESUMEN DE DOBLE COLUMNA
     actualizarResumenCartera(totalIngresos, totalHoras, metaSupervivencia);
+    
+    // LLAMAR LA FUNCIÓN EN updatePortfolio()
+    actualizarAnalisisMetricas();
+    
+    actualizarComparacionPrecios();
+    
+    // Actualizar Langile Kopurua en Laburpena
+    const personalProductivo = document.getElementById('contador-personal-productivo')?.textContent || '0';
+    updateElement('resumen-langile-kopurua', personalProductivo);
+    console.log('✅ Langile Kopurua resincronizado:', personalProductivo);
+}; // ← ✅ ESTE } CIERRA CORRECTAMENTE updatePortfolio
 
+
+  
   // AÑADIR AL FINAL DE updatePortfolio() - ANTES DEL CIERRE }
 function actualizarAnalisisMetricas() {
     // ✅ AÑADIR try-catch
@@ -1823,23 +1836,6 @@ function actualizarContadorHipotesis() {
     }
 }
 
-function actualizarInfoHipotesis() {
-    actualizarSelectorHipotesis();
-    actualizarContadorHipotesis();
-    
-    const ultimaElement = document.getElementById('ultima-hipotesis');
-    const hipotesis = listarHipotesis();
-    
-    if (hipotesis.length > 0) {
-        const ultima = hipotesis.reduce((latest, current) => 
-            new Date(current.timestamp) > new Date(latest.timestamp) ? current : latest
-        );
-        ultimaElement.textContent = new Date(ultima.timestamp).toLocaleDateString();
-    } else {
-        ultimaElement.textContent = '-';
-    }
-}
-
 // 3. Datuak kudeatzeko funtzioak
 function obtenerDatosActuales() {
     return {
@@ -1882,24 +1878,6 @@ function aplicarDatosHipotesis(datos) {
 }
 
 // 4. HTML elementuetarako funtzio laguntzaileak
-function guardarHipotesisActual() {
-    const input = document.getElementById('input-hipotesis-nombre');
-    if (input && input.value.trim()) {
-        guardarHipotesis(input.value.trim());
-        input.value = '';
-    } else {
-        alert('Mesedez, sartu izen bat');
-    }
-}
-
-function cargarHipotesisSeleccionada() {
-    const selector = document.getElementById('selector-hipotesis');
-    if (selector && selector.value) {
-        cargarHipotesis(selector.value);
-    } else {
-        alert('Mesedez, hautatu hipotesi bat');
-    }
-}
 
 // 5. Hasieraketa
 document.addEventListener('DOMContentLoaded', function() {

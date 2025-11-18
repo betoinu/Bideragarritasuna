@@ -1150,22 +1150,40 @@ if (type === 'amort') {
     const amortizacionAnual = safeNum(item.cost) / Math.max(1, safeNum(item.life));
     return `
         <tr>
-            <td style="min-width: 300px;"><input value="${item.name}" data-id="${item.id}" data-field="name" style="width: 100%; border: none; background: transparent;"></td>
-            <td class="text-right"><input type="number" value="${item.cost}" data-id="${item.id}" data-field="cost"></td>
-            <td class="text-center"><input type="number" value="${item.life}" data-id="${item.id}" data-field="life"></td>
-            <td class="text-right">${fmt(amortizacionAnual)}</td>
+            <td style="min-width: 300px;">
+                <input value="${item.name}" data-id="${item.id}" data-field="name" 
+                       oninput="onFieldChange(event)" style="width: 100%; border: none; background: transparent;">
+            </td>
+            <td class="text-right">
+                <input type="number" value="${item.cost}" data-id="${item.id}" data-field="cost" 
+                       oninput="onFieldChange(event)">
+            </td>
+            <td class="text-center">
+                <input type="number" value="${item.life}" data-id="${item.id}" data-field="life" 
+                       oninput="onFieldChange(event)">
+            </td>
+            <td class="text-right" id="amort-${item.id}">${fmt(amortizacionAnual)}</td>
             <td><button onclick="removeAmortizable('${item.id}','${item.category}')" class="btn small">✕</button></td>
         </tr>
     `;
 }
-        if (type === 'recur') {
+      if (type === 'recur') {
     const totalAnual = safeNum(item.payment_cost) * Math.max(1, safeNum(item.frequency));
     return `
         <tr>
-            <td style="min-width: 300px;"><input value="${item.name}" data-id="${item.id}" data-field="name" style="width: 100%; border: none; background: transparent;"></td>
-            <td class="text-right"><input type="number" value="${item.payment_cost}" data-id="${item.id}" data-field="payment_cost"></td>
-            <td class="text-center"><input type="number" value="${item.frequency}" data-id="${item.id}" data-field="frequency"></td>
-            <td class="text-right">${fmt(totalAnual)}</td>
+            <td style="min-width: 300px;">
+                <input value="${item.name}" data-id="${item.id}" data-field="name" 
+                       oninput="onFieldChange(event)" style="width: 100%; border: none; background: transparent;">
+            </td>
+            <td class="text-right">
+                <input type="number" value="${item.payment_cost}" data-id="${item.id}" data-field="payment_cost" 
+                       oninput="onFieldChange(event)">
+            </td>
+            <td class="text-center">
+                <input type="number" value="${item.frequency}" data-id="${item.id}" data-field="frequency" 
+                       oninput="onFieldChange(event)">
+            </td>
+            <td class="text-right" id="recur-${item.id}">${fmt(totalAnual)}</td>
             <td><button onclick="removeRecurring('${item.id}','${item.category}')" class="btn small">✕</button></td>
         </tr>
     `;
@@ -1337,6 +1355,8 @@ function updateAll() {
         calculatePricing();
         if (window.syncIndividualPersonnelCosts) window.syncIndividualPersonnelCosts();
         if (typeof updateBideragarritasuna === 'function') updateBideragarritasuna();
+        actualizarCargasPersonales(); // ← AÑADIR ESTO
+        actualizarTodosLosCalculos(); // ← AÑADIR ESTO
     }, 100);
 }
 
@@ -1900,6 +1920,13 @@ function calcularTotales() {
 
 function actualizarResultados() {
     updateAll();
+}
+function calcularCostes() {
+    return calculateOperationalCosts();
+}
+
+function calcularIngresos() {
+    return calculatePortfolioRevenue();
 }
 
 // 4. HTML elementuetarako funtzio laguntzaileak

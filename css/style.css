@@ -858,337 +858,233 @@ img {
     font-weight: bold;
     color: #007bff;
 }
-/* FALDÓN INTEGRADO - ESTILO COHERENTE */
+/* FALDONA ZURE ESTILOEKIN BAT ETORRIK */
 .faldon-hipotesis-integrado {
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    border: 1px solid #e5e7eb;
-    margin: 20px auto;
-    max-width: 1200px;
-    overflow: hidden;
-}
-
-.faldon-contenedor {
-    padding: 0;
+  background: var(--card-bg);
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(16,24,40,0.06);
+  border: 1px solid rgba(15,23,42,0.03);
+  margin: 30px auto 20px auto;
+  max-width: var(--max-width);
+  overflow: hidden;
+  position: relative;
+  font-family: 'HK Grotesk', 'Fira Sans', system-ui, -apple-system, sans-serif;
 }
 
 .faldon-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 16px 24px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 24px;
+  background: var(--card-bg);
+  border-bottom: 1px solid rgba(15,23,42,0.04);
+  border-left: 6px solid var(--id-primary);
 }
 
 .faldon-titulo {
-    margin: 0;
-    font-size: 18px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.faldon-icono {
-    font-size: 20px;
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--id-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .faldon-toggle {
-    background: rgba(255, 255, 255, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    color: white;
-    padding: 6px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    transition: all 0.2s ease;
+  background: rgba(255,255,255,0.7);
+  border: 1px solid rgba(15,23,42,0.06);
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
 }
 
 .faldon-toggle:hover {
-    background: rgba(255, 255, 255, 0.3);
+  background: white;
+  transform: translateY(-1px);
 }
 
 .faldon-body {
-    padding: 24px;
-    background: #f8fafc;
+  padding: 24px;
+  background: linear-gradient(180deg, var(--card-bg), #fbfbff);
 }
 
 .faldon-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr auto;
-    gap: 24px;
-    align-items: start;
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 24px;
+  align-items: start;
 }
 
 .faldon-columna {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 .faldon-grupo-form {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .faldon-label {
-    font-size: 14px;
-    font-weight: 500;
-    color: #374151;
-    margin-bottom: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 4px;
 }
 
 .faldon-input-group {
-    display: flex;
-    gap: 8px;
-    align-items: center;
+  display: flex;
+  gap: 8px;
+  align-items: center;
 }
 
 .faldon-input {
-    flex: 1;
-    padding: 10px 12px;
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
-    font-size: 14px;
-    background: white;
-    transition: border-color 0.2s ease;
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid #e6edf3;
+  border-radius: 8px;
+  font-size: 14px;
+  background: white;
+  font-family: 'HK Grotesk', system-ui, sans-serif;
+  transition: border-color 0.2s ease;
 }
 
 .faldon-input:focus {
-    outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  outline: none;
+  border-color: var(--id-primary);
+  box-shadow: 0 0 0 3px rgba(83, 12, 237, 0.1);
 }
 
 .faldon-select {
-    flex: 1;
-    padding: 10px 12px;
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
-    font-size: 14px;
-    background: white;
-    cursor: pointer;
-}
-
-.faldon-select:focus {
-    outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid #e6edf3;
+  border-radius: 8px;
+  font-size: 14px;
+  background: white;
+  cursor: pointer;
+  font-family: 'HK Grotesk', system-ui, sans-serif;
 }
 
 .faldon-btn {
-    padding: 10px 16px;
-    border: none;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    transition: all 0.2s ease;
-    white-space: nowrap;
+  background: rgba(255,255,255,0.7);
+  border: 1px solid rgba(15,23,42,0.06);
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  font-family: 'HK Grotesk', system-ui, sans-serif;
 }
 
-.faldon-btn-primary {
-    background: #10b981;
-    color: white;
-}
-
-.faldon-btn-primary:hover {
-    background: #059669;
-    transform: translateY(-1px);
-}
-
-.faldon-btn-secondary {
-    background: #3b82f6;
-    color: white;
-}
-
-.faldon-btn-secondary:hover {
-    background: #2563eb;
-    transform: translateY(-1px);
-}
-
-.faldon-btn-danger {
-    background: #ef4444;
-    color: white;
-    padding: 10px 12px;
-}
-
-.faldon-btn-danger:hover {
-    background: #dc2626;
-    transform: translateY(-1px);
-}
-
-.btn-icon {
-    font-size: 16px;
-}
-
-.faldon-info-panel {
-    background: white;
-    padding: 16px;
-    border-radius: 8px;
-    border: 1px solid #e5e7eb;
-    min-width: 200px;
-}
-
-.faldon-info-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
-}
-
-.faldon-info-item:last-child {
-    margin-bottom: 0;
-}
-
-.faldon-info-label {
-    font-size: 14px;
-    color: #6b7280;
-    font-weight: 500;
-}
-
-.faldon-info-valor {
-    font-size: 14px;
-    color: #1f2937;
-    font-weight: 600;
-    background: #f3f4f6;
-    padding: 4px 8px;
-    border-radius: 6px;
-    min-width: 80px;
-    text-align: center;
-}
-
-/* Estados */
-.faldon-body.contraido {
-    display: none;
-}
-
-.faldon-hipotesis-integrado.contraido {
-    margin-bottom: 10px;
-}
-
-.faldon-hipotesis-integrado.contraido .faldon-header {
-    border-radius: 12px;
-}
-
-/* Responsive */
-@media (max-width: 1024px) {
-    .faldon-grid {
-        grid-template-columns: 1fr;
-        gap: 20px;
-    }
-    
-    .faldon-info-panel {
-        min-width: auto;
-    }
-}
-
-@media (max-width: 768px) {
-    .faldon-body {
-        padding: 16px;
-    }
-    
-    .faldon-input-group {
-        flex-direction: column;
-    }
-    
-    .faldon-input,
-    .faldon-select {
-        width: 100%;
-    }
-    
-    .faldon-btn {
-        width: 100%;
-        justify-content: center;
-    }
-    
-    .faldon-header {
-        padding: 12px 16px;
-    }
-    
-    .faldon-toggle-text {
-        display: none;
-    }
-}
-/* FALDONA ORRIALDEKO ESPAZIO HUTSERAKO */
-.faldon-hipotesis-integrado {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  border: 1px solid #e5e7eb;
-  margin: 30px auto 20px auto; /* Goiko eta beheko marjinak */
-  max-width: var(--max-width); /* Zure --max-width aldagai berbera */
-  overflow: hidden;
-  position: relative;
-}
-
-/* Orrialdearen itxura koherentea mantentzeko */
-.faldon-hipotesis-integrado {
-  font-family: 'HK Grotesk', system-ui, -apple-system, sans-serif;
-  color: #111827;
-}
-
-/* Header-aren estiloa zure brand-arekin bat etorriz */
-.faldon-header {
-  background: linear-gradient(135deg, var(--id-primary) 0%, #7b4bff 100%);
-  color: white;
-}
-
-/* Botoien estiloa zure .btn primary-rekin bat etorriz */
-.faldon-btn-primary {
+.faldon-btn.primary {
   background: linear-gradient(90deg, var(--id-primary), #7b4bff);
   color: white;
   border: none;
   box-shadow: 0 6px 18px rgba(83,12,237,0.14);
 }
 
-.faldon-btn-secondary {
-  background: rgba(255,255,255,0.7);
-  border: 1px solid rgba(15,23,42,0.06);
-  color: #111827;
+.faldon-btn.primary:hover {
+  background: linear-gradient(90deg, #7b4bff, var(--id-primary));
+  transform: translateY(-1px);
 }
 
-/* Input-ak zure estiloekin bat etorriz */
-.faldon-input, .faldon-select {
-  border: 1px solid #e6edf3;
+.faldon-btn:hover {
+  background: white;
+  transform: translateY(-1px);
+}
+
+.faldon-info-panel {
+  background: white;
+  padding: 16px;
   border-radius: 8px;
-  font-family: 'HK Grotesk', system-ui, -apple-system, sans-serif;
+  border: 1px solid rgba(15,23,42,0.04);
+  min-width: 200px;
 }
 
-.faldon-input:focus, .faldon-select:focus {
-  outline: none;
-  border-color: var(--id-primary);
-  box-shadow: 0 0 0 3px rgba(83, 12, 237, 0.1);
+.faldon-info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
 }
 
-/* Responsive doikuntzak */
-@media (max-width: 1000px) {
-  .faldon-hipotesis-integrado {
-    margin: 20px 16px;
-    border-radius: 10px;
-  }
-  
+.faldon-info-item:last-child {
+  margin-bottom: 0;
+}
+
+.faldon-info-label {
+  font-size: 14px;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.faldon-info-valor {
+  font-size: 14px;
+  color: #1f2937;
+  font-weight: 600;
+  background: #f3f4f6;
+  padding: 4px 8px;
+  border-radius: 6px;
+  min-width: 80px;
+  text-align: center;
+}
+
+/* Faldonaren egoerak */
+.faldon-body.contraido {
+  display: none;
+}
+
+.faldon-hipotesis-integrado.contraido {
+  margin-bottom: 10px;
+}
+
+.faldon-hipotesis-integrado.contraido .faldon-header {
+  border-radius: 12px;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
   .faldon-grid {
     grid-template-columns: 1fr;
-    gap: 16px;
+    gap: 20px;
+  }
+  
+  .faldon-info-panel {
+    min-width: auto;
   }
 }
 
 @media (max-width: 768px) {
-  .faldon-hipotesis-integrado {
-    margin: 16px 12px;
-  }
-  
   .faldon-body {
     padding: 16px;
+  }
+  
+  .faldon-input-group {
+    flex-direction: column;
+  }
+  
+  .faldon-input,
+  .faldon-select {
+    width: 100%;
+  }
+  
+  .faldon-btn {
+    width: 100%;
+    justify-content: center;
   }
   
   .faldon-header {

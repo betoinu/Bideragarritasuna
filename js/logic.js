@@ -1707,6 +1707,180 @@ function actualizarContadorHipotesis() {
         contador.textContent = hipotesis.length;
     }
 }
+// ===== HIPOTESIEN KUDEAKETA SISTEMA =====
+
+// 1. Oinarrizko funtzioak
+function listarHipotesis() {
+    return JSON.parse(localStorage.getItem('hipotesis') || '[]');
+}
+
+function guardarHipotesis(nombre, datos) {
+    if (!nombre || nombre.trim() === '') {
+        alert('Mesedez, sartu hipotesiaren izena');
+        return;
+    }
+    
+    try {
+        const datosActuales = obtenerDatosActuales();
+        let hipotesis = listarHipotesis();
+        
+        // Egiaztatu izena erabiltzen ari den
+        const existe = hipotesis.find(h => h.nombre === nombre);
+        if (existe && !confirm(`"${nombre}" existitzen da. Gainidatzi?`)) {
+            return;
+        }
+        
+        // Ezabatu existitzen bada
+        hipotesis = hipotesis.filter(h => h.nombre !== nombre);
+        
+        // Gehitu berria
+        hipotesis.push({
+            nombre: nombre.trim(),
+            datos: datos || datosActuales,
+            timestamp: new Date().toISOString()
+        });
+        
+        localStorage.setItem('hipotesis', JSON.stringify(hipotesis));
+        actualizarInfoHipotesis();
+        alert(`✅ Gordeta: ${nombre}`);
+        
+    } catch (error) {
+        console.error('Errorea gordetzean:', error);
+        alert('Errorea gordetzean');
+    }
+}
+
+function cargarHipotesis(nombre) {
+    try {
+        const hipotesis = listarHipotesis();
+        const hipotesi = hipotesis.find(h => h.nombre === nombre);
+        
+        if (hipotesi) {
+            aplicarDatosHipotesis(hipotesi.datos);
+            alert(`✅ Kargatuta: ${nombre}`);
+        } else {
+            alert('❌ Hipotesia ez da aurkitu');
+        }
+    } catch (error) {
+        console.error('Errorea kargatzean:', error);
+        alert('Errorea kargatzean');
+    }
+}
+
+function eliminarHipotesis(nombre) {
+    if (confirm(`Ziur zaude "${nombre}" ezabatu nahi duzula?`)) {
+        let hipotesis = listarHipotesis();
+        hipotesis = hipotesis.filter(h => h.nombre !== nombre);
+        localStorage.setItem('hipotesis', JSON.stringify(hipotesis));
+        actualizarInfoHipotesis();
+    }
+}
+
+// 2. Interfaze funtzioak
+function actualizarSelectorHipotesis() {
+    const selector = document.getElementById('selector-hipotesis');
+    if (!selector) return;
+    
+    const hipotesis = listarHipotesis();
+    selector.innerHTML = '<option value="">Hautatu hipotesia...</option>';
+    
+    hipotesis.forEach(h => {
+        const option = document.createElement('option');
+        option.value = h.nombre;
+        option.textContent = `${h.nombre} (${new Date(h.timestamp).toLocaleDateString()})`;
+        selector.appendChild(option);
+    });
+}
+
+function actualizarContadorHipotesis() {
+    const contador = document.getElementById('contador-hipotesis');
+    if (contador) {
+        contador.textContent = listarHipotesis().length;
+    }
+}
+
+function actualizarInfoHipotesis() {
+    actualizarSelectorHipotesis();
+    actualizarContadorHipotesis();
+    
+    const ultimaElement = document.getElementById('ultima-hipotesis');
+    const hipotesis = listarHipotesis();
+    
+    if (hipotesis.length > 0) {
+        const ultima = hipotesis.reduce((latest, current) => 
+            new Date(current.timestamp) > new Date(latest.timestamp) ? current : latest
+        );
+        ultimaElement.textContent = new Date(ultima.timestamp).toLocaleDateString();
+    } else {
+        ultimaElement.textContent = '-';
+    }
+}
+
+// 3. Datuak kudeatzeko funtzioak
+function obtenerDatosActuales() {
+    return {
+        servicios: obtenerServiciosActuales(),
+        costes: obtenerCostesActuales(),
+        ingresos: obtenerIngresosActuales(),
+        financiacion: obtenerFinanciacionActual(),
+        timestamp: new Date().toISOString()
+    };
+}
+
+function obtenerServiciosActuales() {
+    // Zure zerbitzu datuak hemen
+    console.log('TODO: obtenerServiciosActuales implementatu');
+    return [];
+}
+
+function obtenerCostesActuales() {
+    // Zure kostu datuak hemen
+    console.log('TODO: obtenerCostesActuales implementatu');
+    return {};
+}
+
+function obtenerIngresosActuales() {
+    // Zure irabazi datuak hemen
+    console.log('TODO: obtenerIngresosActuales implementatu');
+    return {};
+}
+
+function obtenerFinanciacionActual() {
+    // Zure finantzaketa datuak hemen
+    console.log('TODO: obtenerFinanciacionActual implementatu');
+    return {};
+}
+
+function aplicarDatosHipotesis(datos) {
+    // Datuak interfazean aplikatu
+    console.log('Datuak aplikatzen:', datos);
+    // TODO: Zure datuak kargatzeko kodea
+}
+
+// 4. HTML elementuetarako funtzio laguntzaileak
+function guardarHipotesisActual() {
+    const input = document.getElementById('input-hipotesis-nombre');
+    if (input && input.value.trim()) {
+        guardarHipotesis(input.value.trim());
+        input.value = '';
+    } else {
+        alert('Mesedez, sartu izen bat');
+    }
+}
+
+function cargarHipotesisSeleccionada() {
+    const selector = document.getElementById('selector-hipotesis');
+    if (selector && selector.value) {
+        cargarHipotesis(selector.value);
+    } else {
+        alert('Mesedez, hautatu hipotesi bat');
+    }
+}
+
+// 5. Hasieraketa
+document.addEventListener('DOMContentLoaded', function() {
+    actualizarInfoHipotesis();
+});
 
   
 // LLAMAR LA FUNCIÓN EN updatePortfolio()

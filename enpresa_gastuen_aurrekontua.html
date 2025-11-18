@@ -679,5 +679,70 @@
         }
     </style>
     <script src="js/logic.js"></script>
+    <!-- FALDÓN DE GESTIÓN DE HIPÓTESIS -->
+<div id="faldon-hipotesis" class="faldon-hipotesis">
+    <div class="faldon-contenido">
+        <!-- Cabecera del faldón -->
+        <div class="faldon-cabecera">
+            <h3>💾 Gestión de Hipótesis</h3>
+            <button id="toggle-faldon" class="btn-toggle-faldon">−</button>
+        </div>
+        
+        <!-- Contenido del faldón -->
+        <div class="faldon-cuerpo">
+            <div class="faldon-grid">
+                <!-- Columna 1: Guardar -->
+                <div class="faldon-col">
+                    <div class="faldon-grupo">
+                        <label for="nombre-hipotesis">Guardar hipótesis actual:</label>
+                        <div class="input-group">
+                            <input type="text" id="nombre-hipotesis" 
+                                   placeholder="Nombre de la hipótesis" 
+                                   class="input-hipotesis">
+                            <button onclick="guardarHipotesisActual()" 
+                                    class="btn-guardar">
+                                💾 Guardar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Columna 2: Cargar/Eliminar -->
+                <div class="faldon-col">
+                    <div class="faldon-grupo">
+                        <label for="selector-hipotesis">Hipótesis guardadas:</label>
+                        <div class="input-group">
+                            <select id="selector-hipotesis" class="select-hipotesis">
+                                <option value="">-- Seleccionar --</option>
+                            </select>
+                            <button onclick="cargarHipotesisSeleccionada()" 
+                                    class="btn-cargar">
+                                📂 Cargar
+                            </button>
+                            <button onclick="eliminarHipotesisSeleccionada()" 
+                                    class="btn-eliminar">
+                                🗑️
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Columna 3: Info -->
+                <div class="faldon-col">
+                    <div class="faldon-info">
+                        <div class="info-item">
+                            <span class="info-label">Total guardadas:</span>
+                            <span id="contador-hipotesis" class="info-valor">0</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Última:</span>
+                            <span id="ultima-hipotesis" class="info-valor">Ninguna</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>            

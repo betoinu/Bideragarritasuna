@@ -658,68 +658,70 @@
                 </div>
             </aside>
         </main>
-        <!-- FALDOIA KANPOAN, ESPAZIO HUTSERA MUGITU -->
-        
-        <div class="faldon-hipotesis-integrado" id="faldon-hipotesis">
-          <div class="faldon-contenedor">
-            <div class="faldon-header">
-              <h3 class="faldon-titulo">
-                <span class="faldon-icono">💾</span>
-                Hipotesien Kudeaketa
-              </h3>
-              <button class="faldon-toggle" id="toggle-faldon" onclick="toggleFaldon()">
-                <span class="faldon-toggle-text">Txikitu</span>
-                <span class="faldon-toggle-icon">▼</span>
+       <!-- FALDONA KONPONDU BEHAR DA - ID ZUZENEKIN -->
+<div class="faldon-hipotesis-integrado" id="faldon-hipotesis">
+  <div class="faldon-contenedor">
+    <div class="faldon-header">
+      <h3 class="faldon-titulo">
+        <span class="faldon-icono">💾</span>
+        Hipotesien Kudeaketa
+      </h3>
+      <button class="faldon-toggle" id="toggle-faldon" onclick="toggleFaldon()">
+        <span class="faldon-toggle-text">Txikitu</span>
+        <span class="faldon-toggle-icon">▼</span>
+      </button>
+    </div>
+    
+    <div class="faldon-body" id="faldon-body">
+      <div class="faldon-grid">
+        <div class="faldon-columna">
+          <div class="faldon-grupo-form">
+            <label class="faldon-label">Gorde hipotesi berria</label>
+            <div class="faldon-input-group">
+              <!-- ID ZUENA GEHITU -->
+              <input type="text" class="faldon-input" id="input-hipotesis-nombre" placeholder="Hipotesiaren izena...">
+              <!-- ID ZUENA GEHITU -->
+              <button class="faldon-btn primary" id="btn-guardar-hipotesis" onclick="guardarHipotesisActual()">
+                <span class="btn-icon">💾</span>
+                Gorde
               </button>
-            </div>
-            
-            <div class="faldon-body" id="faldon-body">
-              <div class="faldon-grid">
-                <div class="faldon-columna">
-                  <div class="faldon-grupo-form">
-                    <label class="faldon-label">Gorde hipotesi berria</label>
-                    <div class="faldon-input-group">
-                      <input type="text" class="faldon-input" placeholder="Hipotesiaren izena...">
-                      <button class="faldon-btn primary">
-                        <span class="btn-icon">💾</span>
-                        Gorde
-                      </button>
-                    </div>
-                  </div>
-                </div>
-                
-                <div class="faldon-columna">
-                  <div class="faldon-grupo-form">
-                    <label class="faldon-label">Kargatu hipotesia</label>
-                    <div class="faldon-input-group">
-                      <select class="faldon-select">
-                        <option>Hautatu hipotesia...</option>
-                        <!-- Hipotesi zerrenda -->
-                      </select>
-                      <button class="faldon-btn">
-                        <span class="btn-icon">📂</span>
-                        Kargatu
-                      </button>
-                    </div>
-                  </div>
-                </div>
-                
-                <div class="faldon-columna">
-                  <div class="faldon-info-panel">
-                    <div class="faldon-info-item">
-                      <span class="faldon-info-label">Gordetako hipotesiak:</span>
-                      <span class="faldon-info-valor" id="contador-hipotesis">0</span>
-                    </div>
-                    <div class="faldon-info-item">
-                      <span class="faldon-info-label">Azken aldaketa:</span>
-                      <span class="faldon-info-valor" id="ultima-hipotesis">-</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>
+        
+        <div class="faldon-columna">
+          <div class="faldon-grupo-form">
+            <label class="faldon-label">Kargatu hipotesia</label>
+            <div class="faldon-input-group">
+              <!-- ID ZUENA GEHITU -->
+              <select class="faldon-select" id="selector-hipotesis">
+                <option value="">Hautatu hipotesia...</option>
+              </select>
+              <!-- ID ZUENA GEHITU -->
+              <button class="faldon-btn" id="btn-cargar-hipotesis" onclick="cargarHipotesisSeleccionada()">
+                <span class="btn-icon">📂</span>
+                Kargatu
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="faldon-columna">
+          <div class="faldon-info-panel">
+            <div class="faldon-info-item">
+              <span class="faldon-info-label">Gordetako hipotesiak:</span>
+              <span class="faldon-info-valor" id="contador-hipotesis">0</span>
+            </div>
+            <div class="faldon-info-item">
+              <span class="faldon-info-label">Azken aldaketa:</span>
+              <span class="faldon-info-valor" id="ultima-hipotesis">-</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
         <footer class="siteinfo">
             <small data-i18n="footer.note">IDarte · Euskadiko Diseinu Eskola Publikoa — Escuela Pública de Diseño de Euskadi.</small>
         </footer>

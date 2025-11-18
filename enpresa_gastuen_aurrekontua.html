@@ -658,7 +658,61 @@
                 </div>
             </aside>
         </main>
-
+        <!-- FALDONA KANPOAN, ESPAZIO HUTSERA MUGITU -->
+        <div class="faldon-hipotesis-integrado">
+          <div class="faldon-contenedor">
+            <div class="faldon-header">
+              <h3 class="faldon-titulo">
+                <span class="faldon-icono">💾</span>
+                Hipotesien Kudeaketa
+              </h3>
+              <button class="faldon-toggle">
+                <span class="faldon-toggle-text">Txikitu</span>
+                <span>▼</span>
+              </button>
+            </div>
+            
+            <div class="faldon-body">
+              <div class="faldon-grid">
+                <!-- Zure hipotesien formularioa hemen -->
+                <div class="faldon-columna">
+                  <div class="faldon-grupo-form">
+                    <label class="faldon-label">Gorde hipotesi berria</label>
+                    <div class="faldon-input-group">
+                      <input type="text" class="faldon-input" placeholder="Hipotesiaren izena...">
+                      <button class="faldon-btn faldon-btn-primary">
+                        <span class="btn-icon">💾</span>
+                        Gorde
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="faldon-columna">
+                  <div class="faldon-grupo-form">
+                    <label class="faldon-label">Kargatu hipotesia</label>
+                    <div class="faldon-input-group">
+                      <select class="faldon-select">
+                        <option>Hautatu hipotesia...</option>
+                        <!-- Hipotesi zerrenda -->
+                      </select>
+                      <button class="faldon-btn faldon-btn-secondary">
+                        <span class="btn-icon">📂</span>
+                        Kargatu
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="faldon-columna">
+                  <div class="faldon-info-panel">
+                    <!-- Informazio panela -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         <footer class="siteinfo">
             <small data-i18n="footer.note">IDarte · Euskadiko Diseinu Eskola Publikoa — Escuela Pública de Diseño de Euskadi.</small>
         </footer>
@@ -679,89 +733,5 @@
         }
     </style>
     <script src="js/logic.js"></script>
-<!-- FALDÓN DE GESTIÓN DE HIPÓTESIS - INTEGRADO -->
-<div id="faldon-hipotesis" class="faldon-hipotesis-integrado">
-    <div class="faldon-contenedor">
-        <!-- Cabecera -->
-        <div class="faldon-header">
-            <h3 class="faldon-titulo">
-                <span class="faldon-icono">💾</span>
-                Gestión de Hipótesis
-            </h3>
-            <button id="toggle-faldon" class="faldon-toggle" onclick="toggleFaldon()">
-                <span class="faldon-toggle-text">Ocultar</span>
-                <span class="faldon-toggle-icon">−</span>
-            </button>
-        </div>
-        
-        <!-- Cuerpo -->
-        <div class="faldon-body" id="faldon-body">
-            <div class="faldon-grid">
-                <!-- Columna Guardar -->
-                <div class="faldon-columna">
-                    <div class="faldon-grupo-form">
-                        <label class="faldon-label">Guardar hipótesis actual</label>
-                        <div class="faldon-input-group">
-                            <input type="text" 
-                                   id="nombre-hipotesis" 
-                                   placeholder="Ej: Hipótesis inicial" 
-                                   class="faldon-input">
-                            <button onclick="guardarHipotesisActual()" 
-                                    class="faldon-btn faldon-btn-primary">
-                                <span class="btn-icon">💾</span>
-                                Guardar
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <!-- BACKUP_EXPORTAR -->
-                <div class="faldon-backup">
-                    <button onclick="exportarHipotesis()" class="faldon-btn faldon-btn-secondary">
-                        📤 Exportar
-                    </button>
-                    <button onclick="importarHipotesis()" class="faldon-btn faldon-btn-secondary">
-                        📥 Importar
-                    </button>
-                    <input type="file" id="import-file" accept=".json" style="display: none;">
-                </div>
-                <!-- Columna Cargar -->
-                <div class="faldon-columna">
-                    <div class="faldon-grupo-form">
-                        <label class="faldon-label">Cargar hipótesis existente</label>
-                        <div class="faldon-input-group">
-                            <select id="selector-hipotesis" class="faldon-select">
-                                <option value="">-- Seleccionar hipótesis --</option>
-                            </select>
-                            <button onclick="cargarHipotesisSeleccionada()" 
-                                    class="faldon-btn faldon-btn-secondary">
-                                <span class="btn-icon">📂</span>
-                                Cargar
-                            </button>
-                            <button onclick="eliminarHipotesisSeleccionada()" 
-                                    class="faldon-btn faldon-btn-danger"
-                                    title="Eliminar hipótesis seleccionada">
-                                <span class="btn-icon">🗑️</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Columna Info -->
-                <div class="faldon-columna">
-                    <div class="faldon-info-panel">
-                        <div class="faldon-info-item">
-                            <span class="faldon-info-label">Hipótesis guardadas:</span>
-                            <span id="contador-hipotesis" class="faldon-info-valor">0</span>
-                        </div>
-                        <div class="faldon-info-item">
-                            <span class="faldon-info-label">Última modificación:</span>
-                            <span id="ultima-hipotesis" class="faldon-info-valor">-</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 </body>
 </html>            

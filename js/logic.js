@@ -1091,6 +1091,15 @@ window.onFieldChange = function(e) {
         });
     }
 
+        if (found) {
+        // ✅ AÑADIR: Sincronizar inmediatamente si es campo de personal
+        if ((field === 'gross' || field === 'employer_ss') && window.syncIndividualPersonnelCosts) {
+            setTimeout(window.syncIndividualPersonnelCosts, 50);
+        }
+        updateAll();
+    }
+
+  
     // Buscar en personal
     if (!found) {
         const person = state.personnel.find(x => x.id === id);

@@ -958,6 +958,38 @@ window.addAmortizable = function(cat) {
     updateAll();
 };
 
+// ===== SINCRONIZACIÓN DE COSTES INDIVIDUALES EN TABLA =====
+window.syncIndividualPersonnelCosts = function() {
+    const tableBody = document.getElementById('personnel-body');
+    if (!tableBody) {
+        console.warn("❌ Tabla de personal no encontrada");
+        return;
+    }
+    
+    let actualizados = 0;
+    state.personnel.forEach(person => {
+        const costeIndividual = safeNum(person.gross) * (1 + safeNum(person.employer_ss) / 100);
+        const formattedCost = fmt(costeIndividual);
+        
+        const personRow = Array.from(tableBody.rows).find(row => 
+            row.querySelector(`input[data-id="${person.id}"]`)
+        );
+        
+        if (personRow && personRow.cells[6]) {
+            const currentDisplay = personRow.cells[6].textContent;
+            if (currentDisplay !== formattedCost) {
+                personRow.cells[6].textContent = formattedCost;
+                console.log(`✅ Sincronizado ${person.role}: ${currentDisplay} → ${formattedCost}`);
+                actualizados++;
+            }
+        }
+    });
+    
+    if (actualizados > 0) {
+        console.log(`🔄 ${actualizados} costes individuales sincronizados`);
+    }
+};
+
 window.removeAmortizable = function(id, cat) {
     state.amortizables[cat] = state.amortizables[cat].filter(x => x.id !== id);
     renderAllTables();

@@ -1587,6 +1587,128 @@ function aplicarAnalisis(elementId, texto, color) {
     }
 }
 
+// ===== FUNCIONES DE INTERACTIVIDAD DEL FALDÓN =====
+
+// Toggle faldón
+window.toggleFaldon = function() {
+    const faldon = document.getElementById('faldon-hipotesis');
+    const faldonBody = document.getElementById('faldon-body');
+    const toggleBtn = document.getElementById('toggle-faldon');
+    const toggleText = toggleBtn.querySelector('.faldon-toggle-text');
+    const toggleIcon = toggleBtn.querySelector('.faldon-toggle-icon');
+    
+    if (faldonBody.classList.contains('contraido')) {
+        // Expandir
+        faldonBody.classList.remove('contraido');
+        faldon.classList.remove('contraido');
+        toggleText.textContent = 'Ocultar';
+        toggleIcon.textContent = '−';
+    } else {
+        // Contraer
+        faldonBody.classList.add('contraido');
+        faldon.classList.add('contraido');
+        toggleText.textContent = 'Mostrar';
+        toggleIcon.textContent = '+';
+    }
+};
+
+// Guardar hipótesis actual
+window.guardarHipotesisActual = function() {
+    const nombreInput = document.getElementById('nombre-hipotesis');
+    const nombre = nombreInput.value.trim();
+    
+    if (!nombre) {
+        alert('⚠️ Por favor, introduce un nombre para la hipótesis');
+        nombreInput.focus();
+        return;
+    }
+    
+    if (guardarHipotesis(nombre)) {
+        nombreInput.value = ''; // Limpiar input
+        actualizarInfoHipotesis();
+    }
+};
+
+// Cargar hipótesis seleccionada
+window.cargarHipotesisSeleccionada = function() {
+    const selector = document.getElementById('selector-hipotesis');
+    const nombre = selector.value;
+    
+    if (!nombre) {
+        alert('⚠️ Por favor, selecciona una hipótesis');
+        return;
+    }
+    
+    cargarHipotesis(nombre);
+    actualizarInfoHipotesis();
+};
+
+// Eliminar hipótesis seleccionada
+window.eliminarHipotesisSeleccionada = function() {
+    const selector = document.getElementById('selector-hipotesis');
+    const nombre = selector.value;
+    
+    if (!nombre) {
+        alert('⚠️ Por favor, selecciona una hipótesis');
+        return;
+    }
+    
+    if (confirm(`¿Estás seguro de que quieres eliminar la hipótesis "${nombre}"?`)) {
+        if (eliminarHipotesis(nombre)) {
+            actualizarInfoHipotesis();
+        }
+    }
+};
+
+// Actualizar información de hipótesis
+function actualizarInfoHipotesis() {
+    actualizarSelectorHipotesis();
+    actualizarContadorHipotesis();
+    
+    // Actualizar última hipótesis
+    const ultimaElement = document.getElementById('ultima-hipotesis');
+    const hipotesis = listarHipotesis();
+    
+    if (hipotesis.length > 0) {
+        const ultima = hipotesis.reduce((latest, current) => 
+            new Date(current.timestamp) > new Date(latest.timestamp) ? current : latest
+        );
+        const fecha = new Date(ultima.timestamp).toLocaleDateString();
+        ultimaElement.textContent = fecha;
+    } else {
+        ultimaElement.textContent = '-';
+    }
+}
+// Modificar la función actualizarSelectorHipotesis existente
+function actualizarSelectorHipotesis() {
+    const selector = document.getElementById('selector-hipotesis');
+    if (!selector) return;
+    
+    const hipotesis = listarHipotesis();
+    
+    selector.innerHTML = `
+        <option value="">-- Seleccionar hipótesis --</option>
+        ${hipotesis.map(h => `
+            <option value="${h.nombre}">${h.nombre} (${new Date(h.timestamp).toLocaleDateString()})</option>
+        `).join('')}
+    `;
+    
+    const ultima = localStorage.getItem('idarte_ultima_hipotesis');
+    if (ultima) {
+        selector.value = ultima;
+    }
+}
+
+// Modificar la función actualizarContadorHipotesis
+function actualizarContadorHipotesis() {
+    const contador = document.getElementById('contador-hipotesis');
+    if (contador) {
+        const hipotesis = listarHipotesis();
+        contador.textContent = hipotesis.length;
+    }
+}
+
+  
 // LLAMAR LA FUNCIÓN EN updatePortfolio()
 actualizarAnalisisMetricas();
 };
@@ -1690,10 +1812,7 @@ async function initializeApp() {
     }
 }
 
-// ===== VERSIÓN PREMIUM =====
-// ===== GENERACIÓN DE PDF MEJORADA - VERSIÓN FINAL =====
-// ===== PDF CON CABECERA COMPLETA =====
-// ===== GENERACIÓN DE PDF CON CABECERA DE LA WEB =====
+
 // ===== GENERACIÓN DE PDF SIMPLE Y EFICAZ =====
 window.generatePDFReport = function() {
     const loadingOverlay = document.getElementById('loading-overlay');

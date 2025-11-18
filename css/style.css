@@ -858,208 +858,263 @@ img {
     font-weight: bold;
     color: #007bff;
 }
-/* ESTILOS PARA EL FALDÓN DE HIPÓTESIS */
-.faldon-hipotesis {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: #ffffff;
-    border-top: 3px solid #3b82f6;
-    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-    font-family: 'Inter', sans-serif;
-    transition: transform 0.3s ease;
-}
-
-.faldon-hipotesis.contraido {
-    transform: translateY(calc(100% - 50px));
-}
-
-.faldon-contenido {
+/* FALDÓN INTEGRADO - ESTILO COHERENTE */
+.faldon-hipotesis-integrado {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e5e7eb;
+    margin: 20px auto;
     max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
+    overflow: hidden;
 }
 
-.faldon-cabecera {
+.faldon-contenedor {
+    padding: 0;
+}
+
+.faldon-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 0;
-    border-bottom: 1px solid #e5e7eb;
-    background: #f8fafc;
-}
-
-.faldon-cabecera h3 {
-    margin: 0;
-    font-size: 16px;
-    font-weight: 600;
-    color: #1f2937;
-}
-
-.btn-toggle-faldon {
-    background: #6b7280;
+    padding: 16px 24px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    border: none;
-    border-radius: 4px;
-    width: 24px;
-    height: 24px;
+}
+
+.faldon-titulo {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.faldon-icono {
+    font-size: 20px;
+}
+
+.faldon-toggle {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
     cursor: pointer;
     font-size: 14px;
     display: flex;
     align-items: center;
-    justify-content: center;
+    gap: 6px;
+    transition: all 0.2s ease;
 }
 
-.btn-toggle-faldon:hover {
-    background: #4b5563;
+.faldon-toggle:hover {
+    background: rgba(255, 255, 255, 0.3);
 }
 
-.faldon-cuerpo {
-    padding: 15px 0;
+.faldon-body {
+    padding: 24px;
+    background: #f8fafc;
 }
 
 .faldon-grid {
     display: grid;
     grid-template-columns: 1fr 1fr auto;
-    gap: 20px;
+    gap: 24px;
     align-items: start;
 }
 
-.faldon-col {
+.faldon-columna {
     display: flex;
     flex-direction: column;
 }
 
-.faldon-grupo {
+.faldon-grupo-form {
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
 
-.faldon-grupo label {
+.faldon-label {
     font-size: 14px;
     font-weight: 500;
     color: #374151;
     margin-bottom: 4px;
 }
 
-.input-group {
+.faldon-input-group {
     display: flex;
     gap: 8px;
     align-items: center;
 }
 
-.input-hipotesis {
+.faldon-input {
     flex: 1;
-    padding: 8px 12px;
+    padding: 10px 12px;
     border: 1px solid #d1d5db;
-    border-radius: 6px;
-    font-size: 14px;
-}
-
-.select-hipotesis {
-    flex: 1;
-    padding: 8px 12px;
-    border: 1px solid #d1d5db;
-    border-radius: 6px;
+    border-radius: 8px;
     font-size: 14px;
     background: white;
+    transition: border-color 0.2s ease;
 }
 
-.btn-guardar {
+.faldon-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.faldon-select {
+    flex: 1;
+    padding: 10px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 14px;
+    background: white;
+    cursor: pointer;
+}
+
+.faldon-select:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.faldon-btn {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.faldon-btn-primary {
     background: #10b981;
     color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
-    white-space: nowrap;
 }
 
-.btn-guardar:hover {
+.faldon-btn-primary:hover {
     background: #059669;
+    transform: translateY(-1px);
 }
 
-.btn-cargar {
+.faldon-btn-secondary {
     background: #3b82f6;
     color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
-    white-space: nowrap;
 }
 
-.btn-cargar:hover {
+.faldon-btn-secondary:hover {
     background: #2563eb;
+    transform: translateY(-1px);
 }
 
-.btn-eliminar {
+.faldon-btn-danger {
     background: #ef4444;
     color: white;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
+    padding: 10px 12px;
 }
 
-.btn-eliminar:hover {
+.faldon-btn-danger:hover {
     background: #dc2626;
+    transform: translateY(-1px);
 }
 
-.faldon-info {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding: 8px 0;
+.btn-icon {
+    font-size: 16px;
 }
 
-.info-item {
+.faldon-info-panel {
+    background: white;
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    min-width: 200px;
+}
+
+.faldon-info-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 14px;
+    margin-bottom: 12px;
 }
 
-.info-label {
+.faldon-info-item:last-child {
+    margin-bottom: 0;
+}
+
+.faldon-info-label {
+    font-size: 14px;
     color: #6b7280;
     font-weight: 500;
 }
 
-.info-valor {
+.faldon-info-valor {
+    font-size: 14px;
     color: #1f2937;
     font-weight: 600;
     background: #f3f4f6;
-    padding: 2px 8px;
-    border-radius: 4px;
-    min-width: 60px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    min-width: 80px;
     text-align: center;
 }
 
+/* Estados */
+.faldon-body.contraido {
+    display: none;
+}
+
+.faldon-hipotesis-integrado.contraido {
+    margin-bottom: 10px;
+}
+
+.faldon-hipotesis-integrado.contraido .faldon-header {
+    border-radius: 12px;
+}
+
 /* Responsive */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
     .faldon-grid {
         grid-template-columns: 1fr;
-        gap: 15px;
+        gap: 20px;
     }
     
-    .faldon-contenido {
-        padding: 0 15px;
+    .faldon-info-panel {
+        min-width: auto;
+    }
+}
+
+@media (max-width: 768px) {
+    .faldon-body {
+        padding: 16px;
     }
     
-    .input-group {
+    .faldon-input-group {
         flex-direction: column;
     }
     
-    .input-hipotesis,
-    .select-hipotesis {
+    .faldon-input,
+    .faldon-select {
         width: 100%;
+    }
+    
+    .faldon-btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .faldon-header {
+        padding: 12px 16px;
+    }
+    
+    .faldon-toggle-text {
+        display: none;
     }
 }

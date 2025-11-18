@@ -1131,6 +1131,11 @@ function renderAllTables() {
     
     renderTable(state.personnel, 'personnel-body', 'person');
     renderTable(state.finance.socios, 'socios-table-body', 'socio');
+    
+    // ✅ AÑADIR: Sincronizar costes individuales después de renderizar
+    if (window.syncIndividualPersonnelCosts) {
+        setTimeout(window.syncIndividualPersonnelCosts, 100);
+    }
 }
 
 function renderTable(items, containerId, type) {

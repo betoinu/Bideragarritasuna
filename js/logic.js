@@ -1126,39 +1126,74 @@ if (type === 'amort') {
 }
        if (type === 'person') {
     const costeTotal = safeNum(item.gross) * (1 + safeNum(item.employer_ss) / 100);
-    
+
     return `
         <tr>
             <td style="min-width: 200px;">
-                <input value="${item.role}" data-id="${item.id}" data-field="role" 
-                       style="width: 100%; border: none; background: transparent;">
+                <input 
+                    value="${item.role}" 
+                    data-id="${item.id}" 
+                    data-field="role"
+                    oninput="onFieldChange(event)"
+                >
             </td>
+
             <td class="text-right">
-                <input type="number" value="${item.gross}" data-id="${item.id}" data-field="gross">
+                <input 
+                    type="number" 
+                    value="${item.gross}" 
+                    data-id="${item.id}" 
+                    data-field="gross"
+                    oninput="onFieldChange(event)"
+                >
             </td>
+
             <td class="text-center">
-                <input type="number" value="${item.employer_ss}" data-id="${item.id}" data-field="employer_ss">
+                <input 
+                    type="number" 
+                    value="${item.employer_ss}" 
+                    data-id="${item.id}" 
+                    data-field="employer_ss"
+                    oninput="onFieldChange(event)"
+                >
             </td>
-            
-            <!-- ✅ SOLO DATOS EDITABLES -->
+
             <td class="text-center">
-                <input type="number" value="${item.horasAnuales || 1600}" data-id="${item.id}" data-field="horasAnuales"
-                       placeholder="1600" data-i18n-placeholder="placeholder.horasAnuales" style="width: 80px;">
+                <input 
+                    type="number" 
+                    value="${item.horasAnuales || 1600}" 
+                    data-id="${item.id}" 
+                    data-field="horasAnuales"
+                    oninput="onFieldChange(event)"
+                >
             </td>
+
             <td class="text-center">
-                <input type="number" value="${item.jornadaSemanal || 40}" data-id="${item.id}" data-field="jornadaSemanal" 
-                       placeholder="40" data-i18n-placeholder="placeholder.jornadaSemanal" style="width: 80px;">
+                <input 
+                    type="number" 
+                    value="${item.jornadaSemanal || 40}" 
+                    data-id="${item.id}" 
+                    data-field="jornadaSemanal"
+                    oninput="onFieldChange(event)"
+                >
             </td>
-            
+
             <td class="text-center">
-                <input type="checkbox" ${item.esProductivo ? 'checked' : ''} 
-                       data-id="${item.id}" data-field="esProductivo">
+                <input 
+                    type="checkbox" 
+                    ${item.esProductivo ? 'checked' : ''} 
+                    data-id="${item.id}" 
+                    data-field="esProductivo"
+                    onchange="onFieldChange(event)"
+                >
             </td>
+
             <td class="text-right">${fmt(costeTotal)}</td>
             <td><button onclick="removePersonnel('${item.id}')" class="btn small">✕</button></td>
         </tr>
     `;
 }
+
           
         if (type === 'socio') {
             return `

@@ -1316,11 +1316,12 @@ function setupGlobalEventListeners() {
 }
 
 // ===== ACTUALIZACIÓN GLOBAL =====
+
 function updateAll() {
     if (window.updateTimeout) clearTimeout(window.updateTimeout);
     window.updateTimeout = setTimeout(() => {
         calculatePricing();
-        // 🆕 ACTUALIZAR PANEL 8
+        if (window.syncIndividualPersonnelCosts) window.syncIndividualPersonnelCosts();
         if (typeof updateBideragarritasuna === 'function') updateBideragarritasuna();
     }, 100);
 }

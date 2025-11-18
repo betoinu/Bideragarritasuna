@@ -1411,6 +1411,7 @@ window.updatePortfolio = function() {
     
     // LLAMAR LA FUNCIÓN EN updatePortfolio()
     actualizarAnalisisMetricas();
+
     
     actualizarComparacionPrecios();
     
@@ -1907,11 +1908,6 @@ function actualizarResultados() {
 document.addEventListener('DOMContentLoaded', function() {
     actualizarInfoHipotesis();
 });
-
-  
-// LLAMAR LA FUNCIÓN EN updatePortfolio()
-actualizarAnalisisMetricas();
-};
 
 window.aplicarEstrategia = function(tipo) {
     console.log(`🎯 Aplicando estrategia: ${tipo}`);

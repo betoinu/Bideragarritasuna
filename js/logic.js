@@ -1586,7 +1586,31 @@ function aplicarAnalisis(elementId, texto, color) {
         elemento.style.fontWeight = '500';
     }
 }
+// ===== KALKULU FUNTZIOAK PANEL GUZTIENTZAT =====
 
+// Funtzio orokorra kalkulu guztiak eguneratzeko
+function actualizarTodosLosCalculos() {
+    if (typeof window.syncIndividualPersonnelCosts === 'function') {
+        window.syncIndividualPersonnelCosts();
+    }
+    
+    if (typeof window.calcularTotales === 'function') {
+        window.calcularTotales();
+    }
+    
+    if (typeof window.actualizarResultados === 'function') {
+        window.actualizarResultados();
+    }
+    
+    // Beste kalkulu funtzioak hemen...
+    console.log('🔢 Kalkulu guztiak eguneratu dira');
+}
+
+// Event listener orokorra input guztientzako
+document.addEventListener('input', function(e) {
+    // Input bat aldatzen denean, kalkulu guztiak eguneratu
+    setTimeout(actualizarTodosLosCalculos, 100);
+});
 // ===== FUNCIONES DE INTERACTIVIDAD DEL FALDÓN =====
 
 // Toggle faldón

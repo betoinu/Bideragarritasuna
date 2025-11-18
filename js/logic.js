@@ -1848,33 +1848,57 @@ function obtenerDatosActuales() {
 }
 
 function obtenerServiciosActuales() {
-    // Zure zerbitzu datuak hemen
-    console.log('TODO: obtenerServiciosActuales implementatu');
-    return [];
+    return window.serviciosCartera.map(servicio => ({
+        nombre: servicio.nombre,
+        precio: servicio.precio,
+        horas: servicio.horas,
+        cantidad: servicio.cantidad
+    }));
 }
 
 function obtenerCostesActuales() {
-    // Zure kostu datuak hemen
-    console.log('TODO: obtenerCostesActuales implementatu');
-    return {};
+    const financiacion = calculateFinancing();
+    return {
+        amortizaciones: financiacion.totalAmortizaciones,
+        gastosFijos: financiacion.totalGastosFijos,
+        personal: financiacion.totalPersonal,
+        financieros: financiacion.cuotaAnual || 0,
+        total: financiacion.gastosOperativosAnuales + (financiacion.cuotaAnual || 0)
+    };
 }
 
 function obtenerIngresosActuales() {
-    // Zure irabazi datuak hemen
-    console.log('TODO: obtenerIngresosActuales implementatu');
-    return {};
+    return calculatePortfolioRevenue();
 }
 
 function obtenerFinanciacionActual() {
-    // Zure finantzaketa datuak hemen
-    console.log('TODO: obtenerFinanciacionActual implementatu');
-    return {};
+    return calculateFinancing();
 }
 
 function aplicarDatosHipotesis(datos) {
-    // Datuak interfazean aplikatu
-    console.log('Datuak aplikatzen:', datos);
-    // TODO: Zure datuak kargatzeko kodea
+    if (!datos) return;
+    
+    console.log("📥 Cargando hipótesis:", datos.nombre);
+    
+    // Cargar servicios si existen
+    if (datos.servicios && Array.isArray(datos.servicios)) {
+        window.serviciosCartera = datos.servicios;
+        renderizarServicios();
+    }
+    
+    // Forzar recálculo
+    updateAll();
+    
+    alert(`✅ Hipótesis cargada: ${datos.nombre}`);
+}
+
+// 2. Funciones de cálculo placeholder
+function calcularTotales() {
+    calculatePricing();
+}
+
+function actualizarResultados() {
+    updateAll();
 }
 
 // 4. HTML elementuetarako funtzio laguntzaileak

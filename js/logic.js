@@ -1851,20 +1851,6 @@ window.descargarCompleto = function() {
     }, 1500);
 };
 
-// Cargar hipótesis seleccionada
-window.cargarHipotesisSeleccionada = function() {
-    const selector = document.getElementById('selector-hipotesis');
-    const nombre = selector.value;
-    
-    if (!nombre) {
-        alert('⚠️ Por favor, selecciona una hipótesis');
-        return;
-    }
-    
-    cargarHipotesis(nombre);
-    actualizarInfoHipotesis();
-};
-
 // Eliminar hipótesis seleccionada
 window.eliminarHipotesisSeleccionada = function() {
     const selector = document.getElementById('selector-hipotesis');

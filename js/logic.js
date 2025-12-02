@@ -2191,51 +2191,52 @@ async function initializeApp() {
         renderizarServicios();
         setupGlobalEventListeners();
 
-          // 🆕 INICIALIZAR PANEL 8
-    setTimeout(() => {
-        if (typeof renderZerbitzuak === 'function') renderServices();
-        if (typeof renderBenchmarking === 'function') renderBenchmarking();
-        if (typeof updateBideragarritasuna === 'function') updateBideragarritasuna();
-    }, 500);
-     
-        // Cálculos iniciales
-        await new Promise(resolve => setTimeout(resolve, 300));
-        updateAll();
+// 🆕 INICIALIZAR PANEL 8
+setTimeout(() => {
+    if (typeof renderZerbitzuak === 'function') renderServices();
+    if (typeof renderBenchmarking === 'function') renderBenchmarking();
+    if (typeof updateBideragarritasuna === 'function') updateBideragarritasuna();
+}, 500);
+ 
+// Cálculos iniciales
+await new Promise(resolve => setTimeout(resolve, 300));
+updateAll();
 
-        // 1. Deskargatzeko selectorra eguneratu
-        if (typeof actualizarSelectorDescarga === 'function') {
-                actualizarSelectorDescarga();
-        }
-            
-        // 2. Inportatzeko botoia gehitu
-        if (typeof agregarBotonImportar === 'function') {
-                agregarBotonImportar();
-        }
-            
-        // 3. Hipotesi sistema konprobatu
-            const contador = document.getElementById('contador-hipotesis');
-            if (contador) {
-                const hipotesis = listarHipotesis();
-                contador.textContent = hipotesis.length;
-                console.log(`🗄️ ${hipotesis.length} hipotesi gordeta`);
-            }
-        }, 500);
-      
-        // Verificación final
-        setTimeout(() => {
-            console.log("🔍 Verificación final...");
-            const hourlyRate = document.getElementById('suggested-hourly-rate-sidebar');
-            if (hourlyRate && hourlyRate.textContent !== '€ 0.00') {
-                console.log("🎉 IDarte COMPLETO operativo y mostrando datos");
-            } else {
-                console.log("🔄 Último reintento...");
-                updateAll();
-            }
-        }, 1000);
-        
-    } catch (error) {
-        console.error("💥 Error en inicialización:", error);
+// 🆕 SISTEMA BERRIEN INIZIALIZAZIOA
+setTimeout(() => {
+    // 1. Deskargatzeko selectorra eguneratu
+    if (typeof actualizarSelectorDescarga === 'function') {
+        actualizarSelectorDescarga();
     }
+    
+    // 2. Inportatzeko botoia gehitu
+    if (typeof agregarBotonImportar === 'function') {
+        agregarBotonImportar();
+    }
+    
+    // 3. Hipotesi sistema konprobatu
+    const contador = document.getElementById('contador-hipotesis');
+    if (contador) {
+        const hipotesis = listarHipotesis();
+        contador.textContent = hipotesis.length;
+        console.log(`🗄️ ${hipotesis.length} hipotesi gordeta`);
+    }
+}, 500); // ← HAU DA BUKAERAKO }, ez beste bat
+
+// Verificación final
+setTimeout(() => {
+    console.log("🔍 Verificación final...");
+    const hourlyRate = document.getElementById('suggested-hourly-rate-sidebar');
+    if (hourlyRate && hourlyRate.textContent !== '€ 0.00') {
+        console.log("🎉 IDarte COMPLETO operativo y mostrando datos");
+    } else {
+        console.log("🔄 Último reintento...");
+        updateAll();
+    }
+}, 1000);
+
+} catch (error) {
+    console.error("💥 Error en inicialización:", error);
 }
 
 

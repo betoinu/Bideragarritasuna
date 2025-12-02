@@ -1703,6 +1703,154 @@ window.guardarHipotesisActual = function() {
     }
 };
 
+// =====🗄️ JSON DESKARGATZEKO SISTEMA (NUEVO) =====
+window.actualizarSelectorDescarga = function() {
+    const selector = document.getElementById('selector-descargar');
+    if (!selector) return;
+    
+    const hipotesis = listarHipotesis();
+    selector.innerHTML = '<option value="">Hautatu deskargatzeko...</option>';
+    
+    hipotesis.forEach(h => {
+        const option = document.createElement('option');
+        option.value = h.nombre;
+        option.textContent = `${h.nombre} (${new Date(h.timestamp).toLocaleDateString()})`;
+        selector.appendChild(option);
+    });
+};
+
+// 🆕 DESKARGATU HIPOTESIA JSON GISA
+window.descargarHipotesisSeleccionada = function() {
+    const selector = document.getElementById('selector-descargar');
+    const nombreHipotesis = selector.value;
+    
+    if (!nombreHipotesis) {
+        alert('Hautatu deskargatu nahi duzun hipotesia.');
+        return;
+    }
+    
+    const hipotesis = listarHipotesis();
+    const hipotesiAurkituta = hipotesis.find(h => h.nombre === nombreHipotesis);
+    
+    if (!hipotesiAurkituta) {
+        alert('Hipotesia ez da aurkitu.');
+        return;
+    }
+    
+    // JSON DATUEKIN OBJEKTUA SORTU
+    const datosExportar = {
+        nombre: nombreHipotesis,
+        fecha: hipotesiAurkituta.timestamp,
+        datos: hipotesiAurkituta.datos,
+        metadata: {
+            aplicacion: "IDarte Enpresa Gastuen Aurrekontua",
+            version: "1.0",
+            fechaExportacion: new Date().toISOString()
+        }
+    };
+    
+    try {
+        // JSON TESTUA SORTU
+        const jsonStr = JSON.stringify(datosExportar, null, 2);
+        const blob = new Blob([jsonStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        
+        // DESKARGATZEKO ELEMENTUA SORTU
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `idarte_hipotesia_${nombreHipotesis.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        
+        // MEMORIA GARBITU
+        setTimeout(() => URL.revokeObjectURL(url), 100);
+        
+        console.log(`✅ Hipotesia deskargatuta: ${nombreHipotesis}`);
+        alert(`"${nombreHipotesis}" hipotesia deskargatuta!`);
+        
+    } catch (error) {
+        console.error('❌ Errorea JSON deskargatzean:', error);
+        alert('Errorea hipotesia deskargatzean.');
+    }
+};
+
+// 🆕 INPORTATU HIPOTESIA JSON FITXATEGITIK
+window.cargarHipotesisDesdeArchivo = function(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const datosImportados = JSON.parse(e.target.result);
+            
+            // EGIAZTATU FITXATEGIAREN EGITURA
+            if (!datosImportados.datos) {
+                alert('Fitxategiaren formatua ez da egokia.');
+                return;
+            }
+            
+            // GALDETU IZEN BERRI BAT
+            const nombrePorDefecto = datosImportados.nombre || 'Inportatutako hipotesia';
+            const nuevoNombre = prompt('Hipotesi berriaren izena:', nombrePorDefecto);
+            
+            if (!nuevoNombre) return;
+            
+            // GORDE LOCALSTORAGE-AN
+            let hipotesisGuardadas = listarHipotesis();
+            
+            // EZABATU IZEN BERDINEKOAK
+            hipotesisGuardadas = hipotesisGuardadas.filter(h => h.nombre !== nuevoNombre);
+            
+            // GEHITU INPORTATUTAKOA
+            hipotesisGuardadas.push({
+                nombre: nuevoNombre,
+                datos: datosImportados.datos,
+                timestamp: new Date().toISOString()
+            });
+            
+            localStorage.setItem('hipotesis', JSON.stringify(hipotesisGuardadas));
+            
+            // EGUNERAKU INTERFAZEA
+            actualizarSelectorHipotesis();
+            actualizarSelectorDescarga();
+            actualizarContadorHipotesis();
+            
+            console.log(`✅ Hipotesia inportatuta: ${nuevoNombre}`);
+            alert(`"${nuevoNombre}" hipotesia inportatu da!`);
+            
+        } catch (error) {
+            console.error('❌ Errorea JSON fitxategia irakurtzean:', error);
+            alert('Errorea fitxategia irakurtzean. Egiaztatu JSON formatua dela.');
+        }
+    };
+    reader.readAsText(file);
+};
+
+// 🆕 INPORTATZEKO BOTOIA GEHITZERAKO FUNTZIO LAGUNTZAILEA
+window.agregarBotonImportar = function() {
+    // Faldonaren CSS grid-a egokitu 4 zutabetara
+    const faldonGrid = document.querySelector('.faldon-grid');
+    if (faldonGrid) {
+        faldonGrid.style.gridTemplateColumns = 'repeat(4, 1fr)';
+    }
+};
+
+// 🆕 PDF + JSON BATEREKO DESKARGA
+window.descargarCompleto = function() {
+    // PDF-a deskargatu
+    generatePDFReport();
+    
+    // JSON-a ere deskargatu automatikoki
+    setTimeout(() => {
+        const selector = document.getElementById('selector-hipotesis');
+        if (selector && selector.value) {
+            descargarHipotesisSeleccionada();
+        }
+    }, 1500);
+};
+
 // Cargar hipótesis seleccionada
 window.cargarHipotesisSeleccionada = function() {
     const selector = document.getElementById('selector-hipotesis');
@@ -1739,7 +1887,12 @@ function actualizarInfoHipotesis() {
     actualizarSelectorHipotesis();
     actualizarContadorHipotesis();
     
-    // Actualizar última hipótesis
+    // 🆕 DESKARGATZEKO SELECTORRA EGUNERATU
+    if (typeof actualizarSelectorDescarga === 'function') {
+        actualizarSelectorDescarga();
+    }
+    
+    // Azken hipotesia erakutsi
     const ultimaElement = document.getElementById('ultima-hipotesis');
     const hipotesis = listarHipotesis();
     
@@ -1747,12 +1900,12 @@ function actualizarInfoHipotesis() {
         const ultima = hipotesis.reduce((latest, current) => 
             new Date(current.timestamp) > new Date(latest.timestamp) ? current : latest
         );
-        const fecha = new Date(ultima.timestamp).toLocaleDateString();
-        ultimaElement.textContent = fecha;
+        ultimaElement.textContent = new Date(ultima.timestamp).toLocaleString();
     } else {
         ultimaElement.textContent = '-';
     }
 }
+
 // Modificar la función actualizarSelectorHipotesis existente
 function actualizarSelectorHipotesis() {
     const selector = document.getElementById('selector-hipotesis');
@@ -1791,36 +1944,42 @@ function listarHipotesis() {
 function guardarHipotesis(nombre, datos) {
     if (!nombre || nombre.trim() === '') {
         alert('Mesedez, sartu hipotesiaren izena');
-        return;
+        return false;
     }
     
     try {
         const datosActuales = obtenerDatosActuales();
         let hipotesis = listarHipotesis();
         
-        // Egiaztatu izena erabiltzen ari den
         const existe = hipotesis.find(h => h.nombre === nombre);
         if (existe && !confirm(`"${nombre}" existitzen da. Gainidatzi?`)) {
-            return;
+            return false;
         }
         
-        // Ezabatu existitzen bada
         hipotesis = hipotesis.filter(h => h.nombre !== nombre);
         
-        // Gehitu berria
-        hipotesis.push({
+        const nuevaHipotesis = {
             nombre: nombre.trim(),
             datos: datos || datosActuales,
             timestamp: new Date().toISOString()
-        });
+        };
         
+        hipotesis.push(nuevaHipotesis);
         localStorage.setItem('hipotesis', JSON.stringify(hipotesis));
+        
+        // 🆕 DESKARGATZEKO SELECTORRA EGUNERATU
+        if (typeof actualizarSelectorDescarga === 'function') {
+            actualizarSelectorDescarga();
+        }
+        
         actualizarInfoHipotesis();
         alert(`✅ Gordeta: ${nombre}`);
+        return true;
         
     } catch (error) {
         console.error('Errorea gordetzean:', error);
         alert('Errorea gordetzean');
+        return false;
     }
 }
 
@@ -1846,8 +2005,17 @@ function eliminarHipotesis(nombre) {
         let hipotesis = listarHipotesis();
         hipotesis = hipotesis.filter(h => h.nombre !== nombre);
         localStorage.setItem('hipotesis', JSON.stringify(hipotesis));
-        actualizarInfoHipotesis();
+        
+        // 🆕 BI SELECTORRAK EGUNERATU
+        actualizarSelectorHipotesis();
+        if (typeof actualizarSelectorDescarga === 'function') {
+            actualizarSelectorDescarga();
+        }
+        actualizarContadorHipotesis();
+        
+        return true;
     }
+    return false;
 }
 
 // 2. Interfaze funtzioak
@@ -2033,7 +2201,26 @@ async function initializeApp() {
         // Cálculos iniciales
         await new Promise(resolve => setTimeout(resolve, 300));
         updateAll();
-        
+
+        // 1. Deskargatzeko selectorra eguneratu
+        if (typeof actualizarSelectorDescarga === 'function') {
+                actualizarSelectorDescarga();
+        }
+            
+        // 2. Inportatzeko botoia gehitu
+        if (typeof agregarBotonImportar === 'function') {
+                agregarBotonImportar();
+        }
+            
+        // 3. Hipotesi sistema konprobatu
+            const contador = document.getElementById('contador-hipotesis');
+            if (contador) {
+                const hipotesis = listarHipotesis();
+                contador.textContent = hipotesis.length;
+                console.log(`🗄️ ${hipotesis.length} hipotesi gordeta`);
+            }
+        }, 500);
+      
         // Verificación final
         setTimeout(() => {
             console.log("🔍 Verificación final...");

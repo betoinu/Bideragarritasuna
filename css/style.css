@@ -918,7 +918,7 @@ img {
 /* 🎯 HAU ALDATU: 3 ZUTABE → 4 ZUTABE */
 .faldon-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1.5fr; /* 4 zutabe, azkena handiago */
+  grid-template-columns: 1fr 1fr 1fr minmax(250px, 1.8fr); /* ALDATUTA: 4. zutabea zabalago eta malguago */
   gap: 24px;
   align-items: start;
   width: 100%;
@@ -928,7 +928,8 @@ img {
 /* GEHITU HAU: */
 .faldon-info-panel {
   min-width: 250px;
-  max-width: 350px;
+  max-width: none; /* ALDATUTA: muga kendu */
+  width: 100%; /* Gehitu: zabalera osoa hartzeko */
 }
 
 .faldon-columna {
@@ -1022,13 +1023,16 @@ img {
   border-radius: 8px;
   border: 1px solid rgba(15,23,42,0.04);
   min-width: 200px;
+  max-width: none; /* ALDATUTA: muga kendu */
+  width: 100%; /* Gehitu: zabalera osoa */
 }
 
 .faldon-info-item {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start; /* ALDATUTA: flex-start testu luzeentzat */
   margin-bottom: 12px;
+  flex-wrap: wrap; /* Gehitu: testua lerro berrira pasa dadin */
 }
 
 .faldon-info-item:last-child {
@@ -1039,6 +1043,8 @@ img {
   font-size: 14px;
   color: var(--muted);
   font-weight: 500;
+  flex: 0 0 50%; /* Gehitu: etiketarentzako espazioa */
+  margin-bottom: 4px;
 }
 
 .faldon-info-valor {
@@ -1048,8 +1054,12 @@ img {
   background: #f3f4f6;
   padding: 4px 8px;
   border-radius: 6px;
-  min-width: 80px;
-  text-align: center;
+  min-width: auto; /* ALDATUTA: gutxieneko zabalera kendu */
+  max-width: 100%; /* Gehitu: muga gehitu */
+  text-align: left; /* ALDATUTA: ezkerretara lerrokatu */
+  white-space: normal; /* ALDATUTA: testua lerroetan banatu */
+  word-break: break-word; /* Gehitu: hitz luzeak moztu */
+  flex: 0 0 45%; /* Gehitu: balioarentzako espazioa */
 }
 
 /* Faldonaren egoerak */
@@ -1108,6 +1118,17 @@ img {
   .faldon-columna {
     min-width: 180px;
     max-width: 100%;
+  }
+  
+  /* Gehitu 4. zutabearentzako responsive: */
+  .faldon-info-item {
+    flex-direction: column;
+  }
+  
+  .faldon-info-label,
+  .faldon-info-valor {
+    flex: none;
+    width: 100%;
   }
 }
 

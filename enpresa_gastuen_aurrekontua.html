@@ -719,18 +719,31 @@
         </div> <!-- ✅ faldon-columna ITXI (4) -->
 
         <!-- 5. ZUTABEA - INFORMAZIOA -->
-        <div class="faldon-columna">
-          <div class="faldon-info-panel">
-            <div class="faldon-info-item">
-              <span class="faldon-info-label">Gordetako hipotesiak:</span>
-              <span class="faldon-info-valor" id="contador-hipotesis">0</span>
-            </div>
-            <div class="faldon-info-item">
-              <span class="faldon-info-label">Azken aldaketa:</span>
-              <span class="faldon-info-valor" id="ultima-hipotesis">-</span>
-            </div>
-          </div> <!-- ✅ faldon-info-panel ITXI -->
-        </div> <!-- ✅ faldon-columna ITXI (5) -->
+        <div class="faldon-info-panel">
+          <div class="faldon-info-item">
+            <span class="faldon-info-label">Gordetako hipotesiak:</span>
+            <span class="faldon-info-valor" id="contador-hipotesis">0</span>
+          </div>
+          <div class="faldon-info-item">
+            <span class="faldon-info-label">Azken aldaketa:</span>
+            <span class="faldon-info-valor" id="ultima-hipotesis">-</span>
+          </div>
+          <!-- 🆕 GEHITU HAU: -->
+          <div class="faldon-info-item">
+            <span class="faldon-info-label">Bertsioa:</span>
+            <span class="faldon-info-valor">v1.0</span>
+          </div>
+          <!-- 🆕 GEHITU HAU: -->
+          <div class="faldon-info-item">
+            <span class="faldon-info-label">Azken gordetzea:</span>
+            <select class="faldon-info-select" id="selector-hipotesis-info" 
+                    onchange="cargarHipotesis(this.value)" 
+                    style="width: 100%; padding: 4px; margin-top: 4px; font-size: 13px;">
+              <option value="">Hautatu...</option>
+            </select>
+          </div>
+        </div>
+    </div> <!-- ✅ faldon-columna ITXI (5) -->
         
       </div> <!-- 🔴 HAU FALTAN: .faldon-grid ITXI -->
     </div> <!-- 🔴 HAU FALTAN: .faldon-body ITXI -->

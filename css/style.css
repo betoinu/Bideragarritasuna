@@ -867,7 +867,7 @@ img {
   margin: 30px auto 20px auto;
   max-width: var(--max-width);
   overflow: hidden;
-  position: relative;
+  position: relative; /* ✅ HAU MANTENDU - RELATIVE, EZ FIXED */
   font-family: 'HK Grotesk', 'Fira Sans', system-ui, -apple-system, sans-serif;
 }
 
@@ -915,9 +915,10 @@ img {
   background: linear-gradient(180deg, var(--card-bg), #fbfbff);
 }
 
+/* 🎯 HAU ALDATU: 3 ZUTABE → 4 ZUTABE */
 .faldon-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr auto;
+  grid-template-columns: 1fr 1fr 1fr auto; /* 4 zutabe */
   gap: 24px;
   align-items: start;
 }
@@ -1090,61 +1091,4 @@ img {
   .faldon-header {
     padding: 12px 16px;
   }
-}
-/* CSS fitxategian gehitu: */
-.faldon-hipotesis-integrado {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 95%;
-    max-width: 1400px;
-    background: white;
-    border: 2px solid #007bff;
-    border-radius: 10px;
-    z-index: 9999;
-    padding: 15px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-}
-
-.faldon-body.contraido {
-    display: none;
-}
-
-.faldon-grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 20px;
-}
-.faldon-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr); /* 4 zutabe */
-    gap: 15px;
-    width: 100%;
-}
-
-.faldon-columna {
-    min-width: 200px;
-    max-width: 280px;
-}
-
-.faldon-select-small {
-    font-size: 12px;
-    padding: 4px 8px;
-    height: 28px;
-}
-/* FALDON POSIZIO FINKOA */
-#faldon-hipotesis {
-    position: static !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    margin: 20px 0 !important;
-    left: auto !important;
-    right: auto !important;
-    bottom: auto !important;
-    top: auto !important;
-}
-
-/* 4 ZUTABE GRID */
-.faldon-grid {
-    grid-template-columns: repeat(4, 1fr) !important;
 }

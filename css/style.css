@@ -1092,3 +1092,29 @@ img {
     padding: 12px 16px;
   }
 }
+@media (max-width: 1200px) {
+  .faldon-grid {
+    grid-template-columns: repeat(2, 1fr); /* 2 zutabe lerroko */
+  }
+  
+  .faldon-columna {
+    min-width: 180px;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .faldon-grid {
+    grid-template-columns: 1fr; /* 1 zutabe */
+  }
+  
+  .faldon-input-group {
+    flex-direction: column;
+  }
+  
+  .faldon-input,
+  .faldon-select,
+  .faldon-btn {
+    width: 100%;
+  }
+}

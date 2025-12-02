@@ -658,7 +658,6 @@
                 </div>
             </aside>
         </main>
-       <!-- FALDONA KONPONDU BEHAR DA - ID ZUZENEKIN -->
 <div class="faldon-hipotesis-integrado" id="faldon-hipotesis">
   <div class="faldon-contenedor">
     <div class="faldon-header">
@@ -670,73 +669,72 @@
         <span class="faldon-toggle-text">Txikitu</span>
         <span class="faldon-toggle-icon">▼</span>
       </button>
-    </div>
+    </div> <!-- ✅ faldon-header ITXI -->
     
     <div class="faldon-body" id="faldon-body">
       <div class="faldon-grid">
+        <!-- 1. ZUTABEA - GORDE -->
         <div class="faldon-columna">
           <div class="faldon-grupo-form">
             <label class="faldon-label">Gorde hipotesi berria</label>
             <div class="faldon-input-group">
-              <!-- ID ZUENA GEHITU -->
               <input type="text" class="faldon-input" id="nombre-hipotesis" placeholder="Hipotesiaren izena...">
-              <!-- ID ZUENA GEHITU -->
               <button class="faldon-btn primary" id="btn-guardar-hipotesis" onclick="guardarHipotesisActual()">
                 <span class="btn-icon">💾</span>
                 Gorde
               </button>
-            </div>
-          </div>
-        </div>
+            </div> <!-- ✅ faldon-input-group ITXI -->
+          </div> <!-- ✅ faldon-grupo-form ITXI -->
+        </div> <!-- ✅ faldon-columna ITXI (1) -->
         
+        <!-- 2. ZUTABEA - KARGATU -->
         <div class="faldon-columna">
           <div class="faldon-grupo-form">
             <label class="faldon-label">Kargatu hipotesia</label>
             <div class="faldon-input-group">
-              <!-- ID ZUENA GEHITU -->
               <select class="faldon-select" id="selector-hipotesis">
                 <option value="">Hautatu hipotesia...</option>
               </select>
-              <!-- ID ZUENA GEHITU -->
               <button class="faldon-btn" id="btn-cargar-hipotesis" onclick="cargarHipotesisSeleccionada()">
                 <span class="btn-icon">📂</span>
                 Kargatu
               </button>
-            </div>
-          </div>
-        </div>
+            </div> <!-- ✅ faldon-input-group ITXI -->
+          </div> <!-- ✅ faldon-grupo-form ITXI -->
+        </div> <!-- ✅ faldon-columna ITXI (2) -->
 
-        <!-- 🆕 3. HIRUGARREN ZUTABEA - DESKARGATU (HEMEN GEHITU) -->
-          <div class="faldon-columna">
-            <div class="faldon-grupo-form">
-              <label class="faldon-label">Deskargatu hipotesia (JSON)</label>
-              <div class="faldon-input-group">
-                <select class="faldon-select" id="selector-descargar">
-                  <option value="">Hautatu deskargatzeko...</option>
-                </select>
-                <button class="faldon-btn" id="btn-descargar-hipotesis" onclick="descargarHipotesisSeleccionada()">
-                  <span class="btn-icon">⤓</span> Deskargatu
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <!-- 🆕 4. LAUGARREN ZUTABEA - INPORTATU (HEMEN GEHITU) -->
-          <div class="faldon-columna">
-            <div class="faldon-grupo-form">
-              <label class="faldon-label">Inportatu hipotesia (JSON)</label>
-              <div class="faldon-input-group">
-                <input type="file" id="input-importar-archivo" accept=".json" style="display: none" 
-                       onchange="cargarHipotesisDesdeArchivo(event)">
-                <button class="faldon-btn" onclick="document.getElementById('input-importar-archivo').click()">
-                  <span class="btn-icon">📁</span> Hautatu fitxategia
-                </button>
-              </div>
-            </div>
-          </div>
+        <!-- 3. ZUTABEA - DESKARGATU -->
+        <div class="faldon-columna">
+          <div class="faldon-grupo-form">
+            <label class="faldon-label">Deskargatu hipotesia (JSON)</label>
+            <div class="faldon-input-group">
+              <select class="faldon-select" id="selector-descargar">
+                <option value="">Hautatu deskargatzeko...</option>
+              </select>
+              <button class="faldon-btn" id="btn-descargar-hipotesis" onclick="descargarHipotesisSeleccionada()">
+                <span class="btn-icon">⤓</span>
+                Deskargatu
+              </button>
+            </div> <!-- ✅ faldon-input-group ITXI -->
+          </div> <!-- ✅ faldon-grupo-form ITXI -->
+        </div> <!-- ✅ faldon-columna ITXI (3) -->
+        
+        <!-- 4. ZUTABEA - INPORTATU -->
+        <div class="faldon-columna">
+          <div class="faldon-grupo-form">
+            <label class="faldon-label">Inportatu hipotesia (JSON)</label>
+            <div class="faldon-input-group">
+              <input type="file" id="input-importar-archivo" accept=".json" style="display: none" 
+                     onchange="cargarHipotesisDesdeArchivo(event)">
+              <button class="faldon-btn" onclick="document.getElementById('input-importar-archivo').click()">
+                <span class="btn-icon">📁</span>
+                Hautatu fitxategia
+              </button>
+            </div> <!-- ✅ faldon-input-group ITXI -->
+          </div> <!-- ✅ faldon-grupo-form ITXI -->
+        </div> <!-- ✅ faldon-columna ITXI (4) -->
 
-  <!-- 5. BOSGARREN ZUTABEA - INFORMAZIOA -->
-          
+        <!-- 5. ZUTABEA - INFORMAZIOA -->
         <div class="faldon-columna">
           <div class="faldon-info-panel">
             <div class="faldon-info-item">
@@ -747,12 +745,14 @@
               <span class="faldon-info-label">Azken aldaketa:</span>
               <span class="faldon-info-valor" id="ultima-hipotesis">-</span>
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+          </div> <!-- ✅ faldon-info-panel ITXI -->
+        </div> <!-- ✅ faldon-columna ITXI (5) -->
+        
+      </div> <!-- 🔴 HAU FALTAN: .faldon-grid ITXI -->
+    </div> <!-- 🔴 HAU FALTAN: .faldon-body ITXI -->
+  </div> <!-- 🔴 HAU FALTAN: .faldon-contenedor ITXI -->
+</div> <!-- 🔴 HAU FALTAN: .faldon-hipotesis-integrado ITXI -->
+        
         <footer class="siteinfo">
             <small data-i18n="footer.note">IDarte · Euskadiko Diseinu Eskola Publikoa — Escuela Pública de Diseño de Euskadi.</small>
         </footer>

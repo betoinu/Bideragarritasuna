@@ -705,7 +705,38 @@
             </div>
           </div>
         </div>
-        
+
+        <!-- 🆕 3. HIRUGARREN ZUTABEA - DESKARGATU (HEMEN GEHITU) -->
+          <div class="faldon-columna">
+            <div class="faldon-grupo-form">
+              <label class="faldon-label">Deskargatu hipotesia (JSON)</label>
+              <div class="faldon-input-group">
+                <select class="faldon-select" id="selector-descargar">
+                  <option value="">Hautatu deskargatzeko...</option>
+                </select>
+                <button class="faldon-btn" id="btn-descargar-hipotesis" onclick="descargarHipotesisSeleccionada()">
+                  <span class="btn-icon">⤓</span> Deskargatu
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 🆕 4. LAUGARREN ZUTABEA - INPORTATU (HEMEN GEHITU) -->
+          <div class="faldon-columna">
+            <div class="faldon-grupo-form">
+              <label class="faldon-label">Inportatu hipotesia (JSON)</label>
+              <div class="faldon-input-group">
+                <input type="file" id="input-importar-archivo" accept=".json" style="display: none" 
+                       onchange="cargarHipotesisDesdeArchivo(event)">
+                <button class="faldon-btn" onclick="document.getElementById('input-importar-archivo').click()">
+                  <span class="btn-icon">📁</span> Hautatu fitxategia
+                </button>
+              </div>
+            </div>
+          </div>
+
+  <!-- 5. BOSGARREN ZUTABEA - INFORMAZIOA -->
+          
         <div class="faldon-columna">
           <div class="faldon-info-panel">
             <div class="faldon-info-item">

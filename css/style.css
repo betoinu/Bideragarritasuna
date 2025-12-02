@@ -1115,3 +1115,20 @@ img {
     grid-template-columns: repeat(5, 1fr);
     gap: 20px;
 }
+.faldon-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 zutabe */
+    gap: 15px;
+    width: 100%;
+}
+
+.faldon-columna {
+    min-width: 200px;
+    max-width: 280px;
+}
+
+.faldon-select-small {
+    font-size: 12px;
+    padding: 4px 8px;
+    height: 28px;
+}

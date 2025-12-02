@@ -918,9 +918,17 @@ img {
 /* 🎯 HAU ALDATU: 3 ZUTABE → 4 ZUTABE */
 .faldon-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr auto; /* 4 zutabe */
+  grid-template-columns: 1fr 1fr 1fr 1.5fr; /* 4 zutabe, azkena handiago */
   gap: 24px;
   align-items: start;
+  width: 100%;
+  min-width: 900px;
+}
+
+/* GEHITU HAU: */
+.faldon-info-panel {
+  min-width: 250px;
+  max-width: 350px;
 }
 
 .faldon-columna {

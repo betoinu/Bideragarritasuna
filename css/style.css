@@ -1132,3 +1132,19 @@ img {
     padding: 4px 8px;
     height: 28px;
 }
+/* FALDON POSIZIO FINKOA */
+#faldon-hipotesis {
+    position: static !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 20px 0 !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    top: auto !important;
+}
+
+/* 4 ZUTABE GRID */
+.faldon-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+}

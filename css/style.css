@@ -1091,3 +1091,27 @@ img {
     padding: 12px 16px;
   }
 }
+/* CSS fitxategian gehitu: */
+.faldon-hipotesis-integrado {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 95%;
+    max-width: 1400px;
+    background: white;
+    border: 2px solid #007bff;
+    border-radius: 10px;
+    z-index: 9999;
+    padding: 15px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+
+.faldon-body.contraido {
+    display: none;
+}
+
+.faldon-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 20px;
+}

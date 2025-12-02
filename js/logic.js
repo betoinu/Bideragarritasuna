@@ -1895,21 +1895,24 @@ function actualizarInfoHipotesis() {
 // Modificar la función actualizarSelectorHipotesis existente
 function actualizarSelectorHipotesis() {
     const selector = document.getElementById('selector-hipotesis');
-    if (!selector) return;
+    const selectorDescargar = document.getElementById('selector-descargar');
+    
+    if (!selector || !selectorDescargar) return;
     
     const hipotesis = listarHipotesis();
     
-    selector.innerHTML = `
-        <option value="">-- Seleccionar hipótesis --</option>
-        ${hipotesis.map(h => `
-            <option value="${h.nombre}">${h.nombre} (${new Date(h.timestamp).toLocaleDateString()})</option>
-        `).join('')}
-    `;
+    // Bi selectorretarako
+    [selector, selectorDescargar].forEach(select => {
+        select.innerHTML = '<option value="">Hautatu...</option>';
+        hipotesis.forEach(h => {
+            const option = document.createElement('option');
+            option.value = h.nombre;
+            option.textContent = `${h.nombre} (${new Date(h.timestamp).toLocaleDateString()})`;
+            select.appendChild(option);
+        });
+    });
     
-    const ultima = localStorage.getItem('idarte_ultima_hipotesis');
-    if (ultima) {
-        selector.value = ultima;
-    }
+    console.log(`✅ Selectorrak eguneratuta: ${hipotesis.length} hipotesi`);
 }
 
 // Modificar la función actualizarContadorHipotesis
@@ -1970,19 +1973,24 @@ function guardarHipotesis(nombre, datos) {
 }
 
 function cargarHipotesis(nombre) {
+    if (!nombre || nombre === "") {
+        console.log("❌ Ez da hipotesirik hautatu");
+        return;
+    }
+    
     try {
         const hipotesis = listarHipotesis();
         const hipotesi = hipotesis.find(h => h.nombre === nombre);
         
         if (hipotesi) {
             aplicarDatosHipotesis(hipotesi.datos);
-            alert(`✅ Kargatuta: ${nombre}`);
+            console.log(`✅ Kargatuta: ${nombre}`);
+            alert(`Hipotesia kargatuta: ${nombre}`);
         } else {
-            alert('❌ Hipotesia ez da aurkitu');
+            console.error('❌ Hipotesia ez da aurkitu:', nombre);
         }
     } catch (error) {
-        console.error('Errorea kargatzean:', error);
-        alert('Errorea kargatzean');
+        console.error('❌ Errorea kargatzean:', error);
     }
 }
 

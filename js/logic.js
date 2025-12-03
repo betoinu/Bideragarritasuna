@@ -1713,6 +1713,13 @@ window.guardarHipotesisActual = function() {
   // Refresca selectores
   rellenarSelectoresHipotesis();
 
+  const ultimaHipotesis = document.getElementById('ultima-hipotesis');
+    if (ultimaHipotesis) {
+        const ahora = new Date();
+        ultimaHipotesis.textContent = 
+            `${nombre} (Ahora ${ahora.getHours()}:${ahora.getMinutes().toString().padStart(2, '0')})`;
+    }
+  
   // Descarga directa como archivo JSON
   const blob = new Blob([JSON.stringify(hipotesis, null, 2)], { type: "application/json" });
   const a = document.createElement("a");
@@ -2028,7 +2035,7 @@ function rellenarSelectoresHipotesis() {
         const list = JSON.parse(localStorage.getItem("hipotesis_idarte_list") || "[]");
         
         // Actualizar selector principal (cargar)
-        const selectorCargar = document.getElementById('selector-hipotesis');
+        const selectorCargar = document.getElementById('selector-hipotesis-info');
         if (selectorCargar) {
             selectorCargar.innerHTML = '<option value="">Hautatu hipotesia...</option>';
             list.forEach(h => {
@@ -2055,6 +2062,34 @@ function rellenarSelectoresHipotesis() {
         const contador = document.getElementById('contador-hipotesis');
         if (contador) {
             contador.textContent = list.length;
+        }
+        
+        // ✅ ACTUALIZAR "ÚLTIMA HIPÓTESIS"
+        const ultimaHipotesis = document.getElementById('ultima-hipotesis');
+        if (ultimaHipotesis) {
+            if (list.length > 0) {
+                // Ordenar por fecha (más reciente primero)
+                const ordenado = [...list].sort((a, b) => 
+                    new Date(b.fecha) - new Date(a.fecha)
+                );
+                
+                const masReciente = ordenado[0];
+                const fecha = new Date(masReciente.fecha);
+                const hoy = new Date();
+                
+                // Formato más amigable
+                if (fecha.toDateString() === hoy.toDateString()) {
+                    // Si es hoy, mostrar hora
+                    ultimaHipotesis.textContent = 
+                        `${masReciente.nombre} (Hoy ${fecha.getHours()}:${fecha.getMinutes().toString().padStart(2, '0')})`;
+                } else {
+                    // Si no, mostrar fecha
+                    ultimaHipotesis.textContent = 
+                        `${masReciente.nombre} (${fecha.toLocaleDateString()})`;
+                }
+            } else {
+                ultimaHipotesis.textContent = "Ez dago hipotesirik";
+            }
         }
         
         console.log(`✅ Selectores actualizados: ${list.length} hipótesis`);

@@ -1785,40 +1785,24 @@ window.cargarHipotesisDesdeArchivo = function(event) {
         try {
             const datosImportados = JSON.parse(e.target.result);
             
-            // EGIAZTATU FITXATEGIAREN EGITURA
-            if (!datosImportados.datos) {
-                alert('Fitxategiaren formatua ez da egokia.');
+            // 🚨 EGIAZTATU FORMATUA
+            if (!datosImportados.state && !datosImportados.servicios) {
+                alert('❌ Fitxategiaren formatua ez da egokia. Ez du estatua edo zerbitzuak.');
                 return;
             }
             
-            // GALDETU IZEN BERRI BAT
-            const nombrePorDefecto = datosImportados.nombre || 'Inportatutako hipotesia';
-            const nuevoNombre = prompt('Hipotesi berriaren izena:', nombrePorDefecto);
+            // 🎯 ZUZENEAN APLIKATU - EZ GORDE LOCALSTORAGE-AN
+            aplicarDatosHipotesis(datosImportados);
             
-            if (!nuevoNombre) return;
+            // 🗂️ AUKERAZ: Gorde localStorag-ean ere
+            const guardar = confirm('Hipotesia lokalki gorde nahi duzu?');
+            if (guardar) {
+                const nombre = datosImportados.nombre || 
+                              `Inportatua_${new Date().toLocaleDateString()}`;
+                guardarHipotesis(nombre, datosImportados);
+            }
             
-            // GORDE LOCALSTORAGE-AN
-            let hipotesisGuardadas = listarHipotesis();
-            
-            // EZABATU IZEN BERDINEKOAK
-            hipotesisGuardadas = hipotesisGuardadas.filter(h => h.nombre !== nuevoNombre);
-            
-            // GEHITU INPORTATUTAKOA
-            hipotesisGuardadas.push({
-                nombre: nuevoNombre,
-                datos: datosImportados.datos,
-                timestamp: new Date().toISOString()
-            });
-            
-            localStorage.setItem('hipotesis', JSON.stringify(hipotesisGuardadas));
-            
-            // EGUNERAKU INTERFAZEA
-            actualizarSelectorHipotesis();
-            actualizarSelectorDescarga();
-            actualizarContadorHipotesis();
-            
-            console.log(`✅ Hipotesia inportatuta: ${nuevoNombre}`);
-            alert(`"${nuevoNombre}" hipotesia inportatu da!`);
+            console.log('✅ JSON fitxategia inportatu eta aplikatu da');
             
         } catch (error) {
             console.error('❌ Errorea JSON fitxategia irakurtzean:', error);
@@ -1826,6 +1810,9 @@ window.cargarHipotesisDesdeArchivo = function(event) {
         }
     };
     reader.readAsText(file);
+    
+    // Garbitu input-a berriro erabiltzeko
+    event.target.value = '';
 };
 
 // 🆕 INPORTATZEKO BOTOIA GEHITZERAKO FUNTZIO LAGUNTZAILEA
@@ -2038,11 +2025,15 @@ function actualizarContadorHipotesis() {
 // 3. Datuak kudeatzeko funtzioak
 function obtenerDatosActuales() {
     return {
-        servicios: obtenerServiciosActuales(),
-        costes: obtenerCostesActuales(),
-        ingresos: obtenerIngresosActuales(),
-        financiacion: obtenerFinanciacionActual(),
-        timestamp: new Date().toISOString()
+        // DATU OSOROAK - aplikazioaren egoera osoa
+        state: JSON.parse(JSON.stringify(window.state)),  // Kopia sakona
+        serviciosCartera: JSON.parse(JSON.stringify(window.serviciosCartera)),
+        currentLanguage: currentLanguage,
+        
+        // Metadatuak
+        timestamp: new Date().toISOString(),
+        version: "2.0",
+        exportDate: new Date().toLocaleString()
     };
 }
 
@@ -2077,20 +2068,84 @@ function obtenerFinanciacionActual() {
 function aplicarDatosHipotesis(datos) {
     if (!datos) return;
     
-    console.log("📥 Cargando hipótesis:", datos.nombre);
+    console.log("📥 Cargando hipótesis completa:", datos.nombre);
     
-    // Cargar servicios si existen
-    if (datos.servicios && Array.isArray(datos.servicios)) {
-        window.serviciosCartera = datos.servicios;
-        renderizarServicios();
+    // 🚨 BERTSIO-KONPATIBILITATEA
+    if (!datos.version || datos.version === "1.0") {
+        console.warn("⚠️ Bertsio zahar bat - migrazioa beharrezkoa");
+        
+        // Migrazioa bertsio zaharretik berrira
+        if (datos.servicios) {
+            window.serviciosCartera = datos.servicios.map(s => ({
+                id: 'serv-' + Math.random().toString(36).slice(2, 9),
+                nombre: s.nombre || 'Servicio',
+                precio: s.precio || 0,
+                horas: s.horas || 0,
+                cantidad: s.cantidad || 0
+            }));
+        }
+        
+        alert("⚠️ Hipotesi zahar bat. Zerbitzuak bakarrik kargatu dira.");
+        
+    } else if (datos.version === "2.0") {
+        // 🎯 BERTZIO BERRIAREN KARGATZEA
+        
+        // 1. STATE OSOA KARGATU
+        if (datos.state) {
+            // Kategoria bakoitza bereizki
+            if (datos.state.amortizables) {
+                window.state.amortizables.lokala = datos.state.amortizables.lokala || [];
+                window.state.amortizables.garraioa = datos.state.amortizables.garraioa || [];
+            }
+            
+            if (datos.state.recurrings) {
+                window.state.recurrings.lokala = datos.state.recurrings.lokala || [];
+                window.state.recurrings.ekoizpena = datos.state.recurrings.ekoizpena || [];
+                window.state.recurrings.garraioa = datos.state.recurrings.garraioa || [];
+                window.state.recurrings.hazkuntza = datos.state.recurrings.hazkuntza || [];
+            }
+            
+            if (datos.state.personnel) {
+                window.state.personnel = datos.state.personnel;
+            }
+            
+            if (datos.state.finance) {
+                window.state.finance.socios = datos.state.finance.socios || [];
+                if (datos.state.finance.prestamo) {
+                    window.state.finance.prestamo = datos.state.finance.prestamo;
+                }
+            }
+        }
+        
+        // 2. ZERBITZUAK KARGATU
+        if (datos.serviciosCartera) {
+            window.serviciosCartera = datos.serviciosCartera;
+        }
+        
+        // 3. HIZKUNTZA EZARRI
+        if (datos.currentLanguage) {
+            currentLanguage = datos.currentLanguage;
+            setTimeout(() => setLanguage(currentLanguage), 100);
+        }
+        
+        console.log("✅ Bertsio berriko datuak kargatu dira");
     }
     
-    // Forzar recálculo
-    updateAll();
+    // 4. INTERFAZEA EGUNERATU
+    setTimeout(() => {
+        renderAllTables();
+        renderizarServicios();
+        updateAll();
+        
+        // Faldonean izena erakutsi
+        const nombreInput = document.getElementById('nombre-hipotesis');
+        if (nombreInput && datos.nombre) {
+            nombreInput.value = datos.nombre + " (kargatuta)";
+        }
+    }, 300);
     
-    alert(`✅ Hipótesis cargada: ${datos.nombre}`);
+    alert(`✅ "${datos.nombre}" hipotesia kargatuta!`);
 }
-
 // 2. Funciones de cálculo placeholder
 function calcularTotales() {
     calculatePricing();
@@ -2216,7 +2271,7 @@ async function initializeApp() {
                 console.log(`🗄️ ${hipotesis.length} hipotesi gordeta`);
             }
         }, 500); // ← HAU DA BUKAERAKO }, ez beste bat
-        
+                
         // Verificación final
         setTimeout(() => {
             console.log("🔍 Verificación final...");

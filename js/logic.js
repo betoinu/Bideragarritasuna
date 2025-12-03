@@ -2066,38 +2066,30 @@ function obtenerFinanciacionActual() {
 }
 
 function aplicarDatosHipotesis(datos) {
-    if (!datos) return;
+    if (!datos) {
+        alert('❌ Datos vacíos o inválidos');
+        return;
+    }
     
-    console.log("📥 Cargando hipótesis completa:", datos.nombre);
+    console.log("📥 Cargando hipótesis:", datos.nombre || 'Sin nombre');
     
-    // 🚨 BERTSIO-KONPATIBILITATEA
-    if (!datos.version || datos.version === "1.0") {
-        console.warn("⚠️ Bertsio zahar bat - migrazioa beharrezkoa");
+    // ==================== FORMATU DESBERDINAK ONARTU ====================
+    
+    // 🅰️ FORMATU BERRIA (2.0) - DATU OSOROAK
+    if (datos.state || datos.serviciosCartera) {
+        console.log("✅ Formato nuevo detectado (state completo)");
         
-        // Migrazioa bertsio zaharretik berrira
-        if (datos.servicios) {
-            window.serviciosCartera = datos.servicios.map(s => ({
-                id: 'serv-' + Math.random().toString(36).slice(2, 9),
-                nombre: s.nombre || 'Servicio',
-                precio: s.precio || 0,
-                horas: s.horas || 0,
-                cantidad: s.cantidad || 0
-            }));
-        }
-        
-        alert("⚠️ Hipotesi zahar bat. Zerbitzuak bakarrik kargatu dira.");
-        
-    } else if (datos.version === "2.0") {
-        // 🎯 BERTZIO BERRIAREN KARGATZEA
-        
-        // 1. STATE OSOA KARGATU
+        // 1. STATE OSOA
         if (datos.state) {
-            // Kategoria bakoitza bereizki
+            console.log("📦 Cargando state completo...");
+            
+            // Amortizables
             if (datos.state.amortizables) {
                 window.state.amortizables.lokala = datos.state.amortizables.lokala || [];
                 window.state.amortizables.garraioa = datos.state.amortizables.garraioa || [];
             }
             
+            // Recurrings
             if (datos.state.recurrings) {
                 window.state.recurrings.lokala = datos.state.recurrings.lokala || [];
                 window.state.recurrings.ekoizpena = datos.state.recurrings.ekoizpena || [];
@@ -2105,10 +2097,12 @@ function aplicarDatosHipotesis(datos) {
                 window.state.recurrings.hazkuntza = datos.state.recurrings.hazkuntza || [];
             }
             
+            // Personnel
             if (datos.state.personnel) {
                 window.state.personnel = datos.state.personnel;
             }
             
+            // Finance
             if (datos.state.finance) {
                 window.state.finance.socios = datos.state.finance.socios || [];
                 if (datos.state.finance.prestamo) {
@@ -2117,35 +2111,69 @@ function aplicarDatosHipotesis(datos) {
             }
         }
         
-        // 2. ZERBITZUAK KARGATU
+        // 2. ZERBITZUAK
         if (datos.serviciosCartera) {
             window.serviciosCartera = datos.serviciosCartera;
+            console.log(`🔄 ${datos.serviciosCartera.length} zerbitzu kargatu`);
         }
         
-        // 3. HIZKUNTZA EZARRI
-        if (datos.currentLanguage) {
-            currentLanguage = datos.currentLanguage;
-            setTimeout(() => setLanguage(currentLanguage), 100);
-        }
+    } 
+    // 🅱️ FORMATU ZAHARRA (1.0) - ZERBITZUAK BAKARRIK
+    else if (datos.servicios && Array.isArray(datos.servicios)) {
+        console.log("🔙 Formato viejo detectado - migrando automáticamente...");
         
-        console.log("✅ Bertsio berriko datuak kargatu dira");
+        // Migrazioa: "servicios" (zaharra) → "serviciosCartera" (berria)
+        window.serviciosCartera = datos.servicios.map((serv, index) => ({
+            id: 'serv-' + (index + 1) + '-' + Date.now(),
+            nombre: serv.nombre || `Servicio ${index + 1}`,
+            precio: Number(serv.precio) || 0,
+            horas: Number(serv.horas) || 0,
+            cantidad: Number(serv.cantidad) || 0
+        }));
+        
+        console.log(`🔄 ${window.serviciosCartera.length} zerbitzu migratu`);
+        
+    } 
+    // 🚨 FORMATU EZEZAGUNA
+    else {
+        console.error("❌ Formato de datos no reconocido:", datos);
+        alert('❌ El archivo no tiene un formato válido.\n\nFormatos aceptados:\n1. Nuevo: con "state" y "serviciosCartera"\n2. Viejo: con "servicios"');
+        return;
     }
     
-    // 4. INTERFAZEA EGUNERATU
+    // ==================== APLIKATU INTERFAZEA ====================
+    
     setTimeout(() => {
+        // 1. Renderizar tablas y servicios
         renderAllTables();
         renderizarServicios();
+        
+        // 2. Hizkuntza
+        if (datos.currentLanguage) {
+            currentLanguage = datos.currentLanguage;
+            setLanguage(currentLanguage);
+        }
+        
+        // 3. Kalkulu guztiak eguneratu
         updateAll();
         
-        // Faldonean izena erakutsi
+        // 4. Feedback
+        console.log("✅ Hipótesis cargada completamente");
+        
+        // 5. (Aukerazkoa) Faldonean izena erakutsi
         const nombreInput = document.getElementById('nombre-hipotesis');
         if (nombreInput && datos.nombre) {
-            nombreInput.value = datos.nombre + " (kargatuta)";
+            nombreInput.value = datos.nombre + " (cargada)";
         }
-    }, 300);
+        
+    }, 100);
     
-    alert(`✅ "${datos.nombre}" hipotesia kargatuta!`);
+    // ==================== FEEDBACK Erabiltzaileari ====================
+    
+    const tipo = datos.state ? 'completa (nuevo formato)' : 'básica (formato viejo)';
+    alert(`✅ Hipótesis ${tipo} cargada:\n"${datos.nombre || 'Sin nombre'}"`);
 }
+
 // 2. Funciones de cálculo placeholder
 function calcularTotales() {
     calculatePricing();

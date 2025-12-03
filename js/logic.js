@@ -1745,6 +1745,11 @@ window.actualizarSelectorDescarga = function() {
     });
 };
 
+window.cargarHipotesis = function() {
+    return window.cargarHipotesisSeleccionada();
+};
+
+
 // 🆕 DESKARGATU HIPOTESIA JSON GISA
 window.descargarHipotesisSeleccionada = function() {
     const selector = document.getElementById('selector-descargar');
@@ -1800,6 +1805,39 @@ window.descargarHipotesisSeleccionada = function() {
         alert('Errorea hipotesia deskargatzean.');
     }
 };
+
+// Función para migrar hipótesis antiguas al nuevo sistema
+function migrarHipotesisAntiguas() {
+    const hipotesisAntiguas = JSON.parse(localStorage.getItem('hipotesis') || '[]');
+    const hipotesisNuevas = JSON.parse(localStorage.getItem("hipotesis_idarte_list") || "[]");
+    
+    if (hipotesisAntiguas.length > 0 && hipotesisNuevas.length === 0) {
+        console.log("🔄 Migrando hipótesis antiguas al nuevo sistema...");
+        
+        hipotesisAntiguas.forEach((h, index) => {
+            const nuevaHipotesis = {
+                nombre: h.nombre || `Hipotesis_Antigua_${index}`,
+                fecha: h.timestamp || new Date().toISOString(),
+                version: "2.0",
+                estado: {
+                    state: h.datos?.state || {},
+                    config: {
+                        currentLanguage: 'eu'
+                    }
+                },
+                servicios: h.datos?.serviciosCartera || []
+            };
+            
+            hipotesisNuevas.push(nuevaHipotesis);
+        });
+        
+        localStorage.setItem("hipotesis_idarte_list", JSON.stringify(hipotesisNuevas));
+        localStorage.removeItem('hipotesis'); // Eliminar datos antiguos
+        
+        console.log(`✅ ${hipotesisAntiguas.length} hipótesis migradas`);
+        alert(`Se han migrado ${hipotesisAntiguas.length} hipótesis antiguas al nuevo sistema`);
+    }
+}
 
 async function cargarHipotesisDesdeArchivo(event) {
   const file = event?.target?.files?.[0];
@@ -1885,328 +1923,318 @@ window.eliminarHipotesisSeleccionada = function() {
     
     if (confirm(`¿Estás seguro de que quieres eliminar la hipótesis "${nombre}"?`)) {
         if (eliminarHipotesis(nombre)) {
-            actualizarInfoHipotesis();
+            rellenarSelectoresHipotesis();
         }
     }
 };
 
-// Actualizar información de hipótesis
-function actualizarInfoHipotesis() {
-    actualizarSelectorHipotesis();
-    actualizarContadorHipotesis();
+function collectEstado() {
+    console.log("📊 Recopilando estado actual...");
     
-    // 🆕 DESKARGATZEKO SELECTORRA EGUNERATU
-    if (typeof actualizarSelectorDescarga === 'function') {
-        actualizarSelectorDescarga();
-    }
+    // Obtener configuraciones actuales
+    const targetProfitMargin = safeNum(document.getElementById('target-profit-margin')?.value) || 20;
+    const corporateTax = safeNum(document.getElementById('corporate-tax')?.value) || 25;
+    const tae = safeNum(document.getElementById('tae')?.value) || 5;
+    const plazo = safeNum(document.getElementById('plazo')?.value) || 5;
+    const periodoGracia = safeNum(document.getElementById('periodo-gracia')?.value) || 0;
+    const mesesTesoreria = safeNum(document.getElementById('meses-tesoreria')?.value) || 3;
     
-    // Azken hipotesia erakutsi
-    const ultimaElement = document.getElementById('ultima-hipotesis');
-    const hipotesis = listarHipotesis();
-    
-    if (hipotesis.length > 0) {
-        const ultima = hipotesis.reduce((latest, current) => 
-            new Date(current.timestamp) > new Date(latest.timestamp) ? current : latest
-        );
-        ultimaElement.textContent = new Date(ultima.timestamp).toLocaleString();
-    } else {
-        ultimaElement.textContent = '-';
-    }
-}
-
-// Modificar la función actualizarSelectorHipotesis existente
-function actualizarSelectorHipotesis() {
-    const selector = document.getElementById('selector-hipotesis');
-    const selectorDescargar = document.getElementById('selector-descargar');
-    
-    if (!selector || !selectorDescargar) return;
-    
-    const hipotesis = listarHipotesis();
-    
-    // Bi selectorretarako
-    [selector, selectorDescargar].forEach(select => {
-        select.innerHTML = '<option value="">Hautatu...</option>';
-        hipotesis.forEach(h => {
-            const option = document.createElement('option');
-            option.value = h.nombre;
-            option.textContent = `${h.nombre} (${new Date(h.timestamp).toLocaleDateString()})`;
-            select.appendChild(option);
-        });
-    });
-    
-    console.log(`✅ Selectorrak eguneratuta: ${hipotesis.length} hipotesi`);
-}
-
-// Modificar la función actualizarContadorHipotesis
-function actualizarContadorHipotesis() {
-    const contador = document.getElementById('contador-hipotesis');
-    if (contador) {
-        const hipotesis = listarHipotesis();
-        contador.textContent = hipotesis.length;
-    }
-}
-// ===== HIPOTESIEN KUDEAKETA SISTEMA =====
-
-// 1. Oinarrizko funtzioak
-function listarHipotesis() {
-    return JSON.parse(localStorage.getItem('hipotesis') || '[]');
-}
-
-function guardarHipotesis(nombre, datos) {
-    if (!nombre || nombre.trim() === '') {
-        alert('Mesedez, sartu hipotesiaren izena');
-        return false;
-    }
-    
-    try {
-        const datosActuales = obtenerDatosActuales();
-        let hipotesis = listarHipotesis();
-        
-        const existe = hipotesis.find(h => h.nombre === nombre);
-        if (existe && !confirm(`"${nombre}" existitzen da. Gainidatzi?`)) {
-            return false;
-        }
-        
-        hipotesis = hipotesis.filter(h => h.nombre !== nombre);
-        
-        const nuevaHipotesis = {
-            nombre: nombre.trim(),
-            datos: datos || datosActuales,
-            timestamp: new Date().toISOString()
-        };
-        
-        hipotesis.push(nuevaHipotesis);
-        localStorage.setItem('hipotesis', JSON.stringify(hipotesis));
-        
-        // 🆕 DESKARGATZEKO SELECTORRA EGUNERATU
-        if (typeof actualizarSelectorDescarga === 'function') {
-            actualizarSelectorDescarga();
-        }
-        
-        actualizarInfoHipotesis();
-        alert(`✅ Gordeta: ${nombre}`);
-        return true;
-        
-    } catch (error) {
-        console.error('Errorea gordetzean:', error);
-        alert('Errorea gordetzean');
-        return false;
-    }
-}
-
-function cargarHipotesis(nombre) {
-    if (!nombre || nombre === "") {
-        console.log("❌ Ez da hipotesirik hautatu");
-        return;
-    }
-    
-    try {
-        const hipotesis = listarHipotesis();
-        const hipotesi = hipotesis.find(h => h.nombre === nombre);
-        
-        if (hipotesi) {
-            aplicarDatosHipotesis(hipotesi.datos);
-            console.log(`✅ Kargatuta: ${nombre}`);
-            alert(`Hipotesia kargatuta: ${nombre}`);
-        } else {
-            console.error('❌ Hipotesia ez da aurkitu:', nombre);
-        }
-    } catch (error) {
-        console.error('❌ Errorea kargatzean:', error);
-    }
-}
-
-function eliminarHipotesis(nombre) {
-    if (confirm(`Ziur zaude "${nombre}" ezabatu nahi duzula?`)) {
-        let hipotesis = listarHipotesis();
-        hipotesis = hipotesis.filter(h => h.nombre !== nombre);
-        localStorage.setItem('hipotesis', JSON.stringify(hipotesis));
-        
-        // 🆕 BI SELECTORRAK EGUNERATU
-        actualizarSelectorHipotesis();
-        if (typeof actualizarSelectorDescarga === 'function') {
-            actualizarSelectorDescarga();
-        }
-        actualizarContadorHipotesis();
-        
-        return true;
-    }
-    return false;
-}
-
-// 2. Interfaze funtzioak
-function actualizarSelectorHipotesis() {
-    const selector = document.getElementById('selector-hipotesis');
-    if (!selector) return;
-    
-    const hipotesis = listarHipotesis();
-    selector.innerHTML = '<option value="">Hautatu hipotesia...</option>';
-    
-    hipotesis.forEach(h => {
-        const option = document.createElement('option');
-        option.value = h.nombre;
-        option.textContent = `${h.nombre} (${new Date(h.timestamp).toLocaleDateString()})`;
-        selector.appendChild(option);
-    });
-}
-
-function actualizarContadorHipotesis() {
-    const contador = document.getElementById('contador-hipotesis');
-    if (contador) {
-        contador.textContent = listarHipotesis().length;
-    }
-}
-
-// 3. Datuak kudeatzeko funtzioak
-function obtenerDatosActuales() {
     return {
-        // DATU OSOROAK - aplikazioaren egoera osoa
-        state: JSON.parse(JSON.stringify(window.state)),  // Kopia sakona
-        serviciosCartera: JSON.parse(JSON.stringify(window.serviciosCartera)),
-        currentLanguage: currentLanguage,
+        // Datos del estado global
+        state: JSON.parse(JSON.stringify(window.state)),
         
-        // Metadatuak
+        // Configuraciones
+        config: {
+            targetProfitMargin,
+            corporateTax,
+            tae,
+            plazo,
+            periodoGracia,
+            mesesTesoreria,
+            currentLanguage: currentLanguage
+        },
+        
+        // Metadatos
         timestamp: new Date().toISOString(),
-        version: "2.0",
-        exportDate: new Date().toLocaleString()
+        version: "2.0"
     };
 }
 
-function obtenerServiciosActuales() {
-    return window.serviciosCartera.map(servicio => ({
-        nombre: servicio.nombre,
-        precio: servicio.precio,
-        horas: servicio.horas,
-        cantidad: servicio.cantidad
-    }));
+// 2. Recopila servicios actuales de la cartera
+function collectServicios() {
+    console.log("📦 Recopilando servicios de cartera...");
+    return JSON.parse(JSON.stringify(window.serviciosCartera));
 }
 
-function obtenerCostesActuales() {
-    const financiacion = calculateFinancing();
-    return {
-        amortizaciones: financiacion.totalAmortizaciones,
-        gastosFijos: financiacion.totalGastosFijos,
-        personal: financiacion.totalPersonal,
-        financieros: financiacion.cuotaAnual || 0,
-        total: financiacion.gastosOperativosAnuales + (financiacion.cuotaAnual || 0)
-    };
-}
-
-function obtenerIngresosActuales() {
-    return calculatePortfolioRevenue();
-}
-
-function obtenerFinanciacionActual() {
-    return calculateFinancing();
-}
-
-function aplicarDatosHipotesis(datos) {
-    if (!datos) {
-        alert('❌ Datos vacíos o inválidos');
+// 3. Aplica estado a la interfaz
+function applyEstadoToUI(estado) {
+    if (!estado || !estado.state) {
+        console.error("❌ Estado inválido para aplicar");
         return;
     }
     
-    console.log("📥 Cargando hipótesis:", datos.nombre || 'Sin nombre');
+    console.log("🔄 Aplicando estado a la UI...");
     
-    // ==================== FORMATU DESBERDINAK ONARTU ====================
+    // Aplicar state completo
+    window.state = estado.state;
     
-    // 🅰️ FORMATU BERRIA (2.0) - DATU OSOROAK
-    if (datos.state || datos.serviciosCartera) {
-        console.log("✅ Formato nuevo detectado (state completo)");
+    // Aplicar configuraciones
+    if (estado.config) {
+        updateElement('target-profit-margin', estado.config.targetProfitMargin);
+        updateElement('corporate-tax', estado.config.corporateTax);
+        updateElement('tae', estado.config.tae);
+        updateElement('plazo', estado.config.plazo);
+        updateElement('periodo-gracia', estado.config.periodoGracia);
+        updateElement('meses-tesoreria', estado.config.mesesTesoreria);
         
-        // 1. STATE OSOA
-        if (datos.state) {
-            console.log("📦 Cargando state completo...");
-            
-            // Amortizables
-            if (datos.state.amortizables) {
-                window.state.amortizables.lokala = datos.state.amortizables.lokala || [];
-                window.state.amortizables.garraioa = datos.state.amortizables.garraioa || [];
-            }
-            
-            // Recurrings
-            if (datos.state.recurrings) {
-                window.state.recurrings.lokala = datos.state.recurrings.lokala || [];
-                window.state.recurrings.ekoizpena = datos.state.recurrings.ekoizpena || [];
-                window.state.recurrings.garraioa = datos.state.recurrings.garraioa || [];
-                window.state.recurrings.hazkuntza = datos.state.recurrings.hazkuntza || [];
-            }
-            
-            // Personnel
-            if (datos.state.personnel) {
-                window.state.personnel = datos.state.personnel;
-            }
-            
-            // Finance
-            if (datos.state.finance) {
-                window.state.finance.socios = datos.state.finance.socios || [];
-                if (datos.state.finance.prestamo) {
-                    window.state.finance.prestamo = datos.state.finance.prestamo;
-                }
-            }
-        }
-        
-        // 2. ZERBITZUAK
-        if (datos.serviciosCartera) {
-            window.serviciosCartera = datos.serviciosCartera;
-            console.log(`🔄 ${datos.serviciosCartera.length} zerbitzu kargatu`);
-        }
-        
-    } 
-    // 🅱️ FORMATU ZAHARRA (1.0) - ZERBITZUAK BAKARRIK
-    else if (datos.servicios && Array.isArray(datos.servicios)) {
-        console.log("🔙 Formato viejo detectado - migrando automáticamente...");
-        
-        // Migrazioa: "servicios" (zaharra) → "serviciosCartera" (berria)
-        window.serviciosCartera = datos.servicios.map((serv, index) => ({
-            id: 'serv-' + (index + 1) + '-' + Date.now(),
-            nombre: serv.nombre || `Servicio ${index + 1}`,
-            precio: Number(serv.precio) || 0,
-            horas: Number(serv.horas) || 0,
-            cantidad: Number(serv.cantidad) || 0
-        }));
-        
-        console.log(`🔄 ${window.serviciosCartera.length} zerbitzu migratu`);
-        
-    } 
-    // 🚨 FORMATU EZEZAGUNA
-    else {
-        console.error("❌ Formato de datos no reconocido:", datos);
-        alert('❌ El archivo no tiene un formato válido.\n\nFormatos aceptados:\n1. Nuevo: con "state" y "serviciosCartera"\n2. Viejo: con "servicios"');
-        return;
-    }
-    
-    // ==================== APLIKATU INTERFAZEA ====================
-    
-    setTimeout(() => {
-        // 1. Renderizar tablas y servicios
-        renderAllTables();
-        renderizarServicios();
-        
-        // 2. Hizkuntza
-        if (datos.currentLanguage) {
-            currentLanguage = datos.currentLanguage;
+        if (estado.config.currentLanguage) {
+            currentLanguage = estado.config.currentLanguage;
             setLanguage(currentLanguage);
         }
+    }
+    
+    // Renderizar todo
+    renderAllTables();
+    updateAll();
+}
+
+// 4. Aplica servicios a la interfaz
+function applyServiciosToUI(servicios) {
+    if (!servicios || !Array.isArray(servicios)) {
+        console.error("❌ Servicios inválidos para aplicar");
+        return;
+    }
+    
+    console.log(`🔄 Aplicando ${servicios.length} servicios a la UI...`);
+    
+    // Actualizar servicios cartera
+    window.serviciosCartera = servicios.map((serv, index) => ({
+        id: serv.id || `serv-${index + 1}`,
+        nombre: serv.nombre || `Servicio ${index + 1}`,
+        precio: Number(serv.precio) || 0,
+        horas: Number(serv.horas) || 0,
+        cantidad: Number(serv.cantidad) || 0
+    }));
+    
+    // Renderizar servicios
+    renderizarServicios();
+}
+
+// 5. Rellena los selectores de hipótesis
+function rellenarSelectoresHipotesis() {
+    console.log("🔄 Actualizando selectores de hipótesis...");
+    
+    try {
+        const list = JSON.parse(localStorage.getItem("hipotesis_idarte_list") || "[]");
         
-        // 3. Kalkulu guztiak eguneratu
-        updateAll();
-        
-        // 4. Feedback
-        console.log("✅ Hipótesis cargada completamente");
-        
-        // 5. (Aukerazkoa) Faldonean izena erakutsi
-        const nombreInput = document.getElementById('nombre-hipotesis');
-        if (nombreInput && datos.nombre) {
-            nombreInput.value = datos.nombre + " (cargada)";
+        // Actualizar selector principal (cargar)
+        const selectorCargar = document.getElementById('selector-hipotesis');
+        if (selectorCargar) {
+            selectorCargar.innerHTML = '<option value="">Hautatu hipotesia...</option>';
+            list.forEach(h => {
+                const option = document.createElement('option');
+                option.value = h.nombre;
+                option.textContent = `${h.nombre} (${new Date(h.fecha).toLocaleDateString()})`;
+                selectorCargar.appendChild(option);
+            });
         }
         
-    }, 100);
+        // Actualizar selector de descarga
+        const selectorDescargar = document.getElementById('selector-descargar');
+        if (selectorDescargar) {
+            selectorDescargar.innerHTML = '<option value="">Hautatu deskargatzeko...</option>';
+            list.forEach(h => {
+                const option = document.createElement('option');
+                option.value = h.nombre;
+                option.textContent = `${h.nombre} (${new Date(h.fecha).toLocaleDateString()})`;
+                selectorDescargar.appendChild(option);
+            });
+        }
+        
+        // Actualizar contador
+        const contador = document.getElementById('contador-hipotesis');
+        if (contador) {
+            contador.textContent = list.length;
+        }
+        
+        console.log(`✅ Selectores actualizados: ${list.length} hipótesis`);
+        
+    } catch (error) {
+        console.error('❌ Error actualizando selectores:', error);
+    }
+}
+
+// 6. Función para cargar hipótesis seleccionada (desde el selector)
+window.cargarHipotesisSeleccionada = function() {
+    const selector = document.getElementById('selector-hipotesis');
+    const nombre = selector?.value;
     
-    // ==================== FEEDBACK Erabiltzaileari ====================
+    if (!nombre) {
+        alert('⚠️ Por favor, selecciona una hipótesis para cargar');
+        return;
+    }
     
-    const tipo = datos.state ? 'completa (nuevo formato)' : 'básica (formato viejo)';
-    alert(`✅ Hipótesis ${tipo} cargada:\n"${datos.nombre || 'Sin nombre'}"`);
+    try {
+        const list = JSON.parse(localStorage.getItem("hipotesis_idarte_list") || "[]");
+        const hipotesis = list.find(h => h.nombre === nombre);
+        
+        if (!hipotesis) {
+            alert(`❌ No se encontró la hipótesis: "${nombre}"`);
+            return;
+        }
+        
+        console.log(`📥 Cargando hipótesis: "${nombre}"`);
+        
+        // Aplicar estado y servicios
+        if (hipotesis.estado) applyEstadoToUI(hipotesis.estado);
+        if (hipotesis.servicios) applyServiciosToUI(hipotesis.servicios);
+        
+        // Actualizar interfaz completa
+        setTimeout(() => {
+            renderAllTables();
+            renderizarServicios();
+            updateAll();
+            
+            // Marcar en el input de nombre
+            const nombreInput = document.getElementById('nombre-hipotesis');
+            if (nombreInput) {
+                nombreInput.value = nombre;
+            }
+            
+            console.log(`✅ Hipótesis "${nombre}" cargada correctamente`);
+            alert(`✅ Hipótesis "${nombre}" cargada correctamente`);
+        }, 300);
+        
+    } catch (error) {
+        console.error('❌ Error cargando hipótesis:', error);
+        alert('❌ Error cargando hipótesis. Revisa la consola.');
+    }
+};
+
+
+
+window.cargarHipotesisDesdeArchivo = async function(event) {
+    const file = event?.target?.files?.[0];
+    if (!file) return;
+
+    console.group("📤 Importando hipótesis desde archivo");
+    
+    try {
+        const text = await file.text();
+        const obj = JSON.parse(text);
+        
+        console.log("📄 Archivo JSON parseado:", obj);
+
+        // 🔧 Mapear diferentes formatos
+        let hipotesis;
+        
+        if (obj.estado && obj.servicios) {
+            // Formato nuevo (2.0) - con estado y servicios separados
+            hipotesis = {
+                nombre: obj.nombre || file.name.replace('.json', ''),
+                fecha: obj.fecha || new Date().toISOString(),
+                version: obj.version || "2.0",
+                estado: obj.estado,
+                servicios: obj.servicios
+            };
+        } else if (obj.datos?.state && obj.datos?.serviciosCartera) {
+            // Formato de exportación - con datos anidados
+            hipotesis = {
+                nombre: obj.nombre || file.name.replace('.json', ''),
+                fecha: obj.fecha || new Date().toISOString(),
+                version: obj.version || "2.0",
+                estado: {
+                    state: obj.datos.state,
+                    config: {
+                        currentLanguage: obj.datos.currentLanguage || 'eu'
+                    }
+                },
+                servicios: obj.datos.serviciosCartera
+            };
+        } else if (obj.servicios && Array.isArray(obj.servicios)) {
+            // Formato antiguo - solo servicios
+            hipotesis = {
+                nombre: obj.nombre || file.name.replace('.json', ''),
+                fecha: new Date().toISOString(),
+                version: "2.0",
+                estado: {
+                    state: window.state, // Mantener estado actual
+                    config: {
+                        currentLanguage: currentLanguage
+                    }
+                },
+                servicios: obj.servicios
+            };
+        } else {
+            throw new Error("Formato de archivo no reconocido");
+        }
+
+        console.log("✅ Hipótesis preparada:", hipotesis);
+
+        // Aplicar a la UI
+        applyEstadoToUI(hipotesis.estado);
+        applyServiciosToUI(hipotesis.servicios);
+
+        // Guardar en LocalStorage
+        const list = JSON.parse(localStorage.getItem("hipotesis_idarte_list") || "[]");
+        const existingIndex = list.findIndex(h => h.nombre === hipotesis.nombre);
+        
+        if (existingIndex >= 0) {
+            list[existingIndex] = hipotesis;
+        } else {
+            list.push(hipotesis);
+        }
+        
+        localStorage.setItem("hipotesis_idarte_list", JSON.stringify(list));
+
+        // Actualizar selectores
+        rellenarSelectoresHipotesis();
+
+        console.info("✅ Hipótesis importada y aplicada:", hipotesis.nombre);
+        alert(`✅ Hipótesis "${hipotesis.nombre}" importada correctamente`);
+        
+        // Resetear input file
+        event.target.value = '';
+        
+    } catch (error) {
+        console.error("❌ Error importando hipótesis:", error);
+        alert("❌ Error importando archivo:\n" + error.message);
+    } finally {
+        console.groupEnd();
+    }
+};
+
+// 8. Función para limpiar todas las hipótesis (para debugging)
+window.limpiarTodasHipotesis = function() {
+    if (confirm("¿Estás seguro de que quieres eliminar TODAS las hipótesis guardadas?")) {
+        localStorage.removeItem("hipotesis_idarte_list");
+        rellenarSelectoresHipotesis();
+        alert("✅ Todas las hipótesis han sido eliminadas");
+    }
+};
+
+// 9. Inicializar sistema de hipótesis
+function inicializarSistemaHipotesis() {
+    console.log("🔄 Inicializando sistema de hipótesis...");
+    
+    // Verificar si ya existen hipótesis
+    const list = JSON.parse(localStorage.getItem("hipotesis_idarte_list") || "[]");
+    console.log(`📊 ${list.length} hipótesis encontradas`);
+    
+    // Rellenar selectores
+    rellenarSelectoresHipotesis();
+    
+    // Configurar evento para cargar hipótesis
+    const selectorCargar = document.getElementById('selector-hipotesis');
+    if (selectorCargar) {
+        selectorCargar.addEventListener('change', function() {
+            if (this.value) {
+                window.cargarHipotesisSeleccionada();
+            }
+        });
+    }
+    
+    console.log("✅ Sistema de hipótesis inicializado");
 }
 
 // 2. Funciones de cálculo placeholder
@@ -2229,7 +2257,7 @@ function calcularIngresos() {
 
 // 5. Hasieraketa
 document.addEventListener('DOMContentLoaded', function() {
-    actualizarInfoHipotesis();
+    rellenarSelectoresHipotesis();
 });
 
 window.aplicarEstrategia = function(tipo) {
@@ -2302,6 +2330,7 @@ async function initializeApp() {
         renderAllTables();
         renderizarServicios();
         setupGlobalEventListeners();
+        migrarHipotesisAntiguas();
 
         // 🆕 INICIALIZAR PANEL 8
         setTimeout(() => {
@@ -2313,7 +2342,11 @@ async function initializeApp() {
         // Cálculos iniciales
         await new Promise(resolve => setTimeout(resolve, 300));
         updateAll();
-        
+
+        setTimeout(() => {
+        inicializarSistemaHipotesis();
+    }, 500);
+      
         // 🆕 SISTEMA BERRIEN INIZIALIZAZIOA
         setTimeout(() => {
             // 1. Deskargatzeko selectorra eguneratu

@@ -858,7 +858,7 @@ img {
     font-weight: bold;
     color: #007bff;
 }
-/* FALDONA ZURE ESTILOEKIN BAT ETORRIK */
+/* FALDÓN HIPOTESIS INTEGRADO */
 .faldon-hipotesis-integrado {
   background: var(--card-bg);
   border-radius: 12px;
@@ -867,7 +867,7 @@ img {
   margin: 30px auto 20px auto;
   max-width: var(--max-width);
   overflow: hidden;
-  position: relative; /* ✅ HAU MANTENDU - RELATIVE, EZ FIXED */
+  position: relative;
   font-family: 'HK Grotesk', 'Fira Sans', system-ui, -apple-system, sans-serif;
 }
 
@@ -915,27 +915,28 @@ img {
   background: linear-gradient(180deg, var(--card-bg), #fbfbff);
 }
 
-/* 🎯 HAU ALDATU: 3 ZUTABE → 4 ZUTABE */
+/* 🎯 NUEVA DISPOSICIÓN: 4 columnas × 2 filas */
 .faldon-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr minmax(250px, 1.8fr); /* ALDATUTA: 4. zutabea zabalago eta malguago */
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: auto auto;
   gap: 24px;
   align-items: start;
   width: 100%;
 }
 
-/* GEHITU HAU: */
-.faldon-info-panel {
-  min-width: 250px;
-  max-width: none; /* ALDATUTA: muga kendu */
-  width: 100%; /* Gehitu: zabalera osoa hartzeko */
+/* Columna central de la primera fila ocupa doble ancho */
+.faldon-columna.central {
+  grid-column: 2 / span 2;
 }
 
+/* Columnas genéricas */
 .faldon-columna {
   display: flex;
   flex-direction: column;
 }
 
+/* Formularios */
 .faldon-grupo-form {
   display: flex;
   flex-direction: column;
@@ -955,7 +956,8 @@ img {
   align-items: center;
 }
 
-.faldon-input {
+.faldon-input,
+.faldon-select {
   flex: 1;
   padding: 10px 12px;
   border: 1px solid #e6edf3;
@@ -972,17 +974,6 @@ img {
   box-shadow: 0 0 0 3px rgba(83, 12, 237, 0.1);
 }
 
-.faldon-select {
-  flex: 1;
-  padding: 10px 12px;
-  border: 1px solid #e6edf3;
-  border-radius: 8px;
-  font-size: 14px;
-  background: white;
-  cursor: pointer;
-  font-family: 'HK Grotesk', system-ui, sans-serif;
-}
-
 .faldon-btn {
   background: rgba(255,255,255,0.7);
   border: 1px solid rgba(15,23,42,0.06);
@@ -996,7 +987,6 @@ img {
   gap: 6px;
   transition: all 0.2s ease;
   white-space: nowrap;
-  font-family: 'HK Grotesk', system-ui, sans-serif;
 }
 
 .faldon-btn.primary {
@@ -1016,133 +1006,10 @@ img {
   transform: translateY(-1px);
 }
 
+/* Paneles de información */
 .faldon-info-panel {
   background: white;
   padding: 16px;
   border-radius: 8px;
   border: 1px solid rgba(15,23,42,0.04);
-  min-width: 200px;
-  max-width: none; /* ALDATUTA: muga kendu */
-  width: 100%; /* Gehitu: zabalera osoa */
-}
 
-.faldon-info-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start; /* ALDATUTA: flex-start testu luzeentzat */
-  margin-bottom: 12px;
-  flex-wrap: wrap; /* Gehitu: testua lerro berrira pasa dadin */
-}
-
-.faldon-info-item:last-child {
-  margin-bottom: 0;
-}
-
-.faldon-info-label {
-  font-size: 14px;
-  color: var(--muted);
-  font-weight: 500;
-  flex: 0 0 50%; /* Gehitu: etiketarentzako espazioa */
-  margin-bottom: 4px;
-}
-
-.faldon-info-valor {
-  font-size: 14px;
-  color: #1f2937;
-  font-weight: 600;
-  background: #f3f4f6;
-  padding: 4px 8px;
-  border-radius: 6px;
-  min-width: auto; /* ALDATUTA: gutxieneko zabalera kendu */
-  max-width: 100%; /* Gehitu: muga gehitu */
-  text-align: left; /* ALDATUTA: ezkerretara lerrokatu */
-  white-space: normal; /* ALDATUTA: testua lerroetan banatu */
-  word-break: break-word; /* Gehitu: hitz luzeak moztu */
-  flex: 0 0 45%; /* Gehitu: balioarentzako espazioa */
-}
-
-/* Faldonaren egoerak */
-.faldon-body.contraido {
-  display: none;
-}
-
-.faldon-hipotesis-integrado.contraido {
-  margin-bottom: 10px;
-}
-
-.faldon-hipotesis-integrado.contraido .faldon-header {
-  border-radius: 12px;
-}
-
-/* Responsive */
-@media (max-width: 1024px) {
-  .faldon-grid {
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
-  
-  .faldon-info-panel {
-    min-width: auto;
-  }
-}
-
-@media (max-width: 768px) {
-  .faldon-body {
-    padding: 16px;
-  }
-  
-  .faldon-input-group {
-    flex-direction: column;
-  }
-  
-  .faldon-input,
-  .faldon-select {
-    width: 100%;
-  }
-  
-  .faldon-btn {
-    width: 100%;
-    justify-content: center;
-  }
-  
-  .faldon-header {
-    padding: 12px 16px;
-  }
-}
-@media (max-width: 1200px) {
-  .faldon-grid {
-    grid-template-columns: repeat(2, 1fr); /* 2 zutabe lerroko */
-  }
-  
-  .faldon-columna {
-    min-width: 180px;
-    max-width: 100%;
-  }
-  
-  /* Gehitu 4. zutabearentzako responsive: */
-  .faldon-info-item {
-    flex-direction: column;
-  }
-  
-  .faldon-info-label,
-  .faldon-info-valor {
-    flex: none;
-    width: 100%;
-  }
-}
-
-@media (max-width: 768px) {
-  .faldon-grid {
-    grid-template-columns: 1fr; /* 1 zutabe */
-  }
-  
-  .faldon-input-group {
-    flex-direction: column;
-  }
-  
-  .faldon-input,
-  .faldon-select,
-  .faldon-btn {
-    width: 100%;
-  }
-}

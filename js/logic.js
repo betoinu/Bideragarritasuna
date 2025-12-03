@@ -1688,20 +1688,49 @@ window.toggleFaldon = function() {
 
 // Guardar hipótesis actual
 window.guardarHipotesisActual = function() {
-    const nombreInput = document.getElementById('nombre-hipotesis');
-    const nombre = nombreInput.value.trim();
-    
-    if (!nombre) {
-        alert('⚠️ Por favor, introduce un nombre para la hipótesis');
-        nombreInput.focus();
-        return;
-    }
-    
-    if (guardarHipotesis(nombre)) {
-        nombreInput.value = ''; // Limpiar input
-        actualizarInfoHipotesis();
-    }
+  const nombre = (document.getElementById("nombre-hipotesis")?.value || "").trim();
+  if (!nombre) {
+    alert("Id bat eman hipotesiari."); // “Proporciona un identificador”
+    return;
+  }
+
+  // Recopila estado y servicios con tus funciones actuales
+  const estado = collectEstado();          // snapshot de Paneles 6 y 7, sidebar…
+  const servicios = collectServicios();    // cartera de servicios del Panel 8
+
+  // Construye el objeto con la estructura correcta
+  const hipotesis = {
+    nombre,
+    fecha: new Date().toISOString(),
+    version: "2.0",
+    estado,
+    servicios
+  };
+
+  // Guarda en LocalStorage
+  const list = JSON.parse(localStorage.getItem("hipotesis_idarte_list") || "[]");
+  const idx = list.findIndex(x => x.nombre === nombre);
+  if (idx >= 0) list[idx] = hipotesis; else list.push(hipotesis);
+  localStorage.setItem("hipotesis_idarte_list", JSON.stringify(list));
+
+  // Refresca selectores
+  rellenarSelectoresHipotesis();
+
+  // Descarga directa como archivo JSON
+  const blob = new Blob([JSON.stringify(hipotesis, null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `idarte_hipotesia_${nombre.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+
+  setTimeout(() => URL.revokeObjectURL(a.href), 100);
+
+  console.info("✅ Hipotesia gordeta eta deskargatuta:", hipotesis);
+  alert(`"${nombre}" hipotesia gordeta eta deskargatuta!`);
 };
+
 
 // =====🗄️ JSON DESKARGATZEKO SISTEMA (NUEVO) =====
 window.actualizarSelectorDescarga = function() {
@@ -1775,45 +1804,54 @@ window.descargarHipotesisSeleccionada = function() {
     }
 };
 
-// 🆕 INPORTATU HIPOTESIA JSON FITXATEGITIK
-window.cargarHipotesisDesdeArchivo = function(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-    
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        try {
-            const datosImportados = JSON.parse(e.target.result);
-            
-            // 🚨 EGIAZTATU FORMATUA
-            if (!datosImportados.state && !datosImportados.servicios) {
-                alert('❌ Fitxategiaren formatua ez da egokia. Ez du estatua edo zerbitzuak.');
-                return;
-            }
-            
-            // 🎯 ZUZENEAN APLIKATU - EZ GORDE LOCALSTORAGE-AN
-            aplicarDatosHipotesis(datosImportados);
-            
-            // 🗂️ AUKERAZ: Gorde localStorag-ean ere
-            const guardar = confirm('Hipotesia lokalki gorde nahi duzu?');
-            if (guardar) {
-                const nombre = datosImportados.nombre || 
-                              `Inportatua_${new Date().toLocaleDateString()}`;
-                guardarHipotesis(nombre, datosImportados);
-            }
-            
-            console.log('✅ JSON fitxategia inportatu eta aplikatu da');
-            
-        } catch (error) {
-            console.error('❌ Errorea JSON fitxategia irakurtzean:', error);
-            alert('Errorea fitxategia irakurtzean. Egiaztatu JSON formatua dela.');
-        }
+async function cargarHipotesisDesdeArchivo(event) {
+  const file = event?.target?.files?.[0];
+  if (!file) return;
+
+  console.group("Importación de hipótesis (archivo)");
+  try {
+    const text = await file.text();
+    let obj = JSON.parse(text);
+
+    // 🔧 Mapeo: adaptar estructura exportada a la esperada
+    const estado = obj.datos?.state || {};
+    const servicios = obj.datos?.serviciosCartera || [];
+
+    const hipotesis = {
+      nombre: obj.nombre || "sin_nombre",
+      fecha: obj.fecha || new Date().toISOString(),
+      version: obj.datos?.version || obj.metadata?.version || "legacy",
+      estado,
+      servicios
     };
-    reader.readAsText(file);
-    
-    // Garbitu input-a berriro erabiltzeko
-    event.target.value = '';
-};
+
+    // Validación
+    if (!hipotesis.estado || !Array.isArray(hipotesis.servicios)) {
+      alert("❌ Fitxategiaren formatua ez da egokia. Ez du estatua edo zerbitzuak.");
+      console.error("Validación fallida: faltan claves", hipotesis);
+      return;
+    }
+
+    // Aplica a la UI
+    applyEstadoToUI(hipotesis.estado);
+    applyServiciosToUI(hipotesis.servicios);
+
+    // Guarda en LocalStorage
+    const list = JSON.parse(localStorage.getItem("hipotesis_idarte_list") || "[]");
+    list.push(hipotesis);
+    localStorage.setItem("hipotesis_idarte_list", JSON.stringify(list));
+
+    rellenarSelectoresHipotesis();
+
+    console.info("✅ Hipótesis importada y aplicada:", hipotesis.nombre);
+  } catch (e) {
+    alert("❌ Ezin da fitxategia irakurri edo JSON parseatu.");
+    console.error("Error al importar:", e);
+  } finally {
+    console.groupEnd();
+  }
+}
+
 
 // 🆕 INPORTATZEKO BOTOIA GEHITZERAKO FUNTZIO LAGUNTZAILEA
 window.agregarBotonImportar = function() {

@@ -1470,9 +1470,6 @@ function actualizarAnalisisMetricas() {
         const clientesMensuales = parseInt(document.getElementById('metricas-clientes-mes')?.textContent) || 0;
         const capacidad = parseInt(document.getElementById('metricas-capacidad')?.textContent) || 0;
         
-        // Actualizar métrica de precio promedio en la card
-        updateElement('metricas-precio-promedio', `€ ${precioHoraPromedio.toFixed(2)}`);
-        
         // ANÁLISIS DE HORAS SEMANALES
         let analisisHoras = "";
         let colorHoras = "#666";
